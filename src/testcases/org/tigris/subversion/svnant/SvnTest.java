@@ -26,6 +26,7 @@ import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
 import org.tigris.subversion.svnclientadapter.ISVNNotifyListener;
 import org.tigris.subversion.svnclientadapter.ISVNProperty;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
+import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
@@ -384,10 +385,10 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
 		executeTarget("testResolve");
 		File file = new File(WORKINGCOPY_DIR+"/resolveTest/file.txt");
 		ISVNStatus status = svnClient.getSingleStatus(file);
-		assertTrue(status.getTextStatus() == ISVNStatus.Kind.CONFLICTED);
+		assertTrue(status.getTextStatus() == SVNStatusKind.CONFLICTED);
 		svnClient.resolved(file);
 		status = svnClient.getSingleStatus(file);
-		assertTrue(status.getTextStatus() == ISVNStatus.Kind.MODIFIED);
+		assertTrue(status.getTextStatus() == SVNStatusKind.MODIFIED);
 	}
 
 	public void testAnnotate() throws Exception {

@@ -63,6 +63,7 @@ import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
+import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 /**
@@ -238,7 +239,7 @@ public class Commit extends SvnCommand {
 			currentDir = file.getParentFile();
 			ISVNStatus status = svnClient.getSingleStatus(currentDir);
 			while ((currentDir != null)
-			    && (status.getTextStatus() == ISVNStatus.Kind.ADDED)
+			    && (status.getTextStatus() == SVNStatusKind.ADDED)
 			    && (!currentDir.equals(baseDir))) {
 			    dirs.push(currentDir);
 			    currentDir = currentDir.getParentFile();
