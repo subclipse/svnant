@@ -76,9 +76,6 @@ public class Import extends SvnCommand {
     /** the path to import */
     private File path = null;
     
-    /** new entry */
-    private String newEntry = null;
-
 	/** message */
 	private String message = null;	
 
@@ -91,7 +88,7 @@ public class Import extends SvnCommand {
 		log("Svn : Importing to repository");
 
         try {
-        	svnClient.doImport(path, url, newEntry, message, recurse);
+        	svnClient.doImport(path, url, message, recurse);
         } catch (ClientException e) {
             throw new BuildException("Can't import", e);
         }
@@ -124,13 +121,6 @@ public class Import extends SvnCommand {
     	this.path = path;
     }
     
-    /**
-     * set the new entry in repository 
-     * @param newEntry
-     */
-    public void setNewEntry(String newEntry) {
-    	this.newEntry = newEntry;
-    }
     
     /**
      * set the message for immediate commit

@@ -75,6 +75,8 @@ import com.qintsoft.jsvn.jni.Revision;
  */public class Export extends SvnCommand {
     private SVNClientAdapter svnClient = null;
     
+    private boolean force = false;
+    
     /** the source url */
     private URL srcUrl = null;
     
@@ -95,9 +97,9 @@ import com.qintsoft.jsvn.jni.Revision;
         
         try {
 			if (srcUrl != null)
-				svnClient.doExport(srcUrl,destPath,revision);
+				svnClient.doExport(srcUrl,destPath,revision,force);
 			else
-				svnClient.doExport(srcPath,destPath);
+				svnClient.doExport(srcPath,destPath,force);
         } catch (ClientException e) {
         	throw new BuildException("Can't export",e);
         }
@@ -154,5 +156,9 @@ import com.qintsoft.jsvn.jni.Revision;
 	public void setDestPath(File destPath) {
 		this.destPath = destPath;
 	}
+
+    public void setForce(boolean force) {
+        this.force = force;
+    }
 
 }
