@@ -142,6 +142,12 @@ private ISVNClientAdapter svnClient;
         executeTarget("testUpdate");
     }
 
+    public void testRevert() throws FileNotFoundException, IOException {
+        executeTarget("testRevert");
+        DataInputStream dis = new DataInputStream(new FileInputStream("test/my_repos/revertTest/file.txt")); 
+        assertEquals("first version",dis.readLine());
+    }
+
     public static void main(String[] args) {
         String[] testCaseName = { SvnTest.class.getName()};
         junit.textui.TestRunner.main(testCaseName);

@@ -41,11 +41,11 @@
 
   <!-- this test does not test svnant but svnClientAdapter -->
   <target name="testList" depends="init">
-	  <svn javahl="${javahl}">
-		  <add dir="my_repos/listTest"/>
-		  <commit dir="my_repos/listTest" message="listTest directory added to repository"/>	
-		</svn>
-	</target>
+    <svn javahl="${javahl}">
+      <add dir="my_repos/listTest"/>
+      <commit dir="my_repos/listTest" message="listTest directory added to repository"/>	
+    </svn>
+  </target>
 
   <!-- this test does not test svnant but svnClientAdapter -->
   <target name="testLog" depends="init">
@@ -196,6 +196,19 @@
     </svn>
     <svn javahl="${javahl}">
       <update dir="coHEAD/updateTest"/>
+    </svn>
+  </target>
+
+  <target name="testRevert" depends="init">
+    <copy file="my_repos/revertTest/file.txt.version1" tofile="my_repos/revertTest/file.txt"/>
+    <svn javahl="${javahl}">
+      <add dir="my_repos/revertTest" recurse="false"/>
+      <add file="my_repos/revertTest/file.txt"/>
+      <commit dir="my_repos/revertTest" message="revertTest/file.txt added to repository"/>
+    </svn>
+    <copy file="my_repos/revertTest/file.txt.version2" tofile="my_repos/revertTest/file.txt" overwrite="true"/>
+    <svn javahl="${javahl}">
+      <revert file="my_repos/revertTest/file.txt"/>
     </svn>
   </target>
 

@@ -169,6 +169,10 @@ public class SvnTask extends Task {
         commands.addElement(a);
     }    
 
+    public void addRevert(Revert a) {
+        commands.addElement(a);
+    }
+
     public void execute() throws BuildException {
 
         ISVNClientAdapter svnClient;
