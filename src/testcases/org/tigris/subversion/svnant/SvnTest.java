@@ -37,7 +37,7 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  */
 public class SvnTest extends BuildFileTest {
 private ISVNClientAdapter svnClient;
-private static final String WORKINGCOPY_DIR = "test/svn/workingcopy"; 
+private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
 
     public SvnTest(String name) {
         super(name);
@@ -71,9 +71,21 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
 
 	public void testList() throws SVNClientException,MalformedURLException {
        executeTarget("testList");
-	   String urlRepos = getProject().getProperty("urlRepos");
+	   
+       // first using a SVNUrl
+       String urlRepos = getProject().getProperty("urlRepos");
 	   ISVNDirEntry[] list = svnClient.getList(new SVNUrl(urlRepos+"/listTest"),SVNRevision.HEAD,false);
 	   assertTrue(list.length > 0);
+	   
+	   // using a File
+	   list = svnClient.getList(new File(WORKINGCOPY_DIR+"/listTest"),SVNRevision.BASE,false);
+	   assertTrue(list.length > 0);
+	   
+	   // there is no BASE for listTest because it was added and committed but
+	   // it needs to be updated before there is a BASE for it
+	   // this is not what I expected ...
+	   list = svnClient.getList(new File(WORKINGCOPY_DIR),SVNRevision.BASE,false);
+	   assertTrue(list.length == 0);
 	}
 
 
@@ -313,16 +325,30 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
 
 	public void testEntry() throws Exception {
 		executeTarget("testEntry");
+		
+		// first using a SVNUrl
 		String urlRepos = getProject().getProperty("urlRepos");
 		ISVNDirEntry dirEntry = svnClient.getDirEntry(new SVNUrl(urlRepos+"/entryTest/"),SVNRevision.HEAD);
 		assertNotNull(dirEntry);
 		assertEquals(SVNNodeKind.DIR,dirEntry.getNodeKind());
 		assertEquals("entryTest",dirEntry.getPath());
+		
+		// using a File
+		dirEntry = svnClient.getDirEntry(new File(WORKINGCOPY_DIR+"/entryTest/dir1"),SVNRevision.BASE);
+		assertNotNull(dirEntry);
+		assertEquals(SVNNodeKind.DIR,dirEntry.getNodeKind());
+		
+		// this does not work for now because working copy dir needs to be updated
+		// before
+/*		dirEntry = svnClient.getDirEntry(new File(WORKINGCOPY_DIR+"/entryTest/"),SVNRevision.BASE);
+		assertNotNull(dirEntry);
+		assertEquals(SVNNodeKind.DIR,dirEntry.getNodeKind());
+		assertEquals("entryTest",dirEntry.getPath());*/		
 	}
 
 	public void testResolve() throws Exception {
 		executeTarget("testResolve");
-		File file = new File("test/svn/workingcopy/resolveTest/file.txt");
+		File file = new File(WORKINGCOPY_DIR+"/resolveTest/file.txt");
 		ISVNStatus status = svnClient.getSingleStatus(file);
 		assertTrue(status.getTextStatus() == ISVNStatus.Kind.CONFLICTED);
 		svnClient.resolved(file);
@@ -330,6 +356,7 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
 		assertTrue(status.getTextStatus() == ISVNStatus.Kind.MODIFIED);
 	}
 
+	
     public static void main(String[] args) {
         String[] testCaseName = { SvnTest.class.getName()};
         junit.textui.TestRunner.main(testCaseName);
