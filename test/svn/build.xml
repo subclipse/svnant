@@ -32,7 +32,7 @@
     <echo>creating repository (you need svnadmin in your path if using command line interface) ...</echo>
   	<delete dir="repository"/>  
 
-  	<svn>
+  	<svn javahl="${javahl}">
   		<createRepository path="repository"/>
   	</svn>
   </target>
