@@ -16,6 +16,7 @@ import java.util.Set;
 import org.apache.tools.ant.BuildFileTest;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
+import org.apache.tools.ant.UnknownElement;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNDirEntry;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
@@ -204,8 +205,17 @@ private ISVNClientAdapter svnClient;
         };
         
         Target target = (Target)project.getTargets().get("testListener");
-        Task[] tasks = target.getTasks();
-        SvnTask svnTask = (SvnTask)tasks[0]; // there is only one task
+        Task task = target.getTasks()[0]; // there is only one task
+        SvnTask svnTask;
+        if (task instanceof UnknownElement) {
+            // not sure how ant works but it seems to work using that
+            UnknownElement unknownElement = (UnknownElement)task;
+            unknownElement.maybeConfigure();
+            svnTask = (SvnTask)unknownElement.getTask(); 
+        }else {
+            svnTask = (SvnTask)task;
+        }
+ 
         svnTask.addNotifyListener(listener);
         executeTarget("testListener");
         
