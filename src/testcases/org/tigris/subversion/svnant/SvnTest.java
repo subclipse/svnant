@@ -37,13 +37,14 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  */
 public class SvnTest extends BuildFileTest {
 private ISVNClientAdapter svnClient;
+private static final String WORKINGCOPY_DIR = "test/svn/workingcopy"; 
 
     public SvnTest(String name) {
         super(name);
     }
 
     public void setUp() {
-        configureProject("test/build.xml");
+        configureProject("test/svn/build.xml");
         boolean javahl = true;
         String javahlProp = getProject().getProperty("javahl");
         if (javahlProp != null)
@@ -64,7 +65,7 @@ private ISVNClientAdapter svnClient;
     public void testCheckout() throws SVNClientException {
         executeTarget("testCheckout");
 
-		assertEquals(1,svnClient.getSingleStatus(new File("test/coHEAD/checkoutTest/readme.txt")).getLastChangedRevision().getNumber());
+		assertEquals(1,svnClient.getSingleStatus(new File("test/svn/coHEAD/checkoutTest/readme.txt")).getLastChangedRevision().getNumber());
     }
     
 
@@ -79,25 +80,25 @@ private ISVNClientAdapter svnClient;
     public void testLog() throws SVNClientException {
         executeTarget("testLog");
 		String urlRepos = getProject().getProperty("urlRepos");
-		ISVNLogMessage[] messages = svnClient.getLogMessages(new File("test/my_repos/logTest/file1.txt"),new SVNRevision.Number(0),SVNRevision.HEAD);
+		ISVNLogMessage[] messages = svnClient.getLogMessages(new File(WORKINGCOPY_DIR+"/logTest/file1.txt"),new SVNRevision.Number(0),SVNRevision.HEAD);
         assertTrue(messages.length > 0);
 		assertEquals("logTest directory added to repository",messages[0].getMessage());
     }
 
     public void testAddCommit() throws SVNClientException {
        executeTarget("testAddCommit");
-	   assertTrue(svnClient.getSingleStatus(new File("test/my_repos/addCommitTest/file0.add")).getLastChangedRevision().getNumber() > 0);
+	   assertTrue(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/addCommitTest/file0.add")).getLastChangedRevision().getNumber() > 0);
     }
 
     public void testCopy() throws SVNClientException {
     	executeTarget("testCopy");
-		assertTrue(svnClient.getSingleStatus(new File("test/my_repos/copyTest/copy1")).getLastChangedRevision().getNumber() > 0);
+		assertTrue(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/copyTest/copy1")).getLastChangedRevision().getNumber() > 0);
     } 
 
 	public void testDelete() {
 		executeTarget("testDelete");
-		assertFalse(new File("test/my_repos/deleteTest/deleteFromWorkingCopy/file0.del").exists());
-		assertTrue(new File("test/my_repos/deleteTest/deleteFromWorkingCopy/donotdel.txt").exists());
+		assertFalse(new File(WORKINGCOPY_DIR+"/deleteTest/deleteFromWorkingCopy/file0.del").exists());
+		assertTrue(new File(WORKINGCOPY_DIR+"/deleteTest/deleteFromWorkingCopy/donotdel.txt").exists());
 	}
 
 	public void testExport() {
@@ -111,38 +112,38 @@ private ISVNClientAdapter svnClient;
 	
 	public void testMkdir() throws SVNClientException {
 		executeTarget("testMkdir");
-		assertTrue(svnClient.getSingleStatus(new File("test/my_repos/mkdirTest/testMkdir2")).getLastChangedRevision().getNumber() > 0);
+		assertTrue(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/mkdirTest/testMkdir2")).getLastChangedRevision().getNumber() > 0);
     } 
 	
 	public void testMove() throws SVNClientException {
 		executeTarget("testMove");
-		assertTrue(svnClient.getSingleStatus(new File("test/my_repos/moveTest/dir1Renamed")).getLastChangedRevision().getNumber() > 0);
+		assertTrue(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/moveTest/dir1Renamed")).getLastChangedRevision().getNumber() > 0);
 	}
    
     public void testProp() throws SVNClientException {
         executeTarget("testProp");
-        ISVNProperty propData = svnClient.propertyGet(new File("test/my_repos/propTest/file.png"),"svn:mime-type");
+        ISVNProperty propData = svnClient.propertyGet(new File(WORKINGCOPY_DIR+"/propTest/file.png"),"svn:mime-type");
         assertTrue(propData != null);
         assertEquals("image/png",propData.getValue());
-        propData = svnClient.propertyGet(new File("test/my_repos/propTest/file.png"),"myPicture");
+        propData = svnClient.propertyGet(new File(WORKINGCOPY_DIR+"/propTest/file.png"),"myPicture");
         assertTrue(propData != null);
         assertEquals(170,propData.getData().length);
 
         // we don't test that because propDel does not work property with javahl interface for now        
-//        propData = svnClient.propertyGet(new File("test/my_repos/propTest/file.png"),"myProperty");
+//        propData = svnClient.propertyGet(new File(WORKINGCOPY_DIR+"/propTest/file.png"),"myProperty");
 //        assertTrue(propData == null);
     }
 
     public void testDiff() {
         executeTarget("testDiff");
-        File patchFile = new File("test/my_repos/diffTest/patch.txt");
+        File patchFile = new File(WORKINGCOPY_DIR+"/diffTest/patch.txt");
         assertTrue(patchFile.exists());
         assertTrue(patchFile.length() > 0);
     }
     
     public void testKeywords() throws FileNotFoundException, IOException {
         executeTarget("testKeywords");
-        DataInputStream dis = new DataInputStream(new FileInputStream("test/my_repos/keywordsTest/file.txt")); 
+        DataInputStream dis = new DataInputStream(new FileInputStream(WORKINGCOPY_DIR+"/keywordsTest/file.txt")); 
         assertEquals("$LastChangedRevision: 1 $",dis.readLine());
         assertEquals("$Author: cedric $",dis.readLine());
         assertEquals("$Id$",dis.readLine());
@@ -154,13 +155,13 @@ private ISVNClientAdapter svnClient;
 
     public void testRevert() throws FileNotFoundException, IOException {
         executeTarget("testRevert");
-        DataInputStream dis = new DataInputStream(new FileInputStream("test/my_repos/revertTest/file.txt")); 
+        DataInputStream dis = new DataInputStream(new FileInputStream(WORKINGCOPY_DIR+"/revertTest/file.txt")); 
         assertEquals("first version",dis.readLine());
     }
 
     public void testCat() throws FileNotFoundException, IOException {
         executeTarget("testCat");
-        DataInputStream dis = new DataInputStream(new FileInputStream("test/my_repos/catTest/filecat.txt")); 
+        DataInputStream dis = new DataInputStream(new FileInputStream(WORKINGCOPY_DIR+"/catTest/filecat.txt")); 
         assertEquals("first line",dis.readLine());        
         assertEquals("second line",dis.readLine());
     }
@@ -209,46 +210,46 @@ private ISVNClientAdapter svnClient;
         assertEquals(6,addSet.size()); // 6 for add and 6 for commit        
         assertEquals(6,commitSet.size()); // 6 for add and 6 for commit
         
-        assertTrue(addSet.contains(new File("test/my_repos/listenerTest").getCanonicalFile()));
-        assertTrue(addSet.contains(new File("test/my_repos/listenerTest/dir1").getCanonicalFile()));
-        assertTrue(addSet.contains(new File("test/my_repos/listenerTest/dir1/file3.txt").getCanonicalFile()));        
-        assertTrue(addSet.contains(new File("test/my_repos/listenerTest/dir1/file4.txt").getCanonicalFile()));
-        assertTrue(addSet.contains(new File("test/my_repos/listenerTest/file1.txt").getCanonicalFile()));
-        assertTrue(addSet.contains(new File("test/my_repos/listenerTest/file2.txt").getCanonicalFile()));
+        assertTrue(addSet.contains(new File(WORKINGCOPY_DIR+"/listenerTest").getCanonicalFile()));
+        assertTrue(addSet.contains(new File(WORKINGCOPY_DIR+"/listenerTest/dir1").getCanonicalFile()));
+        assertTrue(addSet.contains(new File(WORKINGCOPY_DIR+"/listenerTest/dir1/file3.txt").getCanonicalFile()));        
+        assertTrue(addSet.contains(new File(WORKINGCOPY_DIR+"/listenerTest/dir1/file4.txt").getCanonicalFile()));
+        assertTrue(addSet.contains(new File(WORKINGCOPY_DIR+"/listenerTest/file1.txt").getCanonicalFile()));
+        assertTrue(addSet.contains(new File(WORKINGCOPY_DIR+"/listenerTest/file2.txt").getCanonicalFile()));
 
-        assertTrue(commitSet.contains(new File("test/my_repos/listenerTest").getCanonicalFile()));
-        assertTrue(commitSet.contains(new File("test/my_repos/listenerTest/dir1").getCanonicalFile()));
-        assertTrue(commitSet.contains(new File("test/my_repos/listenerTest/dir1/file3.txt").getCanonicalFile()));        
-        assertTrue(commitSet.contains(new File("test/my_repos/listenerTest/dir1/file4.txt").getCanonicalFile()));
-        assertTrue(commitSet.contains(new File("test/my_repos/listenerTest/file1.txt").getCanonicalFile()));
-        assertTrue(commitSet.contains(new File("test/my_repos/listenerTest/file2.txt").getCanonicalFile()));
+        assertTrue(commitSet.contains(new File(WORKINGCOPY_DIR+"/listenerTest").getCanonicalFile()));
+        assertTrue(commitSet.contains(new File(WORKINGCOPY_DIR+"/listenerTest/dir1").getCanonicalFile()));
+        assertTrue(commitSet.contains(new File(WORKINGCOPY_DIR+"/listenerTest/dir1/file3.txt").getCanonicalFile()));        
+        assertTrue(commitSet.contains(new File(WORKINGCOPY_DIR+"/listenerTest/dir1/file4.txt").getCanonicalFile()));
+        assertTrue(commitSet.contains(new File(WORKINGCOPY_DIR+"/listenerTest/file1.txt").getCanonicalFile()));
+        assertTrue(commitSet.contains(new File(WORKINGCOPY_DIR+"/listenerTest/file2.txt").getCanonicalFile()));
         
     }
 
     public void testIgnore() throws Exception {
         executeTarget("testIgnore");
-        assertTrue(svnClient.getSingleStatus(new File("test/my_repos/ignoreTest/fileToIgnore.txt")).isIgnored());
-        assertTrue(svnClient.getSingleStatus(new File("test/my_repos/ignoreTest/dir1/file1.ignore")).isIgnored());
-        assertFalse(svnClient.getSingleStatus(new File("test/my_repos/ignoreTest/dir1/file2.donotignore")).isIgnored());
-        assertTrue(svnClient.getSingleStatus(new File("test/my_repos/ignoreTest/dir1/dir2/file3.ignore")).isIgnored());        
+        assertTrue(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/ignoreTest/fileToIgnore.txt")).isIgnored());
+        assertTrue(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/ignoreTest/dir1/file1.ignore")).isIgnored());
+        assertFalse(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/ignoreTest/dir1/file2.donotignore")).isIgnored());
+        assertTrue(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/ignoreTest/dir1/dir2/file3.ignore")).isIgnored());        
     }
 
 
     public void testSingleStatus() throws Exception {
         executeTarget("testStatus");
-        assertTrue(svnClient.getSingleStatus(new File("test/my_repos/statusTest/added.txt")).isAdded());
+        assertTrue(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/statusTest/added.txt")).isAdded());
         
         // a resource that does not exist is a non managed resource
-        assertFalse(svnClient.getSingleStatus(new File("test/my_repos/statusTest/fileThatDoesNotExist.txt")).isManaged());
+        assertFalse(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/statusTest/fileThatDoesNotExist.txt")).isManaged());
         
         // same test but in a directory that is not versioned
-        assertFalse(null,svnClient.getSingleStatus(new File("test/my_repos/statusTest/nonManaged.dir/fileThatDoesNotExist.txt")).isManaged());
+        assertFalse(null,svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/statusTest/nonManaged.dir/fileThatDoesNotExist.txt")).isManaged());
         
-        assertTrue(svnClient.getSingleStatus(new File("test/my_repos/statusTest/ignored.txt")).isIgnored());    
+        assertTrue(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/statusTest/ignored.txt")).isIgnored());    
         
-        assertTrue(svnClient.getSingleStatus(new File("test/my_repos/statusTest/committed.txt")).hasRemote());        
+        assertTrue(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/statusTest/committed.txt")).hasRemote());        
         
-        assertTrue(svnClient.getSingleStatus(new File("test/my_repos/statusTest/deleted.txt")).isDeleted());
+        assertTrue(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/statusTest/deleted.txt")).isDeleted());
 
     }
     
@@ -258,31 +259,31 @@ private ISVNClientAdapter svnClient;
         ISVNStatus[] statuses;  
         // getStatus(File, boolean) does not have the same result with command line interface
         // and svnjavahl for now. svnjavahl does not return ignored files for now 
-//        statuses = svnClient.getStatus(new File("test/my_repos/statusTest"),false);
+//        statuses = svnClient.getStatus(new File(WORKINGCOPY_DIR+"/statusTest"),false);
         // let's verify we don't forget some files (ignored ones for example)
 //        assertEquals(8,statuses.length);
         
-//        statuses = svnClient.getStatus(new File("test/my_repos/statusTest"),true);
+//        statuses = svnClient.getStatus(new File(WORKINGCOPY_DIR+"/statusTest"),true);
 //        assertEquals(9,statuses.length);
 
-//        statuses = svnClient.getStatus(new File("test/my_repos/statusTest/nonManaged.dir").getCanonicalFile(),false);
+//        statuses = svnClient.getStatus(new File(WORKINGCOPY_DIR+"/statusTest/nonManaged.dir").getCanonicalFile(),false);
 //        assertEquals(1, statuses.length);
 
         
         statuses = svnClient.getStatus( new File[] {
-            new File("test/my_repos/statusTest/added.txt"),
-            new File("test/my_repos/statusTest/managedDir/added in managed dir.txt"),
-            new File("test/my_repos/statusTest/nonManaged.dir"),
+            new File(WORKINGCOPY_DIR+"/statusTest/added.txt"),
+            new File(WORKINGCOPY_DIR+"/statusTest/managedDir/added in managed dir.txt"),
+            new File(WORKINGCOPY_DIR+"/statusTest/nonManaged.dir"),
             new File("nonExistingFile"),
-            new File("test/my_repos/statusTest/ignored.txt"),
-            new File("test/my_repos/statusTest/nonManaged.dir/statusTest")
+            new File(WORKINGCOPY_DIR+"/statusTest/ignored.txt"),
+            new File(WORKINGCOPY_DIR+"/statusTest/nonManaged.dir/statusTest")
             }
         );
         assertEquals(6,statuses.length);
-        assertEquals(new File("test/my_repos/statusTest/added.txt").getCanonicalFile(), statuses[0].getFile());
+        assertEquals(new File(WORKINGCOPY_DIR+"/statusTest/added.txt").getCanonicalFile(), statuses[0].getFile());
         assertTrue(statuses[0].isAdded());
         
-        assertEquals(new File("test/my_repos/statusTest/managedDir/added in managed dir.txt").getAbsoluteFile(), statuses[1].getFile());        
+        assertEquals(new File(WORKINGCOPY_DIR+"/statusTest/managedDir/added in managed dir.txt").getAbsoluteFile(), statuses[1].getFile());        
         assertTrue(statuses[1].isManaged());
         assertEquals(SVNNodeKind.FILE,statuses[1].getNodeKind());
         
