@@ -61,7 +61,6 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
-import org.tigris.subversion.svnclientadapter.javahl.SVNClientAdapter;
 
 /**
  * Svn Task
@@ -156,9 +155,10 @@ public class SvnTask extends Task {
 
         if (password != null)
             svnClient.setPassword(password);
-            
-        if (logLevel != 0)
-			SVNClientAdapter.enableLogging(logLevel,logFile);
+
+        // TODO : delete these methods from JhlClientAdepter and from doc ?             
+//        if (logLevel != 0)
+//			JhlClientAdapter.enableLogging(logLevel,logFile);
 
         for (int i = 0; i < commands.size(); i++) {
             SvnCommand command = (SvnCommand) commands.elementAt(i);
@@ -169,8 +169,8 @@ public class SvnTask extends Task {
         }
         
         // disable logging
-		if (logLevel != 0)
-			SVNClientAdapter.enableLogging(0,logFile);        
+//		if (logLevel != 0)
+//			JhlClientAdapter.enableLogging(0,logFile);        
     }
 
 }
