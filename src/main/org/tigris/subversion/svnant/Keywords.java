@@ -52,137 +52,132 @@
  * <http://www.apache.org/>.
  *
  */ 
+
 package org.tigris.subversion.svnant;
 
 import java.io.File;
 import java.util.Vector;
 
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
+import org.apache.tools.ant.types.FileSet;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
+import org.tigris.subversion.svnclientadapter.SVNKeywords;
 
 /**
- * Svn Task
+ * ancestor of KeywordSet ...
  * @author Cédric Chabanois 
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  *
  */
-public class SvnTask extends Task {
-    private String username = null;
-    private String password = null;
-    private Vector commands = new Vector();
-    private int logLevel = 0;
-    private File logFile = new File("svn.log");
+public abstract class Keywords extends SvnCommand {
+    // the keywords available for substitution
+    protected SVNKeywords keywords;
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    /** file concerned by keywords substitution */
+    protected File file = null;
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    /** filesets concerned by keywords substitution */
+    protected Vector filesets = new Vector();
 
-	public void setLogLevel(int logLevel) {
-		if (logLevel > 3)
-			logLevel = 3;
-		else
-		if (logLevel < 0)
-			logLevel = 0;
-		this.logLevel = logLevel;
-	}
+    /** directory concerned by keywords substitution */
+    protected File dir = null;
 
-	public void setLogFile(File logFile) {
-		this.logFile = logFile;
-	}
+    /** set keywords substitution recursively ? (only for dir attribute) */
+    protected boolean recurse = true;
 
-    public void addCheckout(Checkout a) {
-        commands.addElement(a);
-    }
 
-    public void addAdd(Add a) {
-        commands.addElement(a);
-    }
+    protected ISVNClientAdapter svnClient;
 
-    public void addCommit(Commit a) {
-        commands.addElement(a);
-    }
-
-    public void addCopy(Copy a) {
-        commands.addElement(a);
-    }
-
-    public void addDelete(Delete a) {
-        commands.addElement(a);
-    }
-
-    public void addExport(Export a) {
-        commands.addElement(a);
-    }
-
-    public void addImport(Import a) {
-        commands.addElement(a);
-    }
-
-    public void addMkdir(Mkdir a) {
-        commands.addElement(a);
-    }
-
-    public void addMove(Move a) {
-        commands.addElement(a);
-    }
-
-    public void addUpdate(Update a) {
-        commands.addElement(a);
-    }
-    
-    public void addPropset(Propset a) {
-        commands.addElement(a);
-    }
-    
-    public void addDiff(Diff a) {
-        commands.addElement(a);
-    }
-
-    public void addKeywordsSet(Keywordsset a) {
-        commands.addElement(a);
-    }
-    
-    public void addKeywordsAdd(Keywordsadd a) {
-        commands.addElement(a);
-    }
-    
-    public void addKeywordsRemove(Keywordsremove a) {
-        commands.addElement(a);
-    }    
-
-    public void execute() throws BuildException {
-    	
-    	// this must be done before creating client !
-
-        ISVNClientAdapter svnClient = SVNClientAdapterFactory.createSVNClient(SVNClientAdapterFactory.JAVAHL_CLIENT);
-
-        if (username != null)
-            svnClient.setUsername(username);
-
-        if (password != null)
-            svnClient.setPassword(password);
-
-        // TODO : delete these methods from JhlClientAdepter and from doc ?             
-//        if (logLevel != 0)
-//			JhlClientAdapter.enableLogging(logLevel,logFile);
-
-        for (int i = 0; i < commands.size(); i++) {
-            SvnCommand command = (SvnCommand) commands.elementAt(i);
-            Feedback feedback = new Feedback(command);
-			svnClient.addNotifyListener(feedback);
-            command.execute(svnClient);
-            svnClient.removeNotifyListener(feedback);
-        }
+    public void execute(ISVNClientAdapter svnClient) throws BuildException {
+        this.svnClient = svnClient;
+        validateAttributes();
         
-        // disable logging
-//		if (logLevel != 0)
-//			JhlClientAdapter.enableLogging(0,logFile);        
+        // we do nothing there but this function is overloaded  
+    }
+
+    /**
+     * Ensure we have a consistent and legal set of attributes
+     */
+    protected void validateAttributes() throws BuildException {
+
+        if ((file == null) && (dir == null) && (filesets.size() == 0))
+            throw new BuildException("file, url or fileset must be set");
+    }
+    
+	public void setHeadURL(boolean b) {
+		keywords.setHeadUrl(b);
+	}
+
+    public void setURL(boolean b) {
+        keywords.setHeadUrl(b);
+    }
+
+	public void setId(boolean b) {
+        keywords.setId(b);
+	}
+
+	public void setLastChangedBy(boolean b) {
+		keywords.setLastChangedBy(b);
+	}
+
+    public void setAuthor(boolean b) {
+        keywords.setLastChangedBy(b);
+    }
+
+	public void setLastChangedDate(boolean b) {
+		keywords.setLastChangedDate(b);
+	}
+
+    public void setDate(boolean b) {
+        keywords.setLastChangedDate(b);
+    }
+
+
+	public void setLastChangedRevision(boolean b) {
+		keywords.setLastChangedRevision(b);
+	}
+    
+    public void setRev(boolean b) {
+        keywords.setLastChangedRevision(b);
+    }
+
+    /**
+     * set file on which to set keywords substitution 
+     * @param file
+     */
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    /**
+     * set directory on which to set keywords substitution 
+     * @param dir
+     */
+    public void setDir(File dir) {
+        this.dir = dir;
+    }
+
+    /**
+     * if set, keywords substitution will be set recursively
+     * @param recursive
+     */
+    public void setRecurse(boolean recurse) {
+        this.recurse = recurse;
+    }
+
+    /**
+     * Adds a set of files on which to apply keywords substitution
+     */
+    public void addFileset(FileSet set) {
+        filesets.addElement(set);
+    }
+
+    /**
+     * set the keywords
+     * @param keywords
+     */
+    public void setKeywords(SVNKeywords keywords) {
+        this.keywords = keywords;
     }
 
 }
