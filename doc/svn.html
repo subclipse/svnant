@@ -5,7 +5,7 @@
 	<TITLE>Svn Task</TITLE>
 	<META NAME="GENERATOR" CONTENT="OpenOffice.org 1.1.0  (Win32)">
 	<META NAME="CREATED" CONTENT="20031019;22355182">
-	<META NAME="CHANGED" CONTENT="20040723;20170400">
+	<META NAME="CHANGED" CONTENT="20040914;13544331">
 	<META HTTP-EQUIV="Content-Language" CONTENT="en-us">
 </HEAD>
 <BODY LANG="en-US" DIR="LTR">
@@ -435,9 +435,9 @@ server-side copy;&nbsp; used to branch &amp; tag</P>
 </P>
 <P>This task is not (yet) available for javahl interface.<BR>Example
 :</P>
-<P><FONT SIZE=2><FONT FACE="Courier New"><FONT COLOR="#000080">&lt;svn</FONT>
-<FONT COLOR="#000080">javahl=</FONT><FONT COLOR="#008000">&quot;false&quot;</FONT><FONT COLOR="#000080">&gt;<BR>
- &lt;createRepository</FONT> <FONT COLOR="#000080">path=</FONT><FONT COLOR="#008000">&quot;repository&quot;</FONT><FONT COLOR="#000080">/&gt;<BR>&lt;/svn&gt;</FONT></FONT></FONT></P>
+<P><FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;svn</FONT>
+<FONT COLOR="#000080">javahl=</FONT><FONT COLOR="#008000">&quot;false&quot;</FONT><FONT COLOR="#000080">&gt;<BR>&lt;createRepository</FONT>
+<FONT COLOR="#000080">path=</FONT><FONT COLOR="#008000">&quot;repository&quot;</FONT><FONT COLOR="#000080">/&gt;<BR>&lt;/svn&gt;</FONT></FONT></FONT></P>
 <H4>delete</H4>
 <P>If run on a working copy target, the item is scheduled for
 deletion upon the next commit.&nbsp; Files, and directories that have
@@ -1405,17 +1405,89 @@ are used to select sets of files to revert.
 <FONT COLOR="#000080">path=</FONT><FONT COLOR="#008000">&quot;workingcopy/statusTest/added.txt&quot;</FONT>
 </FONT></FONT>
 </P>
-<P STYLE="margin-bottom: 0cm"><FONT COLOR="#000080"> 
-<FONT FACE="Courier New"><FONT SIZE=2>textStatusProperty=</FONT><FONT COLOR="#008000">&quot;testStatus.textStatus&quot;</FONT></FONT></FONT></P>
-<P STYLE="margin-bottom: 0cm"> 
-<FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">propStatusProperty=</FONT><FONT COLOR="#008000">&quot;testStatus.propStatus&quot;</FONT></FONT></FONT></P>
-<P STYLE="margin-bottom: 0cm"> 
-<FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">lastChangedRevisionProperty=</FONT><FONT COLOR="#008000">&quot;testStatus.lastCommitRevision&quot;</FONT></FONT></FONT></P>
-<P STYLE="margin-bottom: 0cm"><FONT COLOR="#000080"> 
-<FONT FACE="Courier New"><FONT SIZE=2>revisionProperty=</FONT><FONT COLOR="#008000">&quot;testStatus.revision&quot;</FONT></FONT></FONT></P>
-<P STYLE="margin-bottom: 0cm"> 
-<FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">lastCommitAuthorProperty=</FONT><FONT COLOR="#008000">&quot;testStatus.lastCommitAuthor&quot;</FONT></FONT></FONT></P>
-<P STYLE="margin-bottom: 0cm"><FONT SIZE=2><FONT FACE="Courier New"><FONT COLOR="#000080">/&gt;</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0cm"><FONT COLOR="#000080"><FONT FACE="Courier New"><FONT SIZE=2>textStatusProperty=<FONT COLOR="#008000">&quot;testStatus.textStatus&quot;</FONT></FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0cm"><FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">propStatusProperty=</FONT><FONT COLOR="#008000">&quot;testStatus.propStatus&quot;</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0cm"><FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">lastChangedRevisionProperty=</FONT><FONT COLOR="#008000">&quot;testStatus.lastCommitRevision&quot;</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0cm"><FONT COLOR="#000080"><FONT FACE="Courier New"><FONT SIZE=2>revisionProperty=<FONT COLOR="#008000">&quot;testStatus.revision&quot;</FONT></FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0cm"><FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">lastCommitAuthorProperty=</FONT><FONT COLOR="#008000">&quot;testStatus.lastCommitAuthor&quot;</FONT></FONT></FONT></P>
+<H4>/&gt;<BR><BR>switch</H4>
+<P>Update the working copy to mirror a new URL within the repository.
+This behaviour is similar to 'svn update', and is the way to  move a
+working copy to a branch or tag within the same repository.</P>
+<TABLE WIDTH=1110 BORDER=2 CELLPADDING=2 CELLSPACING=0>
+	<COL WIDTH=127>
+	<COL WIDTH=862>
+	<COL WIDTH=105>
+	<TR VALIGN=TOP>
+		<TD WIDTH=127>
+			<P><B>Attribute</B></P>
+		</TD>
+		<TD WIDTH=862>
+			<P><B>Description</B></P>
+		</TD>
+		<TD WIDTH=105>
+			<P><B>Required</B></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=127 VALIGN=TOP>
+			<P>path</P>
+		</TD>
+		<TD WIDTH=862>
+			<P>The working copy to switch to the given url</P>
+		</TD>
+		<TD WIDTH=105>
+			<P ALIGN=CENTER>Yes</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=127>
+			<P>url</P>
+		</TD>
+		<TD WIDTH=862>
+			<P>The url to switch to</P>
+		</TD>
+		<TD WIDTH=105>
+			<P ALIGN=CENTER>Yes</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=127>
+			<P>recurse</P>
+		</TD>
+		<TD WIDTH=862>
+			<P>Set to &quot;false&quot; to operate on a single directory only.
+			Default is &quot;true&quot;</P>
+		</TD>
+		<TD WIDTH=105>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=127>
+			<P>revision</P>
+		</TD>
+		<TD WIDTH=862>
+			<P>revision. Defaults is &quot;HEAD&quot;<BR>Possible values are
+			:<BR>- a date with the following format : MM/DD/YYYY HH:MM AM_PM<BR>-
+			a revision number<BR>- HEAD, BASE, COMMITED or PREV</P>
+		</TD>
+		<TD WIDTH=105>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+</TABLE>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>Example
+:</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0cm"><FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;svn</FONT><FONT COLOR="#000080">&gt;</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0cm">  <FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;switch</FONT>
+<FONT COLOR="#000080">path=</FONT><FONT COLOR="#008000">&quot;workingcopy/switchTest&quot;</FONT>
+<FONT COLOR="#000080">url=</FONT><FONT COLOR="#008000">&quot;${urlRepos}/switchTestBranch&quot;</FONT><FONT COLOR="#000080">/&gt;</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0cm"><FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;/svn&gt;</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
 <H4>update</H4>
 <P>Bring changes from the repository into the working copy.<BR>If no
 revision given, bring working copy up-to-date with HEAD rev.&nbsp;
