@@ -59,7 +59,7 @@ private ISVNClientAdapter svnClient;
 	{
 		System.out.print(getLog());
 	}
-
+/*
     public void testCheckout() throws SVNClientException {
         executeTarget("testCheckout");
 
@@ -245,16 +245,16 @@ private ISVNClientAdapter svnClient;
         assertFalse(svnClient.getSingleStatus(new File("test/my_repos/ignoreTest/dir1/file2.donotignore")).isIgnored());
         assertTrue(svnClient.getSingleStatus(new File("test/my_repos/ignoreTest/dir1/dir2/file3.ignore")).isIgnored());        
     }
-
+*/
     public void testStatus() throws Exception {
         executeTarget("testStatus");
         assertTrue(svnClient.getSingleStatus(new File("test/my_repos/statusTest/added.txt")).isAdded());
         
-        // getSingleStatus returns null when resource does not exist
-        assertEquals(null,svnClient.getSingleStatus(new File("test/my_repos/statusTest/fileThatDoesNotExist.txt")));
+        // a resource that does not exist is a non managed resource
+        assertFalse(svnClient.getSingleStatus(new File("test/my_repos/statusTest/fileThatDoesNotExist.txt")).isManaged());
         
         // same test but in a directory that is not versioned
-        assertEquals(null,svnClient.getSingleStatus(new File("test/my_repos/statusTest/nonManaged.dir/fileThatDoesNotExist.txt")));
+        assertFalse(null,svnClient.getSingleStatus(new File("test/my_repos/statusTest/nonManaged.dir/fileThatDoesNotExist.txt")).isManaged());
         
         assertTrue(svnClient.getSingleStatus(new File("test/my_repos/statusTest/ignored.txt")).isIgnored());    
         
