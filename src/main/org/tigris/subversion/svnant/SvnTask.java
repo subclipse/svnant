@@ -203,7 +203,7 @@ public class SvnTask extends Task {
         else
         if (commandLineAvailable) {
             svnClient = SVNClientAdapterFactory.createSVNClient(SVNClientAdapterFactory.COMMANDLINE_CLIENT);
-            log("Using command line interface (experimental)");
+            log("Using command line interface");
         } 
         else
             throw new BuildException("Cannot use javahl nor command line svn client");
@@ -214,10 +214,6 @@ public class SvnTask extends Task {
 
         if (password != null)
             svnClient.setPassword(password);
-
-        // TODO : delete these methods from JhlClientAdepter and from doc ?             
-//        if (logLevel != 0)
-//			JhlClientAdapter.enableLogging(logLevel,logFile);
 
         for (int i = 0; i < notifyListeners.size();i++) {
             svnClient.addNotifyListener((ISVNNotifyListener)notifyListeners.get(i));
@@ -231,9 +227,6 @@ public class SvnTask extends Task {
             svnClient.removeNotifyListener(feedback);
         }
         
-        // disable logging
-//		if (logLevel != 0)
-//			JhlClientAdapter.enableLogging(0,logFile);        
     }
 
 }
