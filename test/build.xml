@@ -30,7 +30,7 @@
     <svn javahl="${javahl}">
       <checkout url="${urlRepos}" destPath="my_repos" />
     </svn>
-    
+
     <!-- we copy the model to my_repos -->
     <copy todir="my_repos">
       <fileset dir="model"/>
@@ -173,6 +173,27 @@
       <commit dir="my_repos/keywordsTest" message="file.txt commited"/>
     </svn>
   </target>
+	
+	<target name="testUpdate" depends="init">
+    <svn javahl="${javahl}">
+      <checkout url="${urlRepos}" destPath="coHEAD" />
+    </svn>
+		<copy file="my_repos/updateTest/file1.txt" tofile="my_repos/updateTest/file.txt" />
+    <svn javahl="${javahl}">
+			<add file="my_repos/updateTest/file.txt"/>
+      <commit dir="my_repos/updateTest" message="updateTest/file.txt added to repository"/>
+    </svn>
+		<svn javahl="${javahl}">
+		  <update dir="coHEAD"/>
+		</svn>
+		<copy file="my_repos/updateTest/file2.txt"  tofile="my_repos/updateTest/file.txt" />
+		<svn javahl="${javahl}">
+      <commit dir="my_repos/updateTest" message="updateTest/file.txt modified"/>
+    </svn>
+    <svn javahl="${javahl}">
+		  <update dir="coHEAD/updateTest"/>
+		</svn>
+	</target>
 
   <target name="all" depends="init,testCheckout,testAddCommit,testCopy,testDelete,testExport,testImport,testMkdir,testMove">
   </target>
