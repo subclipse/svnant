@@ -8,12 +8,13 @@ import java.io.File;
 import java.net.MalformedURLException;
 
 import org.apache.tools.ant.BuildFileTest;
-import org.tigris.subversion.javahl.ClientException;
-import org.tigris.subversion.javahl.DirEntry;
-import org.tigris.subversion.javahl.LogMessage;
-import org.tigris.subversion.javahl.PropertyData;
-import org.tigris.subversion.javahl.Revision;
-import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.ISVNDirEntry;
+import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
+import org.tigris.subversion.svnclientadapter.ISVNProperty;
+import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
+import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
@@ -23,7 +24,7 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  *
  */
 public class SvnTest extends BuildFileTest {
-private SVNClientAdapter svnClient;
+private ISVNClientAdapter svnClient;
 
     public SvnTest(String name) {
         super(name);
@@ -31,7 +32,7 @@ private SVNClientAdapter svnClient;
 
     public void setUp() {
         configureProject("test/build.xml");
-		svnClient = new SVNClientAdapter();
+		svnClient = SVNClientAdapterFactory.createSVNClient(SVNClientAdapterFactory.JAVAHL_CLIENT);
     }
 
 	public void tearDown()
@@ -39,12 +40,11 @@ private SVNClientAdapter svnClient;
 		System.out.print(getLog());
 	}
 
-
     public void testCheckout() {
         executeTarget("testCheckout");
         try {
 			assertEquals(1,svnClient.getSingleStatus(new File("test/coHEAD/README.txt")).getLastChangedRevision().getNumber());
-		} catch (ClientException e) {
+		} catch (SVNClientException e) {
             fail("an exception occured");
 		}
     }
@@ -52,9 +52,9 @@ private SVNClientAdapter svnClient;
 	public void testList() {
 		try {
 			String urlRepos = getProject().getProperty("urlRepos");
-			DirEntry[] list = svnClient.getList(new SVNUrl(urlRepos),Revision.HEAD,false);
+			ISVNDirEntry[] list = svnClient.getList(new SVNUrl(urlRepos),SVNRevision.HEAD,false);
 			assertTrue(list.length > 0);
-		} catch (ClientException e) {
+		} catch (SVNClientException e) {
 			fail("an exception occured");
 		} catch (MalformedURLException e) { }
 	}
@@ -62,9 +62,9 @@ private SVNClientAdapter svnClient;
     public void testLog() {
         try {
 			String urlRepos = getProject().getProperty("urlRepos");
-			LogMessage[] messages = svnClient.getLogMessages(new File("test/my_repos/README.txt"),new Revision.Number(0),Revision.HEAD);
+			ISVNLogMessage[] messages = svnClient.getLogMessages(new File("test/my_repos/README.txt"),new SVNRevision.Number(0),SVNRevision.HEAD);
 			assertEquals("initial import",messages[0].getMessage());
-		} catch (ClientException e) {
+		} catch (SVNClientException e) {
             fail("an exception occured");
 		}
     }
@@ -74,7 +74,7 @@ private SVNClientAdapter svnClient;
         executeTarget("testAddCommit");
 		try {
 			assertTrue(svnClient.getSingleStatus(new File("test/my_repos/toAdd/file0.add")).getLastChangedRevision().getNumber() > 0);
-		} catch (ClientException e) {
+		} catch (SVNClientException e) {
             fail("an exception occured");
 		}
     }
@@ -83,7 +83,7 @@ private SVNClientAdapter svnClient;
     	executeTarget("testCopy");
 		try {
 			assertTrue(svnClient.getSingleStatus(new File("test/my_repos/copyTest/copy1")).getLastChangedRevision().getNumber() > 0);
-		} catch (ClientException e) {
+		} catch (SVNClientException e) {
             fail("an exception occured");
 		}
     } 
@@ -106,7 +106,7 @@ private SVNClientAdapter svnClient;
 		executeTarget("testMkdir");
 		try {
 			assertTrue(svnClient.getSingleStatus(new File("test/my_repos/testMkdir2")).getLastChangedRevision().getNumber() > 0);
-		} catch (ClientException e) {
+		} catch (SVNClientException e) {
             fail("an exception occured");
 		}
 	} 
@@ -115,7 +115,7 @@ private SVNClientAdapter svnClient;
 		executeTarget("testMove");
 		try {
 			assertTrue(svnClient.getSingleStatus(new File("test/my_repos/moveTest/dir1Renamed")).getLastChangedRevision().getNumber() > 0);
-		} catch (ClientException e) {
+		} catch (SVNClientException e) {
             fail("an exception occured");
 		}
 	}
@@ -123,13 +123,13 @@ private SVNClientAdapter svnClient;
     public void testProp() {
         executeTarget("testProp");
         try {
-            PropertyData propData = svnClient.propertyGet(new File("test/my_repos/propTest/file.png"),"svn:mime-type");
+            ISVNProperty propData = svnClient.propertyGet(new File("test/my_repos/propTest/file.png"),"svn:mime-type");
             assertTrue(propData != null);
             assertEquals("image/png",propData.getValue());
             propData = svnClient.propertyGet(new File("test/my_repos/propTest/file.png"),"myPicture");
             assertTrue(propData != null);
             assertEquals(170,propData.getData().length);
-        } catch (ClientException e) {
+        } catch (SVNClientException e) {
             fail("an exception occured");
         }
     }
