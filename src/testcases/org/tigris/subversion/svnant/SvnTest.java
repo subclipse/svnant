@@ -44,7 +44,7 @@ private SVNClientAdapter svnClient;
     public void testCheckout() {
         executeTarget("testCheckout");
         try {
-			assertEquals(1,svnClient.getStatus(new File("test/coHEAD/README.txt")).getLastChangedRevision().getNumber());
+			assertEquals(1,svnClient.getSingleStatus(new File("test/coHEAD/README.txt")).getLastChangedRevision().getNumber());
 		} catch (ClientException e) {
             fail("an exception occured");
 		}
@@ -74,7 +74,7 @@ private SVNClientAdapter svnClient;
     public void testAddCommit() {
         executeTarget("testAddCommit");
 		try {
-			assertTrue(svnClient.getStatus(new File("test/my_repos/toAdd/file0.add")).getLastChangedRevision().getNumber() > 0);
+			assertTrue(svnClient.getSingleStatus(new File("test/my_repos/toAdd/file0.add")).getLastChangedRevision().getNumber() > 0);
 		} catch (ClientException e) {
             fail("an exception occured");
 		}
@@ -83,7 +83,7 @@ private SVNClientAdapter svnClient;
     public void testCopy() {
     	executeTarget("testCopy");
 		try {
-			assertTrue(svnClient.getStatus(new File("test/my_repos/copyTest/copy1")).getLastChangedRevision().getNumber() > 0);
+			assertTrue(svnClient.getSingleStatus(new File("test/my_repos/copyTest/copy1")).getLastChangedRevision().getNumber() > 0);
 		} catch (ClientException e) {
             fail("an exception occured");
 		}
@@ -106,7 +106,7 @@ private SVNClientAdapter svnClient;
 	public void testMkdir() {
 		executeTarget("testMkdir");
 		try {
-			assertTrue(svnClient.getStatus(new File("test/my_repos/testMkdir2")).getLastChangedRevision().getNumber() > 0);
+			assertTrue(svnClient.getSingleStatus(new File("test/my_repos/testMkdir2")).getLastChangedRevision().getNumber() > 0);
 		} catch (ClientException e) {
             fail("an exception occured");
 		}
@@ -115,7 +115,7 @@ private SVNClientAdapter svnClient;
 	public void testMove() {
 		executeTarget("testMove");
 		try {
-			assertTrue(svnClient.getStatus(new File("test/my_repos/moveTest/dir1Renamed")).getLastChangedRevision().getNumber() > 0);
+			assertTrue(svnClient.getSingleStatus(new File("test/my_repos/moveTest/dir1Renamed")).getLastChangedRevision().getNumber() > 0);
 		} catch (ClientException e) {
             fail("an exception occured");
 		}

@@ -218,12 +218,12 @@ public class Add extends SvnCommand {
         
         try {
 			// don't add the file if already added ...
-			if (svnClient.getStatus(file).isManaged())
+			if (svnClient.getSingleStatus(file).isManaged())
 			    return;
 			
 			// determine directories to add to repository			
 			while ((currentDir != null)
-			    && (!svnClient.getStatus(currentDir).isManaged())
+			    && (!svnClient.getSingleStatus(currentDir).isManaged())
 			    && (!currentDir.equals(baseDir))) {
 			    dirs.push(currentDir);
 			    currentDir = currentDir.getParentFile();

@@ -221,7 +221,7 @@ public class Commit extends SvnCommand {
 
         try {
 			// file has not been "added", we cannot commit it
-			if (!svnClient.getStatus(file).isManaged())
+			if (!svnClient.getSingleStatus(file).isManaged())
 			    return;
 		} catch (ClientException e1) {
             throw new BuildException("Cannot get status of file :"+file.toString());
@@ -236,13 +236,13 @@ public class Commit extends SvnCommand {
 		try {
 			dirs = new Stack();
 			currentDir = file.getParentFile();
-			com.qintsoft.jsvn.jni.Status status = svnClient.getStatus(currentDir);
+			com.qintsoft.jsvn.jni.Status status = svnClient.getSingleStatus(currentDir);
 			while ((currentDir != null)
 			    && (status.getTextStatus() == com.qintsoft.jsvn.jni.Status.Kind.added)
 			    && (!currentDir.equals(baseDir))) {
 			    dirs.push(currentDir);
 			    currentDir = currentDir.getParentFile();
-			    status = svnClient.getStatus(currentDir);
+			    status = svnClient.getSingleStatus(currentDir);
 			}
 		} catch (ClientException e) {
             throw new BuildException("Cannot get status of directory :"+currentDir.toString());
