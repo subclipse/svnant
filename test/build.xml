@@ -8,6 +8,7 @@
   <path id="project.classpath">
     <pathelement location="${javahl.jar}" /> 
     <pathelement location="${svnant.jar}" />
+    <pathelement location="${svnClientAdapter.jar}"/>
   </path>  
   
   <taskdef name="svn" classname="org.tigris.subversion.svnant.SvnTask" classpathref="project.classpath"/>
@@ -27,6 +28,7 @@
     </copy>
     
     <!-- then we checkout it to my_repos -->
+    <mkdir dir="my_repos"/>
     <svn javahl="${javahl}">
       <checkout url="${urlRepos}" destPath="my_repos" />
     </svn>
@@ -47,16 +49,16 @@
 
   <!-- this test does not test svnant but svnClientAdapter -->
   <target name="testLog" depends="init">
-	  <svn javahl="${javahl}">
-		  <add dir="my_repos/logTest"/>
-		  <commit dir="my_repos/logTest" message="logTest directory added to repository"/>	
-		</svn>
-	</target>
+    <svn javahl="${javahl}">
+      <add dir="my_repos/logTest"/>
+      <commit dir="my_repos/logTest" message="logTest directory added to repository"/>	
+    </svn>
+  </target>
 
   <target name="testCheckout" depends="init">
     <svn javahl="${javahl}">
-		  <add dir="my_repos/checkoutTest"/>
-			<commit dir="my_repos/checkoutTest" message="checkoutTest directory added to repository"/>
+      <add dir="my_repos/checkoutTest"/>
+      <commit dir="my_repos/checkoutTest" message="checkoutTest directory added to repository"/>
 			
       <checkout url="${urlRepos}" revision="HEAD" destPath="coHEAD" />
       <checkout url="${urlRepos}" revision="0" destPath="co0" />
@@ -92,8 +94,8 @@
 
   <target name="testDelete" depends="init">
     <svn javahl="${javahl}">
- 	 	  <add dir="my_repos/deleteTest"/>
-			<commit message="deleteTest added" dir="my_repos/deleteTest"/>
+      <add dir="my_repos/deleteTest"/>
+      <commit message="deleteTest added" dir="my_repos/deleteTest"/>
 		
       <delete url="${urlRepos}/deleteTest/deleteFromRepository" message="deleted for test" />
       <delete>
@@ -174,26 +176,28 @@
     </svn>
   </target>
 	
-	<target name="testUpdate" depends="init">
+  <target name="testUpdate" depends="init">
     <svn javahl="${javahl}">
+      <add dir="my_repos/updateTest"/>
+      <commit dir="my_repos/updateTest" message="updateTest directory added to repository"/>
       <checkout url="${urlRepos}" destPath="coHEAD" />
     </svn>
-		<copy file="my_repos/updateTest/file1.txt" tofile="my_repos/updateTest/file.txt" />
+      <copy file="my_repos/updateTest/file1.txt" tofile="my_repos/updateTest/file.txt" />
     <svn javahl="${javahl}">
-			<add file="my_repos/updateTest/file.txt"/>
+      <add file="my_repos/updateTest/file.txt"/>
       <commit dir="my_repos/updateTest" message="updateTest/file.txt added to repository"/>
     </svn>
-		<svn javahl="${javahl}">
-		  <update dir="coHEAD"/>
-		</svn>
-		<copy file="my_repos/updateTest/file2.txt"  tofile="my_repos/updateTest/file.txt" />
-		<svn javahl="${javahl}">
+    <svn javahl="${javahl}">
+      <update dir="coHEAD"/>
+    </svn>
+    <copy file="my_repos/updateTest/file2.txt"  tofile="my_repos/updateTest/file.txt" />
+    <svn javahl="${javahl}">
       <commit dir="my_repos/updateTest" message="updateTest/file.txt modified"/>
     </svn>
     <svn javahl="${javahl}">
-		  <update dir="coHEAD/updateTest"/>
-		</svn>
-	</target>
+      <update dir="coHEAD/updateTest"/>
+    </svn>
+  </target>
 
   <target name="all" depends="init,testCheckout,testAddCommit,testCopy,testDelete,testExport,testImport,testMkdir,testMove">
   </target>
