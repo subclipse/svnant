@@ -122,16 +122,25 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
    
     public void testProp() throws SVNClientException {
         executeTarget("testProp");
-        ISVNProperty propData = svnClient.propertyGet(new File(WORKINGCOPY_DIR+"/propTest/file.png"),"svn:mime-type");
+        File file = new File(WORKINGCOPY_DIR+"/propTest/file.png");
+        ISVNProperty propData = svnClient.propertyGet(file,"svn:mime-type");
         assertTrue(propData != null);
         assertEquals("image/png",propData.getValue());
-        propData = svnClient.propertyGet(new File(WORKINGCOPY_DIR+"/propTest/file.png"),"myPicture");
+        propData = svnClient.propertyGet(file,"myPicture");
         assertTrue(propData != null);
         assertEquals(170,propData.getData().length);
 
-        // we don't test that because propDel does not work property with javahl interface for now        
+        // we don't test that because propDel does not work properly with javahl interface for now        
 //        propData = svnClient.propertyGet(new File(WORKINGCOPY_DIR+"/propTest/file.png"),"myProperty");
 //        assertTrue(propData == null);
+
+		ISVNProperty[] properties = svnClient.getProperties(file);
+		// this should be 2 but actually propDel does not work properly with javahl interface
+		assertTrue(properties.length >= 2);
+		
+		properties = svnClient.getProperties(new File(WORKINGCOPY_DIR+"/propTest"));
+		assertEquals(0,properties.length);
+		
     }
 
     public void testDiff() {
