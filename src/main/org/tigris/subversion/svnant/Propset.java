@@ -58,9 +58,8 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.tools.ant.BuildException;
+import org.tigris.subversion.javahl.ClientException;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
-
-import com.qintsoft.jsvn.jni.ClientException;
 
 /**
  * svn propset. Set a property

@@ -9,13 +9,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.tools.ant.BuildFileTest;
+import org.tigris.subversion.javahl.ClientException;
+import org.tigris.subversion.javahl.DirEntry;
+import org.tigris.subversion.javahl.LogMessage;
+import org.tigris.subversion.javahl.PropertyData;
+import org.tigris.subversion.javahl.Revision;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
-
-import com.qintsoft.jsvn.jni.ClientException;
-import com.qintsoft.jsvn.jni.DirEntry;
-import com.qintsoft.jsvn.jni.LogMessage;
-import com.qintsoft.jsvn.jni.PropertyData;
-import com.qintsoft.jsvn.jni.Revision;
 
 /**
  * Edit test/build.properties and change urlRepos before running these tests

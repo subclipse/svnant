@@ -58,9 +58,8 @@ import java.io.File;
 import java.net.URL;
 
 import org.apache.tools.ant.BuildException;
+import org.tigris.subversion.javahl.ClientException;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
-
-import com.qintsoft.jsvn.jni.ClientException;
 
 /**
  * @author cedric

@@ -59,10 +59,9 @@ import java.net.URL;
 import java.text.ParseException;
 
 import org.apache.tools.ant.BuildException;
+import org.tigris.subversion.javahl.Revision;
 import org.tigris.subversion.svnclientadapter.RevisionUtils;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
-
-import com.qintsoft.jsvn.jni.Revision;
 
 /**
  * svn Checkout. Check out a working copy from a repository 
