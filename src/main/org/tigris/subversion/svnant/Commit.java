@@ -65,6 +65,7 @@ import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
+import org.tigris.subversion.svnclientadapter.SVNStatusUtils;
 
 /**
  * svn Add. Add a file, a directory or a set of files to repository
@@ -222,7 +223,7 @@ public class Commit extends SvnCommand {
 
         try {
 			// file has not been "added", we cannot commit it
-			if (!svnClient.getSingleStatus(file).isManaged())
+			if (!SVNStatusUtils.isManaged(svnClient.getSingleStatus(file)))
 			    return;
 		} catch (SVNClientException e1) {
             throw new BuildException("Cannot get status of file :"+file.toString(),e1);

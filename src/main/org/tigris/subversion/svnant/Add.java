@@ -63,6 +63,7 @@ import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
+import org.tigris.subversion.svnclientadapter.SVNStatusUtils;
 
 /**
  * svn Add. Add a file, a directory or a set of files to repository
@@ -217,12 +218,12 @@ public class Add extends SvnCommand {
         
         try {
 			// don't add the file if already added ...
-			if (svnClient.getSingleStatus(file).isManaged())
+			if (SVNStatusUtils.isManaged(svnClient.getSingleStatus(file)))
 			    return;
 			
 			// determine directories to add to repository			
 			while ((currentDir != null)
-			    && (!svnClient.getSingleStatus(currentDir).isManaged())
+			    && (!SVNStatusUtils.isManaged(svnClient.getSingleStatus(currentDir)))
 			    && (!currentDir.equals(baseDir))) {
 			    dirs.push(currentDir);
 			    currentDir = currentDir.getParentFile();

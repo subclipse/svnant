@@ -32,6 +32,7 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNScheduleKind;
+import org.tigris.subversion.svnclientadapter.SVNStatusUtils;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 import org.tigris.subversion.svnclientadapter.commandline.CmdLineClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.javahl.JhlClientAdapterFactory;
@@ -275,29 +276,49 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
         
     }
 
+    private void assertTextStatus(ISVNStatus status, SVNStatusKind statusKind) {
+        assertEquals(status.getTextStatus(), statusKind);
+    }
+    
+    private void assertNotTextStatus(ISVNStatus status, SVNStatusKind statusKind) {
+        assertFalse(status.getTextStatus().equals(statusKind));
+    }
+
+    private void assertManaged(ISVNStatus status) {
+        assertTrue(SVNStatusUtils.isManaged(status));
+    }
+    
+    private void assertNotManaged(ISVNStatus status) {
+        assertFalse(SVNStatusUtils.isManaged(status));
+    }    
+    
+    private void assertHasRemote(ISVNStatus status) {
+        assertTrue(SVNStatusUtils.hasRemote(status));
+    }
+    
     public void testIgnore() throws Exception {
         executeTarget("testIgnore");
-        assertTrue(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/ignoreTest/fileToIgnore.txt")).isIgnored());
-        assertTrue(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/ignoreTest/dir1/file1.ignore")).isIgnored());
-        assertFalse(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/ignoreTest/dir1/file2.donotignore")).isIgnored());
-        assertTrue(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/ignoreTest/dir1/dir2/file3.ignore")).isIgnored());        
+        assertTextStatus(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/ignoreTest/fileToIgnore.txt")),SVNStatusKind.IGNORED);
+        assertTextStatus(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/ignoreTest/dir1/file1.ignore")),SVNStatusKind.IGNORED);
+        assertNotTextStatus(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/ignoreTest/dir1/file2.donotignore")),SVNStatusKind.IGNORED);
+        assertTextStatus(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/ignoreTest/dir1/dir2/file3.ignore")),SVNStatusKind.IGNORED);        
     }
 
     public void testSingleStatus() throws Exception {
         executeTarget("testStatus");
-        assertTrue(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/statusTest/added.txt")).isAdded());
+        assertTextStatus(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/statusTest/added.txt")), SVNStatusKind.ADDED);
         
         // a resource that does not exist is a non managed resource
-        assertFalse(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/statusTest/fileThatDoesNotExist.txt")).isManaged());
+        assertNotManaged(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/statusTest/fileThatDoesNotExist.txt")));
         
         // same test but in a directory that is not versioned
-        assertFalse(null,svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/statusTest/nonManaged.dir/fileThatDoesNotExist.txt")).isManaged());
+        assertNotManaged(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/statusTest/nonManaged.dir/fileThatDoesNotExist.txt")));
         
-        assertTrue(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/statusTest/ignored.txt")).isIgnored());    
+        assertTextStatus(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/statusTest/ignored.txt")), SVNStatusKind.IGNORED);    
         
-        assertTrue(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/statusTest/committed.txt")).hasRemote());        
+        assertHasRemote(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/statusTest/committed.txt")));        
         
-        assertTrue(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/statusTest/deleted.txt")).isDeleted());
+        assertTextStatus(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/statusTest/deleted.txt")), SVNStatusKind.DELETED);
 
         assertEquals("added",getProject().getProperty("testStatus.textStatus"));
         assertEquals("normal",getProject().getProperty("testStatus.propStatus"));
@@ -338,24 +359,24 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
         );
         assertEquals(6,statuses.length);
         assertEquals(new File(WORKINGCOPY_DIR+"/statusTest/added.txt").getCanonicalFile(), statuses[0].getFile());
-        assertTrue(statuses[0].isAdded());
+        assertTextStatus(statuses[0], SVNStatusKind.ADDED);
         
         assertEquals(new File(WORKINGCOPY_DIR+"/statusTest/managedDir/added in managed dir.txt").getAbsoluteFile(), statuses[1].getFile());        
-        assertTrue(statuses[1].isManaged());
+        assertManaged(statuses[1]);
         assertEquals(SVNNodeKind.FILE,statuses[1].getNodeKind());
         
-        assertFalse(statuses[2].isManaged());
+        assertNotManaged(statuses[2]);
         assertEquals(SVNNodeKind.UNKNOWN,statuses[2].getNodeKind());
 
-        assertFalse(statuses[3].isManaged());
+        assertNotManaged(statuses[3]);
         assertEquals(SVNNodeKind.UNKNOWN,statuses[3].getNodeKind());
         
-        assertTrue(statuses[4].isIgnored());
+        assertTextStatus(statuses[4], SVNStatusKind.IGNORED);
         assertEquals(SVNNodeKind.UNKNOWN,statuses[4].getNodeKind()); // an ignored resource is a not versioned one, so its resource kind is UNKNOWN
         
         // make sure that the top most directory is said to be versionned. It is in a directory where there is no
         // .svn directory but it is versionned however. 
-        assertTrue(statuses[5].isManaged());
+        assertManaged(statuses[5]);
         assertNotNull(statuses[5].getUrl());
         
   
