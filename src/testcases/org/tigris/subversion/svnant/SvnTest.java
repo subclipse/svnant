@@ -286,10 +286,11 @@ private ISVNClientAdapter svnClient;
             new File("test/my_repos/statusTest/managedDir/added in managed dir.txt"),
             new File("test/my_repos/statusTest/nonManaged.dir"),
             new File("nonExistingFile"),
-            new File("test/my_repos/statusTest/ignored.txt")
+            new File("test/my_repos/statusTest/ignored.txt"),
+            new File("test/my_repos/statusTest/nonManaged.dir/statusTest")
             }
         );
-        assertEquals(5,statuses.length);
+        assertEquals(6,statuses.length);
         assertEquals(new File("test/my_repos/statusTest/added.txt").getCanonicalFile(), statuses[0].getFile());
         assertTrue(statuses[0].isAdded());
         
@@ -306,6 +307,10 @@ private ISVNClientAdapter svnClient;
         assertTrue(statuses[4].isIgnored());
         assertEquals(SVNNodeKind.UNKNOWN,statuses[4].getNodeKind()); // an ignored resource is a not versioned one, so its resource kind is UNKNOWN
         
+        // make sure that the top most directory is said to be versionned. It is in a directory where there is no
+        // .svn directory but it is versionned however. 
+        assertTrue(statuses[5].isManaged());
+        assertNotNull(statuses[5].getUrl());       
     }
 
     public static void main(String[] args) {

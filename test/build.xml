@@ -317,6 +317,8 @@
       <delete file="my_repos/statusTest/deleted.txt"/>
       
       <add file="my_repos/statusTest/managedDir/added in managed dir.txt"/>
+      
+      <checkout url="${urlRepos}/statusTest" revision="HEAD" destPath="my_repos/statusTest/nonManaged.dir/statusTest" recurse="false" />      
     </svn>
   </target>
 
