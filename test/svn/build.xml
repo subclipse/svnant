@@ -315,7 +315,15 @@
       
       <add file="workingcopy/statusTest/managedDir/added in managed dir.txt"/>
       
-      <checkout url="${urlRepos}/statusTest" revision="HEAD" destPath="workingcopy/statusTest/nonManaged.dir/statusTest" recurse="false" />      
+      <checkout url="${urlRepos}/statusTest" revision="HEAD" destPath="workingcopy/statusTest/nonManaged.dir/statusTest" recurse="false" />
+    	
+      <status path="workingcopy/statusTest/added.txt" 
+      	textStatusProperty="testStatus.textStatus"
+        propStatusProperty="testStatus.propStatus"
+        lastChangedRevisionProperty="testStatus.lastCommitRevision"
+      	revisionProperty="testStatus.revision"
+      	lastCommitAuthorProperty="testStatus.lastCommitAuthor"
+      />
     </svn>
   </target>
 
