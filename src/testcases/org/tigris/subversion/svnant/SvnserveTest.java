@@ -18,7 +18,7 @@ public class SvnserveTest extends BuildFileTest {
 	}
 
 	public void setUp() {
-		configureProject("test/build.xml");
+		configureProject("test/svnserve/build.xml");
 	}
 
 	public void tearDown()
