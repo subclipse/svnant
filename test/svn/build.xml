@@ -325,6 +325,11 @@
       	lastCommitAuthorProperty="testStatus.lastCommitAuthor"
       />
     </svn>
+  	<!-- we try with a long username -->
+  	<svn javahl="${javahl}" username="Cedric Chabanois">
+  		<add dir="workingcopy/statusTest/longUserName.dir"/>
+  		<commit dir="workingcopy/statusTest/longUserName.dir" message="longUserName committed"/>
+  	</svn>
   </target>
 
   <target name="testIgnore" depends="init">
@@ -376,6 +381,7 @@
   </target>
 
   <target name="testAnnotate" depends="init">
+  	<!-- don't modify the indentation for echo ! -->
   	<mkdir dir="workingcopy/annotateTest"/>
   	<echo file="workingcopy/annotateTest/file.txt" append="false">line 1
 </echo>
@@ -397,6 +403,14 @@
 </echo>  	
     <svn javahl="${javahl}" username="">
       <commit dir="workingcopy/annotateTest" message="modified"/>	
+    </svn>    	
+  </target>
+
+  <target name="testRepositoryRoot" depends="init">	
+  	<mkdir dir="workingcopy/repositoryRootTest"/>
+  	<svn javahl="${javahl}">
+      <add dir="workingcopy/repositoryRootTest"/>
+  	  <commit dir="workingcopy/repositoryRootTest" message="repositoryRootTest directory added to repository"/>	
     </svn>    	
   </target>
 	

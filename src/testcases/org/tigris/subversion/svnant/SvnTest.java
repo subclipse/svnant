@@ -100,6 +100,8 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
 		ISVNLogMessage[] messages = svnClient.getLogMessages(new File(WORKINGCOPY_DIR+"/logTest/file1.txt"),new SVNRevision.Number(0),SVNRevision.HEAD);
         assertTrue(messages.length > 0);
 		assertEquals("logTest directory added to repository",messages[0].getMessage());
+        assertEquals(5,messages[0].getChangedPaths().length);
+        assertEquals('A',messages[0].getChangedPaths()[0].getAction());
     }
 
     public void testAddCommit() throws SVNClientException {
@@ -295,7 +297,7 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
         ISVNStatus[] statuses;  
         // getStatus(File, boolean) does not have the same result with command line interface
         // and svnjavahl for now. svnjavahl does not return ignored files for now 
-//        statuses = svnClient.getStatus(new File(WORKINGCOPY_DIR+"/statusTest"),false);
+//        statuses = svnClient.getStatus(new File(WORKINGCOPY_DIR+"/statusTest"),false,true);
         // let's verify we don't forget some files (ignored ones for example)
 //        assertEquals(8,statuses.length);
         
@@ -335,7 +337,15 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
         // make sure that the top most directory is said to be versionned. It is in a directory where there is no
         // .svn directory but it is versionned however. 
         assertTrue(statuses[5].isManaged());
-        assertNotNull(statuses[5].getUrl());       
+        assertNotNull(statuses[5].getUrl());
+        
+  
+        // this test does not pass with command line interface : there is a problem with long
+        // usernames
+//        statuses = svnClient.getStatus(new File(WORKINGCOPY_DIR+"/statusTest/longUserName.dir"),true,true);
+//        assertEquals(2, statuses.length);
+//        assertEquals(new File(WORKINGCOPY_DIR+"/statusTest/longUserName.dir").getAbsoluteFile(), statuses[0].getFile());
+        
     }
 
     public void testInfo() throws Exception {
@@ -411,8 +421,15 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
 		assertEquals("line 1\nline 2\nline 3", new String(bytes));
 		
 	}
-	
-	
+/*	
+    public void testRepositoryRoot() throws Exception {
+        executeTarget("testRepositoryRoot");
+        String urlRepos = getProject().getProperty("urlRepos");
+        SVNUrl url = svnClient.getRepositoryRoot(
+                new SVNUrl(urlRepos+"/entryTest/"));
+        assertEquals(new SVNUrl(urlRepos),url);
+    }
+*/	
     public static void main(String[] args) {
         String[] testCaseName = { SvnTest.class.getName()};
         junit.textui.TestRunner.main(testCaseName);
