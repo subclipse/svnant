@@ -5,7 +5,7 @@
 	<TITLE>Svn Task</TITLE>
 	<META NAME="GENERATOR" CONTENT="OpenOffice.org 1.1.0  (Win32)">
 	<META NAME="CREATED" CONTENT="20031019;22355182">
-	<META NAME="CHANGED" CONTENT="20040331;20381746">
+	<META NAME="CHANGED" CONTENT="20040723;20170400">
 	<META HTTP-EQUIV="Content-Language" CONTENT="en-us">
 </HEAD>
 <BODY LANG="en-US" DIR="LTR">
@@ -21,7 +21,7 @@
 in the open source community.</P>
 <P>Svn uses javahl (a java interface for the subversion api) if it
 can find the corresponding library (svnjavahl.dll on windows).
-Otherwise it uses experimental svn command line interface.<BR>&nbsp;</P>
+Otherwise it uses svn command line interface.<BR>&nbsp;</P>
 <H3>Parameters</H3>
 <TABLE WIDTH=628 BORDER=2 CELLPADDING=2 CELLSPACING=0>
 	<COL WIDTH=80>
@@ -402,6 +402,42 @@ server-side copy;&nbsp; used to branch &amp; tag</P>
 </TABLE>
 <P><BR><BR>
 </P>
+<H4>createRepository</H4>
+<P>Create a new, empty repository at path.</P>
+<TABLE WIDTH=873 BORDER=2 CELLPADDING=2 CELLSPACING=0>
+	<COL WIDTH=99>
+	<COL WIDTH=677>
+	<COL WIDTH=81>
+	<TR VALIGN=TOP>
+		<TD WIDTH=99>
+			<P><B>Attribute</B></P>
+		</TD>
+		<TD WIDTH=677>
+			<P><B>Description</B></P>
+		</TD>
+		<TD WIDTH=81>
+			<P><B>Required</B></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=99 VALIGN=TOP>
+			<P>path</P>
+		</TD>
+		<TD WIDTH=677>
+			<P>Path where to create the new repository</P>
+		</TD>
+		<TD WIDTH=81>
+			<P ALIGN=CENTER>Yes</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><BR><BR>
+</P>
+<P>This task is not (yet) available for javahl interface.<BR>Example
+:</P>
+<P><FONT SIZE=2><FONT FACE="Courier New"><FONT COLOR="#000080">&lt;svn</FONT>
+<FONT COLOR="#000080">javahl=</FONT><FONT COLOR="#008000">&quot;false&quot;</FONT><FONT COLOR="#000080">&gt;<BR>
+ &lt;createRepository</FONT> <FONT COLOR="#000080">path=</FONT><FONT COLOR="#008000">&quot;repository&quot;</FONT><FONT COLOR="#000080">/&gt;<BR>&lt;/svn&gt;</FONT></FONT></FONT></P>
 <H4>delete</H4>
 <P>If run on a working copy target, the item is scheduled for
 deletion upon the next commit.&nbsp; Files, and directories that have
@@ -578,8 +614,7 @@ two urls (oldUrl and newUrl).</P>
 			<P ALIGN=LEFT>Default is 'patch'</P>
 		</TD>
 		<TD WIDTH=163>
-			<P ALIGN=CENTER>No<BR><BR>
-			</P>
+			<P ALIGN=CENTER>No</P>
 		</TD>
 	</TR>
 	<TR>
@@ -598,12 +633,12 @@ two urls (oldUrl and newUrl).</P>
 <P><BR><BR>
 </P>
 <P>Example : diff between BASE and current working version</P>
-<P STYLE="margin-bottom: 0cm">   <FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;svn</FONT>
+<P STYLE="margin-bottom: 0cm"><FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;svn</FONT>
 <FONT COLOR="#000080">javahl=</FONT><FONT COLOR="#008000">&quot;${javahl}&quot;</FONT><FONT COLOR="#000080">&gt;</FONT></FONT></FONT></P>
-<P STYLE="margin-bottom: 0cm">      <FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;diff</FONT>
+<P STYLE="margin-bottom: 0cm"><FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;diff</FONT>
 <FONT COLOR="#000080">oldPath=</FONT><FONT COLOR="#008000">&quot;workingcopy/diffTest/file.txt&quot;</FONT>
 <FONT COLOR="#000080">outFile=</FONT><FONT COLOR="#008000">&quot;workingcopy/diffTest/patch.txt&quot;</FONT><FONT COLOR="#000080">/&gt;</FONT></FONT></FONT></P>
-<P STYLE="margin-bottom: 0cm">   <FONT SIZE=2><FONT FACE="Courier New"><FONT COLOR="#000080">&lt;/svn&gt;</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0cm"><FONT COLOR="#000080"><FONT FACE="Courier New"><FONT SIZE=2>&lt;/svn&gt;</FONT></FONT></FONT></P>
 <H4>export</H4>
 <P>&nbsp; 1. Exports a clean directory tree from the repository
 specified by <CODE>srcurl</CODE>, at revision <CODE>revision </CODE>if
@@ -738,7 +773,7 @@ svn:ignore property)</P>
 </TABLE>
 <P STYLE="margin-bottom: 0cm"><BR>
 </P>
-<P>Example :<BR> <FONT SIZE=2><FONT FACE="Courier New"><FONT COLOR="#000080">&lt;ignore</FONT>
+<P>Example :<BR><FONT SIZE=2><FONT FACE="Courier New"><FONT COLOR="#000080">&lt;ignore</FONT>
 <FONT COLOR="#000080">dir=</FONT><FONT COLOR="#008000">&quot;workingcopy/ignoreTest/dir1&quot;</FONT>
 <FONT COLOR="#000080">pattern=</FONT><FONT COLOR="#008000">&quot;*.ignore&quot;</FONT>
 <FONT COLOR="#000080">recurse=</FONT><FONT COLOR="#008000">&quot;true&quot;</FONT><FONT COLOR="#000080">/&gt;</FONT></FONT></FONT></P>
@@ -1265,6 +1300,122 @@ versioned properties but will store any arbitrary properties set:</P>
 <P><BR>Parameters specified as nested elements :<BR><BR>fileset<BR>Filesets
 are used to select sets of files to revert. 
 </P>
+<H4>status</H4>
+<P>Get the status of working copy files and directories.</P>
+<TABLE WIDTH=1263 BORDER=2 CELLPADDING=2 CELLSPACING=0>
+	<COL WIDTH=173>
+	<COL WIDTH=953>
+	<COL WIDTH=121>
+	<TR>
+		<TD WIDTH=173 VALIGN=TOP>
+			<P><B>Attribute</B></P>
+		</TD>
+		<TD WIDTH=953>
+			<P><B>Description</B></P>
+		</TD>
+		<TD WIDTH=121 VALIGN=TOP>
+			<P><B>Required</B></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=173>
+			<P>path</P>
+		</TD>
+		<TD WIDTH=953>
+			<P>path of the file or directory</P>
+		</TD>
+		<TD WIDTH=121>
+			<P ALIGN=CENTER>Yes</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=173>
+			<P>textStatusProperty</P>
+		</TD>
+		<TD WIDTH=953>
+			<P>Name of the property to set to the status of the item</P>
+		</TD>
+		<TD WIDTH=121>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=173>
+			<P>propStatusProperty</P>
+		</TD>
+		<TD WIDTH=953>
+			<P>Name of the property to set to the status of the item
+			properties</P>
+		</TD>
+		<TD WIDTH=121>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=173>
+			<P>revisionProperty</P>
+		</TD>
+		<TD WIDTH=953>
+			<P>Name of the property to set to the revision of the item (or &ldquo;&rdquo;
+			if unversioned)</P>
+		</TD>
+		<TD WIDTH=121>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=173>
+			<P>lastChangedRevisionProperty</P>
+		</TD>
+		<TD WIDTH=953>
+			<P>Name of the property to set to the last changed revision of the
+			item (or &ldquo;&rdquo; if unversioned)</P>
+		</TD>
+		<TD WIDTH=121>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=173>
+			<P>lastCommitAuthorProperty</P>
+		</TD>
+		<TD WIDTH=953>
+			<P>Name of the property to set to the last commit author (or &ldquo;&rdquo;
+			if unversioned)</P>
+		</TD>
+		<TD WIDTH=121>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><BR><BR>
+</P>
+<UL>
+	<LI><P>The value of TextStatusProperty can be :<BR>non-svn<BR>normal
+	: no modifications<BR>added<BR>missing : item is missing (removed by
+	non-svn
+	command)<BR>incomplete<BR>deleted<BR>replaced<BR>modified<BR>merged<BR>conflicted<BR>obstructed<BR>ignored<BR>external<BR>unversioned</P>
+</UL>
+<UL>
+	<LI><P>The value of propStatusProperty can be :<BR>normal : no
+	modifications<BR>conflicted<BR>modified</P>
+</UL>
+<P>Example :</P>
+<P STYLE="margin-bottom: 0cm"><FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;status</FONT>
+<FONT COLOR="#000080">path=</FONT><FONT COLOR="#008000">&quot;workingcopy/statusTest/added.txt&quot;</FONT>
+</FONT></FONT>
+</P>
+<P STYLE="margin-bottom: 0cm"><FONT COLOR="#000080"> 
+<FONT FACE="Courier New"><FONT SIZE=2>textStatusProperty=</FONT><FONT COLOR="#008000">&quot;testStatus.textStatus&quot;</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0cm"> 
+<FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">propStatusProperty=</FONT><FONT COLOR="#008000">&quot;testStatus.propStatus&quot;</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0cm"> 
+<FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">lastChangedRevisionProperty=</FONT><FONT COLOR="#008000">&quot;testStatus.lastCommitRevision&quot;</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0cm"><FONT COLOR="#000080"> 
+<FONT FACE="Courier New"><FONT SIZE=2>revisionProperty=</FONT><FONT COLOR="#008000">&quot;testStatus.revision&quot;</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0cm"> 
+<FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">lastCommitAuthorProperty=</FONT><FONT COLOR="#008000">&quot;testStatus.lastCommitAuthor&quot;</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0cm"><FONT SIZE=2><FONT FACE="Courier New"><FONT COLOR="#000080">/&gt;</FONT></FONT></FONT></P>
 <H4>update</H4>
 <P>Bring changes from the repository into the working copy.<BR>If no
 revision given, bring working copy up-to-date with HEAD rev.&nbsp;
