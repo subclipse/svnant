@@ -11,7 +11,7 @@
   <property name="urlRepository" value="svn://localhost"/>
 
   <path id="project.classpath">
-    <pathelement location="${svnjavahl.jar}" /> 
+    <pathelement location="${svn-javahl.jar}" /> 
     <pathelement location="${svnant.jar}" />
     <pathelement location="${svnClientAdapter.jar}"/>
   </path>  
@@ -20,6 +20,7 @@
 
   <target name="clean">
     <delete dir="workingcopy"/>
+    <delete dir="workingcopy2"/>
   </target>
 
   <!-- create the svnserve test repository -->
