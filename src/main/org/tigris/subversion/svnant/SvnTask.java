@@ -183,6 +183,10 @@ public class SvnTask extends Task {
     public void addPropdel(Propdel a) {
         commands.add(a);
     }
+    
+    public void addIgnore(Ignore a) {
+        commands.add(a);
+    }
 
     public void addNotifyListener(ISVNNotifyListener notifyListener) {
         notifyListeners.add(notifyListener);
