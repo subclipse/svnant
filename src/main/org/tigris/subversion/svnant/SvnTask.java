@@ -192,6 +192,10 @@ public class SvnTask extends Task {
         commands.add(a);
     }
 
+    public void addStatus(Status a) {
+    	commands.add(a);
+    }
+    
     public void addNotifyListener(ISVNNotifyListener notifyListener) {
         notifyListeners.add(notifyListener);
     }

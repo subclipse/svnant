@@ -273,6 +273,15 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
         
         assertTrue(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/statusTest/deleted.txt")).isDeleted());
 
+        assertEquals("added",getProject().getProperty("testStatus.textStatus"));
+        assertEquals("normal",getProject().getProperty("testStatus.propStatus"));
+        SVNRevision.Number lastCommit = (SVNRevision.Number)SVNRevision.getRevision(getProject().getProperty("testStatus.lastCommitRevision"));
+        assertEquals(null,lastCommit);
+        
+        SVNRevision.Number revision = (SVNRevision.Number)SVNRevision.getRevision(getProject().getProperty("testStatus.revision"));
+        assertEquals(0,revision.getNumber());
+        assertNotNull(getProject().getProperty("testStatus.lastCommitAuthor"));
+        
     }
     
     public void testStatus() throws Exception {  
