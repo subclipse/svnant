@@ -35,3 +35,19 @@ set_lk_max_objects 2000
 # http://subversion.tigris.org/servlets/ReadMsg?list=dev&msgId=161960
 set_lg_bsize     262144
 set_lg_max      1048576
+#
+# Disable fsync of log files on transaction commit. Read the
+# documentation about DB_TXN_NOSYNC at:
+#
+#   http://www.sleepycat.com/docs/api_c/env_set_flags.html
+#
+# [requires Berkeley DB 4.0]
+# set_flags DB_TXN_NOSYNC
+#
+# Enable automatic removal of unused transaction log files.
+# Read the documentation about DB_LOG_AUTOREMOVE at:
+#
+#   http://www.sleepycat.com/docs/api_c/env_set_flags.html
+#
+# [requires Berkeley DB 4.2]
+set_flags DB_LOG_AUTOREMOVE
