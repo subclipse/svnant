@@ -22,11 +22,17 @@
   </target>
 
   <target name="init" depends="clean">
+    <echo>using svnadmin to create repository (you need it in your path) ...</echo>
+    <exec executable="svnadmin" failonerror="true">
+      <arg value="create"/>
+      <arg value="test_repos"/>
+    </exec>
+
     <!-- first we copy the initial repository created using svnadmin to test_repos -->
-    <copy todir="test_repos">
-      <fileset dir="initialRepos"/>
+<!--    <copy todir="test_repos">
+      <fileset dir="initialRepos-linux"/>
     </copy>
-    
+    -->
     <!-- then we checkout it to my_repos -->
     <mkdir dir="my_repos"/>
     <svn javahl="${javahl}">
