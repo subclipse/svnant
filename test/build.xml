@@ -385,6 +385,18 @@
     </svn>
   </target>
 
+  <!-- this test does not test svnant but svnClientAdapter -->
+  <target name="testEntry" depends="init">
+    <copy todir="my_repos/entryTest">
+      <fileset dir="model/entryTest"></fileset>
+    </copy>
+    <svn javahl="${javahl}">
+      <add dir="my_repos/entryTest"/>
+      <commit dir="my_repos/entryTest" message="entryTest directory added to repository"/>	
+    </svn>
+  </target>
+
+
   <target name="all" depends="init,testCheckout,testAddCommit,testCopy,testDelete,testExport,testImport,testMkdir,testMove">
   </target>
 

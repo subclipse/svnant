@@ -118,7 +118,7 @@ public class Cat extends SvnCommand {
         if (url == null)
             throw new BuildException("you must set url attr");
 		if (destFile == null)
-			destFile = new File(project.getBaseDir(),url.getFile());
+			destFile = new File(project.getBaseDir(),url.getLastSegment());
 		if (revision == null)
 			throw new BuildException("Invalid revision. Revision should be a number, a date in MM/DD/YYYY HH:MM AM_PM format or HEAD, BASE, COMMITED or PREV");
 	}

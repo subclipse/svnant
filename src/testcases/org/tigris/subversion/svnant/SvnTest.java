@@ -300,6 +300,15 @@ private ISVNClientAdapter svnClient;
         assertNotNull(statuses[5].getUrl());       
     }
 
+	public void testEntry() throws Exception {
+		executeTarget("testEntry");
+		String urlRepos = getProject().getProperty("urlRepos");
+		ISVNDirEntry dirEntry = svnClient.getDirEntry(new SVNUrl(urlRepos+"/entryTest/"),SVNRevision.HEAD);
+		assertNotNull(dirEntry);
+		assertEquals(SVNNodeKind.DIR,dirEntry.getNodeKind());
+		assertEquals("entryTest",dirEntry.getPath());
+	}
+
     public static void main(String[] args) {
         String[] testCaseName = { SvnTest.class.getName()};
         junit.textui.TestRunner.main(testCaseName);
