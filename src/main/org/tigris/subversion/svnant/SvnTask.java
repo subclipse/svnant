@@ -177,6 +177,9 @@ public class SvnTask extends Task {
         commands.addElement(a);
     }
 
+    public void addPropdel(Propdel a) {
+        commands.addElement(a);
+    }
 
     public void execute() throws BuildException {
 

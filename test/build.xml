@@ -150,6 +150,8 @@
 		
       <propset path="my_repos/propTest/file.png" name="svn:mime-type" value="image/png"/>
       <propset path="my_repos/propTest/file.png" name="myPicture" file="my_repos/propTest/icon.gif"/>
+      <propset path="my_repos/propTest/file.png" name="myProperty" value="myvalue"/>
+      <propdel path="my_repos/propTest/file.png" name="myProperty"/>
     </svn>
   </target>
 
