@@ -138,6 +138,10 @@ private ISVNClientAdapter svnClient;
         assertEquals("$Id$",dis.readLine());
     }
 
+    public void testUpdate() {
+        executeTarget("testUpdate");
+    }
+
     public static void main(String[] args) {
         String[] testCaseName = { SvnTest.class.getName()};
         junit.textui.TestRunner.main(testCaseName);
