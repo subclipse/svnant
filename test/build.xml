@@ -7,11 +7,6 @@
   
   <property file="build.properties" /> 
 
- <!-- if urlRepos is not defined in build.properties, we define it here 
-       urlRepos is the url of the repository that will be used for most tests
-   -->
-  <property name="testReposPath" location="test_repos" />
-  <property name="urlRepos" value="file:///${testReposPath}" />  
   
   <!-- we need a repository for svnserve specific tests -->
   <property name="urlReposSvnserve" value="svn://localhost"/>
@@ -23,6 +18,7 @@
   </path>  
   
   <taskdef resource="svntask.properties" classpathref="project.classpath"/>
+
 
   <target name="clean">
     <delete dir="my_repos"/>
@@ -58,6 +54,16 @@
 
   <!-- init target is executed before each other "test"Target -->
   <target name="init" depends="clean, createTestRepository">
+
+    <!-- if urlRepos is not defined in build.properties, we define it here 
+       urlRepos is the url of the repository that will be used for most tests -->
+    <property name="testReposLocation" location="test_repos" />
+     <!-- we need / separator -->
+    <pathconvert property="testReposPath" dirsep="/">
+  	  <path path="${testReposLocation}"/>
+    </pathconvert>
+    <property name="urlRepos" value="file:///${testReposPath}" />  
+ 
     <!-- we checkout it to my_repos -->
     <mkdir dir="my_repos"/>
     <svn javahl="${javahl}">
@@ -286,6 +292,13 @@
       <add dir="my_repos_svnserve/svnservePasswdTest"/>
       <commit message="svnservePasswdTest added" dir="my_repos_svnserve/svnservePasswdTest"/>
     </svn>  
+  </target>
+
+  <target name="testListener" depends="init">
+    <svn javahl="${javahl}">
+      <add dir="my_repos/listenerTest"/>
+      <commit message="listenerTest added" dir="my_repos/listenerTest"/>
+    </svn>      
   </target>
 
   <target name="all" depends="init,testCheckout,testAddCommit,testCopy,testDelete,testExport,testImport,testMkdir,testMove">

@@ -55,11 +55,13 @@
 package org.tigris.subversion.svnant;
 
 import java.io.File;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.ISVNNotifyListener;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
 
 /**
@@ -71,10 +73,11 @@ import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
 public class SvnTask extends Task {
     private String username = null;
     private String password = null;
-    private Vector commands = new Vector();
+    private List commands = new ArrayList();
     private int logLevel = 0;
     private File logFile = new File("svn.log");
     private boolean javahl = true;
+    private List notifyListeners = new ArrayList();
     private static boolean javahlAvailable = 
         SVNClientAdapterFactory.isSVNClientAvailable(SVNClientAdapterFactory.JAVAHL_CLIENT);
     private static boolean commandLineAvailable = 
@@ -110,75 +113,79 @@ public class SvnTask extends Task {
 	}
 
     public void addCheckout(Checkout a) {
-        commands.addElement(a);
+        commands.add(a);
     }
 
     public void addAdd(Add a) {
-        commands.addElement(a);
+        commands.add(a);
     }
 
     public void addCommit(Commit a) {
-        commands.addElement(a);
+        commands.add(a);
     }
 
     public void addCopy(Copy a) {
-        commands.addElement(a);
+        commands.add(a);
     }
 
     public void addDelete(Delete a) {
-        commands.addElement(a);
+        commands.add(a);
     }
 
     public void addExport(Export a) {
-        commands.addElement(a);
+        commands.add(a);
     }
 
     public void addImport(Import a) {
-        commands.addElement(a);
+        commands.add(a);
     }
 
     public void addMkdir(Mkdir a) {
-        commands.addElement(a);
+        commands.add(a);
     }
 
     public void addMove(Move a) {
-        commands.addElement(a);
+        commands.add(a);
     }
 
     public void addUpdate(Update a) {
-        commands.addElement(a);
+        commands.add(a);
     }
     
     public void addPropset(Propset a) {
-        commands.addElement(a);
+        commands.add(a);
     }
     
     public void addDiff(Diff a) {
-        commands.addElement(a);
+        commands.add(a);
     }
 
     public void addKeywordsSet(Keywordsset a) {
-        commands.addElement(a);
+        commands.add(a);
     }
     
     public void addKeywordsAdd(Keywordsadd a) {
-        commands.addElement(a);
+        commands.add(a);
     }
     
     public void addKeywordsRemove(Keywordsremove a) {
-        commands.addElement(a);
+        commands.add(a);
     }    
 
     public void addRevert(Revert a) {
-        commands.addElement(a);
+        commands.add(a);
     }
 
     public void addCat(Cat a) {
-        commands.addElement(a);
+        commands.add(a);
     }
 
     public void addPropdel(Propdel a) {
-        commands.addElement(a);
+        commands.add(a);
+    }
+
+    public void addNotifyListener(ISVNNotifyListener notifyListener) {
+        notifyListeners.add(notifyListener);
     }
 
     public void execute() throws BuildException {
@@ -208,8 +215,12 @@ public class SvnTask extends Task {
 //        if (logLevel != 0)
 //			JhlClientAdapter.enableLogging(logLevel,logFile);
 
+        for (int i = 0; i < notifyListeners.size();i++) {
+            svnClient.addNotifyListener((ISVNNotifyListener)notifyListeners.get(i));
+        }
+
         for (int i = 0; i < commands.size(); i++) {
-            SvnCommand command = (SvnCommand) commands.elementAt(i);
+            SvnCommand command = (SvnCommand) commands.get(i);
             Feedback feedback = new Feedback(command);
 			svnClient.addNotifyListener(feedback);
             command.execute(svnClient);

@@ -10,14 +10,20 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.tools.ant.BuildFileTest;
+import org.apache.tools.ant.Target;
+import org.apache.tools.ant.Task;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNDirEntry;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
+import org.tigris.subversion.svnclientadapter.ISVNNotifyListener;
 import org.tigris.subversion.svnclientadapter.ISVNProperty;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
+import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
@@ -170,6 +176,57 @@ private ISVNClientAdapter svnClient;
 			
 		}
 	}
+
+
+    public void testListener() throws Exception {
+        final Set addSet = new HashSet();
+        final Set commitSet = new HashSet();
+        final Set[] currentSet = new Set[] { null };
+        final boolean duplicates = false;
+
+        ISVNNotifyListener listener = new ISVNNotifyListener() {
+            public void setCommand(int command) {
+                if (command == ISVNNotifyListener.Command.ADD) {
+                    currentSet[0] = addSet;
+                } else {
+                    currentSet[0] = commitSet;
+                }
+            }
+            
+            public void logCommandLine(String commandLine) {}
+            public void logMessage(String message) {}
+            public void logError(String message) {}
+            public void logCompleted(String message) {}
+  
+            public void onNotify(File path, SVNNodeKind kind) {
+                currentSet[0].add(path);
+            }
+        };
+        
+        Target target = (Target)project.getTargets().get("testListener");
+        Task[] tasks = target.getTasks();
+        SvnTask svnTask = (SvnTask)tasks[0]; // there is only one task
+        svnTask.addNotifyListener(listener);
+        executeTarget("testListener");
+        
+        assertEquals(6,addSet.size()); // 6 for add and 6 for commit        
+        assertEquals(6,commitSet.size()); // 6 for add and 6 for commit
+        
+        assertTrue(addSet.contains(new File("test/my_Repos/listenerTest").getCanonicalFile()));
+        assertTrue(addSet.contains(new File("test/my_Repos/listenerTest/dir1").getCanonicalFile()));
+        assertTrue(addSet.contains(new File("test/my_Repos/listenerTest/dir1/file3.txt").getCanonicalFile()));        
+        assertTrue(addSet.contains(new File("test/my_Repos/listenerTest/dir1/file4.txt").getCanonicalFile()));
+        assertTrue(addSet.contains(new File("test/my_Repos/listenerTest/file1.txt").getCanonicalFile()));
+        assertTrue(addSet.contains(new File("test/my_Repos/listenerTest/file2.txt").getCanonicalFile()));
+
+        assertTrue(commitSet.contains(new File("test/my_Repos/listenerTest").getCanonicalFile()));
+        assertTrue(commitSet.contains(new File("test/my_Repos/listenerTest/dir1").getCanonicalFile()));
+        assertTrue(commitSet.contains(new File("test/my_Repos/listenerTest/dir1/file3.txt").getCanonicalFile()));        
+        assertTrue(commitSet.contains(new File("test/my_Repos/listenerTest/dir1/file4.txt").getCanonicalFile()));
+        assertTrue(commitSet.contains(new File("test/my_Repos/listenerTest/file1.txt").getCanonicalFile()));
+        assertTrue(commitSet.contains(new File("test/my_Repos/listenerTest/file2.txt").getCanonicalFile()));
+        
+    }
 
 
     public static void main(String[] args) {
