@@ -5,7 +5,7 @@
 	<TITLE>Svn Task</TITLE>
 	<META NAME="GENERATOR" CONTENT="OpenOffice.org 1.1.0  (Win32)">
 	<META NAME="CREATED" CONTENT="20031019;22355182">
-	<META NAME="CHANGED" CONTENT="20031024;23492226">
+	<META NAME="CHANGED" CONTENT="20031227;16405871">
 	<META HTTP-EQUIV="Content-Language" CONTENT="en-us">
 </HEAD>
 <BODY LANG="en-US" DIR="LTR">
@@ -129,6 +129,62 @@ Otherwise it uses experimental svn command line interface.<BR>&nbsp;</P>
 are used to select sets of files to add to the repository. <B>Note
 that directories needed to add selected files will be added to the
 repository even if they are not selected by the fileset.</B></P>
+<H4>cat</H4>
+<P>Get the content of a file on repository.</P>
+<TABLE WIDTH=1234 BORDER=2 CELLPADDING=2 CELLSPACING=0>
+	<COL WIDTH=127>
+	<COL WIDTH=862>
+	<COL WIDTH=229>
+	<TR VALIGN=TOP>
+		<TD WIDTH=127>
+			<P><B>Attribute</B></P>
+		</TD>
+		<TD WIDTH=862>
+			<P><B>Description</B></P>
+		</TD>
+		<TD WIDTH=229>
+			<P><B>Required</B></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=127 VALIGN=TOP>
+			<P>destFile</P>
+		</TD>
+		<TD WIDTH=862>
+			<P>Name of the destination file</P>
+		</TD>
+		<TD WIDTH=229>
+			<P ALIGN=CENTER>No <BR>(default is the name of the file on the
+			url)</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=127>
+			<P>url</P>
+		</TD>
+		<TD WIDTH=862>
+			<P>Url of the file in repository</P>
+		</TD>
+		<TD WIDTH=229>
+			<P ALIGN=CENTER>Yes</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=127>
+			<P>revision</P>
+		</TD>
+		<TD WIDTH=862>
+			<P>revision to get.<BR>Possible values are :<BR>- a date with the
+			following format : MM/DD/YYYY HH:MM AM_PM<BR>- a revision number<BR>-
+			HEAD, BASE, COMMITED or PREV<BR>Default is &quot;HEAD&quot;</P>
+		</TD>
+		<TD WIDTH=229>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><B><BR></B><BR><BR>
+</P>
 <H4>checkout</H4>
 <P>Check out a working copy from a repository.</P>
 <TABLE BORDER=1 CELLPADDING=2 CELLSPACING=0>
@@ -785,6 +841,60 @@ URL:&nbsp; complete server-side rename.</P>
 </TABLE>
 <P><BR><BR>
 </P>
+<H4>propdel</H4>
+<P>Remove a property from files or dirs.</P>
+<TABLE WIDTH=1263 BORDER=2 CELLPADDING=2 CELLSPACING=0>
+	<COL WIDTH=146>
+	<COL WIDTH=981>
+	<COL WIDTH=120>
+	<TR>
+		<TD WIDTH=146 VALIGN=TOP>
+			<P><B>Attribute</B></P>
+		</TD>
+		<TD WIDTH=981>
+			<P><B>Description</B></P>
+		</TD>
+		<TD WIDTH=120 VALIGN=TOP>
+			<P><B>Required</B></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=146>
+			<P>path</P>
+		</TD>
+		<TD WIDTH=981>
+			<P>path of the file or directory on which to delete the property</P>
+		</TD>
+		<TD WIDTH=120>
+			<P ALIGN=CENTER>Yes</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=146>
+			<P>name</P>
+		</TD>
+		<TD WIDTH=981>
+			<P>name of the property to delete 
+			</P>
+		</TD>
+		<TD WIDTH=120>
+			<P ALIGN=CENTER>Yes</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=146>
+			<P>recurse</P>
+		</TD>
+		<TD WIDTH=981>
+			<P>if set, property will be removed recursively</P>
+		</TD>
+		<TD WIDTH=120>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><BR><BR><BR>
+</P>
 <H4>propset</H4>
 <P>Set a property on files or dirs.</P>
 <TABLE BORDER=1 CELLPADDING=2 CELLSPACING=0>
@@ -890,8 +1000,77 @@ versioned properties but will store any arbitrary properties set:</P>
 	optional revision flags, and an URL.&nbsp; For example<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	foo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	http://example.com/repos/zig<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	foo/bar -r 1234 http://example.com/repos/zag</P>
+	foo/bar -r 1234 <A HREF="http://example.com/repos/zag">http://example.com/repos/zag</A></P>
 </UL>
+<H4>revert</H4>
+<P>Restore pristine working copy file (undo most local edits).</P>
+<TABLE WIDTH=1110 BORDER=2 CELLPADDING=2 CELLSPACING=0>
+	<COL WIDTH=127>
+	<COL WIDTH=862>
+	<COL WIDTH=105>
+	<TR VALIGN=TOP>
+		<TD WIDTH=127>
+			<P><B>Attribute</B></P>
+		</TD>
+		<TD WIDTH=862>
+			<P><B>Description</B></P>
+		</TD>
+		<TD WIDTH=105>
+			<P><B>Required</B></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=127 VALIGN=TOP>
+			<P>file</P>
+		</TD>
+		<TD WIDTH=862>
+			<P>file to revert</P>
+		</TD>
+		<TD WIDTH=105>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=127>
+			<P>dir</P>
+		</TD>
+		<TD WIDTH=862>
+			<P>directory to revert</P>
+		</TD>
+		<TD WIDTH=105>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=127>
+			<P>recurse</P>
+		</TD>
+		<TD WIDTH=862>
+			<P>Set to &quot;false&quot; to operate on a single directory only
+			(applies only when <CODE>dir</CODE> attribute is set). Default is
+			&quot;false&quot;</P>
+		</TD>
+		<TD WIDTH=105>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=127>
+			<P>revision</P>
+		</TD>
+		<TD WIDTH=862>
+			<P>revision. Defaults is &quot;HEAD&quot;<BR>Possible values are
+			:<BR>- a date with the following format : MM/DD/YYYY HH:MM AM_PM<BR>-
+			a revision number<BR>- HEAD, BASE, COMMITED or PREV</P>
+		</TD>
+		<TD WIDTH=105>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><BR>Parameters specified as nested elements :<BR><BR>fileset<BR>Filesets
+are used to select sets of files to revert. 
+</P>
 <H4>update</H4>
 <P>Bring changes from the repository into the working copy.<BR>If no
 revision given, bring working copy up-to-date with HEAD rev.&nbsp;
@@ -973,8 +1152,17 @@ dir=&quot;my_repos/deleteTest&quot;&gt;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&
 &lt;commit message=&quot;commit deleted files&quot;
 dir=&quot;my_repos/deleteTest&quot;/&gt;<BR>&nbsp;&nbsp;&nbsp; &lt;/svn&gt;</CODE></P>
 <P>deletes some files from repository (and commit changes)</P>
-<P><BR><BR>
-</P>
+<P>    <FONT FACE="Courier New, monospace">&lt;svn javahl=&quot;false&quot;&gt;<BR>
+     &lt;add dir=&quot;my_repos/propTest&quot;/&gt;<BR>      &lt;commit
+message=&quot;propTest added&quot; dir=&quot;my_repos/propTest&quot;/&gt;<BR>
+     &lt;propset path=&quot;my_repos/propTest/file.png&quot;
+name=&quot;svn:mime-type&quot; value=&quot;image/png&quot;/&gt;<BR>  
+   &lt;propset path=&quot;my_repos/propTest/file.png&quot;
+name=&quot;myPicture&quot; file=&quot;my_repos/propTest/icon.gif&quot;/&gt;<BR>
+   &lt;/svn&gt;</FONT></P>
+<P>add my_repos/propTest to repository and set two properties on
+file.png<BR>subversion command line interface is used
+(javahl=&rdquo;false&rdquo;).</P>
 <HR>
 </BODY>
 </HTML>
