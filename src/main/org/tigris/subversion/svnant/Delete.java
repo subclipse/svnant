@@ -134,7 +134,7 @@ public class Delete extends SvnCommand {
 	 */
 	private void deleteUrl(URL url, String message) throws BuildException {
 		try {
-			svnClient.remove(url,message);
+			svnClient.remove(new URL[] { url },message);
 		} catch (ClientException e) {
 			throw new BuildException("Cannot delete url "+url.toString(),e);
 		}
@@ -149,7 +149,7 @@ public class Delete extends SvnCommand {
 	 */
 	private void deleteFile(File file, boolean force) throws BuildException {
 		try {
-			svnClient.remove(file,force);
+			svnClient.remove(new File[] { file },force);
 		} catch (ClientException e) {
 			throw new BuildException("Cannot delete file or directory "+file.getAbsolutePath(),e);
 		}
@@ -166,29 +166,25 @@ public class Delete extends SvnCommand {
 		File baseDir = fs.getDir(getProject()); // base dir
 		String[] files = ds.getIncludedFiles();
 		String[] dirs = ds.getIncludedDirectories();
+        File[] filesAndDirs = new File[files.length+dirs.length];
+        int j = 0;
 
-		// first : we delete directories
-		// this also delete subdirectories and files contained in this directory 
 		for (int i = 0; i < dirs.length; i++) {
-			File dir = new File(baseDir, dirs[i]);
-			try {
-				svnClient.remove(dir,force);
-			} catch (ClientException e) {
-				log("Cannot delete directory "+dir.getAbsolutePath());
-			}
+            filesAndDirs[j] = new File(baseDir, dirs[i]);
+            j++;
 		}
-
-		// then we delete files
-		// note that some files can have already been deleted during
-		// directories deletion
 		for (int i = 0; i < files.length; i++) {
-			File file = new File(baseDir, files[i]);
-			try {
-				svnClient.remove(file,force);
-			} catch (ClientException e) {
-				log("Cannot delete file "+file.getAbsolutePath());
-			}
+            filesAndDirs[j] = new File(baseDir, files[i]);
+            j++;
 		}
+        
+        // note : when we delete dirs, this also delete subdirectories and files 
+        // contained in this directory        
+        try {
+            svnClient.remove(filesAndDirs,force);
+        } catch (ClientException e) {
+            log("Cannot delete file "+file.getAbsolutePath());
+        }
 	}
 
 	/**
