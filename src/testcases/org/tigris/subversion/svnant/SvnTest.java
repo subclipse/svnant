@@ -22,6 +22,7 @@ import org.tigris.subversion.svnclientadapter.ISVNDirEntry;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
 import org.tigris.subversion.svnclientadapter.ISVNNotifyListener;
 import org.tigris.subversion.svnclientadapter.ISVNProperty;
+import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
@@ -59,7 +60,7 @@ private ISVNClientAdapter svnClient;
 	{
 		System.out.print(getLog());
 	}
-/*
+
     public void testCheckout() throws SVNClientException {
         executeTarget("testCheckout");
 
@@ -88,7 +89,6 @@ private ISVNClientAdapter svnClient;
 	   assertTrue(svnClient.getSingleStatus(new File("test/my_repos/addCommitTest/file0.add")).getLastChangedRevision().getNumber() > 0);
     }
 
-    
     public void testCopy() throws SVNClientException {
     	executeTarget("testCopy");
 		assertTrue(svnClient.getSingleStatus(new File("test/my_repos/copyTest/copy1")).getLastChangedRevision().getNumber() > 0);
@@ -245,8 +245,9 @@ private ISVNClientAdapter svnClient;
         assertFalse(svnClient.getSingleStatus(new File("test/my_repos/ignoreTest/dir1/file2.donotignore")).isIgnored());
         assertTrue(svnClient.getSingleStatus(new File("test/my_repos/ignoreTest/dir1/dir2/file3.ignore")).isIgnored());        
     }
-*/
-    public void testStatus() throws Exception {
+
+
+    public void testSingleStatus() throws Exception {
         executeTarget("testStatus");
         assertTrue(svnClient.getSingleStatus(new File("test/my_repos/statusTest/added.txt")).isAdded());
         
@@ -259,6 +260,52 @@ private ISVNClientAdapter svnClient;
         assertTrue(svnClient.getSingleStatus(new File("test/my_repos/statusTest/ignored.txt")).isIgnored());    
         
         assertTrue(svnClient.getSingleStatus(new File("test/my_repos/statusTest/committed.txt")).hasRemote());        
+        
+        assertTrue(svnClient.getSingleStatus(new File("test/my_repos/statusTest/deleted.txt")).isDeleted());
+
+    }
+    
+    public void testStatus() throws Exception {  
+      
+        ISVNStatus[] statuses;  
+        // getStatus(File, boolean) does not have the same result with command line interface
+        // and svnjavahl for now. svnjavahl does not return ignored files for now 
+//        statuses = svnClient.getStatus(new File("test/my_repos/statusTest"),false);
+        // let's verify we don't forget some files (ignored ones for example)
+//        assertEquals(8,statuses.length);
+        
+//        statuses = svnClient.getStatus(new File("test/my_repos/statusTest"),true);
+//        assertEquals(9,statuses.length);
+
+//        statuses = svnClient.getStatus(new File("test/my_repos/statusTest/nonManaged.dir").getCanonicalFile(),false);
+//        assertEquals(1, statuses.length);
+
+        
+        statuses = svnClient.getStatus( new File[] {
+            new File("test/my_repos/statusTest/added.txt"),
+            new File("test/my_repos/statusTest/managedDir/added in managed dir.txt"),
+            new File("test/my_repos/statusTest/nonManaged.dir"),
+            new File("nonExistingFile"),
+            new File("test/my_repos/statusTest/ignored.txt")
+            }
+        );
+        assertEquals(5,statuses.length);
+        assertEquals(new File("test/my_repos/statusTest/added.txt").getCanonicalFile(), statuses[0].getFile());
+        assertTrue(statuses[0].isAdded());
+        
+        assertEquals(new File("test/my_repos/statusTest/managedDir/added in managed dir.txt").getAbsoluteFile(), statuses[1].getFile());        
+        assertTrue(statuses[1].isManaged());
+        assertEquals(SVNNodeKind.FILE,statuses[1].getNodeKind());
+        
+        assertFalse(statuses[2].isManaged());
+        assertEquals(SVNNodeKind.UNKNOWN,statuses[2].getNodeKind());
+
+        assertFalse(statuses[3].isManaged());
+        assertEquals(SVNNodeKind.UNKNOWN,statuses[3].getNodeKind());
+        
+        assertTrue(statuses[4].isIgnored());
+        assertEquals(SVNNodeKind.UNKNOWN,statuses[4].getNodeKind()); // an ignored resource is a not versioned one, so its resource kind is UNKNOWN
+        
     }
 
     public static void main(String[] args) {
