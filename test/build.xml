@@ -4,7 +4,14 @@
   
   <!--  all properties are in build.properties 
   --> 
+  
   <property file="build.properties" /> 
+
+ <!-- if urlRepos is not defined in build.properties, we define it here -->
+  <property name="testReposPath" location="test_repos" />
+  <property name="urlRepos" value="file:///${testReposPath}" />  
+
+
   <path id="project.classpath">
     <pathelement location="${javahl.jar}" /> 
     <pathelement location="${svnant.jar}" />
