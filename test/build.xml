@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+
+<project name="svn-test" basedir="." default="all">
+  
+  <!--  all properties are in build.properties 
+  --> 
+  <property file="build.properties" /> 
+  <path id="project.classpath">
+    <pathelement location="${jsvn.jar}" /> 
+    <pathelement location="${svnant.jar}" />
+  </path>  
+  
+  <taskdef name="svn" classname="org.tigris.subversion.svnant.SvnTask" classpathref="project.classpath"/>
+
+  <target name="clean">
+    <delete dir="my_repos"/>
+    <delete dir="test_repos"/>  
+    <delete dir="coHEAD"/>
+    <delete dir="co0"/>
+    <delete dir="export1"/>
+  </target>
+
+  <target name="init" depends="clean">
+    <!-- first we copy the initial repository created using svnadmin to test_repos -->
+    <copy todir="test_repos">
+      <fileset dir="initialRepos"/>
+    </copy>
+    
+    <!-- then we checkout it to my_repos -->
+    <svn>
+      <checkout url="${urlRepos}" destPath="my_repos" />
+    </svn>
+    
+    <!-- we copy the model to my_repos -->
+    <copy todir="my_repos">
+      <fileset dir="model"/>
+    </copy>
+    
+    <svn>
+      <add dir="my_repos/my_dir"/>
+      <add dir="my_repos/copyTest"/>
+      <add dir="my_repos/deleteTest"/>
+      <add dir="my_repos/moveTest"/>
+			<add dir="my_repos/propTest"/>
+      <add file="my_repos/README.txt"/>
+      <add file="my_repos/fileprop.txt"/>
+      <commit message="initial import" dir="my_repos"/>
+    </svn>
+  </target>
+
+  <target name="testCheckout" depends="init">
+    <svn>
+      <checkout url="${urlRepos}" revision="HEAD" destPath="coHEAD" />
+      <checkout url="${urlRepos}" revision="0" destPath="co0" />
+    </svn>
+  </target>
+
+  <target name="testAddCommit" depends="init">
+    <svn>
+      <add>
+        <fileset dir="my_repos">
+          <include name="**/*.add"/>
+        </fileset>
+      </add> 
+      <commit message="commit added files">
+        <fileset dir="my_repos">
+          <include name="**/*.add"/>
+          <exclude name="**/donotcommit.*"/>
+        </fileset>
+      </commit>
+    </svn>
+  </target>
+
+  <target name="testCopy" depends="init">
+    <svn>
+      <copy srcPath="my_repos/copyTest/toCopy" destPath="my_repos/copyTest/copy1" />
+      <commit message="commit moved files" dir="my_repos/copyTest"/>
+      <copy srcUrl="${urlRepos}/copyTest/toCopy" destUrl="${urlRepos}/copyTest/copy2" message="directory copied" />
+    </svn>
+  </target>
+
+  <target name="testDelete" depends="init">
+    <svn>
+      <delete url="${urlRepos}/deleteTest/deleteFromRepository" message="deleted for test" />
+      <delete>
+        <fileset dir="my_repos/deleteTest">
+          <include name="**/*.del"/>
+        </fileset>
+      </delete>
+      <commit message="commit deleted files" dir="my_repos/deleteTest"/>
+    </svn>
+  </target>
+
+  <target name="testExport" depends="init">
+    <svn>
+      <export srcUrl="${urlRepos}" revision="1" destPath="export1"/>
+    </svn>
+  </target>
+
+  <target name="testImport" depends="init">
+    <svn logLevel="3">
+      <import url="${urlRepos}/" path="model/toImport" message="toImport imported"/>
+    </svn>
+  </target>
+
+  <target name="testMkdir" depends="init">
+    <svn>
+      <mkdir url="${urlRepos}/testMkdir1" message="test mkdir 1"/>
+      <mkdir path="my_repos/testMkdir2"/>
+      <commit dir="my_repos/testMkdir2" message="test mkdir 2"/>
+    </svn>
+  </target>
+
+  <target name="testMove" depends="init">
+    <svn>
+      <move srcpath="my_repos/moveTest/dir1ToRename" destpath="my_repos/moveTest/dir1Renamed"/>
+      <move srcUrl="${urlRepos}/moveTest/dir2ToRename" 
+            destUrl="${urlRepos}/moveTest/dir2Renamed"
+            message="dir renamed"/>
+      <commit dir="my_repos/moveTest" message="dir1 renamed"/>
+    </svn>
+  </target>
+
+  <target name="testProp" depends="init">
+    <svn>
+		  <propset path="my_repos/propTest/file.png" name="svn:mime-type" value="image/png"/>
+			<propset path="my_repos/propTest/file.png" name="myPicture" file="my_repos/propTest/icon.gif"/>
+		</svn>
+  </target>
+
+  <target name="all" depends="init,testCheckout,testAddCommit,testCopy,testDelete,testExport,testImport,testMkdir,testMove">
+  </target>
+
+</project>
