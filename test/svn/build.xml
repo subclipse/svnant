@@ -1,0 +1,403 @@
+<?xml version="1.0"?>
+
+<project name="svn-test" basedir="." default="all">
+  
+  <!--  all properties are in build.properties 
+  --> 
+  
+  <property file="build.properties" /> 
+
+  
+  <!-- we need a repository for svnserve specific tests -->
+  <property name="urlReposSvnserve" value="svn://localhost"/>
+
+  <path id="project.classpath">
+    <pathelement location="${svnjavahl.jar}" /> 
+    <pathelement location="${svnant.jar}" />
+    <pathelement location="${svnClientAdapter.jar}"/>
+  </path>  
+  
+  <taskdef resource="svntask.properties" classpathref="project.classpath"/>
+
+
+  <target name="clean">
+    <delete dir="my_repos"/>
+    <delete dir="coHEAD"/>
+    <delete dir="co0"/>
+    <delete dir="export1"/>
+    <delete dir="my_repos_svnserve"/>
+  </target>
+
+
+ 
+  <!-- create the test repository -->
+  <target name="createTestRepository">
+    <echo>using svnadmin to create repositories (you need it in your path) ...</echo>
+    <delete dir="test_repos"/>  
+    <exec executable="svnadmin" failonerror="true">
+      <arg value="create"/>
+      <arg value="test_repos"/>
+    </exec>
+  </target>
+
+  <!-- create the svnserve test repository -->
+  <target name="createTestSvnServeRepository">
+    <echo>using svnadmin to create repositories (you need it in your path) ...</echo>
+    <delete dir="test_repos_svnserve"/>
+    <exec executable="svnadmin" failonerror="true">
+      <arg value="create"/>
+      <arg value="test_repos_svnserve"/>
+    </exec>
+    <copy file="svnserve.conf" todir="test_repos_svnserve/conf" overwrite="true"/>
+    <copy file="passwd" todir="test_repos_svnserve/conf" overwrite="true"/>
+  </target>  
+
+  <!-- init target is executed before each other "test"Target -->
+  <target name="init" depends="clean, createTestRepository">
+
+    <!-- if urlRepos is not defined in build.properties, we define it here 
+       urlRepos is the url of the repository that will be used for most tests -->
+    <property name="testReposLocation" location="test_repos" />
+     <!-- we need / separator -->
+    <pathconvert property="testReposPath" dirsep="/">
+  	  <path path="${testReposLocation}"/>
+    </pathconvert>
+    <property name="urlRepos" value="file:///${testReposPath}" />  
+ 
+    <!-- we checkout it to my_repos -->
+    <mkdir dir="my_repos"/>
+    <svn javahl="${javahl}">
+      <checkout url="${urlRepos}" destPath="my_repos" />
+    </svn>
+  </target>
+
+  <!-- for now we launch it in daemon mode, so you will need to kill it after -->
+  <target name="launchSvnserve" depends="createTestSvnServeRepository">
+    <!-- spawn is only available with ant >= 1.6 -->
+    <exec executable="svnserve" spawn="yes">
+      <arg value="-d"/>
+      <arg value="-r"/>
+      <arg value="test_repos_svnserve"/>
+    </exec>
+  </target>
+
+  <!-- initSvnserve is executed before each other specific svnserve test targets -->
+  <target name="initSvnserve" depends="clean,createTestSvnServeRepository,launchSvnserve">
+    <mkdir dir="my_repos_svnserve"/>
+    <svn javahl="${javahl}">
+      <checkout url="${urlReposSvnserve}" destPath="my_repos_svnserve" />
+    </svn>
+  </target>
+
+  <!-- this test does not test svnant but svnClientAdapter -->
+  <target name="testList" depends="init">
+    <copy todir="my_repos/listTest">
+      <fileset dir="model/listTest"></fileset>
+    </copy>
+    <svn javahl="${javahl}">
+      <add dir="my_repos/listTest"/>
+      <commit dir="my_repos/listTest" message="listTest directory added to repository"/>	
+    </svn>
+  </target>
+
+  <!-- this test does not test svnant but svnClientAdapter -->
+  <target name="testLog" depends="init">
+    <copy todir="my_repos/logTest">
+      <fileset dir="model/logTest"></fileset>
+    </copy>
+    <svn javahl="${javahl}">
+      <add dir="my_repos/logTest"/>
+      <commit dir="my_repos/logTest" message="logTest directory added to repository"/>	
+    </svn>
+  </target>
+
+  <target name="testCheckout" depends="init">
+    <copy todir="my_repos/checkoutTest">
+      <fileset dir="model/checkoutTest"></fileset>
+    </copy>
+    <svn javahl="${javahl}">
+      <add dir="my_repos/checkoutTest"/>
+      <commit dir="my_repos/checkoutTest" message="checkoutTest directory added to repository"/>
+			
+      <checkout url="${urlRepos}" revision="HEAD" destPath="coHEAD" />
+      <checkout url="${urlRepos}" revision="0" destPath="co0" />
+    </svn>
+  </target>
+
+  <target name="testAddCommit" depends="init">
+    <copy todir="my_repos/addCommitTest">
+      <fileset dir="model/addCommitTest"></fileset>
+    </copy>
+    <svn javahl="${javahl}">
+      <add>
+        <fileset dir="my_repos">
+          <include name="**/*.add"/>
+        </fileset>
+      </add> 
+      <commit message="commit added files">
+        <fileset dir="my_repos">
+          <include name="**/*.add"/>
+          <exclude name="**/donotcommit.*"/>
+        </fileset>
+      </commit>
+    </svn>
+  </target>
+
+  <target name="testCopy" depends="init">
+    <copy todir="my_repos/copyTest">
+      <fileset dir="model/copyTest"></fileset>
+    </copy>
+    <svn javahl="${javahl}">
+      <add dir="my_repos/copyTest"/>
+      <commit message="copyTest added" dir="my_repos/copyTest"/>
+			
+      <copy srcPath="my_repos/copyTest/toCopy" destPath="my_repos/copyTest/copy1" />
+      <commit message="commit moved files" dir="my_repos/copyTest"/>
+      <copy srcUrl="${urlRepos}/copyTest/toCopy" destUrl="${urlRepos}/copyTest/copy2" message="directory copied" />
+    </svn>
+  </target>
+
+  <target name="testDelete" depends="init">
+    <copy todir="my_repos/deleteTest">
+      <fileset dir="model/deleteTest"></fileset>
+    </copy>
+    <svn javahl="${javahl}">
+      <add dir="my_repos/deleteTest"/>
+      <commit message="deleteTest added" dir="my_repos/deleteTest"/>
+		
+      <delete url="${urlRepos}/deleteTest/deleteFromRepository" message="deleted for test" />
+      <delete>
+        <fileset dir="my_repos/deleteTest">
+          <include name="**/*.del"/>
+        </fileset>
+      </delete>
+      <commit message="commit deleted files" dir="my_repos/deleteTest"/>
+    </svn>
+  </target>
+
+  <target name="testExport" depends="init">
+    <copy todir="my_repos/exportTest">
+      <fileset dir="model/exportTest"></fileset>
+    </copy>
+    <svn javahl="${javahl}">
+      <add dir="my_repos/exportTest"/>
+      <commit message="exportTest added" dir="my_repos/exportTest"/>
+      <export srcUrl="${urlRepos}" revision="1" destPath="export1"/>
+    </svn>
+  </target>
+
+  <target name="testImport" depends="init">
+    <svn logLevel="3" javahl="${javahl}">
+      <import url="${urlRepos}/" path="model/importTest" message="importTest imported"/>
+    </svn>
+  </target>
+
+  <target name="testMkdir" depends="init">
+    <copy todir="my_repos/mkdirTest">
+      <fileset dir="model/mkdirTest"></fileset>
+    </copy>
+    <svn javahl="${javahl}">
+      <add dir="my_repos/mkdirTest"/>
+      <commit message="mkdirTest added" dir="my_repos/mkdirTest"/>
+      <mkdir url="${urlRepos}/mkdirTest/testMkdir1" message="test mkdir 1"/>
+      <mkdir path="my_repos/mkdirTest/testMkdir2"/>
+      <commit dir="my_repos/mkdirTest/testMkdir2" message="test mkdir 2"/>
+    </svn>
+  </target>
+
+  <target name="testMove" depends="init">
+    <copy todir="my_repos/moveTest">
+      <fileset dir="model/moveTest"></fileset>
+    </copy>
+    <svn javahl="${javahl}">
+      <add dir="my_repos/moveTest"/>
+      <commit message="moveTest added" dir="my_repos/moveTest"/>
+      <move srcpath="my_repos/moveTest/dir1ToRename" destpath="my_repos/moveTest/dir1Renamed"/>
+      <move srcUrl="${urlRepos}/moveTest/dir2ToRename" 
+            destUrl="${urlRepos}/moveTest/dir2Renamed"
+            message="dir renamed"/>
+      <commit dir="my_repos/moveTest" message="dir1 renamed"/>
+    </svn>
+  </target>
+
+  <target name="testProp" depends="init">
+    <copy todir="my_repos/propTest">
+      <fileset dir="model/propTest"></fileset>
+    </copy>
+    <svn javahl="${javahl}">
+      <add dir="my_repos/propTest"/>
+      <commit message="propTest added" dir="my_repos/propTest"/>
+		
+      <propset path="my_repos/propTest/file.png" name="svn:mime-type" value="image/png"/>
+      <propset path="my_repos/propTest/file.png" name="myPicture" file="my_repos/propTest/icon.gif"/>
+      <propset path="my_repos/propTest/file.png" name="myProperty" value="myvalue"/>
+      <propdel path="my_repos/propTest/file.png" name="myProperty"/>
+    </svn>
+  </target>
+
+  <target name="testDiff" depends="init">
+    <copy todir="my_repos/diffTest">
+      <fileset dir="model/diffTest"></fileset>
+    </copy>
+    <copy file="my_repos/diffTest/file.txt.version1" tofile="my_repos/diffTest/file.txt"/>
+    <svn javahl="${javahl}">
+      <add dir="my_repos/diffTest" recurse="false"/>
+      <add file="my_repos/diffTest/file.txt"/>
+      <commit dir="my_repos/diffTest" message="diffTest/file.txt added to repository"/>
+    </svn>
+    <copy file="my_repos/diffTest/file.txt.version2" tofile="my_repos/diffTest/file.txt" overwrite="true"/>    
+    <svn javahl="${javahl}">
+      <diff oldPath="my_repos/diffTest/file.txt" outFile="my_repos/diffTest/patch.txt"/>
+    </svn>
+  </target>
+
+  <target name="testKeywords" depends="init">
+    <copy todir="my_repos/keywordsTest">
+      <fileset dir="model/keywordsTest"></fileset>
+    </copy>
+    <svn username="cedric" javahl="${javahl}">
+      <add dir="my_repos/keywordsTest"/>
+      <keywordsset file="my_repos/keywordsTest/file.txt" keywords="LastChangedRevision"/> 
+      <keywordsadd file="my_repos/keywordsTest/file.txt" keywords="Author Id"/>
+      <keywordsremove file="my_repos/keywordsTest/file.txt" keywords="Id"/>
+      <commit dir="my_repos/keywordsTest" message="file.txt commited"/>
+    </svn>
+  </target>
+	
+  <target name="testUpdate" depends="init">
+    <copy todir="my_repos/updateTest">
+      <fileset dir="model/updateTest"></fileset>
+    </copy>
+    <svn javahl="${javahl}">
+      <add dir="my_repos/updateTest"/>
+      <commit dir="my_repos/updateTest" message="updateTest directory added to repository"/>
+      <checkout url="${urlRepos}" destPath="coHEAD" />
+    </svn>
+      <copy file="my_repos/updateTest/file1.txt" tofile="my_repos/updateTest/file.txt" />
+    <svn javahl="${javahl}">
+      <add file="my_repos/updateTest/file.txt"/>
+      <commit dir="my_repos/updateTest" message="updateTest/file.txt added to repository"/>
+    </svn>
+    <svn javahl="${javahl}">
+      <update dir="coHEAD"/>
+    </svn>
+    <copy file="my_repos/updateTest/file2.txt"  tofile="my_repos/updateTest/file.txt" />
+    <svn javahl="${javahl}">
+      <commit dir="my_repos/updateTest" message="updateTest/file.txt modified"/>
+    </svn>
+    <svn javahl="${javahl}">
+      <update dir="coHEAD/updateTest"/>
+    </svn>
+  </target>
+
+  <target name="testRevert" depends="init">
+    <copy todir="my_repos/revertTest">
+      <fileset dir="model/revertTest"></fileset>
+    </copy>
+    <copy file="my_repos/revertTest/file.txt.version1" tofile="my_repos/revertTest/file.txt"/>
+    <svn javahl="${javahl}">
+      <add dir="my_repos/revertTest" recurse="false"/>
+      <add file="my_repos/revertTest/file.txt"/>
+      <commit dir="my_repos/revertTest" message="revertTest/file.txt added to repository"/>
+    </svn>
+    <copy file="my_repos/revertTest/file.txt.version2" tofile="my_repos/revertTest/file.txt" overwrite="true"/>
+    <svn javahl="${javahl}">
+      <revert file="my_repos/revertTest/file.txt"/>
+    </svn>
+  </target>
+
+  <target name="testCat" depends="init">
+    <copy todir="my_repos/catTest">
+      <fileset dir="model/catTest"></fileset>
+    </copy>
+    <svn javahl="${javahl}">
+      <add dir="my_repos/catTest"/>
+      <commit message="catTest added" dir="my_repos/catTest"/>
+      <cat url="${urlRepos}/catTest/file.txt" destFile="my_repos/catTest/filecat.txt"/>
+    </svn>  
+  </target>
+
+  <target name="testSvnservePasswdSucceed" depends="initSvnserve" >
+    <copy todir="my_repos_svnserve/svnservePasswdTest">
+      <fileset dir="model_svnserve/svnservePasswdTest"></fileset>
+    </copy>
+    <svn javahl="${javahl}" username="cedric" password="cedricpass">
+      <add dir="my_repos_svnserve/svnservePasswdTest"/>
+      <commit message="svnservePasswdTest added" dir="my_repos_svnserve/svnservePasswdTest"/>
+    </svn>  
+  </target>
+
+  <target name="testSvnservePasswdFail" depends="initSvnserve" >
+    <copy todir="my_repos_svnserve/svnservePasswdTest">
+      <fileset dir="model_svnserve/svnservePasswdTest"></fileset>
+    </copy>
+    <svn javahl="${javahl}" username="cedric" password="incorrectpass">
+      <add dir="my_repos_svnserve/svnservePasswdTest"/>
+      <commit message="svnservePasswdTest added" dir="my_repos_svnserve/svnservePasswdTest"/>
+    </svn>  
+  </target>
+
+  <target name="testListener" depends="init">
+    <copy todir="my_repos/listenerTest">
+      <fileset dir="model/listenerTest"></fileset>
+    </copy>
+    <svn javahl="${javahl}">
+      <add dir="my_repos/listenerTest"/>
+      <commit message="listenerTest added" dir="my_repos/listenerTest"/>
+    </svn>      
+  </target>
+
+  <target name="testStatus" depends="init">
+    <copy todir="my_repos/statusTest">
+      <fileset dir="model/statusTest"></fileset>
+    </copy>
+    <svn javahl="${javahl}">
+      <add dir="my_repos/statusTest" recurse="false"/>
+      <commit dir="my_repos/statusTest" message="statusTest committed" recurse="false"/>
+      <add dir="my_repos/statusTest/managedDir" recurse="false"/>
+      <commit dir="my_repos/statusTest/managedDir" message="statusTest/managedDir committed" recurse="false"/>
+      
+      <add file="my_repos/statusTest/added.txt"/>
+      <ignore file="my_repos/statusTest/ignored.txt"/>
+      <add file="my_repos/statusTest/committed.txt"/>
+      <commit file="my_repos/statusTest/committed.txt" message="committed"/>
+      <add file="my_repos/statusTest/deleted.txt"/>
+      <commit file="my_repos/statusTest/deleted.txt" message="this file will be deleted"/>
+      <delete file="my_repos/statusTest/deleted.txt"/>
+      
+      <add file="my_repos/statusTest/managedDir/added in managed dir.txt"/>
+      
+      <checkout url="${urlRepos}/statusTest" revision="HEAD" destPath="my_repos/statusTest/nonManaged.dir/statusTest" recurse="false" />      
+    </svn>
+  </target>
+
+  <target name="testIgnore" depends="init">
+    <copy todir="my_repos/ignoreTest">
+      <fileset dir="model/ignoreTest"></fileset>
+    </copy>
+    <svn javahl="${javahl}">
+      <add dir="my_repos/ignoreTest" recurse="false"/>
+      <add dir="my_repos/ignoreTest/dir1" recurse="false"/>
+      <add dir="my_repos/ignoreTest/dir1/dir2" recurse="false"/>      
+      <commit message="committed" dir="my_repos/ignoreTest"/>
+      <ignore file="my_repos/ignoreTest/fileToIgnore.txt"/>
+      <ignore dir="my_repos/ignoreTest/dir1" pattern="*.ignore" recurse="true"/>
+    </svn>
+  </target>
+
+  <!-- this test does not test svnant but svnClientAdapter -->
+  <target name="testEntry" depends="init">
+    <copy todir="my_repos/entryTest">
+      <fileset dir="model/entryTest"></fileset>
+    </copy>
+    <svn javahl="${javahl}">
+      <add dir="my_repos/entryTest"/>
+      <commit dir="my_repos/entryTest" message="entryTest directory added to repository"/>	
+    </svn>
+  </target>
+
+
+  <target name="all" depends="init,testCheckout,testAddCommit,testCopy,testDelete,testExport,testImport,testMkdir,testMove">
+  </target>
+
+</project>
