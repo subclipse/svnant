@@ -37,13 +37,10 @@
     </copy>
     
     <svn>
-      <add dir="my_repos/my_dir"/>
       <add dir="my_repos/copyTest"/>
       <add dir="my_repos/deleteTest"/>
       <add dir="my_repos/moveTest"/>
       <add dir="my_repos/propTest"/>
-      <add file="my_repos/README.txt"/>
-      <add file="my_repos/fileprop.txt"/>
       <commit message="initial import" dir="my_repos"/>
     </svn>
   </target>
@@ -99,7 +96,7 @@
 
   <target name="testImport" depends="init">
     <svn logLevel="3">
-      <import url="${urlRepos}/" path="model/toImport" message="toImport imported"/>
+      <import url="${urlRepos}/" path="model/importTest" message="importTest imported"/>
     </svn>
   </target>
 
