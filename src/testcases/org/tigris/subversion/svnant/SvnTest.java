@@ -17,6 +17,7 @@ import org.apache.tools.ant.BuildFileTest;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.UnknownElement;
+import org.tigris.subversion.svnclientadapter.ISVNAnnotations;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNDirEntry;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
@@ -366,6 +367,21 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
 		assertTrue(status.getTextStatus() == ISVNStatus.Kind.MODIFIED);
 	}
 
+	public void testAnnotate() throws Exception {
+		executeTarget("testAnnotate");
+		File file = new File(WORKINGCOPY_DIR+"/annotateTest/file.txt");
+		ISVNAnnotations annotations = svnClient.annotate(file,new SVNRevision.Number(2),new SVNRevision.Number(3));
+		assertEquals(3,annotations.size());
+		assertNull(annotations.getAuthor(0));
+		assertEquals(-1,annotations.getRevision(0));
+		assertEquals("user1",annotations.getAuthor(1));
+		assertEquals(2,annotations.getRevision(1));
+		assertEquals("line 2",annotations.getLine(1));
+		assertEquals("user2",annotations.getAuthor(2));
+		assertEquals(3,annotations.getRevision(2));
+		assertEquals("line 3",annotations.getLine(2));		
+	}
+	
 	
     public static void main(String[] args) {
         String[] testCaseName = { SvnTest.class.getName()};

@@ -375,7 +375,32 @@
     <!-- there is a conflict on workingcopy/resolveTest now -->
   </target>
 
+  <target name="testAnnotate" depends="init">
+  	<mkdir dir="workingcopy/annotateTest"/>
+  	<echo file="workingcopy/annotateTest/file.txt" append="false">line 1
+</echo>
+    <svn javahl="${javahl}">
+      <add dir="workingcopy/annotateTest"/>
+      <commit dir="workingcopy/annotateTest" message="annotateTest directory added to repository"/>	
+    </svn>  
+    <echo file="workingcopy/annotateTest/file.txt" append="true">line 2
+</echo>
+    <svn javahl="${javahl}" username="user1">
+      <commit dir="workingcopy/annotateTest" message="modified"/>	
+    </svn>  
+    <echo file="workingcopy/annotateTest/file.txt" append="true">line 3
+</echo>
+    <svn javahl="${javahl}" username="user2">
+      <commit dir="workingcopy/annotateTest" message="modified"/>	
+    </svn>  
+    <echo file="workingcopy/annotateTest/file.txt" append="true">line 4
+</echo>  	
+    <svn javahl="${javahl}" username="">
+      <commit dir="workingcopy/annotateTest" message="modified"/>	
+    </svn>    	
+  </target>
+	
   <target name="all" depends="init">
   </target>
-
+	
 </project>
