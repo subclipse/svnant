@@ -6,13 +6,13 @@
   --> 
   <property file="build.properties" /> 
   <path id="project.classpath">
-    <pathelement location="${javahl.jar}" /> 
+    <pathelement location="${svnjavahl.jar}" /> 
     <pathelement location="${svnant.jar}" />
-		<pathelement location="${svnClientAdapter.jar}" />
+    <pathelement location="${svnClientAdapter.jar}" />
   </path>  
   
-  <taskdef name="svn" classname="org.tigris.subversion.svnant.SvnTask" classpathref="project.classpath"/>
-
+  <taskdef resource="svntask.properties" classpathref="project.classpath"/>
+  
   <target name="clean">
     <delete dir="src_latest"/>
     <delete dir="src_${svnant.version}"/>  

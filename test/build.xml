@@ -11,7 +11,7 @@
     <pathelement location="${svnClientAdapter.jar}"/>
   </path>  
   
-  <taskdef name="svn" classname="org.tigris.subversion.svnant.SvnTask" classpathref="project.classpath"/>
+  <taskdef resource="svntask.properties" classpathref="project.classpath"/>
 
   <target name="clean">
     <delete dir="my_repos"/>

@@ -1,3 +1,8 @@
+* 0.8.5
+- linked with subversion 0.35.1 and Berkeley DB 4.2.52
+- improvements to command line interface to subversion
+- cat, revert, propdel commands added
+
 * 0.8.2
 - linked with subversion 0.31.2
 - command line interface to subversion (experimental)
