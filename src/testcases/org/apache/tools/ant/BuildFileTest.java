@@ -54,10 +54,11 @@
 
 package org.apache.tools.ant;
 
-import junit.framework.*;
-import org.apache.tools.ant.*;
-import java.io.*;
+import java.io.File;
+import java.io.PrintStream;
 import java.net.URL;
+
+import junit.framework.TestCase;
 
 /**
  * A BuildFileTest is a TestCase which executes targets from an Ant buildfile 

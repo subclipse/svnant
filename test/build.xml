@@ -12,7 +12,7 @@
   <property name="urlReposSvnserve" value="svn://localhost"/>
 
   <path id="project.classpath">
-    <pathelement location="${javahl.jar}" /> 
+    <pathelement location="${svnjavahl.jar}" /> 
     <pathelement location="${svnant.jar}" />
     <pathelement location="${svnClientAdapter.jar}"/>
   </path>  
@@ -299,6 +299,29 @@
       <add dir="my_repos/listenerTest"/>
       <commit message="listenerTest added" dir="my_repos/listenerTest"/>
     </svn>      
+  </target>
+
+  <target name="testStatus" depends="init">
+    <svn javahl="${javahl}">
+      <add dir="my_repos/statusTest" recurse="false"/>
+      <commit dir="my_repos/statusTest" message="statusTest committed" recurse="ffalse"/>
+      
+      <add file="my_repos/statusTest/added.txt"/>
+      <ignore file="my_repos/statusTest/ignored.txt"/>
+      <add file="my_repos/statusTest/committed.txt"/>
+      <commit file="my_repos/statusTest/committed.txt" message="committed"/>
+    </svn>
+  </target>
+
+  <target name="testIgnore" depends="init">
+    <svn javahl="${javahl}">
+      <add dir="my_repos/ignoreTest" recurse="false"/>
+      <add dir="my_repos/ignoreTest/dir1" recurse="false"/>
+      <add dir="my_repos/ignoreTest/dir1/dir2" recurse="false"/>      
+      <commit message="committed" dir="my_repos/ignoreTest"/>
+      <ignore file="my_repos/ignoreTest/fileToIgnore.txt"/>
+      <ignore dir="my_repos/ignoreTest/dir1" pattern="*.ignore" recurse="true"/>
+    </svn>
   </target>
 
   <target name="all" depends="init,testCheckout,testAddCommit,testCopy,testDelete,testExport,testImport,testMkdir,testMove">

@@ -228,6 +228,28 @@ private ISVNClientAdapter svnClient;
         
     }
 
+    public void testIgnore() throws Exception {
+        executeTarget("testIgnore");
+        assertTrue(svnClient.getSingleStatus(new File("test/my_repos/ignoreTest/fileToIgnore.txt")).isIgnored());
+        assertTrue(svnClient.getSingleStatus(new File("test/my_repos/ignoreTest/dir1/file1.ignore")).isIgnored());
+        assertFalse(svnClient.getSingleStatus(new File("test/my_repos/ignoreTest/dir1/file2.donotignore")).isIgnored());
+        assertTrue(svnClient.getSingleStatus(new File("test/my_repos/ignoreTest/dir1/dir2/file3.ignore")).isIgnored());        
+    }
+
+    public void testStatus() throws Exception {
+        executeTarget("testStatus");
+        assertTrue(svnClient.getSingleStatus(new File("test/my_repos/statusTest/added.txt")).isAdded());
+        
+        // getSingleStatus returns null when resource does not exist
+        assertEquals(null,svnClient.getSingleStatus(new File("test/my_repos/statusTest/fileThatDoesNotExist.txt")));
+        
+        // same test but in a directory that is not versioned
+        assertEquals(null,svnClient.getSingleStatus(new File("test/my_repos/statusTest/nonManaged.dir/fileThatDoesNotExist.txt")));
+        
+        assertTrue(svnClient.getSingleStatus(new File("test/my_repos/statusTest/ignored.txt")).isIgnored());    
+        
+        assertTrue(svnClient.getSingleStatus(new File("test/my_repos/statusTest/committed.txt")).hasRemote());        
+    }
 
     public static void main(String[] args) {
         String[] testCaseName = { SvnTest.class.getName()};
