@@ -228,7 +228,7 @@ public class Add extends SvnCommand {
 			    currentDir = currentDir.getParentFile();
 			}
 		} catch (SVNClientException e) {
-			throw new BuildException("Cannot get status of file or directory");
+			throw new BuildException("Cannot get status of file or directory",e);
 		}
 
         // add them to the repository

@@ -12,7 +12,7 @@
 
   <path id="project.classpath">
     <pathelement location="${ant.jar}"/>
-    <pathelement location="${javahl.jar}"/>
+    <pathelement location="${svnjavahl.jar}"/>
     <pathelement location="${junit.jar}"/>
 		<pathelement location="${svnClientAdapter.jar}"/>
   </path>

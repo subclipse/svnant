@@ -224,7 +224,7 @@ public class Commit extends SvnCommand {
 			if (!svnClient.getSingleStatus(file).isManaged())
 			    return;
 		} catch (SVNClientException e1) {
-            throw new BuildException("Cannot get status of file :"+file.toString());
+            throw new BuildException("Cannot get status of file :"+file.toString(),e1);
 		}
 
         // determine directories to commit
@@ -245,7 +245,7 @@ public class Commit extends SvnCommand {
 			    status = svnClient.getSingleStatus(currentDir);
 			}
 		} catch (SVNClientException e) {
-            throw new BuildException("Cannot get status of directory :"+currentDir.toString());
+            throw new BuildException("Cannot get status of directory :"+currentDir.toString(),e);
 		}
 
         // add them to the vector
@@ -291,7 +291,7 @@ public class Commit extends SvnCommand {
         try {
             svnClient.commit(files, message, false);
         } catch (Exception e) {
-            throw new BuildException("Can't commit fileset", e);
+            throw new BuildException("Can't commit fileset : ", e);
         }
 
     }
