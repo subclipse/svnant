@@ -30,11 +30,11 @@
   <!-- create the test repository -->
   <target name="createTestRepository">
     <echo>using svnadmin to create repositories (you need it in your path) ...</echo>
-    <delete dir="repository"/>  
-    <exec executable="svnadmin" failonerror="true">
-      <arg value="create"/>
-      <arg value="repository"/>
-    </exec>
+  	<delete dir="repository"/>  
+
+  	<svn javahl="false">
+  		<createRepository path="repository"/>
+  	</svn>
   </target>
 
 
