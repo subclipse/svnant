@@ -200,6 +200,10 @@ public class SvnTask extends Task {
     	commands.add(a);
     }
     
+    public void addPropget(Propget a) {
+    	commands.add(a);
+    }
+    
     public void addNotifyListener(ISVNNotifyListener notifyListener) {
         notifyListeners.add(notifyListener);
     }
