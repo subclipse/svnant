@@ -55,67 +55,44 @@
 package org.tigris.subversion.svnant;
 
 import java.io.File;
-import java.text.ParseException;
-import java.util.Vector;
 
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.types.FileSet;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
- * svn Update. Bring changes from the repository into the working copy.
+ * svn Switch.  
+ * Update the working copy to mirror a new URL within the repository.
+ * This behaviour is similar to 'svn update', and is the way to
+ * move a working copy to a branch or tag within the same repository.
+ * 
  * @author Cédric Chabanois 
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  *
  */
-public class Update extends SvnCommand {
-	/** file to update */
-	private File file = null;
-	
-	/** dir to update */
-	private File dir = null;
-	
-	/** filesets to update */
-	private Vector filesets = new Vector();	
+public class Switch extends SvnCommand {
+	private File path = null;
+    
+    private SVNUrl url;
 	
 	private ISVNClientAdapter svnClient;
 
 	private SVNRevision revision = SVNRevision.HEAD;
-	
+    
 	private boolean recurse = true;
 
 	public void execute(ISVNClientAdapter svnClient) throws BuildException {
 		this.svnClient = svnClient;
 		validateAttributes();
 		
-		log("Svn : Updating");
+		log("Svn : Switching");
 		
-		if (file != null)
-		{
-			try {
-				svnClient.update(file, revision, false);
-			} catch (SVNClientException e) {
-				throw new BuildException("Cannot update file "+file.getAbsolutePath(),e);
-			}
-		}
-			
-		if (dir != null) {
-			try {
-				svnClient.update(dir, revision, recurse);
-			} catch (SVNClientException e) {
-				throw new BuildException("Cannot update dir "+dir.getAbsolutePath(),e);
-			}			
-		}
-		
-		// deal with filesets
-		if (filesets.size() > 0) {
-			for (int i = 0; i < filesets.size(); i++) {
-				FileSet fs = (FileSet) filesets.elementAt(i);
-				updateFileSet(fs);
-			}
+		try {
+			svnClient.switchToUrl(path, url, revision, recurse);
+		} catch (SVNClientException e) {
+			throw new BuildException("Cannot switch to url : "+url.toString(),e);
 		}
 	}
 
@@ -123,86 +100,32 @@ public class Update extends SvnCommand {
 	 * Ensure we have a consistent and legal set of attributes
 	 */
 	protected void validateAttributes() throws BuildException {
-		if ((file == null) && (dir == null) && (filesets.size() == 0))
-			throw new BuildException("file, url or fileset must be set"); 
-	}
-
-	/**
-	 * updates a fileset (both dirs and files)
-	 * @param svnClient
-	 * @param fs
-	 * @throws BuildException
-	 */
-	private void updateFileSet(FileSet fs) throws BuildException {
-		DirectoryScanner ds = fs.getDirectoryScanner(getProject());
-		File baseDir = fs.getDir(getProject()); // base dir
-		String[] files = ds.getIncludedFiles();
-		String[] dirs = ds.getIncludedDirectories();
-
-		// first : we update directories
-		for (int i = 0; i < dirs.length; i++) {
-			File dir = new File(baseDir, dirs[i]);
-			try {
-				svnClient.update(dir,revision,false);
-			} catch (SVNClientException e) {
-				log("Cannot update directory "+dir.getAbsolutePath());
-			}
-		}
-
-		// then we update files
-		for (int i = 0; i < files.length; i++) {
-			File file = new File(baseDir, files[i]);
-			try {
-				svnClient.update(file,revision,false);
-			} catch (SVNClientException e) {
-				log("Cannot update file "+file.getAbsolutePath());
-			}
-		}
-	}
-
-	/**
-	 * set the file to update
-	 * @param file
-	 */
-	public void setFile(File file) {
-		this.file = file;
-	}
-
-	/**
-	 * set the directory to update
-	 * @param dir
-	 */
-	public void setDir(File dir) {
-		this.dir = dir;
+		if ((path == null) || (url == null))
+			throw new BuildException("path and url must be set"); 
 	}
 	
 	/**
-	 * if set, directory will be updated recursively 
-	 * @param recurse
+	 * @param path The path to set.
+	 */
+	public void setPath(File path) {
+		this.path = path;
+	}
+	/**
+	 * @param recurse The recurse to set.
 	 */
 	public void setRecurse(boolean recurse) {
 		this.recurse = recurse;
 	}
-	
 	/**
-	 * Sets the revision
-	 * 
-	 * @param revision
+	 * @param revision The revision to set.
 	 */
-	public void setRevision(String revision) {
-		try {
-			this.revision = SVNRevision.getRevision(revision);
-		} catch (ParseException e) {
-			this.revision = null;
-		}
+	public void setRevision(SVNRevision revision) {
+		this.revision = revision;
 	}
-
-
 	/**
-	 * Adds a set of files to update
+	 * @param url The url to set.
 	 */
-	public void addFileset(FileSet set) {
-		filesets.addElement(set);
-	}	
-	
+	public void setUrl(SVNUrl url) {
+		this.url = url;
+	}
 }

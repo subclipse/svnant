@@ -429,7 +429,12 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
                 new SVNUrl(urlRepos+"/entryTest/"));
         assertEquals(new SVNUrl(urlRepos),url);
     }
-*/	
+*/
+    
+    public void testSwitch() throws Exception {
+    	executeTarget("testSwitch");
+    }
+    
     public static void main(String[] args) {
         String[] testCaseName = { SvnTest.class.getName()};
         junit.textui.TestRunner.main(testCaseName);

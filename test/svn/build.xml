@@ -413,6 +413,22 @@
   	  <commit dir="workingcopy/repositoryRootTest" message="repositoryRootTest directory added to repository"/>	
     </svn>    	
   </target>
+
+  <target name="testSwitch" depends="init">
+    <copy todir="workingcopy/switchTest">
+      <fileset dir="model/switchTest"></fileset>
+    </copy>
+  	<!-- first create the branch -->
+    <svn javahl="${javahl}">
+      <add dir="workingcopy/switchTest"/>
+      <commit dir="workingcopy/switchTest" message="switchTest directory added to repository"/>	
+      <copy srcUrl="${urlRepos}/switchTest" destUrl="${urlRepos}/switchTestBranch" message="branched" />
+    </svn>
+  	<!-- switch to the branch -->
+  	<svn javahl="${javahl}">
+      <switch path="workingcopy/switchTest" url="${urlRepos}/switchTestBranch"/>
+    </svn>
+  </target>
 	
   <target name="all" depends="init">
   </target>
