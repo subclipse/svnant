@@ -56,6 +56,7 @@ package org.tigris.subversion.svnant;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 
@@ -84,9 +85,11 @@ public class Cat extends SvnCommand {
 		validateAttributes();
 
 		log("Svn : Cat");
+        InputStream is = null;
+        FileOutputStream os = null;
 		try {
-            InputStream is = svnClient.getContent(url, revision);
-            FileOutputStream os = new FileOutputStream(destFile);
+            os = new FileOutputStream(destFile);
+            is = svnClient.getContent(url, revision);
             byte[] buffer = new byte[5000];
             int read;
             while ((read = is.read(buffer)) != -1) {
@@ -94,6 +97,17 @@ public class Cat extends SvnCommand {
             }
 		} catch (Exception e) {
 			throw new BuildException("Can't get the content of the specified file", e);
+		} finally {
+            if (os != null) {
+                try {
+                    os.close();
+                } catch (IOException e) {}
+            }
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {}
+            }        
 		}
 	}
 
