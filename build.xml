@@ -12,7 +12,7 @@
 
   <path id="project.classpath">
     <pathelement location="${ant.jar}"/>
-    <pathelement location="${jsvn.jar}"/>
+    <pathelement location="${javahl.jar}"/>
     <pathelement location="${junit.jar}"/>
 		<pathelement location="${svnClientAdapter.jar}"/>
   </path>
@@ -87,13 +87,12 @@
 		<mkdir dir="${build.distrib.dir}/doc"/>
 		<copy file="readme.txt" todir="${build.distrib.dir}"/>
 		<copy file="changelog.txt" todir="${build.distrib.dir}"/>
-		<copy file="jsvnjni.dll" todir="${build.distrib.dir}"/>
+		<copy file="javahl.dll" todir="${build.distrib.dir}"/>
 		<copy file="libeay32.dll" todir="${build.distrib.dir}"/>
 		<copy file="ssleay32.dll" todir="${build.distrib.dir}"/>
 		<copy file="libdb40.dll" todir="${build.distrib.dir}"/>
 		<copy file="lib/svnClientAdapter.jar" todir="${build.distrib.dir}/lib"/>
-		<copy file="lib/jsvn.jar" todir="${build.distrib.dir}/lib"/>
-		<copy file="lib/jsvn.jar" todir="${build.distrib.dir}/lib"/>
+		<copy file="lib/javahl.jar" todir="${build.distrib.dir}/lib"/>
 		<copy file="${build.lib.dir}/svnant.jar" todir="${build.distrib.dir}/lib"/>
 		<copy file="doc/svn.html" todir="${build.distrib.dir}/doc"/>
 		<copy file="${distribfiles.dir}/build.xml" todir="${build.distrib.dir}"/>
