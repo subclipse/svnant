@@ -178,7 +178,6 @@ private ISVNClientAdapter svnClient;
 		}
 	}
 
-
     public void testListener() throws Exception {
         final Set addSet = new HashSet();
         final Set commitSet = new HashSet();
@@ -205,7 +204,8 @@ private ISVNClientAdapter svnClient;
         };
         
         Target target = (Target)project.getTargets().get("testListener");
-        Task task = target.getTasks()[0]; // there is only one task
+        // first task is "copy", second one is "svn"
+        Task task = target.getTasks()[1];
         SvnTask svnTask;
         if (task instanceof UnknownElement) {
             // not sure how ant works but it seems to work using that

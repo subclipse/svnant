@@ -69,10 +69,6 @@
     <svn javahl="${javahl}">
       <checkout url="${urlRepos}" destPath="my_repos" />
     </svn>
-    <!-- we copy the model to my_repos -->
-    <copy todir="my_repos">
-      <fileset dir="model"/>
-    </copy>
   </target>
 
   <!-- for now we launch it in daemon mode, so you will need to kill it after -->
@@ -91,14 +87,13 @@
     <svn javahl="${javahl}">
       <checkout url="${urlReposSvnserve}" destPath="my_repos_svnserve" />
     </svn>
-    <!-- we copy the model to my_repos -->
-    <copy todir="my_repos_svnserve">
-      <fileset dir="model_svnserve"/>
-    </copy>
   </target>
 
   <!-- this test does not test svnant but svnClientAdapter -->
   <target name="testList" depends="init">
+    <copy todir="my_repos/listTest">
+      <fileset dir="model/listTest"></fileset>
+    </copy>
     <svn javahl="${javahl}">
       <add dir="my_repos/listTest"/>
       <commit dir="my_repos/listTest" message="listTest directory added to repository"/>	
@@ -107,6 +102,9 @@
 
   <!-- this test does not test svnant but svnClientAdapter -->
   <target name="testLog" depends="init">
+    <copy todir="my_repos/logTest">
+      <fileset dir="model/logTest"></fileset>
+    </copy>
     <svn javahl="${javahl}">
       <add dir="my_repos/logTest"/>
       <commit dir="my_repos/logTest" message="logTest directory added to repository"/>	
@@ -114,6 +112,9 @@
   </target>
 
   <target name="testCheckout" depends="init">
+    <copy todir="my_repos/checkoutTest">
+      <fileset dir="model/checkoutTest"></fileset>
+    </copy>
     <svn javahl="${javahl}">
       <add dir="my_repos/checkoutTest"/>
       <commit dir="my_repos/checkoutTest" message="checkoutTest directory added to repository"/>
@@ -124,6 +125,9 @@
   </target>
 
   <target name="testAddCommit" depends="init">
+    <copy todir="my_repos/addCommitTest">
+      <fileset dir="model/addCommitTest"></fileset>
+    </copy>
     <svn javahl="${javahl}">
       <add>
         <fileset dir="my_repos">
@@ -140,6 +144,9 @@
   </target>
 
   <target name="testCopy" depends="init">
+    <copy todir="my_repos/copyTest">
+      <fileset dir="model/copyTest"></fileset>
+    </copy>
     <svn javahl="${javahl}">
       <add dir="my_repos/copyTest"/>
       <commit message="copyTest added" dir="my_repos/copyTest"/>
@@ -151,6 +158,9 @@
   </target>
 
   <target name="testDelete" depends="init">
+    <copy todir="my_repos/deleteTest">
+      <fileset dir="model/deleteTest"></fileset>
+    </copy>
     <svn javahl="${javahl}">
       <add dir="my_repos/deleteTest"/>
       <commit message="deleteTest added" dir="my_repos/deleteTest"/>
@@ -166,6 +176,9 @@
   </target>
 
   <target name="testExport" depends="init">
+    <copy todir="my_repos/exportTest">
+      <fileset dir="model/exportTest"></fileset>
+    </copy>
     <svn javahl="${javahl}">
       <add dir="my_repos/exportTest"/>
       <commit message="exportTest added" dir="my_repos/exportTest"/>
@@ -180,6 +193,9 @@
   </target>
 
   <target name="testMkdir" depends="init">
+    <copy todir="my_repos/mkdirTest">
+      <fileset dir="model/mkdirTest"></fileset>
+    </copy>
     <svn javahl="${javahl}">
       <add dir="my_repos/mkdirTest"/>
       <commit message="mkdirTest added" dir="my_repos/mkdirTest"/>
@@ -190,6 +206,9 @@
   </target>
 
   <target name="testMove" depends="init">
+    <copy todir="my_repos/moveTest">
+      <fileset dir="model/moveTest"></fileset>
+    </copy>
     <svn javahl="${javahl}">
       <add dir="my_repos/moveTest"/>
       <commit message="moveTest added" dir="my_repos/moveTest"/>
@@ -202,6 +221,9 @@
   </target>
 
   <target name="testProp" depends="init">
+    <copy todir="my_repos/propTest">
+      <fileset dir="model/propTest"></fileset>
+    </copy>
     <svn javahl="${javahl}">
       <add dir="my_repos/propTest"/>
       <commit message="propTest added" dir="my_repos/propTest"/>
@@ -214,6 +236,9 @@
   </target>
 
   <target name="testDiff" depends="init">
+    <copy todir="my_repos/diffTest">
+      <fileset dir="model/diffTest"></fileset>
+    </copy>
     <copy file="my_repos/diffTest/file.txt.version1" tofile="my_repos/diffTest/file.txt"/>
     <svn javahl="${javahl}">
       <add dir="my_repos/diffTest" recurse="false"/>
@@ -227,6 +252,9 @@
   </target>
 
   <target name="testKeywords" depends="init">
+    <copy todir="my_repos/keywordsTest">
+      <fileset dir="model/keywordsTest"></fileset>
+    </copy>
     <svn username="cedric" javahl="${javahl}">
       <add dir="my_repos/keywordsTest"/>
       <keywordsset file="my_repos/keywordsTest/file.txt" keywords="LastChangedRevision"/> 
@@ -237,6 +265,9 @@
   </target>
 	
   <target name="testUpdate" depends="init">
+    <copy todir="my_repos/updateTest">
+      <fileset dir="model/updateTest"></fileset>
+    </copy>
     <svn javahl="${javahl}">
       <add dir="my_repos/updateTest"/>
       <commit dir="my_repos/updateTest" message="updateTest directory added to repository"/>
@@ -260,6 +291,9 @@
   </target>
 
   <target name="testRevert" depends="init">
+    <copy todir="my_repos/revertTest">
+      <fileset dir="model/revertTest"></fileset>
+    </copy>
     <copy file="my_repos/revertTest/file.txt.version1" tofile="my_repos/revertTest/file.txt"/>
     <svn javahl="${javahl}">
       <add dir="my_repos/revertTest" recurse="false"/>
@@ -273,6 +307,9 @@
   </target>
 
   <target name="testCat" depends="init">
+    <copy todir="my_repos/catTest">
+      <fileset dir="model/catTest"></fileset>
+    </copy>
     <svn javahl="${javahl}">
       <add dir="my_repos/catTest"/>
       <commit message="catTest added" dir="my_repos/catTest"/>
@@ -281,6 +318,9 @@
   </target>
 
   <target name="testSvnservePasswdSucceed" depends="initSvnserve" >
+    <copy todir="my_repos_svnserve/svnservePasswdTest">
+      <fileset dir="model_svnserve/svnservePasswdTest"></fileset>
+    </copy>
     <svn javahl="${javahl}" username="cedric" password="cedricpass">
       <add dir="my_repos_svnserve/svnservePasswdTest"/>
       <commit message="svnservePasswdTest added" dir="my_repos_svnserve/svnservePasswdTest"/>
@@ -288,6 +328,9 @@
   </target>
 
   <target name="testSvnservePasswdFail" depends="initSvnserve" >
+    <copy todir="my_repos_svnserve/svnservePasswdTest">
+      <fileset dir="model_svnserve/svnservePasswdTest"></fileset>
+    </copy>
     <svn javahl="${javahl}" username="cedric" password="incorrectpass">
       <add dir="my_repos_svnserve/svnservePasswdTest"/>
       <commit message="svnservePasswdTest added" dir="my_repos_svnserve/svnservePasswdTest"/>
@@ -295,6 +338,9 @@
   </target>
 
   <target name="testListener" depends="init">
+    <copy todir="my_repos/listenerTest">
+      <fileset dir="model/listenerTest"></fileset>
+    </copy>
     <svn javahl="${javahl}">
       <add dir="my_repos/listenerTest"/>
       <commit message="listenerTest added" dir="my_repos/listenerTest"/>
@@ -302,6 +348,9 @@
   </target>
 
   <target name="testStatus" depends="init">
+    <copy todir="my_repos/statusTest">
+      <fileset dir="model/statusTest"></fileset>
+    </copy>
     <svn javahl="${javahl}">
       <add dir="my_repos/statusTest" recurse="false"/>
       <commit dir="my_repos/statusTest" message="statusTest committed" recurse="false"/>
@@ -323,6 +372,9 @@
   </target>
 
   <target name="testIgnore" depends="init">
+    <copy todir="my_repos/ignoreTest">
+      <fileset dir="model/ignoreTest"></fileset>
+    </copy>
     <svn javahl="${javahl}">
       <add dir="my_repos/ignoreTest" recurse="false"/>
       <add dir="my_repos/ignoreTest/dir1" recurse="false"/>
