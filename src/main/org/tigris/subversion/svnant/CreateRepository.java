@@ -68,6 +68,9 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
 public class CreateRepository extends SvnCommand {
 	/** path of the repository to create */
 	private File path = null;
+	
+	/** the type of the repository to create */
+	private String repositoryType = null;
     
 	private ISVNClientAdapter svnClient;
 	
@@ -81,7 +84,7 @@ public class CreateRepository extends SvnCommand {
 		log("SvnAdmin : create");			
 
 		try {
-			svnClient.createRepository(path);
+			svnClient.createRepository(path,repositoryType);
 		} catch (SVNClientException e) {
 			throw new BuildException("Cannot create repository at "+path.getAbsolutePath(),e);
 		}		
@@ -100,5 +103,15 @@ public class CreateRepository extends SvnCommand {
 	 */
 	public void setPath(File path) {
 		this.path = path;
+	}
+	
+	
+	/**
+	 * set the repository type : either fsfs or bdb
+	 * 
+	 * @param repositoryType The repositoryType to set.
+	 */
+	public void setRepositoryType(String repositoryType) {
+		this.repositoryType = repositoryType;
 	}
 }
