@@ -84,7 +84,7 @@
   <target name="testCopy" depends="init">
     <svn javahl="${javahl}">
       <add dir="my_repos/copyTest"/>
-			<commit message="copyTest added" dir="my_repos/copyTest"/>
+      <commit message="copyTest added" dir="my_repos/copyTest"/>
 			
       <copy srcPath="my_repos/copyTest/toCopy" destPath="my_repos/copyTest/copy1" />
       <commit message="commit moved files" dir="my_repos/copyTest"/>
@@ -210,6 +210,14 @@
     <svn javahl="${javahl}">
       <revert file="my_repos/revertTest/file.txt"/>
     </svn>
+  </target>
+
+  <target name="testCat" depends="init">
+    <svn javahl="${javahl}">
+      <add dir="my_repos/catTest"/>
+      <commit message="catTest added" dir="my_repos/catTest"/>
+      <cat url="${urlRepos}/catTest/file.txt" destFile="my_repos/catTest/filecat.txt"/>
+    </svn>  
   </target>
 
   <target name="all" depends="init,testCheckout,testAddCommit,testCopy,testDelete,testExport,testImport,testMkdir,testMove">

@@ -148,6 +148,14 @@ private ISVNClientAdapter svnClient;
         assertEquals("first version",dis.readLine());
     }
 
+    public void testCat() throws FileNotFoundException, IOException {
+        executeTarget("testCat");
+        DataInputStream dis = new DataInputStream(new FileInputStream("test/my_repos/catTest/filecat.txt")); 
+        assertEquals("first line",dis.readLine());        
+        assertEquals("second line",dis.readLine());
+    }
+
+
     public static void main(String[] args) {
         String[] testCaseName = { SvnTest.class.getName()};
         junit.textui.TestRunner.main(testCaseName);
