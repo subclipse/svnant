@@ -6,7 +6,6 @@ package org.tigris.subversion.svnant;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URL;
 
 import org.apache.tools.ant.BuildFileTest;
 import org.tigris.subversion.javahl.ClientException;
@@ -15,6 +14,7 @@ import org.tigris.subversion.javahl.LogMessage;
 import org.tigris.subversion.javahl.PropertyData;
 import org.tigris.subversion.javahl.Revision;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * Edit test/build.properties and change urlRepos before running these tests
@@ -52,7 +52,7 @@ private SVNClientAdapter svnClient;
 	public void testList() {
 		try {
 			String urlRepos = getProject().getProperty("urlRepos");
-			DirEntry[] list = svnClient.getList(new URL(urlRepos),Revision.HEAD,false);
+			DirEntry[] list = svnClient.getList(new SVNUrl(urlRepos),Revision.HEAD,false);
 			assertTrue(list.length > 0);
 		} catch (ClientException e) {
 			fail("an exception occured");

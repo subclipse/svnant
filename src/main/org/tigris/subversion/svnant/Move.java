@@ -61,6 +61,7 @@ import org.apache.tools.ant.BuildException;
 import org.tigris.subversion.javahl.ClientException;
 import org.tigris.subversion.javahl.Revision;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * svn Move. Moves or renames a file
@@ -71,8 +72,8 @@ import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
 public class Move extends SvnCommand {
     private File srcPath = null;
     private File destPath = null;
-    private URL srcUrl = null;
-    private URL destUrl = null;
+    private SVNUrl srcUrl = null;
+    private SVNUrl destUrl = null;
 	private String message = null;
     private boolean force = false;
 
@@ -145,7 +146,7 @@ public class Move extends SvnCommand {
 	 * set the url to move from
 	 * @param srcUrl
 	 */
-    public void setSrcUrl(URL srcUrl) {
+    public void setSrcUrl(SVNUrl srcUrl) {
         this.srcUrl = srcUrl;
     }
 
@@ -153,7 +154,7 @@ public class Move extends SvnCommand {
 	 * set the url to move to
 	 * @param destUrl
 	 */
-    public void setDestUrl(URL destUrl) {
+    public void setDestUrl(SVNUrl destUrl) {
         this.destUrl = destUrl;
     }
     

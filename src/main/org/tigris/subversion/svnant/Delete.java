@@ -55,7 +55,6 @@
 package org.tigris.subversion.svnant;
 
 import java.io.File;
-import java.net.URL;
 import java.util.Vector;
 
 import org.apache.tools.ant.BuildException;
@@ -63,6 +62,7 @@ import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
 import org.tigris.subversion.javahl.ClientException;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * svn Delete. Remove files and directories from version control.
@@ -75,7 +75,7 @@ public class Delete extends SvnCommand {
 	private String message = null;
 	
 	/** url of the target to delete */
-	private URL url = null;
+	private SVNUrl url = null;
 	
 	/** file to delete */
 	private File file = null;
@@ -131,9 +131,9 @@ public class Delete extends SvnCommand {
 	 * @param message
 	 * @throws BuildException
 	 */
-	private void deleteUrl(URL url, String message) throws BuildException {
+	private void deleteUrl(SVNUrl url, String message) throws BuildException {
 		try {
-			svnClient.remove(new URL[] { url },message);
+			svnClient.remove(new SVNUrl[] { url },message);
 		} catch (ClientException e) {
 			throw new BuildException("Cannot delete url "+url.toString(),e);
 		}
@@ -199,7 +199,7 @@ public class Delete extends SvnCommand {
 	 * set url to delete
 	 * @param url
 	 */
-	public void setUrl(URL url) {
+	public void setUrl(SVNUrl url) {
 		this.url = url;
 	}
 

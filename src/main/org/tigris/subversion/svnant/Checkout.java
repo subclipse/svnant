@@ -55,13 +55,13 @@
 package org.tigris.subversion.svnant;
 
 import java.io.File;
-import java.net.URL;
 import java.text.ParseException;
 
 import org.apache.tools.ant.BuildException;
 import org.tigris.subversion.javahl.Revision;
 import org.tigris.subversion.svnclientadapter.RevisionUtils;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * svn Checkout. Check out a working copy from a repository 
@@ -71,7 +71,7 @@ import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
 public class Checkout extends SvnCommand {
 	
 	/** url to checkout from */
-	private URL url = null;
+	private SVNUrl url = null;
 	
 	/** checkout recursively ? */
 	private boolean recurse = true;
@@ -118,7 +118,7 @@ public class Checkout extends SvnCommand {
 	 * Sets the URL; required.
 	 * @param url The url to set
 	 */
-	public void setUrl(URL url) {
+	public void setUrl(SVNUrl url) {
 		this.url = url;
 	}
 

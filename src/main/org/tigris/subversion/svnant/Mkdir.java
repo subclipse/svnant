@@ -55,11 +55,11 @@
 package org.tigris.subversion.svnant;
 
 import java.io.File;
-import java.net.URL;
 
 import org.apache.tools.ant.BuildException;
 import org.tigris.subversion.javahl.ClientException;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * @author cedric
@@ -69,7 +69,7 @@ import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
  */
 public class Mkdir extends SvnCommand {
     /** the url of dir to create */
-    private URL url = null;
+    private SVNUrl url = null;
 
     /** the path to create */
     private File path = null;
@@ -115,7 +115,7 @@ public class Mkdir extends SvnCommand {
 	 * set the url of the new directory
 	 * @param url
 	 */
-    public void setUrl(URL url) {
+    public void setUrl(SVNUrl url) {
         this.url = url;
     }
 

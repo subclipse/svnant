@@ -55,7 +55,6 @@
 package org.tigris.subversion.svnant;
 
 import java.io.File;
-import java.net.URL;
 import java.text.ParseException;
 
 import org.apache.tools.ant.BuildException;
@@ -63,6 +62,7 @@ import org.tigris.subversion.javahl.ClientException;
 import org.tigris.subversion.javahl.Revision;
 import org.tigris.subversion.svnclientadapter.RevisionUtils;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * svn Export.   
@@ -77,7 +77,7 @@ import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
     private boolean force = false;
     
     /** the source url */
-    private URL srcUrl = null;
+    private SVNUrl srcUrl = null;
     
     /** the source path */
     private File srcPath = null;
@@ -136,7 +136,7 @@ import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
 	 * set the url to export from
 	 * @param srcUrl
 	 */
-	public void setSrcUrl(URL srcUrl) {
+	public void setSrcUrl(SVNUrl srcUrl) {
 		this.srcUrl = srcUrl;
 	}
 

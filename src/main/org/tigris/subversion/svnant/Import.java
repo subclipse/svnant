@@ -60,6 +60,7 @@ import java.net.URL;
 import org.apache.tools.ant.BuildException;
 import org.tigris.subversion.javahl.ClientException;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * @author cedric
@@ -70,7 +71,7 @@ public class Import extends SvnCommand {
     private SVNClientAdapter svnClient = null;
 
     /** the url */
-    private URL url = null;
+    private SVNUrl url = null;
 
     /** the path to import */
     private File path = null;
@@ -108,7 +109,7 @@ public class Import extends SvnCommand {
      * set the url to import to
      * @param url
      */
-    public void setUrl(URL url) {
+    public void setUrl(SVNUrl url) {
     	this.url = url;
     }
     

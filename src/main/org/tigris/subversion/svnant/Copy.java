@@ -63,6 +63,7 @@ import org.tigris.subversion.javahl.ClientException;
 import org.tigris.subversion.javahl.Revision;
 import org.tigris.subversion.svnclientadapter.RevisionUtils;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * svn Copy. Duplicate something in working copy or repos, remembering history.
@@ -73,8 +74,8 @@ import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
 public class Copy extends SvnCommand {
     private File srcPath = null;
     private File destPath = null;
-    private URL srcUrl = null;
-    private URL destUrl = null;
+    private SVNUrl srcUrl = null;
+    private SVNUrl destUrl = null;
     
     /** revision to copy from (head by default) */
     private Revision revision = Revision.HEAD; 
@@ -151,7 +152,7 @@ public class Copy extends SvnCommand {
 	 * set the url to copy from
 	 * @param srcUrl
 	 */
-    public void setSrcUrl(URL srcUrl) {
+    public void setSrcUrl(SVNUrl srcUrl) {
         this.srcUrl = srcUrl;
     }
 
@@ -159,7 +160,7 @@ public class Copy extends SvnCommand {
 	 * set the url to copy to
 	 * @param destUrl
 	 */
-    public void setDestUrl(URL destUrl) {
+    public void setDestUrl(SVNUrl destUrl) {
         this.destUrl = destUrl;
     }
 
