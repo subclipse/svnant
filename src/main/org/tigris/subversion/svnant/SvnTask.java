@@ -78,10 +78,11 @@ public class SvnTask extends Task {
     private File logFile = new File("svn.log");
     private boolean javahl = true;
     private List notifyListeners = new ArrayList();
-    private static boolean javahlAvailable = 
-        SVNClientAdapterFactory.isSVNClientAvailable(SVNClientAdapterFactory.JAVAHL_CLIENT);
-    private static boolean commandLineAvailable = 
-        SVNClientAdapterFactory.isSVNClientAvailable(SVNClientAdapterFactory.COMMANDLINE_CLIENT);
+    
+    private static boolean javahlAvailableInitialized = false;
+    private static boolean javahlAvailable;
+    private static boolean commandLineAvailableInitialized = false;
+    private static boolean commandLineAvailable;
 
     public void setUsername(String username) {
         this.username = username;
@@ -208,16 +209,44 @@ public class SvnTask extends Task {
         notifyListeners.add(notifyListener);
     }
 
+    /**
+     * check if javahl is available
+     * @return true if javahl is available
+     */
+    private boolean isJavahlAvailable() {
+    	if (javahlAvailableInitialized == false) {
+            // we don't initiliaze javahlAvailable in the static field because we
+            // don't want the check to occur if javahl is set to false
+            javahlAvailable = 
+                SVNClientAdapterFactory.isSVNClientAvailable(SVNClientAdapterFactory.JAVAHL_CLIENT);
+            javahlAvailableInitialized = true;
+        }
+        return javahlAvailable;
+    }
+    
+    /**
+     * check if command line interface is available
+     * @return true if command line interface is available
+     */
+    private boolean isCommandLineAvailable() {
+        if (commandLineAvailableInitialized == false) {
+            commandLineAvailable = 
+                SVNClientAdapterFactory.isSVNClientAvailable(SVNClientAdapterFactory.COMMANDLINE_CLIENT);
+            commandLineAvailableInitialized = true;
+        }
+        return commandLineAvailable;
+    }
+    
     public void execute() throws BuildException {
 
         ISVNClientAdapter svnClient;
         
-        if ((javahl) && (javahlAvailable)) {
+        if ((javahl) && (isJavahlAvailable())) {
             svnClient = SVNClientAdapterFactory.createSVNClient(SVNClientAdapterFactory.JAVAHL_CLIENT);
             log("Using javahl");
         }
         else
-        if (commandLineAvailable) {
+        if (isCommandLineAvailable()) {
             svnClient = SVNClientAdapterFactory.createSVNClient(SVNClientAdapterFactory.COMMANDLINE_CLIENT);
             log("Using command line interface");
         } 
