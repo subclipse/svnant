@@ -304,12 +304,19 @@
   <target name="testStatus" depends="init">
     <svn javahl="${javahl}">
       <add dir="my_repos/statusTest" recurse="false"/>
-      <commit dir="my_repos/statusTest" message="statusTest committed" recurse="ffalse"/>
+      <commit dir="my_repos/statusTest" message="statusTest committed" recurse="false"/>
+      <add dir="my_repos/statusTest/managedDir" recurse="false"/>
+      <commit dir="my_repos/statusTest/managedDir" message="statusTest/managedDir committed" recurse="false"/>
       
       <add file="my_repos/statusTest/added.txt"/>
       <ignore file="my_repos/statusTest/ignored.txt"/>
       <add file="my_repos/statusTest/committed.txt"/>
       <commit file="my_repos/statusTest/committed.txt" message="committed"/>
+      <add file="my_repos/statusTest/deleted.txt"/>
+      <commit file="my_repos/statusTest/deleted.txt" message="this file will be deleted"/>
+      <delete file="my_repos/statusTest/deleted.txt"/>
+      
+      <add file="my_repos/statusTest/managedDir/added in managed dir.txt"/>
     </svn>
   </target>
 
