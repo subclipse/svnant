@@ -30,7 +30,7 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
- * Edit test/build.properties and change urlRepos before running these tests
+ * You can set javahl to true or false in test/build.properties
  * @author Cédric Chabanois 
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  *
@@ -164,19 +164,6 @@ private ISVNClientAdapter svnClient;
         assertEquals("first line",dis.readLine());        
         assertEquals("second line",dis.readLine());
     }
-
-	public void testSvnservePasswdSucceed() throws Exception {
-		executeTarget("testSvnservePasswdSucceed");
-	}
-
-	public void testSvnservePasswdFail() throws Exception {
-		try {
-			executeTarget("testSvnservePasswdFail");
-			fail(); // it should have failed as an incorrect password has been given
-		} catch (Exception e) {
-			
-		}
-	}
 
     public void testListener() throws Exception {
         final Set addSet = new HashSet();
