@@ -159,7 +159,10 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
 		
 		properties = svnClient.getProperties(new File(WORKINGCOPY_DIR+"/propTest"));
 		assertEquals(0,properties.length);
-		
+        
+        assertEquals("image/png",getProject().getProperty("propTest.mimeType"));
+		file = new File(WORKINGCOPY_DIR+"/propTest/icon2.gif");
+        assertTrue(file.exists());
     }
 
     public void testDiff() {

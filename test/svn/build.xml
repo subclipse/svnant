@@ -200,6 +200,9 @@
       <propset path="workingcopy/propTest/file.png" name="myPicture" file="workingcopy/propTest/icon.gif"/>
       <propset path="workingcopy/propTest/file.png" name="myProperty" value="myvalue"/>
       <propdel path="workingcopy/propTest/file.png" name="myProperty"/>
+
+      <propget path="workingcopy/propTest/file.png" name="svn:mime-type" property="propTest.mimeType"/>
+      <propget path="workingcopy/propTest/file.png" name="myPicture" file="workingcopy/propTest/icon2.gif"/>
     </svn>
   </target>
 
