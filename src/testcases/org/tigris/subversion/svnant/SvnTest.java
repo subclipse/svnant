@@ -4,7 +4,11 @@
  */
 package org.tigris.subversion.svnant;
 
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.MalformedURLException;
 
 import org.apache.tools.ant.BuildFileTest;
@@ -40,52 +44,38 @@ private ISVNClientAdapter svnClient;
 		System.out.print(getLog());
 	}
 
-    public void testCheckout() {
+    public void testCheckout() throws SVNClientException {
         executeTarget("testCheckout");
-        try {
-			assertEquals(1,svnClient.getSingleStatus(new File("test/coHEAD/README.txt")).getLastChangedRevision().getNumber());
-		} catch (SVNClientException e) {
-            fail("an exception occured");
-		}
-    }
 
-	public void testList() {
-		try {
-			String urlRepos = getProject().getProperty("urlRepos");
-			ISVNDirEntry[] list = svnClient.getList(new SVNUrl(urlRepos),SVNRevision.HEAD,false);
-			assertTrue(list.length > 0);
-		} catch (SVNClientException e) {
-			fail("an exception occured");
-		} catch (MalformedURLException e) { }
-	}
-
-    public void testLog() {
-        try {
-			String urlRepos = getProject().getProperty("urlRepos");
-			ISVNLogMessage[] messages = svnClient.getLogMessages(new File("test/my_repos/README.txt"),new SVNRevision.Number(0),SVNRevision.HEAD);
-			assertEquals("initial import",messages[0].getMessage());
-		} catch (SVNClientException e) {
-            fail("an exception occured");
-		}
-    }
-
-
-    public void testAddCommit() {
-        executeTarget("testAddCommit");
-		try {
-			assertTrue(svnClient.getSingleStatus(new File("test/my_repos/toAdd/file0.add")).getLastChangedRevision().getNumber() > 0);
-		} catch (SVNClientException e) {
-            fail("an exception occured");
-		}
+		assertEquals(1,svnClient.getSingleStatus(new File("test/coHEAD/checkoutTest/readme.txt")).getLastChangedRevision().getNumber());
     }
     
-    public void testCopy() {
+
+	public void testList() throws SVNClientException,MalformedURLException {
+       executeTarget("testList");
+	   String urlRepos = getProject().getProperty("urlRepos");
+	   ISVNDirEntry[] list = svnClient.getList(new SVNUrl(urlRepos+"/listTest"),SVNRevision.HEAD,false);
+	   assertTrue(list.length > 0);
+	}
+
+
+    public void testLog() throws SVNClientException {
+        executeTarget("testLog");
+		String urlRepos = getProject().getProperty("urlRepos");
+		ISVNLogMessage[] messages = svnClient.getLogMessages(new File("test/my_repos/logTest/file1.txt"),new SVNRevision.Number(0),SVNRevision.HEAD);
+        assertTrue(messages.length > 0);
+		assertEquals("logTest directory added to repository",messages[0].getMessage());
+    }
+
+    public void testAddCommit() throws SVNClientException {
+       executeTarget("testAddCommit");
+	   assertTrue(svnClient.getSingleStatus(new File("test/my_repos/addCommitTest/file0.add")).getLastChangedRevision().getNumber() > 0);
+    }
+
+    
+    public void testCopy() throws SVNClientException {
     	executeTarget("testCopy");
-		try {
-			assertTrue(svnClient.getSingleStatus(new File("test/my_repos/copyTest/copy1")).getLastChangedRevision().getNumber() > 0);
-		} catch (SVNClientException e) {
-            fail("an exception occured");
-		}
+		assertTrue(svnClient.getSingleStatus(new File("test/my_repos/copyTest/copy1")).getLastChangedRevision().getNumber() > 0);
     } 
 
 	public void testDelete() {
@@ -101,37 +91,26 @@ private ISVNClientAdapter svnClient;
 	public void testImport() {
 		executeTarget("testImport");
 	} 
+
 	
-	public void testMkdir() {
+	public void testMkdir() throws SVNClientException {
 		executeTarget("testMkdir");
-		try {
-			assertTrue(svnClient.getSingleStatus(new File("test/my_repos/testMkdir2")).getLastChangedRevision().getNumber() > 0);
-		} catch (SVNClientException e) {
-            fail("an exception occured");
-		}
-	} 
+		assertTrue(svnClient.getSingleStatus(new File("test/my_repos/mkdirTest/testMkdir2")).getLastChangedRevision().getNumber() > 0);
+    } 
 	
-	public void testMove() {
+	public void testMove() throws SVNClientException {
 		executeTarget("testMove");
-		try {
-			assertTrue(svnClient.getSingleStatus(new File("test/my_repos/moveTest/dir1Renamed")).getLastChangedRevision().getNumber() > 0);
-		} catch (SVNClientException e) {
-            fail("an exception occured");
-		}
+		assertTrue(svnClient.getSingleStatus(new File("test/my_repos/moveTest/dir1Renamed")).getLastChangedRevision().getNumber() > 0);
 	}
    
-    public void testProp() {
+    public void testProp() throws SVNClientException {
         executeTarget("testProp");
-        try {
-            ISVNProperty propData = svnClient.propertyGet(new File("test/my_repos/propTest/file.png"),"svn:mime-type");
-            assertTrue(propData != null);
-            assertEquals("image/png",propData.getValue());
-            propData = svnClient.propertyGet(new File("test/my_repos/propTest/file.png"),"myPicture");
-            assertTrue(propData != null);
-            assertEquals(170,propData.getData().length);
-        } catch (SVNClientException e) {
-            fail("an exception occured");
-        }
+        ISVNProperty propData = svnClient.propertyGet(new File("test/my_repos/propTest/file.png"),"svn:mime-type");
+        assertTrue(propData != null);
+        assertEquals("image/png",propData.getValue());
+        propData = svnClient.propertyGet(new File("test/my_repos/propTest/file.png"),"myPicture");
+        assertTrue(propData != null);
+        assertEquals(170,propData.getData().length);
     }
 
     public void testDiff() {
@@ -139,6 +118,15 @@ private ISVNClientAdapter svnClient;
         File patchFile = new File("test/my_repos/diffTest/patch.txt");
         assertTrue(patchFile.exists());
         assertTrue(patchFile.length() > 0);
+    }
+    
+    
+    public void testKeywords() throws FileNotFoundException, IOException {
+        executeTarget("testKeywords");
+        DataInputStream dis = new DataInputStream(new FileInputStream("test/my_repos/keywordsTest/file.txt")); 
+        assertEquals("$LastChangedRevision: 1 $",dis.readLine());
+        assertEquals("$Author: cedric $",dis.readLine());
+        assertEquals("$Id$",dis.readLine());
     }
 
     public static void main(String[] args) {

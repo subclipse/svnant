@@ -35,18 +35,29 @@
     <copy todir="my_repos">
       <fileset dir="model"/>
     </copy>
-    
-    <svn>
-      <add dir="my_repos/copyTest"/>
-      <add dir="my_repos/deleteTest"/>
-      <add dir="my_repos/moveTest"/>
-      <add dir="my_repos/propTest"/>
-      <commit message="initial import" dir="my_repos"/>
-    </svn>
   </target>
+
+  <!-- this test does not test svnant but svnClientAdapter -->
+  <target name="testList" depends="init">
+	  <svn>
+		  <add dir="my_repos/listTest"/>
+		  <commit dir="my_repos/listTest" message="listTest directory added to repository"/>	
+		</svn>
+	</target>
+
+  <!-- this test does not test svnant but svnClientAdapter -->
+  <target name="testLog" depends="init">
+	  <svn>
+		  <add dir="my_repos/logTest"/>
+		  <commit dir="my_repos/logTest" message="logTest directory added to repository"/>	
+		</svn>
+	</target>
 
   <target name="testCheckout" depends="init">
     <svn>
+		  <add dir="my_repos/checkoutTest"/>
+			<commit dir="my_repos/checkoutTest" message="checkoutTest directory added to repository"/>
+			
       <checkout url="${urlRepos}" revision="HEAD" destPath="coHEAD" />
       <checkout url="${urlRepos}" revision="0" destPath="co0" />
     </svn>
@@ -70,6 +81,9 @@
 
   <target name="testCopy" depends="init">
     <svn>
+      <add dir="my_repos/copyTest"/>
+			<commit message="copyTest added" dir="my_repos/copyTest"/>
+			
       <copy srcPath="my_repos/copyTest/toCopy" destPath="my_repos/copyTest/copy1" />
       <commit message="commit moved files" dir="my_repos/copyTest"/>
       <copy srcUrl="${urlRepos}/copyTest/toCopy" destUrl="${urlRepos}/copyTest/copy2" message="directory copied" />
@@ -78,6 +92,9 @@
 
   <target name="testDelete" depends="init">
     <svn>
+ 	 	  <add dir="my_repos/deleteTest"/>
+			<commit message="deleteTest added" dir="my_repos/deleteTest"/>
+		
       <delete url="${urlRepos}/deleteTest/deleteFromRepository" message="deleted for test" />
       <delete>
         <fileset dir="my_repos/deleteTest">
@@ -90,6 +107,9 @@
 
   <target name="testExport" depends="init">
     <svn>
+		  <add dir="my_repos/exportTest"/>
+			<commit message="exportTest added" dir="my_repos/exportTest"/>
+			
       <export srcUrl="${urlRepos}" revision="1" destPath="export1"/>
     </svn>
   </target>
@@ -102,14 +122,20 @@
 
   <target name="testMkdir" depends="init">
     <svn>
-      <mkdir url="${urlRepos}/testMkdir1" message="test mkdir 1"/>
-      <mkdir path="my_repos/testMkdir2"/>
-      <commit dir="my_repos/testMkdir2" message="test mkdir 2"/>
+		  <add dir="my_repos/mkdirTest"/>
+			<commit message="mkdirTest added" dir="my_repos/mkdirTest"/>
+			
+      <mkdir url="${urlRepos}/mkdirTest/testMkdir1" message="test mkdir 1"/>
+      <mkdir path="my_repos/mkdirTest/testMkdir2"/>
+      <commit dir="my_repos/mkdirTest/testMkdir2" message="test mkdir 2"/>
     </svn>
   </target>
 
   <target name="testMove" depends="init">
     <svn>
+      <add dir="my_repos/moveTest"/>
+			<commit message="moveTest added" dir="my_repos/moveTest"/>
+			
       <move srcpath="my_repos/moveTest/dir1ToRename" destpath="my_repos/moveTest/dir1Renamed"/>
       <move srcUrl="${urlRepos}/moveTest/dir2ToRename" 
             destUrl="${urlRepos}/moveTest/dir2Renamed"
@@ -120,6 +146,9 @@
 
   <target name="testProp" depends="init">
     <svn>
+      <add dir="my_repos/propTest"/>
+			<commit message="propTest added" dir="my_repos/propTest"/>
+		
       <propset path="my_repos/propTest/file.png" name="svn:mime-type" value="image/png"/>
       <propset path="my_repos/propTest/file.png" name="myPicture" file="my_repos/propTest/icon.gif"/>
     </svn>
@@ -135,6 +164,16 @@
     <copy file="my_repos/diffTest/file.txt.version2" tofile="my_repos/diffTest/file.txt" overwrite="true"/>    
     <svn>
       <diff oldPath="my_repos/diffTest/file.txt" outFile="my_repos/diffTest/patch.txt"/>
+    </svn>
+  </target>
+
+  <target name="testKeywords" depends="init">
+    <svn username="cedric">
+      <add dir="my_repos/keywordsTest"/>
+      <keywordsset file="my_repos/keywordsTest/file.txt" keywords="LastChangedRevision"/> 
+      <keywordsadd file="my_repos/keywordsTest/file.txt" keywords="Author Id"/>
+      <keywordsremove file="my_repos/keywordsTest/file.txt" keywords="Id"/>
+      <commit dir="my_repos/keywordsTest" message="file.txt commited"/>
     </svn>
   </target>
 
