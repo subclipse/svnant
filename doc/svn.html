@@ -5,7 +5,7 @@
 	<TITLE>Svn Task</TITLE>
 	<META NAME="GENERATOR" CONTENT="OpenOffice.org 1.1.0  (Win32)">
 	<META NAME="CREATED" CONTENT="20031019;22355182">
-	<META NAME="CHANGED" CONTENT="20031228;21024346">
+	<META NAME="CHANGED" CONTENT="20040331;20381746">
 	<META HTTP-EQUIV="Content-Language" CONTENT="en-us">
 </HEAD>
 <BODY LANG="en-US" DIR="LTR">
@@ -481,6 +481,129 @@ repository via an immediate commit.</P>
 <P><BR>Parameters specified as nested elements :<BR><BR>fileset<BR>Filesets
 are used to select sets of files to delete.. 
 </P>
+<H4>diff</H4>
+<P>Display the differences between two paths (oldPath and newPath) or
+two urls (oldUrl and newUrl).</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<TABLE WIDTH=1530 BORDER=2 CELLPADDING=2 CELLSPACING=0>
+	<COL WIDTH=191>
+	<COL WIDTH=1160>
+	<COL WIDTH=163>
+	<TR>
+		<TD WIDTH=191 VALIGN=TOP>
+			<P><B>Attribute</B></P>
+		</TD>
+		<TD WIDTH=1160>
+			<P><B>Description</B></P>
+		</TD>
+		<TD WIDTH=163 VALIGN=TOP>
+			<P><B>Required</B></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=191 VALIGN=TOP>
+			<P>oldPath</P>
+		</TD>
+		<TD WIDTH=1160>
+			<P>If oldUrl is not set, defaults to the path '.'</P>
+		</TD>
+		<TD WIDTH=163>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=191>
+			<P>oldUrl</P>
+		</TD>
+		<TD WIDTH=1160>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=163>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=191>
+			<P>oldTargetRevision</P>
+		</TD>
+		<TD WIDTH=1160>
+			<P>defaults to BASE or, if oldUrl is set, to HEAD</P>
+		</TD>
+		<TD WIDTH=163>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=191>
+			<P>newPath</P>
+		</TD>
+		<TD WIDTH=1160>
+			<P>defaults to oldPath if oldUrl is not set</P>
+		</TD>
+		<TD WIDTH=163>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=191>
+			<P>newUrl</P>
+		</TD>
+		<TD WIDTH=1160>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=163>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=191>
+			<P>newTargetRevision</P>
+		</TD>
+		<TD WIDTH=1160>
+			<P>defaults to the current working version or, if newUrl is set,
+			to HEAD</P>
+		</TD>
+		<TD WIDTH=163>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=191>
+			<P>outFile</P>
+		</TD>
+		<TD WIDTH=1160>
+			<P ALIGN=LEFT>Default is 'patch'</P>
+		</TD>
+		<TD WIDTH=163>
+			<P ALIGN=CENTER>No<BR><BR>
+			</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=191>
+			<P>recurse</P>
+		</TD>
+		<TD WIDTH=1160>
+			<P>Set to &quot;false&quot; to operate on single directory only.
+			Default is &quot;true&quot;</P>
+		</TD>
+		<TD WIDTH=163>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><BR><BR>
+</P>
+<P>Example : diff between BASE and current working version</P>
+<P STYLE="margin-bottom: 0cm">   <FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;svn</FONT>
+<FONT COLOR="#000080">javahl=</FONT><FONT COLOR="#008000">&quot;${javahl}&quot;</FONT><FONT COLOR="#000080">&gt;</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0cm">      <FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;diff</FONT>
+<FONT COLOR="#000080">oldPath=</FONT><FONT COLOR="#008000">&quot;workingcopy/diffTest/file.txt&quot;</FONT>
+<FONT COLOR="#000080">outFile=</FONT><FONT COLOR="#008000">&quot;workingcopy/diffTest/patch.txt&quot;</FONT><FONT COLOR="#000080">/&gt;</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0cm">   <FONT SIZE=2><FONT FACE="Courier New"><FONT COLOR="#000080">&lt;/svn&gt;</FONT></FONT></FONT></P>
 <H4>export</H4>
 <P>&nbsp; 1. Exports a clean directory tree from the repository
 specified by <CODE>srcurl</CODE>, at revision <CODE>revision </CODE>if
@@ -548,6 +671,77 @@ not be copied.</P>
 </TABLE>
 <P><BR><BR>
 </P>
+<H4>ignore</H4>
+<P>Add a given file or a pattern to the ignored files list (modifies
+svn:ignore property)</P>
+<TABLE WIDTH=1275 BORDER=2 CELLPADDING=2 CELLSPACING=0>
+	<COL WIDTH=147>
+	<COL WIDTH=990>
+	<COL WIDTH=121>
+	<TR>
+		<TD WIDTH=147 VALIGN=TOP>
+			<P><B>Attribute</B></P>
+		</TD>
+		<TD WIDTH=990>
+			<P><B>Description</B></P>
+		</TD>
+		<TD WIDTH=121 VALIGN=TOP>
+			<P><B>Required</B></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=147 VALIGN=TOP>
+			<P>file 
+			</P>
+		</TD>
+		<TD WIDTH=990>
+			<P>file to ignore 
+			</P>
+		</TD>
+		<TD ROWSPAN=2 WIDTH=121>
+			<P ALIGN=CENTER>One of the two</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=147>
+			<P>dir 
+			</P>
+		</TD>
+		<TD WIDTH=990>
+			<P>directory on which we will update svn:ignore property</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=147>
+			<P>pattern</P>
+		</TD>
+		<TD WIDTH=990>
+			<P>pattern to add to svn:ignore on the directory<BR>Only when dir
+			is set</P>
+		</TD>
+		<TD WIDTH=121>
+			<P ALIGN=CENTER>Yes</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=147>
+			<P>recurse</P>
+		</TD>
+		<TD WIDTH=990>
+			<P>Set to &quot;true&quot; to add the pattern recursively to
+			directories. Default is &quot;false&quot;<BR>Only when dir is set</P>
+		</TD>
+		<TD WIDTH=121>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+</TABLE>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P>Example :<BR> <FONT SIZE=2><FONT FACE="Courier New"><FONT COLOR="#000080">&lt;ignore</FONT>
+<FONT COLOR="#000080">dir=</FONT><FONT COLOR="#008000">&quot;workingcopy/ignoreTest/dir1&quot;</FONT>
+<FONT COLOR="#000080">pattern=</FONT><FONT COLOR="#008000">&quot;*.ignore&quot;</FONT>
+<FONT COLOR="#000080">recurse=</FONT><FONT COLOR="#008000">&quot;true&quot;</FONT><FONT COLOR="#000080">/&gt;</FONT></FONT></FONT></P>
 <H4>import</H4>
 <P>Commit an unversioned file or tree into the
 repository.<BR>Recursively commit a copy of <CODE>path</CODE> to
@@ -1152,14 +1346,13 @@ dir=&quot;my_repos/deleteTest&quot;&gt;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&
 &lt;commit message=&quot;commit deleted files&quot;
 dir=&quot;my_repos/deleteTest&quot;/&gt;<BR>&nbsp;&nbsp;&nbsp; &lt;/svn&gt;</CODE></P>
 <P>deletes some files from repository (and commit changes)</P>
-<P>  <FONT FACE="Courier New, monospace">&lt;svn javahl=&quot;false&quot;&gt;<BR>
-   &lt;add dir=&quot;my_repos/propTest&quot;/&gt;<BR>    &lt;commit
-message=&quot;propTest added&quot; dir=&quot;my_repos/propTest&quot;/&gt;<BR>
-   &lt;propset path=&quot;my_repos/propTest/file.png&quot;
-name=&quot;svn:mime-type&quot; value=&quot;image/png&quot;/&gt;<BR>  
- &lt;propset path=&quot;my_repos/propTest/file.png&quot;
-name=&quot;myPicture&quot; file=&quot;my_repos/propTest/icon.gif&quot;/&gt;<BR>
- &lt;/svn&gt;</FONT></P>
+<P><FONT FACE="Courier New, monospace">&lt;svn javahl=&quot;false&quot;&gt;<BR>&lt;add
+dir=&quot;my_repos/propTest&quot;/&gt;<BR>&lt;commit
+message=&quot;propTest added&quot; dir=&quot;my_repos/propTest&quot;/&gt;<BR>&lt;propset
+path=&quot;my_repos/propTest/file.png&quot; name=&quot;svn:mime-type&quot;
+value=&quot;image/png&quot;/&gt;<BR>&lt;propset
+path=&quot;my_repos/propTest/file.png&quot; name=&quot;myPicture&quot;
+file=&quot;my_repos/propTest/icon.gif&quot;/&gt;<BR>&lt;/svn&gt;</FONT></P>
 <P>add my_repos/propTest to repository and set two properties on
 file.png<BR>subversion command line interface is used
 (javahl=&rdquo;false&rdquo;).</P>
