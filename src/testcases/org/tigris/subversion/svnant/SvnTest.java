@@ -33,6 +33,8 @@ import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNScheduleKind;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
+import org.tigris.subversion.svnclientadapter.commandline.CmdLineClientAdapterFactory;
+import org.tigris.subversion.svnclientadapter.javahl.JhlClientAdapterFactory;
 
 /**
  * You can set javahl to true or false in test/build.properties
@@ -48,6 +50,21 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
         super(name);
     }
 
+    static {
+        try {
+            JhlClientAdapterFactory.setup();
+        } catch (SVNClientException e) {
+            // if an exception is thrown, javahl is not available or 
+            // already registered ...
+        }
+        try {
+            CmdLineClientAdapterFactory.setup();
+        } catch (SVNClientException e) {
+            // if an exception is thrown, command line interface is not available or
+            // already registered ...                
+        }
+    }
+    
     public void setUp() {
         configureProject("test/svn/build.xml");
         boolean javahl = true;
@@ -55,11 +72,11 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
         if (javahlProp != null)
             javahl = getProject().getProperty("javahl").equalsIgnoreCase("true");
         
-        if ((javahl) && (SVNClientAdapterFactory.isSVNClientAvailable(SVNClientAdapterFactory.JAVAHL_CLIENT))) {        
-    		svnClient = SVNClientAdapterFactory.createSVNClient(SVNClientAdapterFactory.JAVAHL_CLIENT);
+        if ((javahl) && (SVNClientAdapterFactory.isSVNClientAvailable(JhlClientAdapterFactory.JAVAHL_CLIENT))) {        
+    		svnClient = SVNClientAdapterFactory.createSVNClient(JhlClientAdapterFactory.JAVAHL_CLIENT);
         }
         else
-            svnClient = SVNClientAdapterFactory.createSVNClient(SVNClientAdapterFactory.COMMANDLINE_CLIENT);
+            svnClient = SVNClientAdapterFactory.createSVNClient(CmdLineClientAdapterFactory.COMMANDLINE_CLIENT);
     }
 
 	public void tearDown()
@@ -266,7 +283,6 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
         assertTrue(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/ignoreTest/dir1/dir2/file3.ignore")).isIgnored());        
     }
 
-
     public void testSingleStatus() throws Exception {
         executeTarget("testStatus");
         assertTrue(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/statusTest/added.txt")).isAdded());
@@ -388,10 +404,10 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
 		
 		// this does not work for now because working copy dir needs to be updated
 		// before
-/*		dirEntry = svnClient.getDirEntry(new File(WORKINGCOPY_DIR+"/entryTest/"),SVNRevision.BASE);
-		assertNotNull(dirEntry);
-		assertEquals(SVNNodeKind.DIR,dirEntry.getNodeKind());
-		assertEquals("entryTest",dirEntry.getPath());*/		
+//		dirEntry = svnClient.getDirEntry(new File(WORKINGCOPY_DIR+"/entryTest/"),SVNRevision.BASE);
+//		assertNotNull(dirEntry);
+//		assertEquals(SVNNodeKind.DIR,dirEntry.getNodeKind());
+//		assertEquals("entryTest",dirEntry.getPath());		
 	}
 
 	public void testResolve() throws Exception {
@@ -424,15 +440,16 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
 		assertEquals("line 1\nline 2\nline 3", new String(bytes));
 		
 	}
-/*	
-    public void testRepositoryRoot() throws Exception {
-        executeTarget("testRepositoryRoot");
-        String urlRepos = getProject().getProperty("urlRepos");
-        SVNUrl url = svnClient.getRepositoryRoot(
-                new SVNUrl(urlRepos+"/entryTest/"));
-        assertEquals(new SVNUrl(urlRepos),url);
-    }
-*/
+    
+	
+//    public void testRepositoryRoot() throws Exception {
+//        executeTarget("testRepositoryRoot");
+//        String urlRepos = getProject().getProperty("urlRepos");
+//        SVNUrl url = svnClient.getRepositoryRoot(
+//                new SVNUrl(urlRepos+"/entryTest/"));
+//        assertEquals(new SVNUrl(urlRepos),url);
+//    }
+
     
     public void testSwitch() throws Exception {
     	executeTarget("testSwitch");

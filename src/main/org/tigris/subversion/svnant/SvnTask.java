@@ -63,6 +63,9 @@ import org.apache.tools.ant.Task;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNNotifyListener;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
+import org.tigris.subversion.svnclientadapter.commandline.CmdLineClientAdapterFactory;
+import org.tigris.subversion.svnclientadapter.javahl.JhlClientAdapterFactory;
 
 /**
  * Svn Task
@@ -217,8 +220,14 @@ public class SvnTask extends Task {
     	if (javahlAvailableInitialized == false) {
             // we don't initiliaze javahlAvailable in the static field because we
             // don't want the check to occur if javahl is set to false
+            try {
+                JhlClientAdapterFactory.setup();
+            } catch (SVNClientException e) {
+                // if an exception is thrown, javahl is not available or 
+                // already registered ...
+            }
             javahlAvailable = 
-                SVNClientAdapterFactory.isSVNClientAvailable(SVNClientAdapterFactory.JAVAHL_CLIENT);
+                SVNClientAdapterFactory.isSVNClientAvailable(JhlClientAdapterFactory.JAVAHL_CLIENT);
             javahlAvailableInitialized = true;
         }
         return javahlAvailable;
@@ -230,8 +239,14 @@ public class SvnTask extends Task {
      */
     private boolean isCommandLineAvailable() {
         if (commandLineAvailableInitialized == false) {
+            try {
+                CmdLineClientAdapterFactory.setup();
+            } catch (SVNClientException e) {
+                // if an exception is thrown, command line interface is not available or
+                // already registered ...                
+            }
             commandLineAvailable = 
-                SVNClientAdapterFactory.isSVNClientAvailable(SVNClientAdapterFactory.COMMANDLINE_CLIENT);
+                SVNClientAdapterFactory.isSVNClientAvailable(CmdLineClientAdapterFactory.COMMANDLINE_CLIENT);
             commandLineAvailableInitialized = true;
         }
         return commandLineAvailable;
@@ -242,12 +257,12 @@ public class SvnTask extends Task {
         ISVNClientAdapter svnClient;
         
         if ((javahl) && (isJavahlAvailable())) {
-            svnClient = SVNClientAdapterFactory.createSVNClient(SVNClientAdapterFactory.JAVAHL_CLIENT);
+            svnClient = SVNClientAdapterFactory.createSVNClient(JhlClientAdapterFactory.JAVAHL_CLIENT);
             log("Using javahl");
         }
         else
         if (isCommandLineAvailable()) {
-            svnClient = SVNClientAdapterFactory.createSVNClient(SVNClientAdapterFactory.COMMANDLINE_CLIENT);
+            svnClient = SVNClientAdapterFactory.createSVNClient(CmdLineClientAdapterFactory.COMMANDLINE_CLIENT);
             log("Using command line interface");
         } 
         else
