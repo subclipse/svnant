@@ -36,7 +36,13 @@ private ISVNClientAdapter svnClient;
 
     public void setUp() {
         configureProject("test/build.xml");
-		svnClient = SVNClientAdapterFactory.createSVNClient(SVNClientAdapterFactory.JAVAHL_CLIENT);
+        boolean javahl = getProject().getProperty("javahl").equalsIgnoreCase("true");
+        
+        if ((javahl) && (SVNClientAdapterFactory.isSVNClientAvailable(SVNClientAdapterFactory.JAVAHL_CLIENT))) {        
+    		svnClient = SVNClientAdapterFactory.createSVNClient(SVNClientAdapterFactory.JAVAHL_CLIENT);
+        }
+        else
+            svnClient = SVNClientAdapterFactory.createSVNClient(SVNClientAdapterFactory.COMMANDLINE_CLIENT);
     }
 
 	public void tearDown()

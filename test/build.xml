@@ -27,7 +27,7 @@
     </copy>
     
     <!-- then we checkout it to my_repos -->
-    <svn>
+    <svn javahl="${javahl}">
       <checkout url="${urlRepos}" destPath="my_repos" />
     </svn>
     
@@ -39,7 +39,7 @@
 
   <!-- this test does not test svnant but svnClientAdapter -->
   <target name="testList" depends="init">
-	  <svn>
+	  <svn javahl="${javahl}">
 		  <add dir="my_repos/listTest"/>
 		  <commit dir="my_repos/listTest" message="listTest directory added to repository"/>	
 		</svn>
@@ -47,14 +47,14 @@
 
   <!-- this test does not test svnant but svnClientAdapter -->
   <target name="testLog" depends="init">
-	  <svn>
+	  <svn javahl="${javahl}">
 		  <add dir="my_repos/logTest"/>
 		  <commit dir="my_repos/logTest" message="logTest directory added to repository"/>	
 		</svn>
 	</target>
 
   <target name="testCheckout" depends="init">
-    <svn>
+    <svn javahl="${javahl}">
 		  <add dir="my_repos/checkoutTest"/>
 			<commit dir="my_repos/checkoutTest" message="checkoutTest directory added to repository"/>
 			
@@ -64,7 +64,7 @@
   </target>
 
   <target name="testAddCommit" depends="init">
-    <svn>
+    <svn javahl="${javahl}">
       <add>
         <fileset dir="my_repos">
           <include name="**/*.add"/>
@@ -80,7 +80,7 @@
   </target>
 
   <target name="testCopy" depends="init">
-    <svn>
+    <svn javahl="${javahl}">
       <add dir="my_repos/copyTest"/>
 			<commit message="copyTest added" dir="my_repos/copyTest"/>
 			
@@ -91,7 +91,7 @@
   </target>
 
   <target name="testDelete" depends="init">
-    <svn>
+    <svn javahl="${javahl}">
  	 	  <add dir="my_repos/deleteTest"/>
 			<commit message="deleteTest added" dir="my_repos/deleteTest"/>
 		
@@ -106,25 +106,23 @@
   </target>
 
   <target name="testExport" depends="init">
-    <svn>
-		  <add dir="my_repos/exportTest"/>
-			<commit message="exportTest added" dir="my_repos/exportTest"/>
-			
+    <svn javahl="${javahl}">
+      <add dir="my_repos/exportTest"/>
+      <commit message="exportTest added" dir="my_repos/exportTest"/>
       <export srcUrl="${urlRepos}" revision="1" destPath="export1"/>
     </svn>
   </target>
 
   <target name="testImport" depends="init">
-    <svn logLevel="3">
+    <svn logLevel="3" javahl="${javahl}">
       <import url="${urlRepos}/" path="model/importTest" message="importTest imported"/>
     </svn>
   </target>
 
   <target name="testMkdir" depends="init">
-    <svn>
-		  <add dir="my_repos/mkdirTest"/>
-			<commit message="mkdirTest added" dir="my_repos/mkdirTest"/>
-			
+    <svn javahl="${javahl}">
+      <add dir="my_repos/mkdirTest"/>
+      <commit message="mkdirTest added" dir="my_repos/mkdirTest"/>
       <mkdir url="${urlRepos}/mkdirTest/testMkdir1" message="test mkdir 1"/>
       <mkdir path="my_repos/mkdirTest/testMkdir2"/>
       <commit dir="my_repos/mkdirTest/testMkdir2" message="test mkdir 2"/>
@@ -132,10 +130,9 @@
   </target>
 
   <target name="testMove" depends="init">
-    <svn>
+    <svn javahl="${javahl}">
       <add dir="my_repos/moveTest"/>
-			<commit message="moveTest added" dir="my_repos/moveTest"/>
-			
+      <commit message="moveTest added" dir="my_repos/moveTest"/>
       <move srcpath="my_repos/moveTest/dir1ToRename" destpath="my_repos/moveTest/dir1Renamed"/>
       <move srcUrl="${urlRepos}/moveTest/dir2ToRename" 
             destUrl="${urlRepos}/moveTest/dir2Renamed"
@@ -145,9 +142,9 @@
   </target>
 
   <target name="testProp" depends="init">
-    <svn>
+    <svn javahl="${javahl}">
       <add dir="my_repos/propTest"/>
-			<commit message="propTest added" dir="my_repos/propTest"/>
+      <commit message="propTest added" dir="my_repos/propTest"/>
 		
       <propset path="my_repos/propTest/file.png" name="svn:mime-type" value="image/png"/>
       <propset path="my_repos/propTest/file.png" name="myPicture" file="my_repos/propTest/icon.gif"/>
@@ -156,19 +153,19 @@
 
   <target name="testDiff" depends="init">
     <copy file="my_repos/diffTest/file.txt.version1" tofile="my_repos/diffTest/file.txt"/>
-    <svn>
+    <svn javahl="${javahl}">
       <add dir="my_repos/diffTest" recurse="false"/>
       <add file="my_repos/diffTest/file.txt"/>
       <commit dir="my_repos/diffTest" message="diffTest/file.txt added to repository"/>
     </svn>
     <copy file="my_repos/diffTest/file.txt.version2" tofile="my_repos/diffTest/file.txt" overwrite="true"/>    
-    <svn>
+    <svn javahl="${javahl}">
       <diff oldPath="my_repos/diffTest/file.txt" outFile="my_repos/diffTest/patch.txt"/>
     </svn>
   </target>
 
   <target name="testKeywords" depends="init">
-    <svn username="cedric">
+    <svn username="cedric" javahl="${javahl}">
       <add dir="my_repos/keywordsTest"/>
       <keywordsset file="my_repos/keywordsTest/file.txt" keywords="LastChangedRevision"/> 
       <keywordsadd file="my_repos/keywordsTest/file.txt" keywords="Author Id"/>

@@ -74,6 +74,11 @@ public class SvnTask extends Task {
     private Vector commands = new Vector();
     private int logLevel = 0;
     private File logFile = new File("svn.log");
+    private boolean javahl = true;
+    private static boolean javahlAvailable = 
+        SVNClientAdapterFactory.isSVNClientAvailable(SVNClientAdapterFactory.JAVAHL_CLIENT);
+    private static boolean commandLineAvailable = 
+        SVNClientAdapterFactory.isSVNClientAvailable(SVNClientAdapterFactory.COMMANDLINE_CLIENT);
 
     public void setUsername(String username) {
         this.username = username;
@@ -81,6 +86,14 @@ public class SvnTask extends Task {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    /**
+     * set javahl to false to use command line interface
+     * @param javahl
+     */
+    public void setJavahl(boolean javahl) {
+        this.javahl = javahl;
     }
 
 	public void setLogLevel(int logLevel) {
@@ -157,10 +170,19 @@ public class SvnTask extends Task {
     }    
 
     public void execute() throws BuildException {
-    	
-    	// this must be done before creating client !
 
-        ISVNClientAdapter svnClient = SVNClientAdapterFactory.createSVNClient(SVNClientAdapterFactory.JAVAHL_CLIENT);
+        ISVNClientAdapter svnClient;
+        
+        if ((javahl) && (javahlAvailable)) {
+            svnClient = SVNClientAdapterFactory.createSVNClient(SVNClientAdapterFactory.JAVAHL_CLIENT);
+        }
+        else
+        if (commandLineAvailable) {
+            svnClient = SVNClientAdapterFactory.createSVNClient(SVNClientAdapterFactory.COMMANDLINE_CLIENT);
+        } 
+        else
+            throw new BuildException("Cannot use javahl nor command line svn client");
+        
 
         if (username != null)
             svnClient.setUsername(username);
