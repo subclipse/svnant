@@ -1,3 +1,7 @@
+* 0.8.6
+- improvements to command line interface to subversion
+  (should work better on Linux)
+
 * 0.8.5
 - linked with subversion 0.35.1 and Berkeley DB 4.2.52
 - improvements to command line interface to subversion
