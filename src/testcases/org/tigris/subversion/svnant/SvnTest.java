@@ -133,7 +133,6 @@ private ISVNClientAdapter svnClient;
         assertTrue(patchFile.length() > 0);
     }
     
-    
     public void testKeywords() throws FileNotFoundException, IOException {
         executeTarget("testKeywords");
         DataInputStream dis = new DataInputStream(new FileInputStream("test/my_repos/keywordsTest/file.txt")); 
@@ -158,6 +157,19 @@ private ISVNClientAdapter svnClient;
         assertEquals("first line",dis.readLine());        
         assertEquals("second line",dis.readLine());
     }
+
+	public void testSvnservePasswdSucceed() throws Exception {
+		executeTarget("testSvnservePasswdSucceed");
+	}
+
+	public void testSvnservePasswdFail() throws Exception {
+		try {
+			executeTarget("testSvnservePasswdFail");
+			fail(); // it should have failed as an incorrect password has been given
+		} catch (Exception e) {
+			
+		}
+	}
 
 
     public static void main(String[] args) {

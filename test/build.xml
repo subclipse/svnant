@@ -7,10 +7,14 @@
   
   <property file="build.properties" /> 
 
- <!-- if urlRepos is not defined in build.properties, we define it here -->
+ <!-- if urlRepos is not defined in build.properties, we define it here 
+       urlRepos is the url of the repository that will be used for most tests
+   -->
   <property name="testReposPath" location="test_repos" />
   <property name="urlRepos" value="file:///${testReposPath}" />  
-
+  
+  <!-- we need a repository for svnserve specific tests -->
+  <property name="urlReposSvnserve" value="svn://localhost"/>
 
   <path id="project.classpath">
     <pathelement location="${javahl.jar}" /> 
@@ -22,33 +26,68 @@
 
   <target name="clean">
     <delete dir="my_repos"/>
-    <delete dir="test_repos"/>  
     <delete dir="coHEAD"/>
     <delete dir="co0"/>
     <delete dir="export1"/>
+    <delete dir="my_repos_svnserve"/>
   </target>
 
-  <target name="init" depends="clean">
-    <echo>using svnadmin to create repository (you need it in your path) ...</echo>
+
+ 
+  <!-- create the test repository -->
+  <target name="createTestRepository">
+    <echo>using svnadmin to create repositories (you need it in your path) ...</echo>
+    <delete dir="test_repos"/>  
     <exec executable="svnadmin" failonerror="true">
       <arg value="create"/>
       <arg value="test_repos"/>
     </exec>
+  </target>
 
-    <!-- first we copy the initial repository created using svnadmin to test_repos -->
-<!--    <copy todir="test_repos">
-      <fileset dir="initialRepos-linux"/>
-    </copy>
-    -->
-    <!-- then we checkout it to my_repos -->
+  <!-- create the svnserve test repository -->
+  <target name="createTestSvnServeRepository">
+    <echo>using svnadmin to create repositories (you need it in your path) ...</echo>
+    <delete dir="test_repos_svnserve"/>
+    <exec executable="svnadmin" failonerror="true">
+      <arg value="create"/>
+      <arg value="test_repos_svnserve"/>
+    </exec>
+    <copy file="svnserve.conf" todir="test_repos_svnserve/conf" overwrite="true"/>
+    <copy file="passwd" todir="test_repos_svnserve/conf" overwrite="true"/>
+  </target>  
+
+  <!-- init target is executed before each other "test"Target -->
+  <target name="init" depends="clean, createTestRepository">
+    <!-- we checkout it to my_repos -->
     <mkdir dir="my_repos"/>
     <svn javahl="${javahl}">
       <checkout url="${urlRepos}" destPath="my_repos" />
     </svn>
-
     <!-- we copy the model to my_repos -->
     <copy todir="my_repos">
       <fileset dir="model"/>
+    </copy>
+  </target>
+
+  <!-- for now we launch it in daemon mode, so you will need to kill it after -->
+  <target name="launchSvnserve" depends="createTestSvnServeRepository">
+    <!-- if it fails, we assume svnserve is already running ... -->
+    <exec executable="svnserve" failonerror="false">
+      <arg value="-d"/>
+      <arg value="-r"/>
+      <arg value="test_repos_svnserve"/>
+    </exec>
+  </target>
+
+  <!-- initSvnserve is executed before each other specific svnserve test targets -->
+  <target name="initSvnserve" depends="clean,createTestSvnServeRepository,launchSvnserve">
+    <mkdir dir="my_repos_svnserve"/>
+    <svn javahl="${javahl}">
+      <checkout url="${urlReposSvnserve}" destPath="my_repos_svnserve" />
+    </svn>
+    <!-- we copy the model to my_repos -->
+    <copy todir="my_repos_svnserve">
+      <fileset dir="model_svnserve"/>
     </copy>
   </target>
 
@@ -232,6 +271,20 @@
       <add dir="my_repos/catTest"/>
       <commit message="catTest added" dir="my_repos/catTest"/>
       <cat url="${urlRepos}/catTest/file.txt" destFile="my_repos/catTest/filecat.txt"/>
+    </svn>  
+  </target>
+
+  <target name="testSvnservePasswdSucceed" depends="initSvnserve" >
+    <svn javahl="${javahl}" username="cedric" password="cedricpass">
+      <add dir="my_repos_svnserve/svnservePasswdTest"/>
+      <commit message="svnservePasswdTest added" dir="my_repos_svnserve/svnservePasswdTest"/>
+    </svn>  
+  </target>
+
+  <target name="testSvnservePasswdFail" depends="initSvnserve" >
+    <svn javahl="${javahl}" username="cedric" password="incorrectpass">
+      <add dir="my_repos_svnserve/svnservePasswdTest"/>
+      <commit message="svnservePasswdTest added" dir="my_repos_svnserve/svnservePasswdTest"/>
     </svn>  
   </target>
 
