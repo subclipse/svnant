@@ -26,7 +26,7 @@
 
   <target name="checkoutThis">
     <svn>
-      <checkout url="${svnant.this.url}" revision="HEAD" destPath="src_latest" />
+      <checkout url="${svnant.this.url}" revision="HEAD" destPath="src_${svnant.version}" />
     </svn>
   </target>
 
