@@ -41,7 +41,7 @@
       <add dir="my_repos/copyTest"/>
       <add dir="my_repos/deleteTest"/>
       <add dir="my_repos/moveTest"/>
-			<add dir="my_repos/propTest"/>
+      <add dir="my_repos/propTest"/>
       <add file="my_repos/README.txt"/>
       <add file="my_repos/fileprop.txt"/>
       <commit message="initial import" dir="my_repos"/>
@@ -123,9 +123,22 @@
 
   <target name="testProp" depends="init">
     <svn>
-		  <propset path="my_repos/propTest/file.png" name="svn:mime-type" value="image/png"/>
-			<propset path="my_repos/propTest/file.png" name="myPicture" file="my_repos/propTest/icon.gif"/>
-		</svn>
+      <propset path="my_repos/propTest/file.png" name="svn:mime-type" value="image/png"/>
+      <propset path="my_repos/propTest/file.png" name="myPicture" file="my_repos/propTest/icon.gif"/>
+    </svn>
+  </target>
+
+  <target name="testDiff" depends="init">
+    <copy file="my_repos/diffTest/file.txt.version1" tofile="my_repos/diffTest/file.txt"/>
+    <svn>
+      <add dir="my_repos/diffTest" recurse="false"/>
+      <add file="my_repos/diffTest/file.txt"/>
+      <commit dir="my_repos/diffTest" message="diffTest/file.txt added to repository"/>
+    </svn>
+    <copy file="my_repos/diffTest/file.txt.version2" tofile="my_repos/diffTest/file.txt" overwrite="true"/>    
+    <svn>
+      <diff oldPath="my_repos/diffTest/file.txt" outFile="my_repos/diffTest/patch.txt"/>
+    </svn>
   </target>
 
   <target name="all" depends="init,testCheckout,testAddCommit,testCopy,testDelete,testExport,testImport,testMkdir,testMove">

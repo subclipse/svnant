@@ -134,6 +134,13 @@ private SVNClientAdapter svnClient;
         }
     }
 
+    public void testDiff() {
+        executeTarget("testDiff");
+        File patchFile = new File("test/my_repos/diffTest/patch.txt");
+        assertTrue(patchFile.exists());
+        assertTrue(patchFile.length() > 0);
+    }
+
     public static void main(String[] args) {
         String[] testCaseName = { SvnTest.class.getName()};
         junit.textui.TestRunner.main(testCaseName);

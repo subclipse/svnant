@@ -55,120 +55,122 @@
 package org.tigris.subversion.svnant;
 
 import java.io.File;
-import java.util.Vector;
 
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
+import org.tigris.subversion.javahl.ClientException;
+import org.tigris.subversion.javahl.Revision;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
- * Svn Task
+ * svn Diff.   
+ * display the differences between two paths. (Unified format)
+ * 
  * @author Cédric Chabanois 
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  *
  */
-public class SvnTask extends Task {
-    private String username = null;
-    private String password = null;
-    private Vector commands = new Vector();
-    private int logLevel = 0;
-    private File logFile = new File("svn.log");
+public class Diff extends SvnCommand {
+    private SVNUrl oldUrl = null;
+    private SVNUrl newUrl = null;
+    private File oldPath = null;
+    private File newPath = null;
+    private Revision oldTargetRevision = null;
+    private Revision newTargetRevision = null;
+    private File outFile = new File("patch");
+    private boolean recurse = true; 
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+	/* (non-Javadoc)
+	 * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.SVNClientAdapter)
+	 */
+	public void execute(SVNClientAdapter svnClient) throws BuildException {
+        validateAttributes();
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-	public void setLogLevel(int logLevel) {
-		if (logLevel > 3)
-			logLevel = 3;
-		else
-		if (logLevel < 0)
-			logLevel = 0;
-		this.logLevel = logLevel;
-	}
-
-	public void setLogFile(File logFile) {
-		this.logFile = logFile;
-	}
-
-    public void addCheckout(Checkout a) {
-        commands.addElement(a);
-    }
-
-    public void addAdd(Add a) {
-        commands.addElement(a);
-    }
-
-    public void addCommit(Commit a) {
-        commands.addElement(a);
-    }
-
-    public void addCopy(Copy a) {
-        commands.addElement(a);
-    }
-
-    public void addDelete(Delete a) {
-        commands.addElement(a);
-    }
-
-    public void addExport(Export a) {
-        commands.addElement(a);
-    }
-
-    public void addImport(Import a) {
-        commands.addElement(a);
-    }
-
-    public void addMkdir(Mkdir a) {
-        commands.addElement(a);
-    }
-
-    public void addMove(Move a) {
-        commands.addElement(a);
-    }
-
-    public void addUpdate(Update a) {
-        commands.addElement(a);
-    }
-    
-    public void addPropset(Propset a) {
-        commands.addElement(a);
-    }
-    
-    public void addDiff(Diff a) {
-        commands.addElement(a);
-    }
-
-    public void execute() throws BuildException {
-    	
-    	// this must be done before creating client !
-
-        SVNClientAdapter svnClient = new SVNClientAdapter();
-
-        if (username != null)
-            svnClient.setUsername(username);
-
-        if (password != null)
-            svnClient.setPassword(password);
-            
-        if (logLevel != 0)
-			SVNClientAdapter.enableLogging(logLevel,logFile);
-
-        for (int i = 0; i < commands.size(); i++) {
-            SvnCommand command = (SvnCommand) commands.elementAt(i);
-            Feedback feedback = new Feedback(command);
-			svnClient.addNotifyListener(feedback);
-            command.execute(svnClient);
-            svnClient.removeNotifyListener(feedback);
-        }
+        log("Svn : diff");
         
-        // disable logging
-		if (logLevel != 0)
-			SVNClientAdapter.enableLogging(0,logFile);        
+        try {
+            if (oldUrl != null)
+                svnClient.diff(oldUrl, oldTargetRevision,
+                               newUrl, newTargetRevision,
+                               outFile, recurse);
+            else
+                svnClient.diff(oldPath, oldTargetRevision,
+                               newPath, newTargetRevision,
+                               outFile, recurse);            
+        } catch (ClientException e) {
+            throw new BuildException("Can't get the differences",e);
+        }
+	}
+
+    /**
+     * Ensure we have a consistent and legal set of attributes
+     */
+    protected void validateAttributes() throws BuildException {
+        if (oldUrl != null) {
+            if ((oldPath != null) || (newPath != null))
+                throw new BuildException("paths cannot be with urls when diffing");
+        }
+        else
+        {
+            if ((oldUrl != null) || (newUrl != null))
+                throw new BuildException("paths cannot be with urls when diffing");
+        }
     }
+
+	/**
+	 * @param file
+	 */
+	public void setNewPath(File file) {
+		newPath = file;
+	}
+
+	/**
+	 * @param revision
+	 */
+	public void setNewTargetRevision(Revision revision) {
+		newTargetRevision = revision;
+	}
+
+	/**
+	 * @param url
+	 */
+	public void setNewUrl(SVNUrl url) {
+		newUrl = url;
+	}
+
+	/**
+	 * @param file
+	 */
+	public void setOldPath(File file) {
+		oldPath = file;
+	}
+
+	/**
+	 * @param revision
+	 */
+	public void setOldTargetRevision(Revision revision) {
+		oldTargetRevision = revision;
+	}
+
+	/**
+	 * @param url
+	 */
+	public void setOldUrl(SVNUrl url) {
+		oldUrl = url;
+	}
+
+	/**
+	 * @param file
+	 */
+	public void setOutFile(File file) {
+		outFile = file;
+	}
+
+	/**
+	 * @param b
+	 */
+	public void setRecurse(boolean b) {
+		recurse = b;
+	}
 
 }
