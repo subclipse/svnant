@@ -320,6 +320,16 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
 		assertEquals("entryTest",dirEntry.getPath());
 	}
 
+	public void testResolve() throws Exception {
+		executeTarget("testResolve");
+		File file = new File("test/svn/workingcopy/resolveTest/file.txt");
+		ISVNStatus status = svnClient.getSingleStatus(file);
+		assertTrue(status.getTextStatus() == ISVNStatus.Kind.CONFLICTED);
+		svnClient.resolved(file);
+		status = svnClient.getSingleStatus(file);
+		assertTrue(status.getTextStatus() == ISVNStatus.Kind.MODIFIED);
+	}
+
     public static void main(String[] args) {
         String[] testCaseName = { SvnTest.class.getName()};
         junit.textui.TestRunner.main(testCaseName);

@@ -19,6 +19,7 @@
 
   <target name="clean">
     <delete dir="workingcopy"/>
+    <delete dir="workingcopy2"/>    
     <delete dir="coHEAD"/>
     <delete dir="co0"/>
     <delete dir="export1"/>
@@ -343,6 +344,28 @@
     </svn>
   </target>
 
+  <target name="testResolve" depends="init">
+    <copy file="model/resolveTest/file.txt" todir="workingcopy/resolveTest"/>
+    <svn javahl="${javahl}">
+      <add dir="workingcopy/resolveTest"/>
+      <commit dir="workingcopy/resolveTest" message="resolveTest directory added to repository"/>	
+    </svn>  
+
+    <mkdir dir="workingcopy2"/>
+    <svn javahl="${javahl}">
+      <checkout url="${urlRepos}" destPath="workingcopy2" />
+    </svn>
+
+    <echo file="workingcopy2/resolveTest/file.txt" append="true">line 4</echo> 
+    <svn javahl="${javahl}">
+      <commit dir="workingcopy2/resolveTest" message="file.txt modified"/>	
+    </svn>  
+    <echo file="workingcopy/resolveTest/file.txt" append="true">the next line</echo>
+    <svn javahl="${javahl}">
+      <update dir="workingcopy/resolveTest"/>     
+    </svn>
+    <!-- there is a conflict on workingcopy/resolveTest now -->
+  </target>
 
   <target name="all" depends="init">
   </target>
