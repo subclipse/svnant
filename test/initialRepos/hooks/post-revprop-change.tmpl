@@ -4,7 +4,7 @@
 #
 # The post-revprop-change hook is invoked after a revision property
 # has been changed. Subversion runs this hook by invoking a program
-# (script, executable, binary, etc.) named `post-revprop-change'
+# (script, executable, binary, etc.) named 'post-revprop-change'
 # (for which this file is a template), with the following ordered
 # arguments:
 #
@@ -15,19 +15,19 @@
 #
 # Because the propchange has already completed and cannot be undone,
 # the exit code of the hook program is ignored.  The hook program
-# can use the `svnlook' utility to help it examine the
+# can use the 'svnlook' utility to help it examine the
 # new property value.
 #
-# On a Unix system, the normal procedure is to have `post-revprop-change'
+# On a Unix system, the normal procedure is to have 'post-revprop-change'
 # invoke other programs to do the real work, though it may do the
 # work itself too.
 #
-# Note that `post-revprop-change' must be executable by the user(s) who will
+# Note that 'post-revprop-change' must be executable by the user(s) who will
 # invoke it (typically the user httpd runs as), and that user must
 # have filesystem-level permission to access the repository.
 #
 # On a Windows system, you should name the hook program
-# `post-revprop-change.bat' or `post-revprop-change.exe',
+# 'post-revprop-change.bat' or 'post-revprop-change.exe',
 # but the basic idea is the same.
 # 
 # Here is an example hook script, for a Unix /bin/sh interpreter:
