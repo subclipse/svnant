@@ -205,6 +205,7 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
             public void logCommandLine(String commandLine) {}
             public void logMessage(String message) {}
             public void logError(String message) {}
+            public void logRevision(long revision) {}
             public void logCompleted(String message) {}
   
             public void onNotify(File path, SVNNodeKind kind) {
