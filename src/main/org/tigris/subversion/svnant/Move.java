@@ -75,6 +75,7 @@ public class Move extends SvnCommand {
     private URL srcUrl = null;
     private URL destUrl = null;
 	private String message = null;
+    private boolean force = false;
 
     private SVNClientAdapter svnClient;
 
@@ -86,7 +87,7 @@ public class Move extends SvnCommand {
 
         if (srcPath != null) {
             try {
-                svnClient.move(srcPath, destPath);
+                svnClient.move(srcPath, destPath, force);
             } catch (ClientException e) {
                 throw new BuildException("Can't copy", e);
             }
@@ -163,6 +164,14 @@ public class Move extends SvnCommand {
      */
     public void setMessage(String message) {
     	this.message = message;
+    }
+
+    /**
+     * set the force parameter
+     * @param force
+     */
+    public void setForce(boolean force) {
+        this.force = force;
     }
 
 }
