@@ -9,7 +9,7 @@
 
   
   <path id="project.classpath">
-    <pathelement location="${svnjavahl.jar}" /> 
+    <pathelement location="${svn-javahl.jar}" /> 
     <pathelement location="${svnant.jar}" />
     <pathelement location="${svnClientAdapter.jar}"/>
   </path>  
@@ -29,10 +29,10 @@
  
   <!-- create the test repository -->
   <target name="createTestRepository">
-    <echo>using svnadmin to create repositories (you need it in your path) ...</echo>
+    <echo>creating repository (you need svnadmin in your path if using command line interface) ...</echo>
   	<delete dir="repository"/>  
 
-  	<svn javahl="false">
+  	<svn>
   		<createRepository path="repository"/>
   	</svn>
   </target>

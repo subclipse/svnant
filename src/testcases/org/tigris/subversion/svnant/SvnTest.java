@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,6 +21,7 @@ import org.apache.tools.ant.UnknownElement;
 import org.tigris.subversion.svnclientadapter.ISVNAnnotations;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNDirEntry;
+import org.tigris.subversion.svnclientadapter.ISVNInfo;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
 import org.tigris.subversion.svnclientadapter.ISVNNotifyListener;
 import org.tigris.subversion.svnclientadapter.ISVNProperty;
@@ -28,6 +30,7 @@ import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
+import org.tigris.subversion.svnclientadapter.SVNScheduleKind;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
@@ -334,6 +337,26 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
         assertNotNull(statuses[5].getUrl());       
     }
 
+    public void testInfo() throws Exception {
+		executeTarget("testStatus");
+        File file = new File(WORKINGCOPY_DIR+"/statusTest/added.txt");
+		ISVNInfo info = svnClient.getInfo(file);
+		assertEquals(SVNNodeKind.FILE,info.getNodeKind());
+        assertNull(info.getLastChangedRevision());
+        assertEquals(SVNScheduleKind.ADD,info.getSchedule());
+        assertEquals(file.getCanonicalFile(),info.getFile().getCanonicalFile());
+        
+        file = new File("nonExistingFile");
+        info = svnClient.getInfo(file);
+        assertEquals(null, info.getUrl());
+
+        // make sure that the top most directory is said to be versionned. It is in a directory where there is no
+        // .svn directory but it is versionned however. 
+        file = new File(WORKINGCOPY_DIR+"/statusTest/nonManaged.dir/statusTest");
+        info = svnClient.getInfo(file);
+        assertEquals(SVNNodeKind.DIR,info.getNodeKind());
+    }
+    
 	public void testEntry() throws Exception {
 		executeTarget("testEntry");
 		
@@ -379,7 +402,13 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
 		assertEquals("line 2",annotations.getLine(1));
 		assertEquals("user2",annotations.getAuthor(2));
 		assertEquals(3,annotations.getRevision(2));
-		assertEquals("line 3",annotations.getLine(2));		
+		assertEquals("line 3",annotations.getLine(2));
+		
+		InputStream is = annotations.getInputStream();
+		byte[] bytes = new byte[is.available()];
+		is.read(bytes);
+		assertEquals("line 1\nline 2\nline 3", new String(bytes));
+		
 	}
 	
 	
