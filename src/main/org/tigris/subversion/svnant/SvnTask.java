@@ -175,10 +175,12 @@ public class SvnTask extends Task {
         
         if ((javahl) && (javahlAvailable)) {
             svnClient = SVNClientAdapterFactory.createSVNClient(SVNClientAdapterFactory.JAVAHL_CLIENT);
+            log("Using javahl");
         }
         else
         if (commandLineAvailable) {
             svnClient = SVNClientAdapterFactory.createSVNClient(SVNClientAdapterFactory.COMMANDLINE_CLIENT);
+            log("Using command line interface (experimental)");
         } 
         else
             throw new BuildException("Cannot use javahl nor command line svn client");
