@@ -57,8 +57,8 @@ package org.tigris.subversion.svnant;
 import java.io.File;
 
 import org.apache.tools.ant.BuildException;
-import org.tigris.subversion.javahl.ClientException;
-import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
@@ -77,7 +77,7 @@ public class Mkdir extends SvnCommand {
     /** message (when url is used) */
     private String message = null;
 
-    public void execute(SVNClientAdapter svnClient) throws BuildException {
+    public void execute(ISVNClientAdapter svnClient) throws BuildException {
         validateAttributes();
 
 		log("Svn : Creating a new directory under revision control");
@@ -85,13 +85,13 @@ public class Mkdir extends SvnCommand {
         if (url != null) {
             try {
                 svnClient.mkdir(url, message);
-            } catch (ClientException e) {
+            } catch (SVNClientException e) {
                 throw new BuildException("Can't make dir "+url, e);
             }
         } else {
             try {
                 svnClient.mkdir(path);
-            } catch (ClientException e) {
+            } catch (SVNClientException e) {
                 throw new BuildException("Can't make dir "+path, e);
             }
         }

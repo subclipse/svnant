@@ -55,11 +55,12 @@
 package org.tigris.subversion.svnant;
 
 import java.io.File;
+import java.text.ParseException;
 
 import org.apache.tools.ant.BuildException;
-import org.tigris.subversion.javahl.ClientException;
-import org.tigris.subversion.javahl.Revision;
-import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
+import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
@@ -75,15 +76,15 @@ public class Diff extends SvnCommand {
     private SVNUrl newUrl = null;
     private File oldPath = null;
     private File newPath = null;
-    private Revision oldTargetRevision = null;
-    private Revision newTargetRevision = null;
+    private SVNRevision oldTargetRevision = null;
+    private SVNRevision newTargetRevision = null;
     private File outFile = new File("patch");
     private boolean recurse = true; 
 
 	/* (non-Javadoc)
 	 * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.SVNClientAdapter)
 	 */
-	public void execute(SVNClientAdapter svnClient) throws BuildException {
+	public void execute(ISVNClientAdapter svnClient) throws BuildException {
         validateAttributes();
 
         log("Svn : diff");
@@ -97,7 +98,7 @@ public class Diff extends SvnCommand {
                 svnClient.diff(oldPath, oldTargetRevision,
                                newPath, newTargetRevision,
                                outFile, recurse);            
-        } catch (ClientException e) {
+        } catch (SVNClientException e) {
             throw new BuildException("Can't get the differences",e);
         }
 	}
@@ -127,8 +128,12 @@ public class Diff extends SvnCommand {
 	/**
 	 * @param revision
 	 */
-	public void setNewTargetRevision(Revision revision) {
-		newTargetRevision = revision;
+	public void setNewTargetRevision(String revision) {
+		try {
+            newTargetRevision = SVNRevision.getRevision(revision);
+        } catch (ParseException e) {
+            newTargetRevision = null;
+        }
 	}
 
 	/**
@@ -148,8 +153,12 @@ public class Diff extends SvnCommand {
 	/**
 	 * @param revision
 	 */
-	public void setOldTargetRevision(Revision revision) {
-		oldTargetRevision = revision;
+	public void setOldTargetRevision(String revision) {
+		try {
+			oldTargetRevision = SVNRevision.getRevision(revision);
+		} catch (ParseException e) {
+            oldTargetRevision = null;
+		}
 	}
 
 	/**

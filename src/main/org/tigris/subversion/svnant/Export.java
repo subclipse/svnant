@@ -58,10 +58,9 @@ import java.io.File;
 import java.text.ParseException;
 
 import org.apache.tools.ant.BuildException;
-import org.tigris.subversion.javahl.ClientException;
-import org.tigris.subversion.javahl.Revision;
-import org.tigris.subversion.svnclientadapter.RevisionUtils;
-import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
+import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
@@ -72,7 +71,7 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  *
  */public class Export extends SvnCommand {
-    private SVNClientAdapter svnClient = null;
+    private ISVNClientAdapter svnClient = null;
     
     private boolean force = false;
     
@@ -86,9 +85,9 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
     private File destPath = null;
 	
 	/** revision to checkout (only useful when exporting directly from repository) */
-	private Revision revision = Revision.HEAD;    
+	private SVNRevision revision = SVNRevision.HEAD;    
 
-    public void execute(SVNClientAdapter svnClient) throws BuildException {
+    public void execute(ISVNClientAdapter svnClient) throws BuildException {
         this.svnClient = svnClient;
         validateAttributes();
 
@@ -99,7 +98,7 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
 				svnClient.doExport(srcUrl,destPath,revision,force);
 			else
 				svnClient.doExport(srcPath,destPath,force);
-        } catch (ClientException e) {
+        } catch (SVNClientException e) {
         	throw new BuildException("Can't export",e);
         }
 
@@ -126,7 +125,7 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
 	 */
 	public void setRevision(String revision) {
 		try {
-			this.revision = RevisionUtils.getRevision(revision);
+			this.revision = SVNRevision.getRevision(revision);
 		} catch (ParseException e) {
 			this.revision = null;
 		}

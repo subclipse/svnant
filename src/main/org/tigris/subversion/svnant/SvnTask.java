@@ -59,7 +59,9 @@ import java.util.Vector;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
-import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
+import org.tigris.subversion.svnclientadapter.javahl.SVNClientAdapter;
 
 /**
  * Svn Task
@@ -147,7 +149,7 @@ public class SvnTask extends Task {
     	
     	// this must be done before creating client !
 
-        SVNClientAdapter svnClient = new SVNClientAdapter();
+        ISVNClientAdapter svnClient = SVNClientAdapterFactory.createSVNClient(SVNClientAdapterFactory.JAVAHL_CLIENT);
 
         if (username != null)
             svnClient.setUsername(username);

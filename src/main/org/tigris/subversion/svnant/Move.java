@@ -55,12 +55,11 @@
 package org.tigris.subversion.svnant;
 
 import java.io.File;
-import java.net.URL;
 
 import org.apache.tools.ant.BuildException;
-import org.tigris.subversion.javahl.ClientException;
-import org.tigris.subversion.javahl.Revision;
-import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
+import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
@@ -77,9 +76,9 @@ public class Move extends SvnCommand {
 	private String message = null;
     private boolean force = false;
 
-    private SVNClientAdapter svnClient;
+    private ISVNClientAdapter svnClient;
 
-    public void execute(SVNClientAdapter svnClient) throws BuildException {
+    public void execute(ISVNClientAdapter svnClient) throws BuildException {
         this.svnClient = svnClient;
         validateAttributes();
 
@@ -88,13 +87,13 @@ public class Move extends SvnCommand {
         if (srcPath != null) {
             try {
                 svnClient.move(srcPath, destPath, force);
-            } catch (ClientException e) {
+            } catch (SVNClientException e) {
                 throw new BuildException("Can't copy", e);
             }
         } else {
             try {
-                svnClient.move(srcUrl, destUrl, message, Revision.HEAD);
-            } catch (ClientException e) {
+                svnClient.move(srcUrl, destUrl, message, SVNRevision.HEAD);
+            } catch (SVNClientException e) {
                 throw new BuildException("Can't copy", e);
             }
         }

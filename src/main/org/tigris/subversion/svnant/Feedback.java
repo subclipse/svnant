@@ -54,14 +54,15 @@
  */ 
 package org.tigris.subversion.svnant;
 
-import org.tigris.subversion.svnclientadapter.StandardNotificationHandler;
+import org.tigris.subversion.svnclientadapter.ISVNNotifyListener;
+import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 
 /**
  * @author Cédric Chabanois 
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  *
  */
-public class Feedback extends StandardNotificationHandler {
+public class Feedback implements ISVNNotifyListener {
 	private SvnCommand svnCommand;
 	
 	public Feedback(SvnCommand command)
@@ -69,8 +70,28 @@ public class Feedback extends StandardNotificationHandler {
 		this.svnCommand = command;
 
 	}
+    
+    public void setCommand(int cmd) {
+        
+    }
 
-    protected void log(int logType, String message) {
+    public void logMessage(String message) {
 		svnCommand.log(message);
 	}
+
+    public void logCommandLine(String message) {
+    }
+
+    public void logError(String message) {
+        svnCommand.log(message);
+    }
+    
+    public void logCompleted(String message) {
+        svnCommand.log(message);
+    }
+
+    public void onNotify(String path, SVNNodeKind nodeKind) {
+        
+    }
+
 }

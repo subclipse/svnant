@@ -58,8 +58,8 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.tools.ant.BuildException;
-import org.tigris.subversion.javahl.ClientException;
-import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 /**
  * svn propset. Set a property
@@ -75,9 +75,9 @@ public class Propset extends SvnCommand {
     private String propName = null;
     private String propValue = null;
     private boolean recurse = false;
-    private SVNClientAdapter svnClient;
+    private ISVNClientAdapter svnClient;
 
-    public void execute(SVNClientAdapter svnClient) throws BuildException {
+    public void execute(ISVNClientAdapter svnClient) throws BuildException {
         this.svnClient = svnClient;
         validateAttributes();
 
@@ -88,7 +88,7 @@ public class Propset extends SvnCommand {
                 svnClient.propertySet(path,propName,propValue,recurse);
             else
                 svnClient.propertySet(path,propName,file,recurse);
-        } catch (ClientException e) {
+        } catch (SVNClientException e) {
             throw new BuildException("Can't set property "+propName, e);
         } catch (IOException e) {
             throw new BuildException("Can't set property "+propName, e);

@@ -60,8 +60,8 @@ import java.util.Vector;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
-import org.tigris.subversion.javahl.ClientException;
-import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
@@ -91,9 +91,9 @@ public class Delete extends SvnCommand {
 	/** filesets to delete */
 	private Vector filesets = new Vector();	
 	
-	private SVNClientAdapter svnClient;
+	private ISVNClientAdapter svnClient;
 
-	public void execute(SVNClientAdapter svnClient) throws BuildException {
+	public void execute(ISVNClientAdapter svnClient) throws BuildException {
 		this.svnClient = svnClient;
 		validateAttributes();
 		
@@ -134,7 +134,7 @@ public class Delete extends SvnCommand {
 	private void deleteUrl(SVNUrl url, String message) throws BuildException {
 		try {
 			svnClient.remove(new SVNUrl[] { url },message);
-		} catch (ClientException e) {
+		} catch (SVNClientException e) {
 			throw new BuildException("Cannot delete url "+url.toString(),e);
 		}
 	}
@@ -149,7 +149,7 @@ public class Delete extends SvnCommand {
 	private void deleteFile(File file, boolean force) throws BuildException {
 		try {
 			svnClient.remove(new File[] { file },force);
-		} catch (ClientException e) {
+		} catch (SVNClientException e) {
 			throw new BuildException("Cannot delete file or directory "+file.getAbsolutePath(),e);
 		}
 	}
@@ -181,7 +181,7 @@ public class Delete extends SvnCommand {
         // contained in this directory        
         try {
             svnClient.remove(filesAndDirs,force);
-        } catch (ClientException e) {
+        } catch (SVNClientException e) {
             log("Cannot delete file "+file.getAbsolutePath());
         }
 	}

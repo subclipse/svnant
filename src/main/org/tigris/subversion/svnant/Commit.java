@@ -61,8 +61,9 @@ import java.util.Vector;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
-import org.tigris.subversion.javahl.ClientException;
-import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.ISVNStatus;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 /**
  * svn Add. Add a file, a directory or a set of files to repository
@@ -88,9 +89,9 @@ public class Commit extends SvnCommand {
     /** filesets to commit */
     private Vector filesets = new Vector();
 
-    private SVNClientAdapter svnClient;
+    private ISVNClientAdapter svnClient;
 
-    public void execute(SVNClientAdapter svnClient) throws BuildException {
+    public void execute(ISVNClientAdapter svnClient) throws BuildException {
 		this.svnClient = svnClient;
         validateAttributes();
 		
@@ -222,7 +223,7 @@ public class Commit extends SvnCommand {
 			// file has not been "added", we cannot commit it
 			if (!svnClient.getSingleStatus(file).isManaged())
 			    return;
-		} catch (ClientException e1) {
+		} catch (SVNClientException e1) {
             throw new BuildException("Cannot get status of file :"+file.toString());
 		}
 
@@ -235,15 +236,15 @@ public class Commit extends SvnCommand {
 		try {
 			dirs = new Stack();
 			currentDir = file.getParentFile();
-			org.tigris.subversion.javahl.Status status = svnClient.getSingleStatus(currentDir);
+			ISVNStatus status = svnClient.getSingleStatus(currentDir);
 			while ((currentDir != null)
-			    && (status.getTextStatus() == org.tigris.subversion.javahl.Status.Kind.added)
+			    && (status.getTextStatus() == ISVNStatus.Kind.ADDED)
 			    && (!currentDir.equals(baseDir))) {
 			    dirs.push(currentDir);
 			    currentDir = currentDir.getParentFile();
 			    status = svnClient.getSingleStatus(currentDir);
 			}
-		} catch (ClientException e) {
+		} catch (SVNClientException e) {
             throw new BuildException("Cannot get status of directory :"+currentDir.toString());
 		}
 

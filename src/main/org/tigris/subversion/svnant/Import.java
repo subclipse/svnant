@@ -55,11 +55,10 @@
 package org.tigris.subversion.svnant;
 
 import java.io.File;
-import java.net.URL;
 
 import org.apache.tools.ant.BuildException;
-import org.tigris.subversion.javahl.ClientException;
-import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
@@ -68,7 +67,7 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  * Commit an unversioned file or tree into the repository. 
  */
 public class Import extends SvnCommand {
-    private SVNClientAdapter svnClient = null;
+    private ISVNClientAdapter svnClient = null;
 
     /** the url */
     private SVNUrl url = null;
@@ -81,7 +80,7 @@ public class Import extends SvnCommand {
 
 	private boolean recurse = true;
 
-    public void execute(SVNClientAdapter svnClient) throws BuildException {
+    public void execute(ISVNClientAdapter svnClient) throws BuildException {
         this.svnClient = svnClient;
         validateAttributes();
 
@@ -89,7 +88,7 @@ public class Import extends SvnCommand {
 
         try {
         	svnClient.doImport(path, url, message, recurse);
-        } catch (ClientException e) {
+        } catch (SVNClientException e) {
             throw new BuildException("Can't import", e);
         }
 

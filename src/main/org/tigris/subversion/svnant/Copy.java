@@ -55,14 +55,12 @@
 package org.tigris.subversion.svnant;
 
 import java.io.File;
-import java.net.URL;
 import java.text.ParseException;
 
 import org.apache.tools.ant.BuildException;
-import org.tigris.subversion.javahl.ClientException;
-import org.tigris.subversion.javahl.Revision;
-import org.tigris.subversion.svnclientadapter.RevisionUtils;
-import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
+import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
@@ -78,14 +76,14 @@ public class Copy extends SvnCommand {
     private SVNUrl destUrl = null;
     
     /** revision to copy from (head by default) */
-    private Revision revision = Revision.HEAD; 
+    private SVNRevision revision = SVNRevision.HEAD; 
     
     /** message for commit (only when target is an url) */
     private String message = null; 
 
-    private SVNClientAdapter svnClient;
+    private ISVNClientAdapter svnClient;
 
-    public void execute(SVNClientAdapter svnClient) throws BuildException {
+    public void execute(ISVNClientAdapter svnClient) throws BuildException {
         this.svnClient = svnClient;
         validateAttributes();
 
@@ -103,7 +101,7 @@ public class Copy extends SvnCommand {
             	else
             		svnClient.copy(srcUrl,destUrl,message, revision);
             }
-        } catch (ClientException e) {
+        } catch (SVNClientException e) {
             throw new BuildException("Can't copy", e);
         }
 
@@ -180,7 +178,7 @@ public class Copy extends SvnCommand {
      */
     public void setRevision(String revision) {
         try {
-            this.revision = RevisionUtils.getRevision(revision);
+            this.revision = SVNRevision.getRevision(revision);
         } catch (ParseException e) {
             this.revision = null;
         }

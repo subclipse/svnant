@@ -61,10 +61,9 @@ import java.util.Vector;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
-import org.tigris.subversion.javahl.ClientException;
-import org.tigris.subversion.javahl.Revision;
-import org.tigris.subversion.svnclientadapter.RevisionUtils;
-import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
+import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 /**
  * svn Update. Bring changes from the repository into the working copy.
@@ -82,13 +81,13 @@ public class Update extends SvnCommand {
 	/** filesets to update */
 	private Vector filesets = new Vector();	
 	
-	private SVNClientAdapter svnClient;
+	private ISVNClientAdapter svnClient;
 
-	private Revision revision = Revision.HEAD;
+	private SVNRevision revision = SVNRevision.HEAD;
 	
 	private boolean recurse = true;
 
-	public void execute(SVNClientAdapter svnClient) throws BuildException {
+	public void execute(ISVNClientAdapter svnClient) throws BuildException {
 		this.svnClient = svnClient;
 		validateAttributes();
 		
@@ -98,7 +97,7 @@ public class Update extends SvnCommand {
 		{
 			try {
 				svnClient.update(file, revision, false);
-			} catch (ClientException e) {
+			} catch (SVNClientException e) {
 				throw new BuildException("Cannot update file "+file.getAbsolutePath(),e);
 			}
 		}
@@ -106,7 +105,7 @@ public class Update extends SvnCommand {
 		if (dir != null) {
 			try {
 				svnClient.update(dir, revision, recurse);
-			} catch (ClientException e) {
+			} catch (SVNClientException e) {
 				throw new BuildException("Cannot update dir "+dir.getAbsolutePath(),e);
 			}			
 		}
@@ -145,7 +144,7 @@ public class Update extends SvnCommand {
 			File dir = new File(baseDir, dirs[i]);
 			try {
 				svnClient.update(dir,revision,false);
-			} catch (ClientException e) {
+			} catch (SVNClientException e) {
 				log("Cannot update directory "+dir.getAbsolutePath());
 			}
 		}
@@ -155,7 +154,7 @@ public class Update extends SvnCommand {
 			File file = new File(baseDir, files[i]);
 			try {
 				svnClient.update(file,revision,false);
-			} catch (ClientException e) {
+			} catch (SVNClientException e) {
 				log("Cannot update file "+file.getAbsolutePath());
 			}
 		}
@@ -192,7 +191,7 @@ public class Update extends SvnCommand {
 	 */
 	public void setRevision(String revision) {
 		try {
-			this.revision = RevisionUtils.getRevision(revision);
+			this.revision = SVNRevision.getRevision(revision);
 		} catch (ParseException e) {
 			this.revision = null;
 		}

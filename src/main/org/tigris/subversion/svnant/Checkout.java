@@ -58,9 +58,8 @@ import java.io.File;
 import java.text.ParseException;
 
 import org.apache.tools.ant.BuildException;
-import org.tigris.subversion.javahl.Revision;
-import org.tigris.subversion.svnclientadapter.RevisionUtils;
-import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
@@ -80,9 +79,9 @@ public class Checkout extends SvnCommand {
 	private File destPath = null;
 	
 	/** revision to checkout */
-	private Revision revision = Revision.HEAD;
+	private SVNRevision revision = SVNRevision.HEAD;
 
-	public void execute(SVNClientAdapter svnClient) throws BuildException {
+	public void execute(ISVNClientAdapter svnClient) throws BuildException {
 		validateAttributes();
 
 		log("Svn : Checking out a working copy from a repository :");
@@ -137,7 +136,7 @@ public class Checkout extends SvnCommand {
 	 */
 	public void setRevision(String revision) {
 		try {
-			this.revision = RevisionUtils.getRevision(revision);
+			this.revision = SVNRevision.getRevision(revision);
 		} catch (ParseException e) {
 			this.revision = null;
 		}

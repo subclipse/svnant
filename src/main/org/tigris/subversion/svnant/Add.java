@@ -61,8 +61,8 @@ import java.util.Vector;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
-import org.tigris.subversion.javahl.ClientException;
-import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 /**
  * svn Add. Add a file, a directory or a set of files to repository
@@ -86,9 +86,9 @@ public class Add extends SvnCommand {
     /** add recursively ? (only for dir attribute) */
     private boolean recurse = true;
 
-    private SVNClientAdapter svnClient;
+    private ISVNClientAdapter svnClient;
 
-    public void execute(SVNClientAdapter svnClient) throws BuildException {
+    public void execute(ISVNClientAdapter svnClient) throws BuildException {
         this.svnClient = svnClient;
         validateAttributes();
 
@@ -227,7 +227,7 @@ public class Add extends SvnCommand {
 			    dirs.push(currentDir);
 			    currentDir = currentDir.getParentFile();
 			}
-		} catch (ClientException e) {
+		} catch (SVNClientException e) {
 			throw new BuildException("Cannot get status of file or directory");
 		}
 

@@ -56,7 +56,7 @@ package org.tigris.subversion.svnant;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.ProjectComponent;
-import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 
 
 /**
@@ -66,6 +66,6 @@ import org.tigris.subversion.svnclientadapter.SVNClientAdapter;
  */
 public abstract class SvnCommand extends ProjectComponent {
 
-	public abstract void execute(SVNClientAdapter svnClient) throws BuildException;
+	public abstract void execute(ISVNClientAdapter svnClient) throws BuildException;
 
 }
