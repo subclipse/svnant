@@ -6,7 +6,7 @@
   --> 
   <property file="build.properties" /> 
   <path id="project.classpath">
-    <pathelement location="${jsvn.jar}" /> 
+    <pathelement location="${javahl.jar}" /> 
     <pathelement location="${svnant.jar}" />
   </path>  
   
