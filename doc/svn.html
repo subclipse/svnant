@@ -5,7 +5,7 @@
 	<TITLE>Svn Task</TITLE>
 	<META NAME="GENERATOR" CONTENT="OpenOffice.org 1.1.0  (Win32)">
 	<META NAME="CREATED" CONTENT="20031019;22355182">
-	<META NAME="CHANGED" CONTENT="20040914;13544331">
+	<META NAME="CHANGED" CONTENT="20040915;21043096">
 	<META HTTP-EQUIV="Content-Language" CONTENT="en-us">
 </HEAD>
 <BODY LANG="en-US" DIR="LTR">
@@ -1122,8 +1122,76 @@ URL:&nbsp; complete server-side rename.</P>
 		</TD>
 	</TR>
 </TABLE>
-<P><BR><BR><BR>
+<P><BR><BR>
 </P>
+<H4>propget</H4>
+<P>Get a property from a file or a directory.</P>
+<TABLE WIDTH=1263 BORDER=2 CELLPADDING=2 CELLSPACING=0>
+	<COL WIDTH=147>
+	<COL WIDTH=980>
+	<COL WIDTH=121>
+	<TR>
+		<TD WIDTH=147 VALIGN=TOP>
+			<P><B>Attribute</B></P>
+		</TD>
+		<TD WIDTH=980>
+			<P><B>Description</B></P>
+		</TD>
+		<TD WIDTH=121 VALIGN=TOP>
+			<P><B>Required</B></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=147>
+			<P>path</P>
+		</TD>
+		<TD WIDTH=980>
+			<P>path of the file or directory on which to get the property</P>
+		</TD>
+		<TD WIDTH=121>
+			<P ALIGN=CENTER>Yes</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=147>
+			<P>name</P>
+		</TD>
+		<TD WIDTH=980>
+			<P>name of the property to get 
+			</P>
+		</TD>
+		<TD WIDTH=121>
+			<P ALIGN=CENTER>Yes</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=147>
+			<P>property</P>
+		</TD>
+		<TD WIDTH=980>
+			<P>the name of the property to set with the value of the svn
+			property</P>
+		</TD>
+		<TD ROWSPAN=2 WIDTH=121>
+			<P ALIGN=CENTER>One of the two</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=147>
+			<P>file</P>
+		</TD>
+		<TD WIDTH=980>
+			<P>file that will contain the value of the property</P>
+		</TD>
+	</TR>
+</TABLE>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm">Example :</P>
+<P STYLE="margin-bottom: 0cm"><FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;propget</FONT>
+<FONT COLOR="#000080">path=</FONT><FONT COLOR="#008000">&quot;workingcopy/propTest/file.png&quot;</FONT>
+<FONT COLOR="#000080">name=</FONT><FONT COLOR="#008000">&quot;svn:mime-type&quot;</FONT>
+<FONT COLOR="#000080">property=</FONT><FONT COLOR="#008000">&quot;propTest.mimeType&quot;</FONT><FONT COLOR="#000080">/&gt;</FONT></FONT></FONT></P>
 <H4>propset</H4>
 <P>Set a property on files or dirs.</P>
 <TABLE BORDER=1 CELLPADDING=2 CELLSPACING=0>
@@ -1412,7 +1480,7 @@ are used to select sets of files to revert.
 <P STYLE="margin-bottom: 0cm"><FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">lastCommitAuthorProperty=</FONT><FONT COLOR="#008000">&quot;testStatus.lastCommitAuthor&quot;</FONT></FONT></FONT></P>
 <H4>/&gt;<BR><BR>switch</H4>
 <P>Update the working copy to mirror a new URL within the repository.
-This behaviour is similar to 'svn update', and is the way to  move a
+This behaviour is similar to 'svn update', and is the way to move a
 working copy to a branch or tag within the same repository.</P>
 <TABLE WIDTH=1110 BORDER=2 CELLPADDING=2 CELLSPACING=0>
 	<COL WIDTH=127>
@@ -1481,11 +1549,11 @@ working copy to a branch or tag within the same repository.</P>
 </P>
 <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=3>Example
 :</FONT></FONT></FONT></P>
-<P STYLE="margin-bottom: 0cm"><FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;svn</FONT><FONT COLOR="#000080">&gt;</FONT></FONT></FONT></P>
-<P STYLE="margin-bottom: 0cm">  <FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;switch</FONT>
+<P STYLE="margin-bottom: 0cm"><FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;svn&gt;</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0cm"><FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;switch</FONT>
 <FONT COLOR="#000080">path=</FONT><FONT COLOR="#008000">&quot;workingcopy/switchTest&quot;</FONT>
 <FONT COLOR="#000080">url=</FONT><FONT COLOR="#008000">&quot;${urlRepos}/switchTestBranch&quot;</FONT><FONT COLOR="#000080">/&gt;</FONT></FONT></FONT></P>
-<P STYLE="margin-bottom: 0cm"><FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;/svn&gt;</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0cm"><FONT COLOR="#000080"><FONT FACE="Courier New"><FONT SIZE=2>&lt;/svn&gt;</FONT></FONT></FONT></P>
 <P STYLE="margin-bottom: 0cm"><BR>
 </P>
 <H4>update</H4>
