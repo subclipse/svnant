@@ -36,7 +36,10 @@ private ISVNClientAdapter svnClient;
 
     public void setUp() {
         configureProject("test/build.xml");
-        boolean javahl = getProject().getProperty("javahl").equalsIgnoreCase("true");
+        boolean javahl = true;
+        String javahlProp = getProject().getProperty("javahl");
+        if (javahlProp != null)
+            javahl = getProject().getProperty("javahl").equalsIgnoreCase("true");
         
         if ((javahl) && (SVNClientAdapterFactory.isSVNClientAvailable(SVNClientAdapterFactory.JAVAHL_CLIENT))) {        
     		svnClient = SVNClientAdapterFactory.createSVNClient(SVNClientAdapterFactory.JAVAHL_CLIENT);

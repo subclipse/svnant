@@ -1,710 +1,980 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en-us">
-<head>
-  <meta http-equiv="Content-Language" content="en-us">
-  <title>Svn Task</title>
-</head>
-<body>
-<h2><a name="svn">Svn</a></h2>
-<p>by<br>
-</p>
-<ul>
-  <li><a href="mailto:cchabanois@ifrance.com">C&eacute;dric Chabanois</a><br>
-  </li>
-</ul>
-<p></p>
-<h3>Description</h3>
-<p>This task provide an interface to <a
- href="http://subversion.tigris.org/">Subversion </a>revision control
-system that is a compelling replacement for CVS in the open source
-community.<br>
-&nbsp;<br>
-</p>
-<h3>Parameters</h3>
-<table border="1" cellpadding="2" cellspacing="0">
-  <tbody>
-    <tr>
-      <td valign="top"><b>Attribute</b></td>
-      <td valign="top"><b>Description</b></td>
-      <td align="center" valign="top"><b>Required</b></td>
-    </tr>
-    <tr>
-      <td valign="top">username</td>
-      <td valign="top">username that will be used for all nested svn
-commands.<br>
-      </td>
-      <td align="center" valign="top">No</td>
-    </tr>
-    <tr>
-      <td valign="top">password</td>
-      <td valign="top">password that will be used for all nested svn
-commands.</td>
-      <td valign="top" align="center">No</td>
-    </tr>
-  </tbody>
-</table>
-<h3>Svn commands specified as nested elements</h3>
-<h4>add</h4>
-<p>You can add files and directories to svn repository with nested <code>&lt;add&gt;</code>
-elements.<br>
-</p>
-<table border="1" cellpadding="2" cellspacing="0">
-  <tbody>
-    <tr>
-      <td width="12%" valign="top"><b>Attribute</b></td>
-      <td width="78%" valign="top"><b>Description</b></td>
-      <td width="10%" valign="top"><b>Required</b></td>
-    </tr>
-    <tr>
-      <td valign="top">file<br>
-      </td>
-      <td style="vertical-align: top;">file to add to the repository<br>
-      </td>
-      <td style="vertical-align: top; text-align: center;">No<br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">dir<br>
-      </td>
-      <td style="vertical-align: top;">directory to add to the
-repository<br>
-      </td>
-      <td style="vertical-align: top; text-align: center;">No<br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">recurse<br>
-      </td>
-      <td style="vertical-align: top;">Set to "false" to operate on a
-single directory only (applies only when <code>dir</code> attribute is
-set). Default is "true"<br>
-      </td>
-      <td style="vertical-align: top; text-align: center;">No<br>
-      </td>
-    </tr>
-  </tbody>
-</table>
-<br>
-Parameters specified as nested elements :<br>
-<br>
-fileset<br>
-Filesets are used to select sets of files to add to the repository. <span
- style="font-weight: bold;">Note that directories needed to add
-selected files will be added to the repository even if they are not
-selected by the fileset.</span><br>
-<br>
-<h4>checkout</h4>
-<p>Check out a working copy from a repository.</p>
-<table border="1" cellpadding="2" cellspacing="0">
-  <tbody>
-    <tr>
-      <td width="12%" valign="top"><b>Attribute</b></td>
-      <td width="78%" valign="top"><b>Description</b></td>
-      <td width="10%" valign="top"><b>Required</b></td>
-    </tr>
-    <tr>
-      <td valign="top">url<br>
-      </td>
-      <td style="vertical-align: top;">url to checkout from</td>
-      <td style="vertical-align: top; text-align: center;">Yes<br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">recurse<br>
-      </td>
-      <td style="vertical-align: top;">Set to "false" to operate on
-single directory only. Default is "true"<br>
-      </td>
-      <td style="vertical-align: top; text-align: center;">No<br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">destPath</td>
-      <td style="vertical-align: top;">destination directory</td>
-      <td style="vertical-align: top; text-align: center;">Yes</td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">revision<br>
-      </td>
-      <td style="vertical-align: top;">revision to checkout.<br>
-Possible values are :<br>
-- a date with the following format : MM/DD/YYYY HH:MM AM_PM<br>
-- a revision number<br>
-- HEAD, BASE, COMMITED or PREV<br>
-Default is "HEAD"<br>
-      </td>
-      <td style="vertical-align: top; text-align: center;">No<br>
-      </td>
-    </tr>
-  </tbody>
-</table>
-<br>
-Parameters specified as nested elements :<br>
-<br>
-fileset<br>
-Filesets are used to select sets of files to add to the repository. <span
- style="font-weight: bold;">Note that directories needed to add
-selected files will be added to the repository even if they are not
-selected by the fileset.</span><br>
-<br>
-<h4>commit</h4>
-<p>Send changes from your working copy to the repository.</p>
-<table border="1" cellpadding="2" cellspacing="0">
-  <tbody>
-    <tr>
-      <td width="12%" valign="top"><b>Attribute</b></td>
-      <td width="78%" valign="top"><b>Description</b></td>
-      <td width="10%" valign="top"><b>Required</b></td>
-    </tr>
-    <tr>
-      <td valign="top">file<br>
-      </td>
-      <td style="vertical-align: top;">file to commit<br>
-      </td>
-      <td style="vertical-align: top; text-align: center;">No</td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">recurse<br>
-      </td>
-      <td style="vertical-align: top;">Set to "false" to operate on
-single directory only. Default is "true"<br>
-Apply only when dir attribute is set.<br>
-      </td>
-      <td style="vertical-align: top; text-align: center;">No<br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">dir</td>
-      <td style="vertical-align: top;">directory to commit<br>
-      </td>
-      <td style="vertical-align: top; text-align: center;">No<br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">message</td>
-      <td style="vertical-align: top;">commit message<br>
-      </td>
-      <td style="vertical-align: top; text-align: center;">Yes<br>
-      </td>
-    </tr>
-  </tbody>
-</table>
-<br>
-Parameters specified as nested elements :<br>
-<br>
-fileset<br>
-Filesets are used to select sets of files to commit. <span
- style="font-weight: bold;"></span><br>
-<br>
-<h4>copy</h4>
-Duplicate something in working copy or repository, remembering history.<br>
-&nbsp; <br>
-source and destination can each be either a working copy (WC) path or
-URL:<br>
-&nbsp;&nbsp;&nbsp; WC&nbsp; -&gt; WC:&nbsp;&nbsp; copy and schedule for
-addition (with history)<br>
-&nbsp;&nbsp;&nbsp; WC&nbsp; -&gt; URL:&nbsp; immediately commit a copy
-of WC to URL<br>
-&nbsp;&nbsp;&nbsp; URL -&gt; WC:&nbsp;&nbsp; check out URL into WC,
-schedule for addition<br>
-&nbsp;&nbsp;&nbsp; URL -&gt; URL:&nbsp; complete server-side
-copy;&nbsp; used to branch &amp; tag<br>
-<br>
-<table border="1" cellpadding="2" cellspacing="0" style="width: 50%;">
-  <tbody>
-    <tr>
-      <td style="width: 12%; vertical-align: top;"><b>Attribute</b></td>
-      <td style="vertical-align: top; width: 78%;"><b>Description</b></td>
-      <td style="width: 10%; vertical-align: top;"><b>Required</b></td>
-    </tr>
-    <tr>
-      <td valign="top">srcPath<br>
-      </td>
-      <td style="vertical-align: top; width: 78%;">source path</td>
-      <td style="vertical-align: top; text-align: center;" rowspan="2"
- colspan="1">One of the two</td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">srcUrl<br>
-      </td>
-      <td style="vertical-align: top; width: 78%;">source url</td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">testPath</td>
-      <td style="vertical-align: top; width: 78%;">destination path</td>
-      <td style="vertical-align: top; text-align: center;" rowspan="2"
- colspan="1">One of the two</td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">destUrl</td>
-      <td style="vertical-align: top; width: 78%;">destination url</td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">message<br>
-      </td>
-      <td style="vertical-align: top;">commit message<br>
-      </td>
-      <td style="vertical-align: top; text-align: center;">when destUrl
-is set<br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">revision</td>
-      <td style="vertical-align: top;">revision to copy from (when
-srcUrl is set)<br>
-Possible values are :<br>
-- a date with the following format : MM/DD/YYYY HH:MM AM_PM<br>
-- a revision number<br>
-- HEAD, BASE, COMMITED or PREV<br>
-Default is "HEAD"</td>
-      <td style="vertical-align: top; text-align: center;">no<br>
-      </td>
-    </tr>
-  </tbody>
-</table>
-<br>
-<h4>delete</h4>
-<p>If run on a working copy target, the item is scheduled for deletion
-upon the next commit.&nbsp; Files, and directories that have not been
-committed, are immediately removed from the working copy.&nbsp; <br>
-The command will not remove targets that are, or contain, unversioned
-or modified items; use the force attribute to override this behaviour.<br>
-If run on an url, the item is deleted from the repository via an
-immediate commit.</p>
-<table border="1" cellpadding="2" cellspacing="0">
-  <tbody>
-    <tr>
-      <td width="12%" valign="top"><b>Attribute</b></td>
-      <td style="width: 78%; vertical-align: top;"><b>Description</b></td>
-      <td width="10%" valign="top"><b>Required</b></td>
-    </tr>
-    <tr>
-      <td valign="top">file<br>
-      </td>
-      <td style="vertical-align: top;">file to delete</td>
-      <td style="vertical-align: top; text-align: center;">No</td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">url</td>
-      <td style="vertical-align: top;">url to delete</td>
-      <td style="vertical-align: top; text-align: center;">No<br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">dir</td>
-      <td style="vertical-align: top;">directory to delete</td>
-      <td style="vertical-align: top; text-align: center;">No<br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">message</td>
-      <td style="vertical-align: top;">commit message<br>
-      </td>
-      <td style="vertical-align: top; text-align: center;">when url
-attribute is set<br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">force<br>
-      </td>
-      <td style="vertical-align: top;">default is "false"<br>
-      </td>
-      <td style="vertical-align: top; text-align: center;">No<br>
-      </td>
-    </tr>
-  </tbody>
-</table>
-<br>
-Parameters specified as nested elements :<br>
-<br>
-fileset<br>
-Filesets are used to select sets of files to delete.. <span
- style="font-weight: bold;"></span><br>
-<br>
-<h4>export</h4>
-<p>&nbsp; 1. Exports a clean directory tree from the repository
-specified by <code>srcurl</code>, at revision <code>revision </code>if
-it is given, otherwise at HEAD, into <code>destPath</code>. <br>
-<br>
-&nbsp; 2. Exports a clean directory tree from the working copy
-specified by <code>srcPath</code> into <code>destPath</code>.&nbsp;
-all
-local changes will be preserved, but files not under revision control
-will not be copied.</p>
-<table border="1" cellpadding="2" cellspacing="0">
-  <tbody>
-    <tr>
-      <td width="12%" valign="top"><b>Attribute</b></td>
-      <td style="width: 78%; vertical-align: top;"><b>Description</b></td>
-      <td width="10%" valign="top"><b>Required</b></td>
-    </tr>
-    <tr>
-      <td valign="top">srcUrl<br>
-      </td>
-      <td style="vertical-align: top;">source url to export from<br>
-      </td>
-      <td style="vertical-align: top; text-align: center;" rowspan="2"
- colspan="1">One of the two</td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">srcPath</td>
-      <td style="vertical-align: top;">source path to export from<br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">destPath<br>
-      </td>
-      <td style="vertical-align: top;">destination path<br>
-      </td>
-      <td style="vertical-align: top; text-align: center;">Yes<br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">revision</td>
-      <td style="vertical-align: top;">revision of the source url to
-export from. Defaults is "HEAD"<br>
-Possible values are :<br>
-- a date with the following format : MM/DD/YYYY HH:MM AM_PM<br>
-- a revision number<br>
-- HEAD, BASE, COMMITED or PREV<br>
-      </td>
-      <td style="vertical-align: top; text-align: center;">No</td>
-    </tr>
-  </tbody>
-</table>
-<br>
-<br>
-<span style="font-weight: bold;"></span>
-<h4>import</h4>
-<p>Commit an unversioned file or tree into the repository.<br>
-Recursively commit a copy of <code>path</code> to <code>url</code>.<br>
-If <code>newEntry </code>is not set, copy top-level contents of <code>path</code>into<code>url</code>directly.&nbsp;
-Otherwise, create <code>newEntry </code>underneath <code>url </code>and
-begin copy there.<br>
-</p>
-<table border="1" cellpadding="2" cellspacing="0">
-  <tbody>
-    <tr>
-      <td width="12%" valign="top"><b>Attribute</b></td>
-      <td style="width: 78%; vertical-align: top;"><b>Description</b></td>
-      <td width="10%" valign="top"><b>Required</b></td>
-    </tr>
-    <tr>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">path<br>
-      </td>
-      <td style="vertical-align: top;">source path to export from</td>
-      <td style="vertical-align: top; text-align: center;">Yes<br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">url<br>
-      </td>
-      <td style="vertical-align: top;">source url to import to</td>
-      <td style="vertical-align: top; text-align: center;">Yes<br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">newEntry</td>
-      <td style="vertical-align: top;"><br>
-      </td>
-      <td style="vertical-align: top; text-align: center;">No</td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">message</td>
-      <td style="vertical-align: top;">commit message<br>
-      </td>
-      <td style="vertical-align: top; text-align: center;">Yes<br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">recurse<br>
-      </td>
-      <td style="vertical-align: top;">Set to "false" to operate on
-single directory only. Default is "true"</td>
-      <td style="vertical-align: top; text-align: center;">False<br>
-      </td>
-    </tr>
-  </tbody>
-</table>
-<br>
-<br>
-<span style="font-weight: bold;"></span>
-<h4>mkdir</h4>
-<p>Create a new directory under revision control.<br>
-If target is a working copy path the directory is scheduled for
-addition in the working copy.&nbsp; If target is an url the directory
-is
-created in the repository via an immediate commit.&nbsp; <br>
-In both cases all the intermediate directories must already exist.</p>
-<table border="1" cellpadding="2" cellspacing="0">
-  <tbody>
-    <tr>
-      <td width="12%" valign="top"><b>Attribute</b></td>
-      <td style="width: 78%; vertical-align: top;"><b>Description</b></td>
-      <td width="10%" valign="top"><b>Required</b></td>
-    </tr>
-    <tr>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">path<br>
-      </td>
-      <td style="vertical-align: top;">path to create<br>
-      </td>
-      <td style="vertical-align: top; text-align: center;" rowspan="2"
- colspan="1">One of the two<br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">url<br>
-      </td>
-      <td style="vertical-align: top;">url to create<br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">message</td>
-      <td style="vertical-align: top;">commit message<br>
-      </td>
-      <td style="vertical-align: top; text-align: center;">Yes<br>
-      </td>
-    </tr>
-  </tbody>
-</table>
-<br>
-<br>
-<span style="font-weight: bold;"></span>
-<h4>move</h4>
-<p>Move/rename something in working copy or repository.<br>
-<br>
-&nbsp; cource and destination can both be working copy (WC) paths or
-URLs:<br>
-&nbsp;&nbsp;&nbsp; WC&nbsp; -&gt; WC:&nbsp;&nbsp; move and schedule for
-addition (with history)<br>
-&nbsp;&nbsp;&nbsp; URL -&gt; URL:&nbsp; complete server-side rename.</p>
-<table border="1" cellpadding="2" cellspacing="0">
-  <tbody>
-    <tr>
-      <td width="12%" valign="top"><b>Attribute</b></td>
-      <td style="width: 78%; vertical-align: top;"><b>Description</b></td>
-      <td width="10%" valign="top"><b>Required</b></td>
-    </tr>
-    <tr>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">srcPath<br>
-      </td>
-      <td style="vertical-align: top;">source path</td>
-      <td style="vertical-align: top; text-align: center;" rowspan="2"
- colspan="1">One of the two<br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">srcUrl<br>
-      </td>
-      <td style="vertical-align: top;">source url<br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">destPath<br>
-      </td>
-      <td style="vertical-align: top;">destination path</td>
-      <td style="vertical-align: top; text-align: center;" rowspan="2"
- colspan="1">One of the two<br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">destUrl<br>
-      </td>
-      <td style="vertical-align: top;">destination url<br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">message<br>
-      </td>
-      <td style="vertical-align: top;">commit message<br>
-      </td>
-      <td style="vertical-align: top; text-align: center;">Yes<br>
-      </td>
-    </tr>
-  </tbody>
-</table>
-<br>
-<h4>propset</h4>
-Set a property on files or dirs.<br>
-<br>
-<table border="1" cellpadding="2" cellspacing="0">
-  <tbody>
-    <tr>
-      <td width="12%" valign="top"><b>Attribute</b></td>
-      <td style="width: 78%; vertical-align: top;"><b>Description</b></td>
-      <td width="10%" valign="top"><b>Required</b></td>
-    </tr>
-    <tr>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">path<br>
-      </td>
-      <td style="vertical-align: top;">path of the file or directory on
-which to set the property</td>
-      <td style="vertical-align: top; text-align: center;" rowspan="1"
- colspan="1">Yes<br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">name<br>
-      </td>
-      <td style="vertical-align: top;">name of the property to set <br>
-      </td>
-      <td style="vertical-align: top;"><br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">value</td>
-      <td style="vertical-align: top;">the value of the property</td>
-      <td style="vertical-align: top; text-align: center;" rowspan="2"
- colspan="1">One of the two<br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">file<br>
-      </td>
-      <td style="vertical-align: top;">the file that will be used as a
-value<br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">recurse</td>
-      <td style="vertical-align: top;">if set, property will be set
-recursively<br>
-      </td>
-      <td style="vertical-align: top; text-align: center;">No</td>
-    </tr>
-  </tbody>
-</table>
-<br>
-<br>
-<span style="font-style: italic;">Note: </span>svn recognizes the
-following special versioned properties but will store any arbitrary
-properties set:<br>
-<ul>
-  <li>svn:ignore&nbsp;&nbsp;&nbsp;&nbsp; - A newline separated list of
-file patterns to ignore.</li>
-  <li>svn:keywords&nbsp;&nbsp; - Keywords to be expanded.&nbsp; Valid
-keywords are:<br>
-&nbsp;&nbsp;&nbsp; URL,
-HeadURL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-- The URL for the head version of the object.<br>
-&nbsp;&nbsp;&nbsp; Author, LastChangedBy&nbsp;&nbsp;&nbsp; - The last
-person to modify the file.<br>
-&nbsp;&nbsp;&nbsp; Date, LastChangedDate&nbsp;&nbsp;&nbsp; - The
-date/time the object was last modified.<br>
-&nbsp;&nbsp;&nbsp; Rev, LastChangedRevision - The last revision the
-object changed.<br>
-&nbsp;&nbsp;&nbsp;
-Id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-- A compressed summary of the previous 4 keywords.</li>
-  <li>svn:executable - If present, make the file executable. This
-property cannot be set on a directory.&nbsp; A non-recursive attempt
-will fail, and a recursive attempt will set the property only on the
-file children of the directory</li>
-  <li>svn:eol-style&nbsp; - One of 'native', 'LF', 'CR', 'CRLF'.</li>
-  <li>svn:mime-type&nbsp; - The mimetype of the file.&nbsp; Used to
-determine whether to merge the file, and how to serve it from Apache. <br>
-A mimetype beginning with 'text/' (or an absent mimetype) is treated as
-text.&nbsp; Anything else is treated as binary.</li>
-  <li>svn:externals&nbsp; - A newline separated list of module
-specifiers, each of which consists of a relative directory path,
-optional revision flags, and an URL.&nbsp; For example<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-foo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-http://example.com/repos/zig<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; foo/bar -r 1234
-http://example.com/repos/zag<br>
-  </li>
-</ul>
-<h4>update</h4>
-<p>Bring changes from the repository into the working copy.<br>
-If no revision given, bring working copy up-to-date with HEAD
-rev.&nbsp; Else synchronize working copy to revision.<br>
-</p>
-<table border="1" cellpadding="2" cellspacing="0">
-  <tbody>
-    <tr>
-      <td width="12%" valign="top"><b>Attribute</b></td>
-      <td width="78%" valign="top"><b>Description</b></td>
-      <td width="10%" valign="top"><b>Required</b></td>
-    </tr>
-    <tr>
-      <td valign="top">file<br>
-      </td>
-      <td style="vertical-align: top;">file to update</td>
-      <td style="vertical-align: top; text-align: center;">No<br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">dir<br>
-      </td>
-      <td style="vertical-align: top;">directory to update</td>
-      <td style="vertical-align: top; text-align: center;">No<br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">recurse<br>
-      </td>
-      <td style="vertical-align: top;">Set to "false" to operate on a
-single directory only (applies only when <code>dir</code> attribute is
-set). Default is "true"<br>
-      </td>
-      <td style="vertical-align: top; text-align: center;">No<br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;">revision<br>
-      </td>
-      <td style="vertical-align: top;">revision. Defaults is "HEAD"<br>
-Possible values are :<br>
-- a date with the following format : MM/DD/YYYY HH:MM AM_PM<br>
-- a revision number<br>
-- HEAD, BASE, COMMITED or PREV</td>
-      <td style="vertical-align: top; text-align: center;">No<br>
-      </td>
-    </tr>
-  </tbody>
-</table>
-<br>
-Parameters specified as nested elements :<br>
-<br>
-fileset<br>
-Filesets are used to select sets of files to update. <span
- style="font-weight: bold;"></span><br>
-<br>
-<h3>Examples</h3>
-<p><code>&nbsp; &lt;svn&gt;<br>
-&nbsp;&nbsp;&nbsp; &lt;checkout
-url="file:///F:/Programmation/Projets/subversion/svnant/test/test_repos"
-destPath="my_repos" /&gt;<br>
-&nbsp; &lt;/svn&gt;<br>
-</code></p>
-<p>checkouts a working copy from repository<code></code></p>
-<p><code><br>
-&nbsp;&nbsp;&nbsp; &lt;svn&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;delete&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;fileset
-dir="my_repos/deleteTest"&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;include
-name="**/*.del"/&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/fileset&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/delete&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;commit message="commit deleted
-files" dir="my_repos/deleteTest"/&gt;<br>
-&nbsp;&nbsp;&nbsp; &lt;/svn&gt;<br>
-</code></p>
-<p>deletes some files from repository (and commit changes)<code><br>
-</code></p>
-<p><code><br>
-</code></p>
-<hr>
-<p align="center"></p>
-</body>
-</html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1252">
+	<TITLE>Svn Task</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 1.1.0  (Win32)">
+	<META NAME="CREATED" CONTENT="20031019;22355182">
+	<META NAME="CHANGED" CONTENT="20031024;23492226">
+	<META HTTP-EQUIV="Content-Language" CONTENT="en-us">
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<H2><A NAME="svn"></A>Svn</H2>
+<P>by</P>
+<UL>
+	<LI><P><A HREF="mailto:cchabanois@ifrance.com">C&eacute;dric
+	Chabanois</A></P>
+</UL>
+<H3>Description</H3>
+<P>This task provide an interface to <A HREF="http://subversion.tigris.org/">Subversion
+</A>revision control system that is a compelling replacement for CVS
+in the open source community.</P>
+<P>Svn uses javahl (a java interface for the subversion api) if it
+can find the corresponding library (svnjavahl.dll on windows).
+Otherwise it uses experimental svn command line interface.<BR>&nbsp;</P>
+<H3>Parameters</H3>
+<TABLE WIDTH=628 BORDER=2 CELLPADDING=2 CELLSPACING=0>
+	<COL WIDTH=80>
+	<COL WIDTH=451>
+	<COL WIDTH=81>
+	<TR VALIGN=TOP>
+		<TD WIDTH=80>
+			<P><B>Attribute</B></P>
+		</TD>
+		<TD WIDTH=451>
+			<P><B>Description</B></P>
+		</TD>
+		<TD WIDTH=81>
+			<P ALIGN=CENTER><B>Required</B></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=80>
+			<P>username</P>
+		</TD>
+		<TD WIDTH=451>
+			<P>username that will be used for all nested svn commands.</P>
+		</TD>
+		<TD WIDTH=81>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=80>
+			<P>password</P>
+		</TD>
+		<TD WIDTH=451>
+			<P>password that will be used for all nested svn commands.</P>
+		</TD>
+		<TD WIDTH=81>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=80>
+			<P>javahl</P>
+		</TD>
+		<TD WIDTH=451>
+			<P>Set to &ldquo;false&rdquo; to use command line client interface
+			to svn<BR>(<B>experimental</B>). Defaults to true</P>
+		</TD>
+		<TD WIDTH=81>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+</TABLE>
+<H3>Svn commands specified as nested elements</H3>
+<H4>add</H4>
+<P>You can add files and directories to svn repository with nested
+<CODE>&lt;add&gt;</CODE> elements.</P>
+<TABLE BORDER=1 CELLPADDING=2 CELLSPACING=0>
+	<TR VALIGN=TOP>
+		<TD WIDTH=12%>
+			<P><B>Attribute</B></P>
+		</TD>
+		<TD WIDTH=78%>
+			<P><B>Description</B></P>
+		</TD>
+		<TD WIDTH=10%>
+			<P><B>Required</B></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD VALIGN=TOP>
+			<P>file</P>
+		</TD>
+		<TD>
+			<P>file to add to the repository</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>dir</P>
+		</TD>
+		<TD>
+			<P>directory to add to the repository</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>recurse</P>
+		</TD>
+		<TD>
+			<P>Set to &quot;false&quot; to operate on a single directory only
+			(applies only when <CODE>dir</CODE> attribute is set). Default is
+			&quot;true&quot;</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><BR>Parameters specified as nested elements :<BR><BR>fileset<BR>Filesets
+are used to select sets of files to add to the repository. <B>Note
+that directories needed to add selected files will be added to the
+repository even if they are not selected by the fileset.</B></P>
+<H4>checkout</H4>
+<P>Check out a working copy from a repository.</P>
+<TABLE BORDER=1 CELLPADDING=2 CELLSPACING=0>
+	<TR VALIGN=TOP>
+		<TD WIDTH=12%>
+			<P><B>Attribute</B></P>
+		</TD>
+		<TD WIDTH=78%>
+			<P><B>Description</B></P>
+		</TD>
+		<TD WIDTH=10%>
+			<P><B>Required</B></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD VALIGN=TOP>
+			<P>url</P>
+		</TD>
+		<TD>
+			<P>url to checkout from</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>Yes</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>recurse</P>
+		</TD>
+		<TD>
+			<P>Set to &quot;false&quot; to operate on single directory only.
+			Default is &quot;true&quot;</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>destPath</P>
+		</TD>
+		<TD>
+			<P>destination directory</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>Yes</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>revision</P>
+		</TD>
+		<TD>
+			<P>revision to checkout.<BR>Possible values are :<BR>- a date with
+			the following format : MM/DD/YYYY HH:MM AM_PM<BR>- a revision
+			number<BR>- HEAD, BASE, COMMITED or PREV<BR>Default is &quot;HEAD&quot;</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><BR>Parameters specified as nested elements :<BR><BR>fileset<BR>Filesets
+are used to select sets of files to add to the repository. <B>Note
+that directories needed to add selected files will be added to the
+repository even if they are not selected by the fileset.</B></P>
+<H4>commit</H4>
+<P>Send changes from your working copy to the repository.</P>
+<TABLE BORDER=1 CELLPADDING=2 CELLSPACING=0>
+	<TR VALIGN=TOP>
+		<TD WIDTH=12%>
+			<P><B>Attribute</B></P>
+		</TD>
+		<TD WIDTH=78%>
+			<P><B>Description</B></P>
+		</TD>
+		<TD WIDTH=10%>
+			<P><B>Required</B></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD VALIGN=TOP>
+			<P>file</P>
+		</TD>
+		<TD>
+			<P>file to commit</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>recurse</P>
+		</TD>
+		<TD>
+			<P>Set to &quot;false&quot; to operate on single directory only.
+			Default is &quot;true&quot;<BR>Apply only when dir attribute is
+			set.</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>dir</P>
+		</TD>
+		<TD>
+			<P>directory to commit</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>message</P>
+		</TD>
+		<TD>
+			<P>commit message</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>Yes</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><BR>Parameters specified as nested elements :<BR><BR>fileset<BR>Filesets
+are used to select sets of files to commit. 
+</P>
+<H4>copy</H4>
+<P>Duplicate something in working copy or repository, remembering
+history.<BR>&nbsp; <BR>source and destination can each be either a
+working copy (WC) path or URL:<BR>&nbsp;&nbsp;&nbsp; WC&nbsp; -&gt;
+WC:&nbsp;&nbsp; copy and schedule for addition (with history)<BR>&nbsp;&nbsp;&nbsp;
+WC&nbsp; -&gt; URL:&nbsp; immediately commit a copy of WC to URL<BR>&nbsp;&nbsp;&nbsp;
+URL -&gt; WC:&nbsp;&nbsp; check out URL into WC, schedule for
+addition<BR>&nbsp;&nbsp;&nbsp; URL -&gt; URL:&nbsp; complete
+server-side copy;&nbsp; used to branch &amp; tag</P>
+<TABLE BORDER=1 CELLPADDING=2 CELLSPACING=0>
+	<TR>
+		<TD>
+			<P><B>Attribute</B></P>
+		</TD>
+		<TD>
+			<P><B>Description</B></P>
+		</TD>
+		<TD>
+			<P><B>Required</B></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD VALIGN=TOP>
+			<P>srcPath</P>
+		</TD>
+		<TD>
+			<P>source path</P>
+		</TD>
+		<TD ROWSPAN=2>
+			<P ALIGN=CENTER>One of the two</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>srcUrl</P>
+		</TD>
+		<TD>
+			<P>source url</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>testPath</P>
+		</TD>
+		<TD>
+			<P>destination path</P>
+		</TD>
+		<TD ROWSPAN=2>
+			<P ALIGN=CENTER>One of the two</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>destUrl</P>
+		</TD>
+		<TD>
+			<P>destination url</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>message</P>
+		</TD>
+		<TD>
+			<P>commit message</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>when destUrl is set</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>revision</P>
+		</TD>
+		<TD>
+			<P>revision to copy from (when srcUrl is set)<BR>Possible values
+			are :<BR>- a date with the following format : MM/DD/YYYY HH:MM
+			AM_PM<BR>- a revision number<BR>- HEAD, BASE, COMMITED or
+			PREV<BR>Default is &quot;HEAD&quot;</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>no</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><BR><BR>
+</P>
+<H4>delete</H4>
+<P>If run on a working copy target, the item is scheduled for
+deletion upon the next commit.&nbsp; Files, and directories that have
+not been committed, are immediately removed from the working copy.&nbsp;
+<BR>The command will not remove targets that are, or contain,
+unversioned or modified items; use the force attribute to override
+this behaviour.<BR>If run on an url, the item is deleted from the
+repository via an immediate commit.</P>
+<TABLE BORDER=1 CELLPADDING=2 CELLSPACING=0>
+	<TR>
+		<TD WIDTH=12% VALIGN=TOP>
+			<P><B>Attribute</B></P>
+		</TD>
+		<TD>
+			<P><B>Description</B></P>
+		</TD>
+		<TD WIDTH=10% VALIGN=TOP>
+			<P><B>Required</B></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD VALIGN=TOP>
+			<P>file</P>
+		</TD>
+		<TD>
+			<P>file to delete</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>url</P>
+		</TD>
+		<TD>
+			<P>url to delete</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>dir</P>
+		</TD>
+		<TD>
+			<P>directory to delete</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>message</P>
+		</TD>
+		<TD>
+			<P>commit message</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>when url attribute is set</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>force</P>
+		</TD>
+		<TD>
+			<P>default is &quot;false&quot;</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><BR>Parameters specified as nested elements :<BR><BR>fileset<BR>Filesets
+are used to select sets of files to delete.. 
+</P>
+<H4>export</H4>
+<P>&nbsp; 1. Exports a clean directory tree from the repository
+specified by <CODE>srcurl</CODE>, at revision <CODE>revision </CODE>if
+it is given, otherwise at HEAD, into <CODE>destPath</CODE>. <BR><BR>&nbsp;
+2. Exports a clean directory tree from the working copy specified by
+<CODE>srcPath</CODE> into <CODE>destPath</CODE>.&nbsp; all local
+changes will be preserved, but files not under revision control will
+not be copied.</P>
+<TABLE BORDER=1 CELLPADDING=2 CELLSPACING=0>
+	<TR>
+		<TD WIDTH=12% VALIGN=TOP>
+			<P><B>Attribute</B></P>
+		</TD>
+		<TD>
+			<P><B>Description</B></P>
+		</TD>
+		<TD WIDTH=10% VALIGN=TOP>
+			<P><B>Required</B></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD VALIGN=TOP>
+			<P>srcUrl</P>
+		</TD>
+		<TD>
+			<P>source url to export from</P>
+		</TD>
+		<TD ROWSPAN=2>
+			<P ALIGN=CENTER>One of the two</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>srcPath</P>
+		</TD>
+		<TD>
+			<P>source path to export from</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>destPath</P>
+		</TD>
+		<TD>
+			<P>destination path</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>Yes</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>revision</P>
+		</TD>
+		<TD>
+			<P>revision of the source url to export from. Defaults is
+			&quot;HEAD&quot;<BR>Possible values are :<BR>- a date with the
+			following format : MM/DD/YYYY HH:MM AM_PM<BR>- a revision number<BR>-
+			HEAD, BASE, COMMITED or PREV</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><BR><BR>
+</P>
+<H4>import</H4>
+<P>Commit an unversioned file or tree into the
+repository.<BR>Recursively commit a copy of <CODE>path</CODE> to
+<CODE>url</CODE>.<BR>If <CODE>newEntry </CODE>is not set, copy
+top-level contents of <CODE>path</CODE>into<CODE>url</CODE>directly.&nbsp;
+Otherwise, create <CODE>newEntry </CODE>underneath <CODE>url </CODE>and
+begin copy there.</P>
+<TABLE BORDER=1 CELLPADDING=2 CELLSPACING=0>
+	<TR>
+		<TD WIDTH=12% VALIGN=TOP>
+			<P><B>Attribute</B></P>
+		</TD>
+		<TD>
+			<P><B>Description</B></P>
+		</TD>
+		<TD WIDTH=10% VALIGN=TOP>
+			<P><B>Required</B></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>path</P>
+		</TD>
+		<TD>
+			<P>source path to export from</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>Yes</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>url</P>
+		</TD>
+		<TD>
+			<P>source url to import to</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>Yes</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>newEntry</P>
+		</TD>
+		<TD>
+			<P><BR>
+			</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>message</P>
+		</TD>
+		<TD>
+			<P>commit message</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>Yes</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>recurse</P>
+		</TD>
+		<TD>
+			<P>Set to &quot;false&quot; to operate on single directory only.
+			Default is &quot;true&quot;</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>False</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><BR><BR>
+</P>
+<H4>Keywordsset</H4>
+<P>Keywordsset controls which keywords will be substituted on the
+given files. Valid keywords are:</P>
+<UL>
+	<LI><P>URL, HeadURL : The URL for the head version of the object.</P>
+</UL>
+<UL>
+	<LI><P>Author, LastChangedBy : The last person to modify the file.</P>
+	<LI><P>Date, LastChangedDate : The date/time the object was last
+	modified.</P>
+	<LI><P>Rev, LastChangedRevision : The last revision the object
+	changed.</P>
+	<LI><P>Id : A compressed summary of the previous</P>
+</UL>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<TABLE WIDTH=935 BORDER=2 CELLPADDING=2 CELLSPACING=0>
+	<COL WIDTH=241>
+	<COL WIDTH=535>
+	<COL WIDTH=143>
+	<TR>
+		<TD WIDTH=241 VALIGN=TOP>
+			<P><B>Attribute</B></P>
+		</TD>
+		<TD WIDTH=535>
+			<P><B>Description</B></P>
+		</TD>
+		<TD WIDTH=143 VALIGN=TOP>
+			<P><B>Required</B></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=241>
+			<P>file</P>
+		</TD>
+		<TD WIDTH=535>
+			<P>File for which keywords will be substituted</P>
+		</TD>
+		<TD WIDTH=143>
+			<P ALIGN=CENTER>Either file, dir or filesets</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=241>
+			<P>dir</P>
+		</TD>
+		<TD WIDTH=535>
+			<P>All files in this directory will have their keywords
+			substituted (recursively)</P>
+		</TD>
+		<TD WIDTH=143>
+			<P ALIGN=CENTER>Either file, dir or filesets</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=241>
+			<P>keywords</P>
+		</TD>
+		<TD WIDTH=535>
+			<P>The keywords to substitute on the given files</P>
+		</TD>
+		<TD WIDTH=143>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=241>
+			<P>HeadURL/URL<BR>Author, LastChangedBy<BR>Date,
+			LastChangedDate<BR>Rev, LastChangedRevision<BR>Id</P>
+		</TD>
+		<TD WIDTH=535>
+			<P>Set to &ldquo;true&ldquo; the keyword to substitute it on the
+			given file.</P>
+		</TD>
+		<TD WIDTH=143>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><BR><BR>
+</P>
+<P>Parameters specified as nested elements :<BR><BR>fileset<BR>Filesets
+are used to select sets of files on which to apply keywords
+substitution. 
+</P>
+<H4>keywordsadd</H4>
+<P>Keywordsadd add some keywords to be substituted on the given
+files. Present keywords are not modified.<BR>The attributes are the
+same than for keywordsset command.</P>
+<H4>keywordsremove</H4>
+<P>Keywordsadd remove some keywords to be substituted on the given
+files. Other present keywords are not modified.<BR>The attributes are
+the same than for keywordsset command.</P>
+<H4>mkdir</H4>
+<P>Create a new directory under revision control.<BR>If target is a
+working copy path the directory is scheduled for addition in the
+working copy.&nbsp; If target is an url the directory is created in
+the repository via an immediate commit.&nbsp; <BR>In both cases all
+the intermediate directories must already exist.</P>
+<TABLE BORDER=1 CELLPADDING=2 CELLSPACING=0>
+	<TR>
+		<TD WIDTH=12% VALIGN=TOP>
+			<P><B>Attribute</B></P>
+		</TD>
+		<TD>
+			<P><B>Description</B></P>
+		</TD>
+		<TD WIDTH=10% VALIGN=TOP>
+			<P><B>Required</B></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>path</P>
+		</TD>
+		<TD>
+			<P>path to create</P>
+		</TD>
+		<TD ROWSPAN=2>
+			<P ALIGN=CENTER>One of the two</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>url</P>
+		</TD>
+		<TD>
+			<P>url to create</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>message</P>
+		</TD>
+		<TD>
+			<P>commit message</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>Yes</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><BR><BR>
+</P>
+<H4>move</H4>
+<P>Move/rename something in working copy or repository.<BR><BR>&nbsp;
+cource and destination can both be working copy (WC) paths or
+URLs:<BR>&nbsp;&nbsp;&nbsp; WC&nbsp; -&gt; WC:&nbsp;&nbsp; move and
+schedule for addition (with history)<BR>&nbsp;&nbsp;&nbsp; URL -&gt;
+URL:&nbsp; complete server-side rename.</P>
+<TABLE BORDER=1 CELLPADDING=2 CELLSPACING=0>
+	<TR>
+		<TD WIDTH=12% VALIGN=TOP>
+			<P><B>Attribute</B></P>
+		</TD>
+		<TD>
+			<P><B>Description</B></P>
+		</TD>
+		<TD WIDTH=10% VALIGN=TOP>
+			<P><B>Required</B></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>srcPath</P>
+		</TD>
+		<TD>
+			<P>source path</P>
+		</TD>
+		<TD ROWSPAN=2>
+			<P ALIGN=CENTER>One of the two</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>srcUrl</P>
+		</TD>
+		<TD>
+			<P>source url</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>destPath</P>
+		</TD>
+		<TD>
+			<P>destination path</P>
+		</TD>
+		<TD ROWSPAN=2>
+			<P ALIGN=CENTER>One of the two</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>destUrl</P>
+		</TD>
+		<TD>
+			<P>destination url</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>message</P>
+		</TD>
+		<TD>
+			<P>commit message</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>Yes</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><BR><BR>
+</P>
+<H4>propset</H4>
+<P>Set a property on files or dirs.</P>
+<TABLE BORDER=1 CELLPADDING=2 CELLSPACING=0>
+	<TR>
+		<TD WIDTH=12% VALIGN=TOP>
+			<P><B>Attribute</B></P>
+		</TD>
+		<TD>
+			<P><B>Description</B></P>
+		</TD>
+		<TD WIDTH=10% VALIGN=TOP>
+			<P><B>Required</B></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>path</P>
+		</TD>
+		<TD>
+			<P>path of the file or directory on which to set the property</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>Yes</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>name</P>
+		</TD>
+		<TD>
+			<P>name of the property to set 
+			</P>
+		</TD>
+		<TD>
+			<P><BR>
+			</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>value</P>
+		</TD>
+		<TD>
+			<P>the value of the property</P>
+		</TD>
+		<TD ROWSPAN=2>
+			<P ALIGN=CENTER>One of the two</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>file</P>
+		</TD>
+		<TD>
+			<P>the file that will be used as a value</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>recurse</P>
+		</TD>
+		<TD>
+			<P>if set, property will be set recursively</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><BR><BR><I>Note: </I>svn recognizes the following special
+versioned properties but will store any arbitrary properties set:</P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0cm">svn:ignore&nbsp;&nbsp;&nbsp;&nbsp;
+	- A newline separated list of file patterns to ignore. 
+	</P>
+	<LI><P STYLE="margin-bottom: 0cm">svn:keywords&nbsp;&nbsp; -
+	Keywords to be expanded.&nbsp; Valid keywords are:<BR>&nbsp;&nbsp;&nbsp;
+	URL, HeadURL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	- The URL for the head version of the object.<BR>&nbsp;&nbsp;&nbsp;
+	Author, LastChangedBy&nbsp;&nbsp;&nbsp; - The last person to modify
+	the file.<BR>&nbsp;&nbsp;&nbsp; Date, LastChangedDate&nbsp;&nbsp;&nbsp;
+	- The date/time the object was last modified.<BR>&nbsp;&nbsp;&nbsp;
+	Rev, LastChangedRevision - The last revision the object changed.<BR>&nbsp;&nbsp;&nbsp;
+	Id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	- A compressed summary of the previous 4 keywords. 
+	</P>
+	<LI><P STYLE="margin-bottom: 0cm">svn:executable - If present, make
+	the file executable. This property cannot be set on a directory.&nbsp;
+	A non-recursive attempt will fail, and a recursive attempt will set
+	the property only on the file children of the directory 
+	</P>
+	<LI><P STYLE="margin-bottom: 0cm">svn:eol-style&nbsp; - One of
+	'native', 'LF', 'CR', 'CRLF'. 
+	</P>
+	<LI><P STYLE="margin-bottom: 0cm">svn:mime-type&nbsp; - The mimetype
+	of the file.&nbsp; Used to determine whether to merge the file, and
+	how to serve it from Apache. <BR>A mimetype beginning with 'text/'
+	(or an absent mimetype) is treated as text.&nbsp; Anything else is
+	treated as binary. 
+	</P>
+	<LI><P>svn:externals&nbsp; - A newline separated list of module
+	specifiers, each of which consists of a relative directory path,
+	optional revision flags, and an URL.&nbsp; For example<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	foo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	http://example.com/repos/zig<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	foo/bar -r 1234 http://example.com/repos/zag</P>
+</UL>
+<H4>update</H4>
+<P>Bring changes from the repository into the working copy.<BR>If no
+revision given, bring working copy up-to-date with HEAD rev.&nbsp;
+Else synchronize working copy to revision.</P>
+<TABLE BORDER=1 CELLPADDING=2 CELLSPACING=0>
+	<TR VALIGN=TOP>
+		<TD WIDTH=12%>
+			<P><B>Attribute</B></P>
+		</TD>
+		<TD WIDTH=78%>
+			<P><B>Description</B></P>
+		</TD>
+		<TD WIDTH=10%>
+			<P><B>Required</B></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD VALIGN=TOP>
+			<P>file</P>
+		</TD>
+		<TD>
+			<P>file to update</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>dir</P>
+		</TD>
+		<TD>
+			<P>directory to update</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>recurse</P>
+		</TD>
+		<TD>
+			<P>Set to &quot;false&quot; to operate on a single directory only
+			(applies only when <CODE>dir</CODE> attribute is set). Default is
+			&quot;true&quot;</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>revision</P>
+		</TD>
+		<TD>
+			<P>revision. Defaults is &quot;HEAD&quot;<BR>Possible values are
+			:<BR>- a date with the following format : MM/DD/YYYY HH:MM AM_PM<BR>-
+			a revision number<BR>- HEAD, BASE, COMMITED or PREV</P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER>No</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><BR>Parameters specified as nested elements :<BR><BR>fileset<BR>Filesets
+are used to select sets of files to update. 
+</P>
+<H3>Examples</H3>
+<P><CODE>&nbsp; &lt;svn&gt;<BR>&nbsp;&nbsp;&nbsp; &lt;checkout
+url=&quot;file:///F:/Programmation/Projets/subversion/svnant/test/test_repos&quot;
+destPath=&quot;my_repos&quot; /&gt;<BR>&nbsp; &lt;/svn&gt;</CODE></P>
+<P>checkouts a working copy from repository</P>
+<P><CODE><BR>&nbsp;&nbsp;&nbsp; &lt;svn&gt;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;delete&gt;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;fileset
+dir=&quot;my_repos/deleteTest&quot;&gt;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;include name=&quot;**/*.del&quot;/&gt;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;/fileset&gt;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/delete&gt;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;commit message=&quot;commit deleted files&quot;
+dir=&quot;my_repos/deleteTest&quot;/&gt;<BR>&nbsp;&nbsp;&nbsp; &lt;/svn&gt;</CODE></P>
+<P>deletes some files from repository (and commit changes)</P>
+<P><BR><BR>
+</P>
+<HR>
+</BODY>
+</HTML>
