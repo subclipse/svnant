@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+
+<project name="svn-test" basedir="." default="checkoutThis">
+  
+  <!--  all properties are in build.properties 
+  --> 
+  <property file="build.properties" /> 
+  <path id="project.classpath">
+    <pathelement location="${jsvn.jar}" /> 
+    <pathelement location="${svnant.jar}" />
+		<pathelement location="${svnClientAdapter.jar}" />
+  </path>  
+  
+  <taskdef name="svn" classname="org.tigris.subversion.svnant.SvnTask" classpathref="project.classpath"/>
+
+  <target name="clean">
+    <delete dir="src_latest"/>
+    <delete dir="src_${svnant.version}"/>  
+  </target>
+
+  <target name="checkoutLatest">
+    <svn>
+      <checkout url="${svnant.latest.url}" revision="HEAD" destPath="src_latest" />
+    </svn>
+  </target>
+
+  <target name="checkoutThis">
+    <svn>
+      <checkout url="${svnant.this.url}" revision="HEAD" destPath="src_latest" />
+    </svn>
+  </target>
+
+</project>
