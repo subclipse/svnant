@@ -77,8 +77,8 @@
 
   <!-- for now we launch it in daemon mode, so you will need to kill it after -->
   <target name="launchSvnserve" depends="createTestSvnServeRepository">
-    <!-- if it fails, we assume svnserve is already running ... -->
-    <exec executable="svnserve" failonerror="false">
+    <!-- spawn is only available with ant >= 1.6 -->
+    <exec executable="svnserve" spawn="yes">
       <arg value="-d"/>
       <arg value="-r"/>
       <arg value="test_repos_svnserve"/>
