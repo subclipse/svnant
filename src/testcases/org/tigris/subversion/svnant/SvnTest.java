@@ -209,19 +209,19 @@ private ISVNClientAdapter svnClient;
         assertEquals(6,addSet.size()); // 6 for add and 6 for commit        
         assertEquals(6,commitSet.size()); // 6 for add and 6 for commit
         
-        assertTrue(addSet.contains(new File("test/my_Repos/listenerTest").getCanonicalFile()));
-        assertTrue(addSet.contains(new File("test/my_Repos/listenerTest/dir1").getCanonicalFile()));
-        assertTrue(addSet.contains(new File("test/my_Repos/listenerTest/dir1/file3.txt").getCanonicalFile()));        
-        assertTrue(addSet.contains(new File("test/my_Repos/listenerTest/dir1/file4.txt").getCanonicalFile()));
-        assertTrue(addSet.contains(new File("test/my_Repos/listenerTest/file1.txt").getCanonicalFile()));
-        assertTrue(addSet.contains(new File("test/my_Repos/listenerTest/file2.txt").getCanonicalFile()));
+        assertTrue(addSet.contains(new File("test/my_repos/listenerTest").getCanonicalFile()));
+        assertTrue(addSet.contains(new File("test/my_repos/listenerTest/dir1").getCanonicalFile()));
+        assertTrue(addSet.contains(new File("test/my_repos/listenerTest/dir1/file3.txt").getCanonicalFile()));        
+        assertTrue(addSet.contains(new File("test/my_repos/listenerTest/dir1/file4.txt").getCanonicalFile()));
+        assertTrue(addSet.contains(new File("test/my_repos/listenerTest/file1.txt").getCanonicalFile()));
+        assertTrue(addSet.contains(new File("test/my_repos/listenerTest/file2.txt").getCanonicalFile()));
 
-        assertTrue(commitSet.contains(new File("test/my_Repos/listenerTest").getCanonicalFile()));
-        assertTrue(commitSet.contains(new File("test/my_Repos/listenerTest/dir1").getCanonicalFile()));
-        assertTrue(commitSet.contains(new File("test/my_Repos/listenerTest/dir1/file3.txt").getCanonicalFile()));        
-        assertTrue(commitSet.contains(new File("test/my_Repos/listenerTest/dir1/file4.txt").getCanonicalFile()));
-        assertTrue(commitSet.contains(new File("test/my_Repos/listenerTest/file1.txt").getCanonicalFile()));
-        assertTrue(commitSet.contains(new File("test/my_Repos/listenerTest/file2.txt").getCanonicalFile()));
+        assertTrue(commitSet.contains(new File("test/my_repos/listenerTest").getCanonicalFile()));
+        assertTrue(commitSet.contains(new File("test/my_repos/listenerTest/dir1").getCanonicalFile()));
+        assertTrue(commitSet.contains(new File("test/my_repos/listenerTest/dir1/file3.txt").getCanonicalFile()));        
+        assertTrue(commitSet.contains(new File("test/my_repos/listenerTest/dir1/file4.txt").getCanonicalFile()));
+        assertTrue(commitSet.contains(new File("test/my_repos/listenerTest/file1.txt").getCanonicalFile()));
+        assertTrue(commitSet.contains(new File("test/my_repos/listenerTest/file2.txt").getCanonicalFile()));
         
     }
 
@@ -254,6 +254,7 @@ private ISVNClientAdapter svnClient;
     
     public void testStatus() throws Exception {  
       
+		executeTarget("testStatus");
         ISVNStatus[] statuses;  
         // getStatus(File, boolean) does not have the same result with command line interface
         // and svnjavahl for now. svnjavahl does not return ignored files for now 
