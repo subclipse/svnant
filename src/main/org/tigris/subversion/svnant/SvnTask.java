@@ -187,6 +187,10 @@ public class SvnTask extends Task {
     public void addIgnore(Ignore a) {
         commands.add(a);
     }
+    
+    public void addCreateRepository(CreateRepository a) {
+        commands.add(a);
+    }
 
     public void addNotifyListener(ISVNNotifyListener notifyListener) {
         notifyListeners.add(notifyListener);
