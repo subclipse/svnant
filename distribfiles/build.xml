@@ -10,7 +10,7 @@
     <pathelement location="${svnant.jar}" />
     <pathelement location="${svnClientAdapter.jar}" />
     <pathelement location="${jakarta-regexp.jar}" /> 
-    <pathelement location="${commons-logging.jar}" /> 
+    <pathelement location="${commons-lang.jar}" /> 
   </path>  
   
   <taskdef resource="svntask.properties" classpathref="project.classpath"/>
