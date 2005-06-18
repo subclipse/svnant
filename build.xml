@@ -105,6 +105,7 @@
 		<copy file="${svnClientAdapter.jar}" todir="${build.distrib.dir}/lib"/>
 		<copy file="${svnjavahl.jar}" todir="${build.distrib.dir}/lib"/>
 		<copy file="${jakarta-regexp.jar}" todir="${build.distrib.dir}/lib"/>
+		<copy file="${commons-lang.jar}" todir="${build.distrib.dir}/lib"/>
 		<copy file="${build.lib.dir}/svnant.jar" todir="${build.distrib.dir}/lib"/>
 		<copy file="doc/svn.html" todir="${build.distrib.dir}/doc"/>
 		<copy file="${distribfiles.dir}/build.xml" todir="${build.distrib.dir}"/>
