@@ -1,3 +1,14 @@
+* 1.0.0-rc1
+- Built against svnClientAdapter r1384 and Subversion 1.2.0,
+  incorporating numerous bug fixes and improvements from both.
+- Lacks support for Subversion locking (introduced in SVN 1.2.0).
+- Improved documentation.
+- New 'switch' and 'propget' commands for <svn> task.
+- Repository creation handles SVN file system type.
+- New JAR dependencies added (regexp, lang).
+- Add new/improved tests (e.g. of 'status', 'info', 'annotate',
+  'switch', svnserve, etc.).
+
 * 0.9.13
 - createRepository command added
 - status command added
