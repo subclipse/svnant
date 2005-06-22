@@ -105,8 +105,11 @@
         <filter token="SVNANTVERSION" value="${svnant.version}"/>
       </filterset>
     </copy>
-		<zip destfile="${build.dir}/svnant-${svnant.version}.zip" basedir="${build.distrib.dir}"/>
-	</target>
+    <zip destfile="${build.dir}/svnant-${svnant.version}.zip">
+      <zipfileset dir="${build.distrib.dir}"
+                  prefix="svnant-${svnant.version}"/>
+    </zip>
+  </target>
  
 
   <!-- create all jar files -->
