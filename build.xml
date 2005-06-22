@@ -105,7 +105,7 @@
         <filter token="SVNANTVERSION" value="${svnant.version}"/>
       </filterset>
     </copy>
-		<zip destfile="${build.dir}/svnant ${svnant.version}.zip" basedir="${build.distrib.dir}"/>
+		<zip destfile="${build.dir}/svnant-${svnant.version}.zip" basedir="${build.distrib.dir}"/>
 	</target>
  
 
