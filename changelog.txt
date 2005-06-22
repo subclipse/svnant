@@ -8,6 +8,8 @@
 - New JAR dependencies added (regexp, lang).
 - Add new/improved tests (e.g. of 'status', 'info', 'annotate',
   'switch', svnserve, etc.).
+- Adjustments to distribution packaging, including the removal of the
+  bundled JavaHL win32 DLLs.
 
 * 0.9.13
 - createRepository command added
