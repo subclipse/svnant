@@ -60,6 +60,7 @@ import java.io.FileFilter;
 import org.apache.tools.ant.BuildException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
+import org.tigris.subversion.svnclientadapter.SVNConstants;
 
 /**
  * Ignore. put patterns to svn:ignore property
@@ -164,7 +165,7 @@ public class Ignore extends SvnCommand {
         if (recursive) {
             File file[] = dir.listFiles( new FileFilter() {
                 public boolean accept(File pathname) {
-                    return pathname.isDirectory() && !pathname.getName().equals(".svn"); 
+                    return pathname.isDirectory() && !pathname.getName().equals(SVNConstants.SVN_DIRNAME); 
                 }
             });
             for (int i = 0; i < file.length;i++) {
