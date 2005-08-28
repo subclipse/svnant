@@ -65,6 +65,7 @@ import org.tigris.subversion.svnclientadapter.ISVNNotifyListener;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.commandline.CmdLineClientAdapterFactory;
+import org.tigris.subversion.svnclientadapter.javahl.JavaSvnClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.javahl.JhlClientAdapterFactory;
 
 /**
@@ -80,10 +81,13 @@ public class SvnTask extends Task {
     private int logLevel = 0;
     private File logFile = new File("svn.log");
     private boolean javahl = true;
+    private boolean javasvn = true;
     private List notifyListeners = new ArrayList();
     
     private static boolean javahlAvailableInitialized = false;
     private static boolean javahlAvailable;
+    private static boolean javaSVNAvailableInitialized = false;
+    private static boolean javaSVNAvailable;
     private static boolean commandLineAvailableInitialized = false;
     private static boolean commandLineAvailable;
 
@@ -101,6 +105,14 @@ public class SvnTask extends Task {
      */
     public void setJavahl(boolean javahl) {
         this.javahl = javahl;
+    }
+
+    /**
+     * set javasvn to false to use command line interface
+     * @param javahl
+     */
+    public void setJavasvn(boolean javasvn) {
+        this.javasvn = javasvn;
     }
 
 	public void setLogLevel(int logLevel) {
@@ -195,6 +207,10 @@ public class SvnTask extends Task {
     public void addCreateRepository(CreateRepository a) {
         commands.add(a);
     }
+    
+//    public void addSummaryStatus(StatusSummary a) {
+//        commands.add(a);
+//    }
 
     public void addStatus(Status a) {
     	commands.add(a);
@@ -234,6 +250,27 @@ public class SvnTask extends Task {
     }
     
     /**
+     * check if JavaSVN is available
+     * @return true if JavaSVN is available
+     */
+    private boolean isJavaSVNAvailable() {
+        if (javaSVNAvailableInitialized == false) {
+            // we don't initiliaze javaSVNAvailable in the static field because we
+            // don't want the check to occur if javaSVN is set to false
+            try {
+                JavaSvnClientAdapterFactory.setup();
+            } catch (SVNClientException e) {
+                // if an exception is thrown, JavaSVN is not available or 
+                // already registered ...
+            }
+            javaSVNAvailable = 
+                SVNClientAdapterFactory.isSVNClientAvailable(JavaSvnClientAdapterFactory.JAVASVN_CLIENT);
+            javaSVNAvailableInitialized = true;
+        }
+        return javaSVNAvailable;
+    }
+    
+    /**
      * check if command line interface is available
      * @return true if command line interface is available
      */
@@ -261,12 +298,17 @@ public class SvnTask extends Task {
             log("Using javahl");
         }
         else
+        if ((javasvn) && isJavaSVNAvailable()) {
+            svnClient = SVNClientAdapterFactory.createSVNClient(JavaSvnClientAdapterFactory.JAVASVN_CLIENT);
+            log("Using javasvn");
+        }
+        else
         if (isCommandLineAvailable()) {
             svnClient = SVNClientAdapterFactory.createSVNClient(CmdLineClientAdapterFactory.COMMANDLINE_CLIENT);
             log("Using command line interface");
         } 
         else
-            throw new BuildException("Cannot use javahl nor command line svn client");
+            throw new BuildException("Cannot use javahl, JavaSVN nor command line svn client");
         
 
         if (username != null)

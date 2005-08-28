@@ -27,15 +27,12 @@ import org.tigris.subversion.svnclientadapter.ISVNNotifyListener;
 import org.tigris.subversion.svnclientadapter.ISVNProperty;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNStatusKind;
-import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNScheduleKind;
 import org.tigris.subversion.svnclientadapter.SVNStatusUtils;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
-import org.tigris.subversion.svnclientadapter.commandline.CmdLineClientAdapterFactory;
-import org.tigris.subversion.svnclientadapter.javahl.JhlClientAdapterFactory;
 
 /**
  * You can set javahl to true or false in test/build.properties
@@ -43,41 +40,17 @@ import org.tigris.subversion.svnclientadapter.javahl.JhlClientAdapterFactory;
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  *
  */
-public class SvnTest extends BuildFileTest {
-private ISVNClientAdapter svnClient;
-private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
+public abstract class SvnTest extends BuildFileTest {
+
+	protected ISVNClientAdapter svnClient;
+	protected static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
 
     public SvnTest(String name) {
         super(name);
     }
-
-    static {
-        try {
-            JhlClientAdapterFactory.setup();
-        } catch (SVNClientException e) {
-            // if an exception is thrown, javahl is not available or 
-            // already registered ...
-        }
-        try {
-            CmdLineClientAdapterFactory.setup();
-        } catch (SVNClientException e) {
-            // if an exception is thrown, command line interface is not available or
-            // already registered ...                
-        }
-    }
     
     public void setUp() {
         configureProject("test/svn/build.xml");
-        boolean javahl = true;
-        String javahlProp = getProject().getProperty("javahl");
-        if (javahlProp != null)
-            javahl = getProject().getProperty("javahl").equalsIgnoreCase("true");
-        
-        if ((javahl) && (SVNClientAdapterFactory.isSVNClientAvailable(JhlClientAdapterFactory.JAVAHL_CLIENT))) {        
-    		svnClient = SVNClientAdapterFactory.createSVNClient(JhlClientAdapterFactory.JAVAHL_CLIENT);
-        }
-        else
-            svnClient = SVNClientAdapterFactory.createSVNClient(CmdLineClientAdapterFactory.COMMANDLINE_CLIENT);
     }
 
 	public void tearDown()
@@ -85,6 +58,9 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
 		System.out.print(getLog());
 	}
 
+	protected abstract boolean isJavaHLTest(); 
+	protected abstract boolean isJavaSVNTest(); 
+	
     public void testCheckout() throws SVNClientException {
         executeTarget("testCheckout");
 
@@ -253,7 +229,9 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
         }else {
             svnTask = (SvnTask)task;
         }
- 
+        svnTask.setJavahl(isJavaHLTest());
+        svnTask.setJavasvn(isJavaSVNTest());
+        
         svnTask.addNotifyListener(listener);
         executeTarget("testListener");
         
@@ -276,23 +254,23 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
         
     }
 
-    private void assertTextStatus(ISVNStatus status, SVNStatusKind statusKind) {
+    protected void assertTextStatus(ISVNStatus status, SVNStatusKind statusKind) {
         assertEquals(status.getTextStatus(), statusKind);
     }
     
-    private void assertNotTextStatus(ISVNStatus status, SVNStatusKind statusKind) {
+    protected void assertNotTextStatus(ISVNStatus status, SVNStatusKind statusKind) {
         assertFalse(status.getTextStatus().equals(statusKind));
     }
 
-    private void assertManaged(ISVNStatus status) {
+    protected void assertManaged(ISVNStatus status) {
         assertTrue(SVNStatusUtils.isManaged(status));
     }
     
-    private void assertNotManaged(ISVNStatus status) {
+    protected void assertNotManaged(ISVNStatus status) {
         assertFalse(SVNStatusUtils.isManaged(status));
     }    
     
-    private void assertHasRemote(ISVNStatus status) {
+    protected void assertHasRemote(ISVNStatus status) {
         assertTrue(SVNStatusUtils.hasRemote(status));
     }
     
@@ -475,7 +453,11 @@ private static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
     public void testSwitch() throws Exception {
     	executeTarget("testSwitch");
     }
-    
+
+    public void testCleanupAfterTests() throws Exception {
+    	executeTarget("clean");
+    }
+
     public static void main(String[] args) {
         String[] testCaseName = { SvnTest.class.getName()};
         junit.textui.TestRunner.main(testCaseName);
