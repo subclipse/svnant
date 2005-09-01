@@ -229,7 +229,7 @@ public abstract class BuildFileTest extends TestCase {
         project.init();
         project.setUserProperty( "ant.file" , new File(filename).getAbsolutePath() );
         project.addBuildListener(new AntTestListener());
-        ProjectHelper.configureProject(project, new File(filename));
+        ProjectHelper.getProjectHelper().parse(project, new File(filename));
     }
     
     /**

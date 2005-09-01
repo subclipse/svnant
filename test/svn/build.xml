@@ -158,7 +158,7 @@
   </target>
 
   <target name="testImport" depends="init">
-    <svn logLevel="3" javahl="${javahl}" javasvn="${javasvn}">
+    <svn javahl="${javahl}" javasvn="${javasvn}">
       <import url="${urlRepos}/" path="model/importTest" message="importTest imported"/>
     </svn>
   </target>
@@ -432,7 +432,7 @@
     </svn>
   	<!-- switch to the branch -->
   	<svn javahl="${javahl}" javasvn="${javasvn}">
-      <switch path="workingcopy/switchTest" url="${urlRepos}/switchTestBranch"/>
+      <switch path="workingcopy/switchTest" url="${urlRepos}/switchTestBranch" revision="1"/>
     </svn>
   </target>
 	

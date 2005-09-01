@@ -81,10 +81,7 @@ public class Copy extends SvnCommand {
     /** message for commit (only when target is an url) */
     private String message = null; 
 
-    private ISVNClientAdapter svnClient;
-
     public void execute(ISVNClientAdapter svnClient) throws BuildException {
-        this.svnClient = svnClient;
         validateAttributes();
 
 		log("Svn : Copy");

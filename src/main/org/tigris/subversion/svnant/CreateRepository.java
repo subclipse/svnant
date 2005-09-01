@@ -72,13 +72,10 @@ public class CreateRepository extends SvnCommand {
 	/** the type of the repository to create */
 	private String repositoryType = null;
     
-	private ISVNClientAdapter svnClient;
-	
 	/* (non-Javadoc)
 	 * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
 	 */
 	public void execute(ISVNClientAdapter svnClient) throws BuildException {
-		this.svnClient = svnClient;
 		validateAttributes();
 
 		log("SvnAdmin : create");			

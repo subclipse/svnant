@@ -51,10 +51,11 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant;
 
 import java.io.File;
+import java.text.ParseException;
 
 import org.apache.tools.ant.BuildException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
@@ -63,32 +64,29 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
- * svn Switch.  
+ * svn Switch.
  * Update the working copy to mirror a new URL within the repository.
  * This behaviour is similar to 'svn update', and is the way to
  * move a working copy to a branch or tag within the same repository.
- * 
- * @author Cédric Chabanois 
+ *
+ * @author Cédric Chabanois
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  *
  */
 public class Switch extends SvnCommand {
 	private File path = null;
-    
+
     private SVNUrl url;
-	
-	private ISVNClientAdapter svnClient;
 
 	private SVNRevision revision = SVNRevision.HEAD;
-    
+
 	private boolean recurse = true;
 
 	public void execute(ISVNClientAdapter svnClient) throws BuildException {
-		this.svnClient = svnClient;
 		validateAttributes();
-		
+
 		log("Svn : Switching");
-		
+
 		try {
 			svnClient.switchToUrl(path, url, revision, recurse);
 		} catch (SVNClientException e) {
@@ -101,9 +99,9 @@ public class Switch extends SvnCommand {
 	 */
 	protected void validateAttributes() throws BuildException {
 		if ((path == null) || (url == null))
-			throw new BuildException("path and url must be set"); 
+			throw new BuildException("path and url must be set");
 	}
-	
+
 	/**
 	 * @param path The path to set.
 	 */
@@ -119,8 +117,12 @@ public class Switch extends SvnCommand {
 	/**
 	 * @param revision The revision to set.
 	 */
-	public void setRevision(SVNRevision revision) {
-		this.revision = revision;
+	public void setRevision(String revision) {
+		try {
+			this.revision = SVNRevision.getRevision(revision);
+		} catch (ParseException e) {
+			throw new BuildException("Cannot parse revision : "+revision,e);
+		}
 	}
 	/**
 	 * @param url The url to set.

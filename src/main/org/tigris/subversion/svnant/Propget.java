@@ -70,7 +70,6 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
  *
  */
 public class Propget extends SvnCommand {
-	private ISVNClientAdapter svnClient;
     
     // path of the resource from which we want to get the property
     private File path;
@@ -88,7 +87,6 @@ public class Propget extends SvnCommand {
 	 * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
 	 */
 	public void execute(ISVNClientAdapter svnClient) throws BuildException {
-        this.svnClient = svnClient;
         validateAttributes();
 
         log("Svn : Propget");

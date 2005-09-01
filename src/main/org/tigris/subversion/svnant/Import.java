@@ -67,9 +67,8 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  * Commit an unversioned file or tree into the repository. 
  */
 public class Import extends SvnCommand {
-    private ISVNClientAdapter svnClient = null;
 
-    /** the url */
+	/** the url */
     private SVNUrl url = null;
 
     /** the path to import */
@@ -81,7 +80,6 @@ public class Import extends SvnCommand {
 	private boolean recurse = true;
 
     public void execute(ISVNClientAdapter svnClient) throws BuildException {
-        this.svnClient = svnClient;
         validateAttributes();
 
 		log("Svn : Importing to repository");

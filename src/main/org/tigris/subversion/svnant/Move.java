@@ -76,10 +76,7 @@ public class Move extends SvnCommand {
 	private String message = null;
     private boolean force = false;
 
-    private ISVNClientAdapter svnClient;
-
     public void execute(ISVNClientAdapter svnClient) throws BuildException {
-        this.svnClient = svnClient;
         validateAttributes();
 
 		log("Svn : Move");

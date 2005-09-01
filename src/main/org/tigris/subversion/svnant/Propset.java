@@ -75,10 +75,8 @@ public class Propset extends SvnCommand {
     private String propName = null;
     private String propValue = null;
     private boolean recurse = false;
-    private ISVNClientAdapter svnClient;
 
     public void execute(ISVNClientAdapter svnClient) throws BuildException {
-        this.svnClient = svnClient;
         validateAttributes();
 
         log("Svn : Propset");

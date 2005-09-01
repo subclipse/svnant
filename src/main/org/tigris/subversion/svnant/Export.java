@@ -71,9 +71,8 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  *
  */public class Export extends SvnCommand {
-    private ISVNClientAdapter svnClient = null;
-    
-    private boolean force = false;
+
+	 private boolean force = false;
     
     /** the source url */
     private SVNUrl srcUrl = null;
@@ -88,7 +87,6 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
 	private SVNRevision revision = SVNRevision.HEAD;    
 
     public void execute(ISVNClientAdapter svnClient) throws BuildException {
-        this.svnClient = svnClient;
         validateAttributes();
 
 		log("Svn : Exporting");        

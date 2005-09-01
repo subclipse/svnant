@@ -72,10 +72,8 @@ public class Propdel extends SvnCommand {
 
     private String propName = null;
     private boolean recurse = false;
-    private ISVNClientAdapter svnClient;
 
     public void execute(ISVNClientAdapter svnClient) throws BuildException {
-        this.svnClient = svnClient;
         validateAttributes();
 
         log("Svn : Propdel");

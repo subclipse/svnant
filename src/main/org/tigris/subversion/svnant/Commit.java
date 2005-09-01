@@ -74,7 +74,7 @@ import org.tigris.subversion.svnclientadapter.SVNStatusUtils;
  *
  */
 public class Commit extends SvnCommand {
-    final private int SVN_ERR_WC_NOT_DIRECTORY = 155007;
+//    final private int SVN_ERR_WC_NOT_DIRECTORY = 155007;
 
     /** message for commit */
     private String message = null;

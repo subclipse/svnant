@@ -54,7 +54,6 @@
  */ 
 package org.tigris.subversion.svnant;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,8 +77,6 @@ public class SvnTask extends Task {
     private String username = null;
     private String password = null;
     private List commands = new ArrayList();
-    private int logLevel = 0;
-    private File logFile = new File("svn.log");
     private boolean javahl = true;
     private boolean javasvn = true;
     private List notifyListeners = new ArrayList();
@@ -114,19 +111,6 @@ public class SvnTask extends Task {
     public void setJavasvn(boolean javasvn) {
         this.javasvn = javasvn;
     }
-
-	public void setLogLevel(int logLevel) {
-		if (logLevel > 3)
-			logLevel = 3;
-		else
-		if (logLevel < 0)
-			logLevel = 0;
-		this.logLevel = logLevel;
-	}
-
-	public void setLogFile(File logFile) {
-		this.logFile = logFile;
-	}
 
     public void addCheckout(Checkout a) {
         commands.add(a);

@@ -90,7 +90,7 @@ public abstract class SvnTest extends BuildFileTest {
 
     public void testLog() throws SVNClientException {
         executeTarget("testLog");
-		String urlRepos = getProject().getProperty("urlRepos");
+//		String urlRepos = getProject().getProperty("urlRepos");
 		ISVNLogMessage[] messages = svnClient.getLogMessages(new File(WORKINGCOPY_DIR+"/logTest/file1.txt"),new SVNRevision.Number(0),SVNRevision.HEAD);
         assertTrue(messages.length > 0);
 		assertEquals("logTest directory added to repository",messages[0].getMessage());
@@ -195,7 +195,6 @@ public abstract class SvnTest extends BuildFileTest {
         final Set addSet = new HashSet();
         final Set commitSet = new HashSet();
         final Set[] currentSet = new Set[] { null };
-        final boolean duplicates = false;
 
         ISVNNotifyListener listener = new ISVNNotifyListener() {
             public void setCommand(int command) {
