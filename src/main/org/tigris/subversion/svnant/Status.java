@@ -61,6 +61,7 @@ import org.apache.tools.ant.Project;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * get the status of a file or a directory
@@ -73,6 +74,7 @@ public class Status extends SvnCommand {
 	private String revisionProperty = null;
 	private String lastChangedRevisionProperty = null;
 	private String lastCommitAuthorProperty = null;
+	private String urlProperty = null;
 	
 	/* (non-Javadoc)
 	 * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
@@ -113,6 +115,10 @@ public class Status extends SvnCommand {
 				}
 				project.setProperty(lastCommitAuthorProperty,lastCommitAuthor);
 			}
+			if (urlProperty != null) {
+				SVNUrl statusUrl = status.getUrl();
+				project.setProperty(urlProperty, (statusUrl != null) ? statusUrl.toString() : "");
+			}
 			
 		} catch (SVNClientException e) {
 			throw new BuildException("Can't get status of "+path, e);
@@ -130,36 +136,32 @@ public class Status extends SvnCommand {
 	}	
 	
 	/**
-	 * @param lastCommitAuthor The lastCommitAuthor to set.
-	 */
-	public void setLastCommitAuthorProperty(String lastCommitAuthorProperty) {
-		this.lastCommitAuthorProperty = lastCommitAuthorProperty;
-	}
-	/**
 	 * @param path The path to set.
 	 */
 	public void setPath(File path) {
 		this.path = path;
 	}
-	/**
-	 * @param propStatusProperty The propStatusProperty to set.
-	 */
-	public void setPropStatusProperty(String propStatusProperty) {
-		this.propStatusProperty = propStatusProperty;
-	}
-	/**
-	 * @param revisionProperty The revisionProperty to set.
-	 */
-	public void setRevisionProperty(String revisionProperty) {
-		this.revisionProperty = revisionProperty;
-	}
+
 	/**
 	 * @param textStatusProperty The textStatusProperty to set.
 	 */
 	public void setTextStatusProperty(String textStatusProperty) {
 		this.textStatusProperty = textStatusProperty;
 	}
-
+	
+	/**
+	 * @param propStatusProperty The propStatusProperty to set.
+	 */
+	public void setPropStatusProperty(String propStatusProperty) {
+		this.propStatusProperty = propStatusProperty;
+	}
+	
+	/**
+	 * @param revisionProperty The revisionProperty to set.
+	 */
+	public void setRevisionProperty(String revisionProperty) {
+		this.revisionProperty = revisionProperty;
+	}
 	
 	/**
 	 * @param lastChangedRevisionProperty The lastChangedRevisionProperty to set.
@@ -168,4 +170,19 @@ public class Status extends SvnCommand {
 			String lastChangedRevisionProperty) {
 		this.lastChangedRevisionProperty = lastChangedRevisionProperty;
 	}
+	
+	/**
+	 * @param lastCommitAuthorProperty. The lastCommitAuthor to set.
+	 */
+	public void setLastCommitAuthorProperty(String lastCommitAuthorProperty) {
+		this.lastCommitAuthorProperty = lastCommitAuthorProperty;
+	}
+
+	/**
+	 * @param urlProperty The url to set.
+	 */
+	public void setUrlProperty(String urlProperty) {
+		this.urlProperty = urlProperty;
+	}
+
 }
