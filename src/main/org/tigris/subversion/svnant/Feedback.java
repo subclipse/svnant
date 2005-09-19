@@ -82,7 +82,7 @@ public class Feedback implements ISVNNotifyListener {
 		svnCommand.log(message);
 	}
 
-    public void logRevision(long revision) {
+    public void logRevision(long revision, String path) {
     }
 
     public void logCommandLine(String message) {

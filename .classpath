@@ -7,7 +7,6 @@
 	<classpathentry sourcepath="C:/Documents and Settings/Martin/My Documents/Subclipse/svnClientAdapter" kind="lib" path="lib/svnClientAdapter.jar"/>
 	<classpathentry kind="lib" path="lib/junit.jar"/>
 	<classpathentry kind="lib" path="lib/svnjavahl.jar"/>
-	<classpathentry kind="lib" path="lib/jakarta-regexp-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/javasvn.jar"/>
 	<classpathentry kind="lib" path="lib/jsch.jar"/>
 	<classpathentry kind="lib" path="lib/ant-launcher.jar"/>

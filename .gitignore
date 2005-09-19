@@ -1,2 +1,2 @@
 /build
-/TEST-org.tigris.subversion.svnant.SvnTest.txt
+/TEST-org.tigris.subversion.svnant.*.txt

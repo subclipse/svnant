@@ -1,3 +1,12 @@
+* 1.0.0-rc2
+- Built against svnClientAdapter r1622 and Subversion 1.2.3,
+  incorporating numerous bug fixes and improvements from both.
+  Removed dependency on commons-lang-2.0.jar.
+  Removed dependency on jakarta-regexp-1.4.jar.
+- Fixed revision parameter in Switch task (#305)
+- Added url property to Status task (#327)
+- Still lacks support for Subversion locking (introduced in SVN 1.2.0).
+
 * 1.0.0-rc1
 - Built against svnClientAdapter r1384 and Subversion 1.2.0,
   incorporating numerous bug fixes and improvements from both.

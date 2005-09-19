@@ -208,7 +208,7 @@ public abstract class SvnTest extends BuildFileTest {
             public void logCommandLine(String commandLine) {}
             public void logMessage(String message) {}
             public void logError(String message) {}
-            public void logRevision(long revision) {}
+            public void logRevision(long revision, String path) {}
             public void logCompleted(String message) {}
   
             public void onNotify(File path, SVNNodeKind kind) {
@@ -314,7 +314,7 @@ public abstract class SvnTest extends BuildFileTest {
         ISVNStatus[] statuses;  
         // getStatus(File, boolean) does not have the same result with command line interface
         // and svnjavahl for now. svnjavahl does not return ignored files for now 
-//        statuses = svnClient.getStatus(new File(WORKINGCOPY_DIR+"/statusTest"),false,true);
+        statuses = svnClient.getStatus(new File(WORKINGCOPY_DIR+"/statusTest"),false,true);
         // let's verify we don't forget some files (ignored ones for example)
 //        assertEquals(8,statuses.length);
         
@@ -361,8 +361,7 @@ public abstract class SvnTest extends BuildFileTest {
         // usernames
 //        statuses = svnClient.getStatus(new File(WORKINGCOPY_DIR+"/statusTest/longUserName.dir"),true,true);
 //        assertEquals(2, statuses.length);
-//        assertEquals(new File(WORKINGCOPY_DIR+"/statusTest/longUserName.dir").getAbsoluteFile(), statuses[0].getFile());
-        
+//        assertEquals(new File(WORKINGCOPY_DIR+"/statusTest/longUserName.dir").getAbsoluteFile(), statuses[0].getFile());        
     }
 
     public void testInfo() throws Exception {

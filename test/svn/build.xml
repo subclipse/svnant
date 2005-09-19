@@ -329,6 +329,7 @@
         lastChangedRevisionProperty="testStatus.lastCommitRevision"
       	revisionProperty="testStatus.revision"
       	lastCommitAuthorProperty="testStatus.lastCommitAuthor"
+      	urlProperty="testStatus.url"
       />
     </svn>
   	<!-- we try with a long username -->
