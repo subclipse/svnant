@@ -99,8 +99,46 @@ Otherwise it uses svn command line interface.</p>
 </table>
 
 <H2>Svn commands specified as nested elements</H2>
+<table>
+	<tr>
+		<td><a href="#add">add </a></td>
+		<td><a href="#createRepository">createRepository</a></td>
+		<td><a href="#import">import</a></td>
+		<td><a href="#move">move</a></td>
+		<td><a href="#status">status</a></td>
+	</tr>
+	<tr>
+		<td><a href="#cat">cat</a></td>
+		<td><a href="#delete">delete</a></td>
+		<td><a href="#keywordsset">keywordsset</a></td>
+		<td><a href="#propdel">propdel</a></td>
+		<td><a href="#switch">switch</a></td>
+	</tr>
+	<tr>
+		<td><a href="#checkout">checkout</a></td>
+		<td><a href="#diff">diff</a></td>
+		<td><a href="#keywordsadd">keywordsadd</a></td>
+		<td><a href="#propget">propget</a></td>
+		<td><a href="#update">update</a></td>
+	</tr>
+	<tr>
+		<td><a href="#commit">commit</a></td>
+		<td><a href="#export">export</a></td>
+		<td><a href="#keywordsremove">keywordsremove</a></td>
+		<td><a href="#propset">propset</a></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td><a href="#copy">copy</a></td>
+		<td><a href="#ignore">ignore</a></td>
+		<td><a href="#mkdir">mkdir</a></td>
+		<td><a href="#revert">revert</a></td>
+		<td></td>
+	</tr>
+	</table>
+<p> </p>
 
-<H3>add</H3>
+<H3><a name="add">add</a></H3>
 <p>You can add files and directories to svn repository with nested
 <CODE>&lt;add&gt;</CODE> elements.</p>
 <table>
@@ -138,7 +176,7 @@ Otherwise it uses svn command line interface.</p>
 </ul>
 </p>
 
-<H3>cat</H3>
+<H3><a name="cat">cat</a></H3>
 <p>Get the content of a file on repository.</p>
 <table>
 	<tr>
@@ -166,7 +204,7 @@ Otherwise it uses svn command line interface.</p>
 	</tr>
 </table>
 
-<H3>checkout</H3>
+<H3><a name="checkout">checkout</a></H3>
 <p>Check out a working copy from a repository.</p>
 <table>
 	<tr>
@@ -210,7 +248,7 @@ Otherwise it uses svn command line interface.</p>
 </ul>
 </p>
 
-<H3>commit</H3>
+<H3><a name="commit">commit</a></H3>
 <p>Send changes from your working copy to the repository.</p>
 <table>
 	<tr>
@@ -250,7 +288,7 @@ Otherwise it uses svn command line interface.</p>
 </ul>
 </p>
 
-<H3>copy</H3>
+<H3><a name="copy">copy</a></H3>
 <p>Duplicate something in working copy or repository, remembering
 history.<BR>
 source and destination can each be either a working copy (WC) path or URL:
@@ -302,7 +340,7 @@ source and destination can each be either a working copy (WC) path or URL:
 	</tr>
 </table>
 
-<H3>createRepository</H3>
+<H3><a name="createRepository">createRepository</a></H3>
 <p>Create a new, empty repository at path.</p>
 <table>
 	<tr>
@@ -324,7 +362,7 @@ source and destination can each be either a working copy (WC) path or URL:
 </p>
 </div>
 
-<H3>delete</H3>
+<H3><a name="delete">delete</a></H3>
 <p>If run on a working copy target, the item is scheduled for
 deletion upon the next commit.&nbsp; Files, and directories that have
 not been committed, are immediately removed from the working copy.&nbsp;
@@ -373,7 +411,7 @@ this behaviour.
 </ul>
 </p>
 
-<H3>diff</H3>
+<H3><a name="diff">diff</a></H3>
 <p>Display the differences between two paths (oldPath and newPath) or
 two urls (oldUrl and newUrl).
 </p>
@@ -437,7 +475,7 @@ two urls (oldUrl and newUrl).
 </p>
 </div>
 
-<H3>export</H3>
+<H3><a name="export">export</a></H3>
 <p>
 <ol>
 	<li>
@@ -481,7 +519,7 @@ two urls (oldUrl and newUrl).
 	</tr>
 </table>
 
-<H3>ignore</H3>
+<H3><a name="ignore">ignore</a></H3>
 <p>Add a given file or a pattern to the ignored files list (modifies
 svn:ignore property)</p>
 <table>
@@ -523,7 +561,7 @@ svn:ignore property)</p>
 </p>
 </div>
 
-<H3>import</H3>
+<H3><a name="import">import</a></H3>
 <p>Commit an unversioned file or tree into the repository.<BR>
 Recursively commit a copy of <CODE>path</CODE> to <CODE>url</CODE>.<BR>
 If <CODE>newEntry </CODE>is not set, copy top-level contents of <CODE>path</CODE>into<CODE>url</CODE>directly.&nbsp;
@@ -564,7 +602,7 @@ Otherwise, create <CODE>newEntry </CODE>underneath <CODE>url </CODE>and begin co
 	</tr>
 </table>
 
-<H3>Keywordsset</H3>
+<H3><a name="keywordsset">keywordsset</a></H3>
 <p>Keywordsset controls which keywords will be substituted on the
 given files. Valid keywords are:
 <ul>
@@ -614,17 +652,17 @@ given files. Valid keywords are:
 </ul>
 </p>
 
-<H3>keywordsadd</H3>
+<H3><a name="keywordsadd">keywordsadd</a></H3>
 <p>Keywordsadd add some keywords to be substituted on the given
 files. Present keywords are not modified.<BR>
 The attributes are the same than for keywordsset command.</p>
 
-<H3>keywordsremove</H3>
+<H3><a name="keywordsremove">keywordsremove</a></H3>
 <p>Keywordsadd remove some keywords to be substituted on the given
 files. Other present keywords are not modified.<BR>
 The attributes are the same than for keywordsset command.</p>
 
-<H3>mkdir</H3>
+<H3><a name="mkdir">mkdir</a></H3>
 <p>Create a new directory under revision control.<BR>
 If target is a working copy path the directory is scheduled for addition in the
 working copy.&nbsp; If target is an url the directory is created in
@@ -653,7 +691,7 @@ In both cases all the intermediate directories must already exist.
 	</tr>
 </table>
 
-<H3>move</H3>
+<H3><a name="move">move</a></H3>
 <p>Move/rename something in working copy or repository.<BR><BR>&nbsp;
 cource and destination can both be working copy (WC) paths or
 URLs:<BR>&nbsp;&nbsp;&nbsp; WC&nbsp; -&gt; WC:&nbsp;&nbsp; move and
@@ -691,7 +729,7 @@ URL:&nbsp; complete server-side rename.
 	</tr>
 </table>
 
-<H3>propdel</H3>
+<H3><a name="propdel">propdel</a></H3>
 <p>Remove a property from files or dirs.</p>
 <table>
 	<tr>
@@ -716,7 +754,7 @@ URL:&nbsp; complete server-side rename.
 	</tr>
 </table>
 
-<H3>propget</H3>
+<H3><a name="propget">propget</a></H3>
 <p>Get a property from a file or a directory.</p>
 <table>
 	<tr>
@@ -754,7 +792,7 @@ Example :<br>
 </p>
 </div>
 
-<H3>propset</H3>
+<H3><a name="propset">propset</a></H3>
 <p>Set a property on files or dirs.</p>
 <table>
 	<tr>
@@ -820,7 +858,7 @@ will store any arbitrary properties set:
 </ul>
 </p>
 
-<H3>revert</H3>
+<H3><a name="revert">revert</a></H3>
 <p>Restore pristine working copy file (undo most local edits).</p>
 <table>
 	<tr>
@@ -861,7 +899,7 @@ will store any arbitrary properties set:
 </ul>
 </p>
 
-<H3>status</H3>
+<H3><a name="status">status</a></H3>
 <p>Get the status of working copy files and directories.</p>
 <table>
 	<tr>
@@ -901,6 +939,11 @@ will store any arbitrary properties set:
 		<td>lastCommitAuthorProperty</td>
 		<td>Name of the property to set to the last commit author (or &ldquo;&rdquo;
 			if unversioned)</td>
+		<td>No</td>
+	</tr>
+	<tr>
+		<td>urlProperty</td>
+		<td>Name of the property to set to the url of the item</td>
 		<td>No</td>
 	</tr>
 </table>
@@ -943,7 +986,7 @@ Example : <br>
 </p>
 </div>
 
-<H3>switch</H3>
+<H3><a name="switch">switch</a></H3>
 <p>Update the working copy to mirror a new URL within the repository.
 This behaviour is similar to 'svn update', and is the way to move a
 working copy to a branch or tag within the same repository.</p>
@@ -988,7 +1031,7 @@ Example :
 </p>
 </div>
 
-<H3>update</H3>
+<H3><a name="update">update</a></H3>
 <p>Bring changes from the repository into the working copy.<BR>If no
 revision given, bring working copy up-to-date with HEAD rev.&nbsp;
 Else synchronize working copy to revision.</p>
@@ -1082,7 +1125,7 @@ added&quot;</FONT> <FONT COLOR="#000080">dir=</FONT><FONT COLOR="#008000">&quot;
 <FONT FACE="Courier New"><FONT SIZE=2><FONT COLOR="#000080">&lt;/svn&gt;</FONT></FONT></FONT>
 </div>
 add my_repos/propTest to repository and set two properties on file.png <br>
-subversion command line interface is used (javahl=”false”).
+subversion command line interface is used (javahl=ï¿½falseï¿½).
 </p>
 
 <HR>

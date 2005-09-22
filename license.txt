@@ -1,3 +1,11 @@
+SvnAnt license
+
+This license applies to all portions of svnant library, which 
+are not externally-maintained libraries (e.g. JavaHL).
+
+Such libraries have their own licenses; we recommend you read them, as
+their terms may differ from the terms below.
+
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *

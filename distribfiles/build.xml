@@ -2,15 +2,13 @@
 
 <project name="svn-test" basedir="." default="checkoutThis">
   
-  <!--  all properties are in build.properties 
-  --> 
+  <!--  all properties are in build.properties  --> 
   <property file="build.properties" /> 
+
   <path id="project.classpath">
     <pathelement location="${svnjavahl.jar}" /> 
     <pathelement location="${svnant.jar}" />
     <pathelement location="${svnClientAdapter.jar}" />
-    <pathelement location="${jakarta-regexp.jar}" /> 
-    <pathelement location="${commons-lang.jar}" /> 
   </path>  
   
   <taskdef resource="svntask.properties" classpathref="project.classpath"/>

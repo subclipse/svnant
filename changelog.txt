@@ -1,5 +1,5 @@
 * 1.0.0-rc2
-- Built against svnClientAdapter r1622 and Subversion 1.2.3,
+- Built against svnClientAdapter r1632 and Subversion 1.2.3,
   incorporating numerous bug fixes and improvements from both.
   Removed dependency on commons-lang-2.0.jar.
   Removed dependency on jakarta-regexp-1.4.jar.

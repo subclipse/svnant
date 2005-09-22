@@ -8,7 +8,7 @@ Subversion Java bindings
 (which are JNI-based, and must setup appropriately), or Subverion's
 command line programs (which must be installed and in your PATH).
 
-documentation of the <svn> task is in the /doc directory.
+Documentation of the <svn> task is in the /doc directory.
 
 To access the sources, just type "ant" in the directory containing the
 build.xml bundled with the distribution.  The default target will
