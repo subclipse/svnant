@@ -8,7 +8,7 @@
 	<classpathentry kind="lib" path="lib/junit.jar"/>
 	<classpathentry kind="lib" path="lib/svnjavahl.jar"/>
 	<classpathentry kind="lib" path="lib/javasvn.jar"/>
-	<classpathentry kind="lib" path="lib/jsch.jar"/>
 	<classpathentry kind="lib" path="lib/ant-launcher.jar"/>
+	<classpathentry kind="lib" path="lib/ganymed.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

@@ -12,7 +12,7 @@
     <pathelement location="${svnClientAdapter.jar}"/>
     <pathelement location="${svnjavahl.jar}"/>
     <pathelement location="${javasvn.jar}"/>
-    <pathelement location="${jsch.jar}"/>
+    <pathelement location="${ganymed.jar}"/>
     <pathelement location="${junit.jar}"/>
   </path>
 
@@ -106,8 +106,8 @@
 		<copy file="${lib.dir}/JAVAHL-LICENSE" todir="${build.distrib.dir}/lib"/>
 		<copy file="${javasvn.jar}" todir="${build.distrib.dir}/lib"/>
 		<copy file="JAVASVN-LICENSE" todir="${build.distrib.dir}"/>
-		<copy file="${jsch.jar}" todir="${build.distrib.dir}/lib"/>
-		<copy file="JSCH-LICENSE" todir="${build.distrib.dir}"/>
+		<copy file="${ganymed.jar}" todir="${build.distrib.dir}/lib"/>
+		<copy file="GANYMED-LICENSE" todir="${build.distrib.dir}"/>
 		<copy file="${build.lib.dir}/svnant.jar" todir="${build.distrib.dir}/lib"/>
 		<copy file="doc/svn.html" todir="${build.distrib.dir}/doc"/>
 		<copy file="${distribfiles.dir}/build.xml" todir="${build.distrib.dir}"/>
