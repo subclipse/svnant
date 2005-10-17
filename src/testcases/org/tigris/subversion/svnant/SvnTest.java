@@ -1,7 +1,3 @@
-/*
- * Created on 10 mars 2003
- *
- */
 package org.tigris.subversion.svnant;
 
 import java.io.DataInputStream;
@@ -35,7 +31,11 @@ import org.tigris.subversion.svnclientadapter.SVNStatusUtils;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
- * You can set javahl to true or false in test/build.properties
+ * Set the property <code>javahl</code> and/or <code>javasvn</code> to
+ * <code>true</code> in any of the test/*/build.properties files to run
+ * the test cases using the JavaHL or JavaSVN clients (as opposed to only
+ * the command-line client).
+ *
  * @author Cédric Chabanois 
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  *
