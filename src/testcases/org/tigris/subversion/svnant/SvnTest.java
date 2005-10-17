@@ -32,9 +32,9 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * Set the property <code>javahl</code> and/or <code>javasvn</code> to
- * <code>true</code> in any of the test/*/build.properties files to run
- * the test cases using the JavaHL or JavaSVN clients (as opposed to only
- * the command-line client).
+ * <code>true</code> in any of the test/<i>[dir]</i>/build.properties
+ * files to run the test cases using the JavaHL or JavaSVN clients (as
+ * opposed to only the command-line client).
  *
  * @author Cédric Chabanois 
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
