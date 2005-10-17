@@ -452,6 +452,11 @@ public abstract class SvnTest extends BuildFileTest {
     	executeTarget("testSwitch");
     }
 
+    /**
+     * This is not actually a test case, but a hook to assure that
+     * cleanup is handled after all test cases have run (rather than
+     * after <i>each</i> test case, which would take longer).
+     */
     public void testCleanupAfterTests() throws Exception {
     	executeTarget("clean");
     }
