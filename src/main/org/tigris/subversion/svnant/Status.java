@@ -97,7 +97,13 @@ public class Status extends SvnCommand {
 			}
 			
 			if (revisionProperty != null) {
-				project.setProperty(revisionProperty, status.getRevision().toString());
+				String revision;
+				if( null == status.getRevision() ) {
+					revision = "-1";
+				} else {
+					revision = status.getRevision().toString();
+				}
+				project.setProperty(revisionProperty, revision);
 			}
 			if (lastChangedRevisionProperty != null) {
 				String lastChangedRevision;

@@ -440,6 +440,64 @@
   	</svn>
   </target>
 
+  <target name="testStatusUnmanaged" depends="init">
+	<!-- Test to verify issue#408, where status of a file not under 
+		 source control generates a NPE -->
+    <copy todir="workingcopy/statusUnmanagedTest">
+      <fileset dir="model/statusUnmanagedTest"></fileset>
+    </copy>
+	  
+    <svn javahl="${javahl}" javasvn="${javasvn}">
+		<add dir="workingcopy/statusUnmanagedTest" recurse="false"/>
+		<add dir="workingcopy/statusUnmanagedTest/managedDir" recurse="true"/>
+		<commit dir="workingcopy/statusUnmanagedTest" message="statusUnmanagedTest committed" recurse="true"/>
+	  
+		<status path="workingcopy/statusUnmanagedTest/unmanaged1.txt" 
+			textStatusProperty="unmanaged1.textStatus"
+			propStatusProperty="unmanaged1.propStatus"
+			lastChangedRevisionProperty="unmanaged1.lastCommitRevision"
+			revisionProperty="unmanaged1.revision"
+			lastCommitAuthorProperty="unmanaged1.lastCommitAuthor"
+			urlProperty="unmanaged1.url"
+			/>
+		<status path="workingcopy/statusUnmanagedTest/unmanagedDir" 
+			textStatusProperty="unmanagedDir.textStatus"
+			propStatusProperty="unmanagedDir.propStatus"
+			lastChangedRevisionProperty="unmanagedDir.lastCommitRevision"
+			revisionProperty="unmanagedDir.revision"
+			lastCommitAuthorProperty="unmanagedDir.lastCommitAuthor"
+			urlProperty="unmanagedDir.url"
+			/>
+		<status path="workingcopy/statusUnmanagedTest/unmanagedDir/unmanaged2.txt" 
+			textStatusProperty="unmanaged2.textStatus"
+			propStatusProperty="unmanaged2.propStatus"
+			lastChangedRevisionProperty="unmanaged2.lastCommitRevision"
+			revisionProperty="unmanaged2.revision"
+			lastCommitAuthorProperty="unmanaged2.lastCommitAuthor"
+			urlProperty="unmanaged2.url"
+			/>
+    </svn>
+	  <echo>unmanaged1.textStatus: ${unmanaged1.textStatus}</echo>
+	  <echo>unmanaged1.propStatus: ${unmanaged1.propStatus}</echo>
+	  <echo>unmanaged1.lastCommitRevision: ${unmanaged1.lastCommitRevision}</echo>
+	  <echo>unmanaged1.revision: ${unmanaged1.revision}</echo>
+	  <echo>unmanaged1.lastCommitAuthor: ${unmanaged1.lastCommitAuthor}</echo>
+	  <echo>unmanaged1.url: ${unmanaged1.url}</echo>
+	  <echo>unmanagedDir.textStatus: ${unmanagedDir.textStatus}</echo>
+	  <echo>unmanagedDir.propStatus: ${unmanagedDir.propStatus}</echo>
+	  <echo>unmanagedDir.lastCommitRevision: ${unmanagedDir.lastCommitRevision}</echo>
+	  <echo>unmanagedDir.revision: ${unmanagedDir.revision}</echo>
+	  <echo>unmanagedDir.lastCommitAuthor: ${unmanagedDir.lastCommitAuthor}</echo>
+	  <echo>unmanagedDir.url: ${unmanagedDir.url}</echo>
+	  <echo>unmanaged2.textStatus: ${unmanaged2.textStatus}</echo>
+	  <echo>unmanaged2.propStatus: ${unmanaged2.propStatus}</echo>
+	  <echo>unmanaged2.lastCommitRevision: ${unmanaged2.lastCommitRevision}</echo>
+	  <echo>unmanaged2.revision: ${unmanaged2.revision}</echo>
+	  <echo>unmanaged2.lastCommitAuthor: ${unmanaged2.lastCommitAuthor}</echo>
+	  <echo>unmanaged2.url: ${unmanaged2.url}</echo>
+  </target>
+
+	
   <target name="testIgnore" depends="init">
     <copy todir="workingcopy/ignoreTest">
       <fileset dir="model/ignoreTest"></fileset>

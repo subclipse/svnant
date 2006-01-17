@@ -368,6 +368,31 @@ public abstract class SvnTest extends BuildFileTest {
 //        assertEquals(new File(WORKINGCOPY_DIR+"/statusTest/longUserName.dir").getAbsoluteFile(), statuses[0].getFile());        
     }
 
+    public void testStatusUnmanaged() throws Exception {  
+		executeTarget("testStatusUnmanaged");
+		
+		assertEquals(project.getProperty("unmanaged1.textStatus"), "unversioned");
+		assertEquals(project.getProperty("unmanaged1.propStatus"), "normal");
+		assertEquals(project.getProperty("unmanaged1.lastCommitRevision"), "");
+		assertEquals(project.getProperty("unmanaged1.revision"), "-1");
+		assertEquals(project.getProperty("unmanaged1.lastCommitAuthor"), "");
+		assertEquals(project.getProperty("unmanaged1.url"), "");
+
+		assertEquals(project.getProperty("unmanagedDir.textStatus"), "unversioned");
+		assertEquals(project.getProperty("unmanagedDir.propStatus"), "normal");
+		assertEquals(project.getProperty("unmanagedDir.lastCommitRevision"), "");
+		assertEquals(project.getProperty("unmanagedDir.revision"), "-1");
+		assertEquals(project.getProperty("unmanagedDir.lastCommitAuthor"), "");
+		assertEquals(project.getProperty("unmanagedDir.url"), "");
+
+		assertEquals(project.getProperty("unmanaged2.textStatus"), "unversioned");
+		assertEquals(project.getProperty("unmanaged2.propStatus"), "normal");
+		assertEquals(project.getProperty("unmanaged2.lastCommitRevision"), "");
+		assertEquals(project.getProperty("unmanaged2.revision"), "-1");
+		assertEquals(project.getProperty("unmanaged2.lastCommitAuthor"), "");
+		assertEquals(project.getProperty("unmanaged2.url"), "");
+    }
+    
     public void testInfo() throws Exception {
 		executeTarget("testStatus");
         File file = new File(WORKINGCOPY_DIR+"/statusTest/added.txt");
