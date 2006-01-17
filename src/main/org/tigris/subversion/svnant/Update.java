@@ -205,4 +205,10 @@ public class Update extends SvnCommand {
 		filesets.addElement(set);
 	}	
 	
+	/**
+	 * Adds a set of files to update
+	 */
+	public void add(FileSet set) {
+		filesets.addElement(set);
+	}	
 }

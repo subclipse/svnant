@@ -216,7 +216,7 @@ public class SvnTask extends Task {
      * check if javahl is available
      * @return true if javahl is available
      */
-    private boolean isJavahlAvailable() {
+    static public boolean isJavahlAvailable() {
     	if (javahlAvailableInitialized == false) {
             // we don't initiliaze javahlAvailable in the static field because we
             // don't want the check to occur if javahl is set to false
@@ -237,7 +237,7 @@ public class SvnTask extends Task {
      * check if JavaSVN is available
      * @return true if JavaSVN is available
      */
-    private boolean isJavaSVNAvailable() {
+    static public boolean isJavaSVNAvailable() {
         if (javaSVNAvailableInitialized == false) {
             // we don't initiliaze javaSVNAvailable in the static field because we
             // don't want the check to occur if javaSVN is set to false
@@ -258,7 +258,7 @@ public class SvnTask extends Task {
      * check if command line interface is available
      * @return true if command line interface is available
      */
-    private boolean isCommandLineAvailable() {
+    static public boolean isCommandLineAvailable() {
         if (commandLineAvailableInitialized == false) {
             try {
                 CmdLineClientAdapterFactory.setup();

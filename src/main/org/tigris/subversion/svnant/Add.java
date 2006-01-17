@@ -313,4 +313,10 @@ public class Add extends SvnCommand {
         filesets.addElement(set);
     }
 
+    /**
+     * Adds a set of files to add
+     */
+    public void add(FileSet set) {
+        filesets.addElement(set);
+    }
 }

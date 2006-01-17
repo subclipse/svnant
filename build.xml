@@ -61,6 +61,21 @@
   </target>
 
   <!-- ================================================================= -->
+  <!-- compile docs                                                      -->
+  <!-- ================================================================= -->
+  <target name="docs" depends="" description="generate documentation">
+  	<mkdir dir="${build.distrib.dir}/doc"/>
+  	<style
+  		basedir="${src.doc.dir}"
+  		destdir="doc"
+  		extension=".html"
+  		style="${src.doc.dir}/ant-types.xsl"
+  		processor="trax"
+  		includes="*.xml"
+  		/>
+  </target>
+
+  <!-- ================================================================= -->
   <!-- compile junit test classes                                        -->
   <!-- ================================================================= -->
   <target name="compileTests" description="compile junit sources files">
@@ -94,7 +109,7 @@
   <!-- ================================================================= -->
   <!-- make distribution                                                 -->
   <!-- ================================================================= -->
-  <target name="makeDistrib" depends="clean,svnant.jar" description="make binary distribution">
+  <target name="makeDistrib" depends="clean,svnant.jar,docs" description="make binary distribution">
 	  <mkdir dir="${build.distrib.dir}"/>
 		<mkdir dir="${build.distrib.dir}/lib"/>
 		<mkdir dir="${build.distrib.dir}/doc"/>
@@ -110,7 +125,9 @@
 		<copy file="${ganymed.jar}" todir="${build.distrib.dir}/lib"/>
 		<copy file="GANYMED-LICENSE" todir="${build.distrib.dir}"/>
 		<copy file="${build.lib.dir}/svnant.jar" todir="${build.distrib.dir}/lib"/>
-		<copy file="doc/svn.html" todir="${build.distrib.dir}/doc"/>
+		<copy todir="${build.distrib.dir}/doc">
+			<fileset dir="doc"/>
+		</copy>
 		<copy file="${distribfiles.dir}/build.xml" todir="${build.distrib.dir}"/>
     <copy file="${distribfiles.dir}/build.xml" todir="${build.distrib.dir}">
       <filterset>

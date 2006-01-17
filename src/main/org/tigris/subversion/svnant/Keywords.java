@@ -173,6 +173,13 @@ public abstract class Keywords extends SvnCommand {
     }
 
     /**
+     * Adds a set of files on which to apply keywords substitution
+     */
+    public void add(FileSet set) {
+        filesets.addElement(set);
+    }
+
+    /**
      * set the keywords
      * @param keywords
      */

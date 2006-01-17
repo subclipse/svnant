@@ -17,7 +17,7 @@
     <pathelement location="${jsch.jar}"/>
   </path>  
   
-  <taskdef resource="svntask.properties" classpathref="project.classpath"/>
+  <typedef resource="svntypes.xml" classpathref="project.classpath"/>
 
 
   <target name="clean">
@@ -26,6 +26,7 @@
     <delete dir="coHEAD"/>
     <delete dir="co0"/>
     <delete dir="export1"/>
+    <delete dir="test"/>
   </target>
 
 
@@ -59,6 +60,106 @@
       <checkout url="${urlRepos}" destPath="workingcopy" />
     </svn>
   </target>
+
+	<!-- init-selectors is run before each test for file selectors, since they all
+		share the same model of a working copy -->
+	<target name="init-selectors" depends="init">
+		<echo message="javahl = ${javahl}  javasvn = ${javasvn}"/>
+		<copy todir="workingcopy">
+			<fileset dir="model/selectorTest"></fileset>
+		</copy>
+		<svn javahl="${javahl}" javasvn="${javasvn}">
+			<!-- Normal files -->
+			<add file="workingcopy/normal1.txt"/>
+			<add file="workingcopy/normal2.txt"/>
+			<commit file="workingcopy/normal1.txt" message="normal file"/>
+			<commit file="workingcopy/normal2.txt" message="normal file"/>
+				
+			<!-- Added files -->
+			<add file="workingcopy/added1.txt"/>
+			<add file="workingcopy/added2.txt"/>
+			
+			<!-- Deleted files -->
+			<add file="workingcopy/deleted1.txt"/>
+			<add file="workingcopy/deleted2.txt"/>
+			<commit file="workingcopy/deleted1.txt" message="deleted file"/>
+			<commit file="workingcopy/deleted2.txt" message="deleted file"/>
+			<delete file="workingcopy/deleted1.txt"/>
+			<delete file="workingcopy/deleted2.txt"/>
+				
+			<!-- Missing files (part 1 of 2) -->
+			<add file="workingcopy/missing1.txt"/>
+			<add file="workingcopy/missing2.txt"/>
+			<commit file="workingcopy/missing1.txt" message="missing file"/>
+			<commit file="workingcopy/missing2.txt" message="missing file"/>
+			
+			<!-- Modified files (part 1 of 2) -->
+			<add file="workingcopy/modified1.txt"/>
+			<add file="workingcopy/modified2.txt"/>
+			<commit file="workingcopy/modified1.txt" message="modified file"/>
+			<commit file="workingcopy/modified2.txt" message="modified file"/>
+			
+			<!-- Ignored files -->
+			<ignore file="workingcopy/ignored1.txt"/>
+			<ignore file="workingcopy/ignored2.txt"/>
+
+			<!-- Conflicted files (part 1 of 2) -->
+			<add file="workingcopy/conflicted1.txt"/>
+			<add file="workingcopy/conflicted2.txt"/>
+			<commit file="workingcopy/conflicted1.txt" message="conflicted file"/>
+			<commit file="workingcopy/conflicted2.txt" message="conflicted file"/>
+
+			<!-- Replaced files (part 1 of 2) -->
+			<add file="workingcopy/replaced1.txt"/>
+			<add file="workingcopy/replaced2.txt"/>
+			<commit file="workingcopy/replaced1.txt" message="replaced file"/>
+			<commit file="workingcopy/replaced2.txt" message="replaced file"/>
+			<delete file="workingcopy/replaced1.txt"/>
+			<delete file="workingcopy/replaced2.txt"/>
+		</svn>
+		
+	    <!-- Checkout a second working copy -->
+	    <mkdir dir="workingcopy2"/>
+	    <svn javahl="${javahl}" javasvn="${javasvn}">
+	      <checkout url="${urlRepos}" destPath="workingcopy2" />
+	    </svn>
+		
+		<!-- Conflicted files (part 2 of 2) -->
+		<copy file="workingcopy/conflicted_v1.txt" tofile="workingcopy/conflicted1.txt" overwrite="true"/>
+		<copy file="workingcopy/conflicted_v1.txt" tofile="workingcopy/conflicted2.txt" overwrite="true"/>
+		<copy file="workingcopy/conflicted_v2.txt" tofile="workingcopy2/conflicted1.txt" overwrite="true"/>
+		<copy file="workingcopy/conflicted_v2.txt" tofile="workingcopy2/conflicted2.txt" overwrite="true"/>
+	    <svn javahl="${javahl}" javasvn="${javasvn}">
+	      <commit message="conflicted file" file="workingcopy2/conflicted1.txt" />
+	      <commit message="conflicted file" file="workingcopy2/conflicted2.txt" />
+	      <update file="workingcopy/conflicted1.txt" />
+	      <update file="workingcopy/conflicted2.txt" />
+	    </svn>
+		<delete file="workingcopy/conflicted_v1.txt"/>
+		<delete file="workingcopy/conflicted_v2.txt"/>
+		<delete>
+			<fileset dir="workingcopy">
+				<include name="conflicted1.txt.*"/>
+				<include name="conflicted2.txt.*"/>
+			</fileset>
+		</delete>
+		
+		<!-- Missing files (part 2 of 2) -->
+		<delete file="workingcopy/missing1.txt"/>
+		<delete file="workingcopy/missing2.txt"/>
+
+		<!-- Modified files (part 2 of 2) -->
+		<copy file="workingcopy/normal1.txt" tofile="workingcopy/modified1.txt" overwrite="true"/>
+		<copy file="workingcopy/normal2.txt" tofile="workingcopy/modified2.txt" overwrite="true"/>
+
+		<!-- Replaced files (part 2 of 2) -->
+		<copy file="workingcopy/normal1.txt" tofile="workingcopy/replaced1.txt" overwrite="true"/>
+		<copy file="workingcopy/normal2.txt" tofile="workingcopy/replaced2.txt" overwrite="true"/>
+		<svn javahl="${javahl}" javasvn="${javasvn}">
+			<add file="workingcopy/replaced1.txt"/>
+			<add file="workingcopy/replaced2.txt"/>
+		</svn>
+	</target>
 
   <!-- this test does not test svnant but svnClientAdapter -->
   <target name="testList" depends="init">
@@ -437,6 +538,399 @@
     </svn>
   </target>
 	
+	<target name="testNormalSelector" depends="init-selectors">
+		<mkdir dir="test"/>
+		<copy todir="test">
+			<fileset dir="workingcopy">
+				<svnNormal javahl="${javahl}" javasvn="${javasvn}"/>
+			</fileset>
+		</copy>
+	</target>
+			
+	<target name="testAddedSelector" depends="init-selectors">
+		<mkdir dir="test"/>
+		<copy todir="test">
+			<fileset dir="workingcopy">
+				<svnAdded javahl="${javahl}" javasvn="${javasvn}"/>
+			</fileset>
+		</copy>
+	</target>
+				
+	<target name="testUnversionedSelector" depends="init-selectors">
+		<mkdir dir="test"/>
+		<copy todir="test">
+			<fileset dir="workingcopy">
+				<svnUnversioned javahl="${javahl}" javasvn="${javasvn}"/>
+			</fileset>
+		</copy>
+	</target>
+					
+	<target name="testModifiedSelector" depends="init-selectors">
+		<mkdir dir="test"/>
+		<copy todir="test">
+			<fileset dir="workingcopy">
+				<svnModified javahl="${javahl}" javasvn="${javasvn}"/>
+			</fileset>
+		</copy>
+	</target>
+					
+	<target name="testIgnoredSelector" depends="init-selectors">
+		<mkdir dir="test"/>
+		<copy todir="test">
+			<fileset dir="workingcopy">
+				<svnIgnored javahl="${javahl}" javasvn="${javasvn}"/>
+			</fileset>
+		</copy>
+	</target>
+					
+	<target name="testConflictedSelector" depends="init-selectors">
+		<mkdir dir="test"/>
+		<copy todir="test">
+			<fileset dir="workingcopy">
+				<svnConflicted javahl="${javahl}" javasvn="${javasvn}"/>
+			</fileset>
+		</copy>
+	</target>
+					
+	<target name="testReplacedSelector" depends="init-selectors">
+		<mkdir dir="test"/>
+		<copy todir="test">
+			<fileset dir="workingcopy">
+				<svnReplaced javahl="${javahl}" javasvn="${javasvn}"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="testEmbeddedSelector" depends="init-selectors">
+		<mkdir dir="test"/>
+		<svn javahl="${javahl}" javasvn="${javasvn}">
+			<add>
+				<fileset dir="workingcopy">
+					<svnUnversioned javahl="${javahl}" javasvn="${javasvn}"/>
+				</fileset>
+			</add>
+		</svn>
+		<copy todir="test">
+			<fileset dir="workingcopy">
+				<svnUnversioned javahl="${javahl}" javasvn="${javasvn}"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="testAddSvnFileSet" depends="init">
+		<!-- Prepare test -->
+	    <copy todir="workingcopy">
+	      <fileset dir="model/addSvnFileSetTest"/>
+	    </copy>
+		<svn javahl="${javahl}" javasvn="${javasvn}">
+			<add file="workingcopy/normal1.txt"/>
+			<add file="workingcopy/normal2.txt"/>
+			<commit file="workingcopy/normal1.txt" message="ci"/>
+			<commit file="workingcopy/normal2.txt" message="ci"/>
+		</svn>
+		
+		<!-- Perform test -->
+		<svn javahl="${javahl}" javasvn="${javasvn}">
+			<add>
+				<svnFileSet dir="workingcopy" javahl="${javahl}" javasvn="${javasvn}">
+					<svnUnversioned javahl="${javahl}" javasvn="${javasvn}"/>
+				</svnFileSet>
+			</add>
+		</svn>
+		
+		<!-- Verify -->
+		<mkdir dir="test"/>
+		<copy todir="test">
+			<fileset dir="workingcopy">
+				<svnAdded javahl="${javahl}" javasvn="${javasvn}"/>
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="testCommitSvnFileSet" depends="init">
+		<!-- Prepare test -->
+	    <copy todir="workingcopy">
+	      <fileset dir="model/commitSvnFileSetTest"/>
+	    </copy>
+		<svn javahl="${javahl}" javasvn="${javasvn}">
+			<add file="workingcopy/file2.txt"/>
+			<add dir="workingcopy/dir1"/>
+		</svn>
+		
+		<!-- Perform test -->
+		<svn javahl="${javahl}" javasvn="${javasvn}">
+			<commit message="ci">
+				<svnFileSet dir="workingcopy" javahl="${javahl}" javasvn="${javasvn}">
+					<svnAdded javahl="${javahl}" javasvn="${javasvn}"/>
+				</svnFileSet>
+			</commit>
+		</svn>
+		
+		<!-- Verify -->
+		<mkdir dir="test"/>
+		<copy todir="test">
+			<fileset dir="workingcopy">
+				<svnNormal javahl="${javahl}" javasvn="${javasvn}"/>
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="testDeleteSvnFileSet" depends="init">
+		<!-- Prepare test -->
+	    <copy todir="workingcopy">
+	      <fileset dir="model/deleteSvnFileSetTest"/>
+	    </copy>
+		<svn javahl="${javahl}" javasvn="${javasvn}">
+			<add file="workingcopy/normal1.txt"/>
+			<add file="workingcopy/missing1.txt"/>
+			<add dir="workingcopy/dir1"/>
+			<commit file="workingcopy/normal1.txt" message="ci"/>
+			<commit file="workingcopy/missing1.txt" message="ci"/>
+			<commit dir="workingcopy/dir1" message="ci"/>
+		</svn>
+		<delete file="workingcopy/missing1.txt"/>
+		<delete file="workingcopy/dir1/missing2.txt"/>
+		
+		<!-- Perform test -->
+		<svn javahl="${javahl}" javasvn="${javasvn}">
+			<delete>
+				<svnFileSet dir="workingcopy" javahl="${javahl}" javasvn="${javasvn}">
+					<svnMissing javahl="${javahl}" javasvn="${javasvn}"/>
+				</svnFileSet>
+			</delete>
+			<commit dir="workingcopy" message="ci"/>
+		</svn>
+		
+		<!-- Verify -->
+	    <mkdir dir="workingcopy2"/>
+	    <svn javahl="${javahl}" javasvn="${javasvn}">
+	      <checkout url="${urlRepos}" destPath="workingcopy2" />
+	    </svn>
+	</target>
+
+	<target name="testKeywordsSvnFileSet" depends="init">
+		<!-- Prepare test -->
+	    <copy todir="workingcopy">
+	      <fileset dir="model/keywordsSvnFileSetTest"/>
+	    </copy>
+		<svn javahl="${javahl}" javasvn="${javasvn}">
+			<add file="workingcopy/file1.txt"/>
+			<add dir="workingcopy/dir1"/>
+			<commit file="workingcopy/file1.txt" message="ci"/>
+			<commit dir="workingcopy/dir1" message="ci"/>
+		</svn>
+		
+		<!-- Perform test -->
+		<svn javahl="${javahl}" javasvn="${javasvn}">
+			<keywordsset keywords="LastChangedRevision">
+				<svnFileSet dir="workingcopy" javahl="${javahl}" javasvn="${javasvn}">
+					<svnNormal javahl="${javahl}" javasvn="${javasvn}"/>
+				</svnFileSet>
+			</keywordsset>
+			<commit dir="workingcopy" message="ci"/>
+		</svn>
+	</target>
+
+	<target name="testRevertSvnFileSet" depends="init">
+		<!-- Prepare test -->
+	    <copy todir="workingcopy">
+	      <fileset dir="model/revertSvnFileSetTest"/>
+	    </copy>
+		<svn javahl="${javahl}" javasvn="${javasvn}">
+			<add file="workingcopy/normal1.txt"/>
+			<add file="workingcopy/deleted1.txt"/>
+			<add dir="workingcopy/dir1"/>
+			<commit file="workingcopy/normal1.txt" message="ci"/>
+			<commit file="workingcopy/deleted1.txt" message="ci"/>
+			<commit dir="workingcopy/dir1" message="ci"/>
+			<delete file="workingcopy/deleted1.txt"/>
+			<delete file="workingcopy/dir1/deleted2.txt"/>
+		</svn>
+		
+		<!-- Perform test -->
+		<svn javahl="${javahl}" javasvn="${javasvn}">
+			<revert>
+				<svnFileSet dir="workingcopy" javahl="${javahl}" javasvn="${javasvn}">
+					<svnDeleted javahl="${javahl}" javasvn="${javasvn}"/>
+				</svnFileSet>
+			</revert>
+		</svn>
+	</target>
+
+	<target name="testUpdateSvnFileSet" depends="init">
+		<!-- Prepare test -->
+	    <copy todir="workingcopy">
+	      <fileset dir="model/updateSvnFileSetTest"/>
+	    </copy>
+		<svn javahl="${javahl}" javasvn="${javasvn}">
+			<add file="workingcopy/normal1.txt"/>
+			<add file="workingcopy/missing1.txt"/>
+			<add dir="workingcopy/dir1"/>
+			<commit file="workingcopy/normal1.txt" message="ci"/>
+			<commit file="workingcopy/missing1.txt" message="ci"/>
+			<commit dir="workingcopy/dir1" message="ci"/>
+		</svn>
+		<delete file="workingcopy/missing1.txt"/>
+		<delete file="workingcopy/dir1/missing2.txt"/>
+		
+		<!-- Perform test : update should restore missing files -->
+		<svn javahl="${javahl}" javasvn="${javasvn}">
+			<update>
+				<svnFileSet dir="workingcopy" javahl="${javahl}" javasvn="${javasvn}">
+					<svnMissing javahl="${javahl}" javasvn="${javasvn}"/>
+				</svnFileSet>
+			</update>
+		</svn>
+	</target>
+
+	<target name="testSvnFileSetAsRefId" depends="init-selectors">
+		<svnFileSet id="svnFileSetId_1" dir="workingcopy" javahl="${javahl}" javasvn="${javasvn}">
+			<svnAdded javahl="${javahl}" javasvn="${javasvn}"/>
+		</svnFileSet>
+		<mkdir dir="test"/>
+		<copy todir="test">
+			<fileset refid="svnFileSetId_1"/>
+		</copy>
+	</target>
+
+	<target name="testSvnFileSetIncludes" depends="init">
+		<!-- Prepare test -->
+	    <copy todir="workingcopy">
+	      <fileset dir="model/svnFileSetIncludesTest"/>
+	    </copy>
+		<svn javahl="${javahl}" javasvn="${javasvn}">
+			<add file="workingcopy/file11.txt"/>
+			<add file="workingcopy/file12.txt"/>
+			<add dir="workingcopy/dir"/>
+			<commit file="workingcopy/file11.txt" message="ci"/>
+			<commit file="workingcopy/file12.txt" message="ci"/>
+			<commit dir="workingcopy/dir" message="ci"/>
+		</svn>
+
+		<!-- Conduct Test -->
+		<svnFileSet 
+			id="svnFileSetIncludes" 
+			dir="workingcopy" 
+			includes="**/*1.txt"
+			javahl="${javahl}" javasvn="${javasvn}"/>
+		<mkdir dir="test"/>
+		<copy todir="test">
+			<fileset refid="svnFileSetIncludes"/>
+		</copy>
+	</target>
+	
+	<target name="testSvnFileSetExcludes" depends="init">
+		<!-- Prepare test -->
+	    <copy todir="workingcopy">
+	      <fileset dir="model/svnFileSetExcludesTest"/>
+	    </copy>
+		<svn javahl="${javahl}" javasvn="${javasvn}">
+			<add file="workingcopy/file11.txt"/>
+			<add file="workingcopy/file12.txt"/>
+			<add dir="workingcopy/dir"/>
+			<commit file="workingcopy/file11.txt" message="ci"/>
+			<commit file="workingcopy/file12.txt" message="ci"/>
+			<commit dir="workingcopy/dir" message="ci"/>
+		</svn>
+
+		<!-- Conduct Test -->
+		<svnFileSet 
+			id="svnFileSetExcludes" 
+			dir="workingcopy" 
+			excludes="**/*1.txt"
+			javahl="${javahl}" javasvn="${javasvn}"/>
+		<mkdir dir="test"/>
+		<copy todir="test">
+			<fileset refid="svnFileSetExcludes"/>
+		</copy>
+	</target>
+
+	<target name="testSvnFileSetNestedInclude" depends="init">
+		<!-- Prepare test -->
+	    <copy todir="workingcopy">
+	      <fileset dir="model/svnFileSetNestedIncludeTest"/>
+	    </copy>
+		<svn javahl="${javahl}" javasvn="${javasvn}">
+			<add file="workingcopy/file11.txt"/>
+			<add file="workingcopy/file12.txt"/>
+			<add dir="workingcopy/dir"/>
+			<commit file="workingcopy/file11.txt" message="ci"/>
+			<commit file="workingcopy/file12.txt" message="ci"/>
+			<commit dir="workingcopy/dir" message="ci"/>
+		</svn>
+
+		<!-- Conduct Test -->
+		<svnFileSet 
+			id="svnFileSetNestedInclude" 
+			dir="workingcopy" 
+			javahl="${javahl}" javasvn="${javasvn}">
+			<include name="**/*1.txt"/>
+		</svnFileSet>
+		<mkdir dir="test"/>
+		<copy todir="test">
+			<fileset refid="svnFileSetNestedInclude"/>
+		</copy>
+	</target>
+	
+	<target name="testSvnFileSetNestedExclude" depends="init">
+		<!-- Prepare test -->
+	    <copy todir="workingcopy">
+	      <fileset dir="model/svnFileSetNestedExcludeTest"/>
+	    </copy>
+		<svn javahl="${javahl}" javasvn="${javasvn}">
+			<add file="workingcopy/file11.txt"/>
+			<add file="workingcopy/file12.txt"/>
+			<add dir="workingcopy/dir"/>
+			<commit file="workingcopy/file11.txt" message="ci"/>
+			<commit file="workingcopy/file12.txt" message="ci"/>
+			<commit dir="workingcopy/dir" message="ci"/>
+		</svn>
+
+		<!-- Conduct Test -->
+		<svnFileSet 
+			id="svnFileSetNestedExclude" 
+			dir="workingcopy" 
+			javahl="${javahl}" javasvn="${javasvn}">
+			<exclude name="**/*1.txt"/>
+		</svnFileSet>
+		<mkdir dir="test"/>
+		<copy todir="test">
+			<fileset refid="svnFileSetNestedExclude"/>
+		</copy>
+	</target>
+
+	<target name="testSvnFileSetPatternSet" depends="init">
+		<!-- Prepare test -->
+	    <copy todir="workingcopy">
+	      <fileset dir="model/svnFileSetPatternSetTest"/>
+	    </copy>
+		<svn javahl="${javahl}" javasvn="${javasvn}">
+			<add file="workingcopy/file1.xml"/>
+			<add file="workingcopy/file2.txt"/>
+			<add dir="workingcopy/dir1"/>
+			<add dir="workingcopy/dir2"/>
+			<commit file="workingcopy/file1.xml" message="ci"/>
+			<commit file="workingcopy/file2.txt" message="ci"/>
+			<commit dir="workingcopy/dir1" message="ci"/>
+			<commit dir="workingcopy/dir2" message="ci"/>
+		</svn>
+
+		<!-- Conduct Test -->
+		<svnFileSet 
+			id="svnFileSetPatternSet" 
+			dir="workingcopy" 
+			javahl="${javahl}" javasvn="${javasvn}">
+			<patternset>
+				<include name="**/*.xml"/>
+				<exclude name="**/dir2/**"/>
+			</patternset>
+		</svnFileSet>
+		<mkdir dir="test"/>
+		<copy todir="test">
+			<fileset refid="svnFileSetPatternSet"/>
+		</copy>
+	</target>
+
   <target name="all" depends="init">
   </target>
 	
