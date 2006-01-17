@@ -97,7 +97,7 @@ public class Propget extends SvnCommand {
             throw new BuildException("Can't get property "+name, e);
         }
         
-        if (property != null) {
+        if (property != null && svnProperty != null) {
             getProject().setProperty(property, svnProperty.getValue());
         }
         if (file != null) {

@@ -310,6 +310,24 @@
     </svn>
   </target>
 
+	<target name="testPropgetInvalidProp" depends="init">
+		<copy todir="workingcopy/propgetInvalidPropTest">
+			<fileset dir="model/propgetInvalidPropTest"></fileset>
+		</copy>
+		
+		<svn javahl="${javahl}" javasvn="${javasvn}">
+			<add dir="workingcopy/propgetInvalidPropTest"/>
+			<commit message="propgetInvalidPropTest added" dir="workingcopy/propgetInvalidPropTest"/>
+			  
+			<propget 
+				path="workingcopy/propgetInvalidPropTest/test.txt" 
+				name="svn:mime-type" 
+				property="propgetInvalidProp.mime"/>
+		</svn>
+		  
+		<echo>propgetInvalidProp.mime: ${propgetInvalidProp.mime}</echo>
+	</target>
+
   <target name="testDiff" depends="init">
     <copy todir="workingcopy/diffTest">
       <fileset dir="model/diffTest"></fileset>

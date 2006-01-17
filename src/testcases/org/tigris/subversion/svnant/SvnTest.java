@@ -163,6 +163,13 @@ public abstract class SvnTest extends BuildFileTest {
         assertTrue(file.exists());
     }
 
+    public void testPropgetInvalidProp() throws SVNClientException {
+        executeTarget("testPropgetInvalidProp");
+        
+        String prop = project.getProperty("propgetInvalidProp.mime");
+        assertNull(prop);
+    }
+
     public void testDiff() {
         executeTarget("testDiff");
         File patchFile = new File(WORKINGCOPY_DIR+"/diffTest/patch.txt");
