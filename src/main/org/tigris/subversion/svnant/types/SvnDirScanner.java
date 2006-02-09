@@ -122,7 +122,7 @@ public class SvnDirScanner extends DirectoryScanner {
            	try {
            		files = m_clientAdapter.getStatus(file,false,true); // descend=false, getAll=true
     		} catch (SVNClientException e) {
-    			throw  new IllegalStateException("Error scanning: " + e, e);
+    			throw new RuntimeException("Error scanning: " + e, e);
     		}
     		
     		// Count children entries
