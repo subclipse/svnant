@@ -17,7 +17,9 @@
     <pathelement location="${jsch.jar}"/>
   </path>  
   
-  <typedef resource="svntypes.xml" classpathref="project.classpath"/>
+  <!-- Define svnant tasks and types. -->
+  <typedef resource="org/tigris/subversion/svnant/svnantlib.xml"
+           classpathref="project.classpath"/>
 
 
   <target name="clean">

@@ -37,7 +37,8 @@
            includes="**"
 	   classpathref="project.classpath">
     </javac>
-    <copy file="${src.main.dir}/svntask.properties" todir="${build.classes.dir}"/>
+    <copy file="${src.main.dir}/svnantlib.xml"
+          todir="${build.classes.dir}/org/tigris/subversion/svnant"/>
   </target>
 
   <!-- ================================================================= -->

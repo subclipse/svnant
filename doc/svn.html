@@ -70,9 +70,27 @@ by
 <p>This task provide an interface to <A HREF="http://subversion.tigris.org/">Subversion</A> 
 revision control system that is a compelling replacement for CVS in the open source community.
 <br>
-Svn uses javahl (a java interface for the subversion api) if it
+SvnAnt uses JavaHL (Java bindings for the Subversion's API) if it
 can find the corresponding library (svnjavahl.dll on windows).
 Otherwise it uses svn command line interface.</p>
+
+<h2>Setup</h2>
+
+<p>As with most Ant extensions, SvnAnt's task and type names must be
+<a href="http://ant.apache.org/manual/CoreTasks/typedef.html">mapped
+to their implementing classes</a> before being used in an Ant build
+file.  An example of how to use the <em>antlib</em> bundled in
+SvnAnt's JAR file to perform that registration follows:</p>
+
+<div class="sample">
+<span style="font-face: Courier New; font-size: 2">
+<span style="color: #000080">&lt;typedef</span>
+<span style="color: #000080">resource=</span><span style="color: #008000">&quot;org/tigris/subversion/svnant/svnantlib.xml&quot;</span>
+<span style="color: #000080">classpath=</span><span style="color: #008000">&quot;svnant.jar&quot;</span>
+<span style="color: #000080">/&gt;</span>
+</span>
+</div>  <!-- sample -->
+
 <H2>Parameters</H2>
 
 <table>
