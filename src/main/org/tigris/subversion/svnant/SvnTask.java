@@ -208,6 +208,13 @@ public class SvnTask extends Task {
     	commands.add(a);
     }
     
+    /**
+     * Add the info command to the list of commands to execute.
+     */
+    public void addInfo(Info a) {
+        commands.add(a);
+    }
+    
     public void addNotifyListener(ISVNNotifyListener notifyListener) {
         notifyListeners.add(notifyListener);
     }

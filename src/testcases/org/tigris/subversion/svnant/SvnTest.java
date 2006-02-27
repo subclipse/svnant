@@ -40,7 +40,9 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  *
  * @author Cédric Chabanois 
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
- *
+ * @author Jeremy Whitlock
+ * <a href="mailto:jwhitlock@collab.net">jwhitlock@collab.net</a>
+ * @author Daniel Rall
  */
 public abstract class SvnTest extends BuildFileTest {
 
@@ -815,8 +817,80 @@ public abstract class SvnTest extends BuildFileTest {
 		assertEquals(1, dir.listFiles().length);
 		assertTrue( (new File(dir, "file3.xml")).exists() );
     }
-
     
+    /**
+     * Asserts whether an Ant property is set.
+     */
+    private void assertPropertySet(String propName, boolean expectedSet)
+    {
+        if (expectedSet) {
+            assertNotNull("Property '" + propName + "' should be set",
+                          super.project.getProperty(propName));
+        }
+        else {
+            assertNull("Property '" + propName + "' should be null",
+                       super.project.getProperty(propName));
+        }
+    }
+
+    /**
+     * Test the info command.
+     */
+    public void testSvnInfo() throws Exception {
+        expectBuildException("testInfoNoAttributes",
+                             "Dir or file must be set.");
+        expectBuildException("testInfoBadFile",
+                             "fakefile.txt:  (Not a versioned resource)");
+			
+        executeTarget("testInfoFile");
+        String[] propNames = {
+            "svn.info.path",
+            "svn.info.name",
+            "svn.info.url",
+            "svn.info.repouuid",
+            "svn.info.rev",
+            "svn.info.nodekind",
+            "svn.info.schedule",
+            "svn.info.author",
+            "svn.info.lastRev",
+            "svn.info.lastDate",
+            "svn.info.lastTextUpdate",
+            "svn.info.lastPropUpdate",
+            "svn.info.checksum"
+        };
+        for (int i = 0; i < propNames.length; i++) {
+            assertPropertySet(propNames[i], true);
+        }
+			
+        executeTarget("testInfoDir");
+        propNames = new String[] {
+            "svn.info.path",
+            "svn.info.name",
+            "svn.info.url",
+            "svn.info.repouuid",
+            "svn.info.rev",
+            "svn.info.nodekind",
+            "svn.info.schedule",
+            "svn.info.author",
+            "svn.info.lastRev",
+            "svn.info.lastDate"
+        };
+        for (int i = 0; i < propNames.length; i++) {
+            assertPropertySet(propNames[i], true);
+        }
+        propNames = new String[] {
+            "svn.info.lastTextUpdate",
+            "svn.info.lastPropUpdate",
+            "svn.info.checksum"
+        };
+        for (int i = 0; i < propNames.length; i++) {
+            assertPropertySet(propNames[i], false);
+        }
+			
+        executeTarget("testInfoCustomPrefix");
+        assertPropertySet("wc.info.path", true);
+    }
+
     /**
      * This is not actually a test case, but a hook to assure that
      * cleanup is handled after all test cases have run (rather than

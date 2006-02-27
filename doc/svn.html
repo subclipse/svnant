@@ -123,34 +123,34 @@ SvnAnt's JAR file to perform that registration follows:</p>
 		<td><a href="#createRepository">createRepository</a></td>
 		<td><a href="#import">import</a></td>
 		<td><a href="#move">move</a></td>
-		<td><a href="#status">status</a></td>
+		<td><a href="#revert">revert</a></td>
 	</tr>
 	<tr>
 		<td><a href="#cat">cat</a></td>
 		<td><a href="#delete">delete</a></td>
+		<td><a href="#info">info</a></td>
+		<td><a href="#mkdir">mkdir</a></td>
+		<td><a href="#status">status</a></td>
+	</tr>
+	<tr>
+		<td><a href="#checkout">checkout</a></td>
+		<td><a href="#diff">diff</a></td>
 		<td><a href="#keywordsset">keywordsset</a></td>
 		<td><a href="#propdel">propdel</a></td>
 		<td><a href="#switch">switch</a></td>
 	</tr>
 	<tr>
-		<td><a href="#checkout">checkout</a></td>
-		<td><a href="#diff">diff</a></td>
+		<td><a href="#commit">commit</a></td>
+		<td><a href="#export">export</a></td>
 		<td><a href="#keywordsadd">keywordsadd</a></td>
 		<td><a href="#propget">propget</a></td>
 		<td><a href="#update">update</a></td>
 	</tr>
 	<tr>
-		<td><a href="#commit">commit</a></td>
-		<td><a href="#export">export</a></td>
-		<td><a href="#keywordsremove">keywordsremove</a></td>
-		<td><a href="#propset">propset</a></td>
-		<td></td>
-	</tr>
-	<tr>
 		<td><a href="#copy">copy</a></td>
 		<td><a href="#ignore">ignore</a></td>
-		<td><a href="#mkdir">mkdir</a></td>
-		<td><a href="#revert">revert</a></td>
+		<td><a href="#keywordsremove">keywordsremove</a></td>
+		<td><a href="#propset">propset</a></td>
 		<td></td>
 	</tr>
 	</table>
@@ -616,6 +616,33 @@ Otherwise, create <CODE>newEntry </CODE>underneath <CODE>url </CODE>and begin co
 		<td>Set to &quot;false&quot; to operate on single directory only.
 			Default is &quot;true&quot;
 		</td>
+		<td>False</td>
+	</tr>
+</table>
+
+<h3><a name="info">info</a></h3>
+<p>Gets the information from the repo for a file or directory and sets
+the values to Ant properties.</p>
+
+<table>
+	<tr>
+		<td>Attribute</td>
+		<td>Description</td>
+		<td>Required</td>
+	</tr>
+	<tr>
+		<td>file</td>
+		<td>Directory or file to gather the information about.</td>
+		<td>Yes</td>
+	</tr>
+	<tr>
+		<td>propPrefix</td>
+		<td>Prefix to use for the Ant properties.  Default is &quot;svn.info.&quot;.</td>
+		<td>False</td>
+	</tr>
+	<tr>
+		<td>verbose</td>
+		<td>Turns on verbosity for this Ant task.  Default is &quot;false&quot;.</td>
 		<td>False</td>
 	</tr>
 </table>

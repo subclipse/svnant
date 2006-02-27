@@ -1009,6 +1009,36 @@
 		</copy>
 	</target>
 
+  <target name="testInfoNoAttributes" depends="init">
+    <svn javahl="${javahl}" javasvn="${javasvn}">
+      <info />
+    </svn>
+  </target>
+
+  <target name="testInfoDirectory" depends="init">
+    <svn javahl="${javahl}" javasvn="${javasvn}">
+      <info file="${basedir}"/>
+    </svn>
+  </target>
+
+  <target name="testInfoFile" depends="init">
+    <svn javahl="${javahl}" javasvn="${javasvn}">
+      <info file="${basedir}/build.xml"/>
+    </svn>
+  </target>
+
+  <target name="testInfoBadFile" depends="init">
+    <svn javahl="${javahl}" javasvn="${javasvn}">
+      <info file="${basedir}/nullfile.txt"/>
+    </svn>
+  </target>
+
+  <target name="testInfoCustomPrefix" depends="init">
+    <svn javahl="${javahl}" javasvn="${javasvn}">
+      <info file="${basedir}" propPrefix="wc.info" />
+    </svn>
+  </target>
+
   <target name="all" depends="init">
   </target>
 	
