@@ -1017,25 +1017,25 @@
 
   <target name="testInfoDirectory" depends="init">
     <svn javahl="${javahl}" javasvn="${javasvn}">
-      <info file="${basedir}"/>
+      <info target="${basedir}"/>
     </svn>
   </target>
 
   <target name="testInfoFile" depends="init">
     <svn javahl="${javahl}" javasvn="${javasvn}">
-      <info file="${basedir}/build.xml"/>
+      <info target="${basedir}/build.xml"/>
     </svn>
   </target>
 
   <target name="testInfoBadFile" depends="init">
     <svn javahl="${javahl}" javasvn="${javasvn}">
-      <info file="${basedir}/nullfile.txt"/>
+      <info target="${basedir}/nullfile.txt"/>
     </svn>
   </target>
 
   <target name="testInfoCustomPrefix" depends="init">
     <svn javahl="${javahl}" javasvn="${javasvn}">
-      <info file="${basedir}" propPrefix="wc.info" />
+      <info target="${basedir}" propPrefix="wc.info" />
     </svn>
   </target>
 

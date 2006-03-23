@@ -841,9 +841,40 @@ public abstract class SvnTest extends BuildFileTest {
                              "Dir or file must be set.");
         expectBuildException("testInfoBadFile",
                              "fakefile.txt:  (Not a versioned resource)");
+        
+        executeTarget("testInfoDirectory");
+        
+        String[] propNames = new String[] {
+            "svn.info.path",
+            "svn.info.url",
+            "svn.info.repouuid",
+            "svn.info.rev",
+            "svn.info.nodekind",
+            "svn.info.schedule",
+            "svn.info.author",
+            "svn.info.lastRev",
+            "svn.info.lastDate"
+        };
+        
+        for (int i = 0; i < propNames.length; i++) {
+            assertPropertySet(propNames[i], true);
+        }
+        
+        propNames = new String[] {
+            "svn.info.name",
+            "svn.info.lastTextUpdate",
+            "svn.info.lastPropUpdate",
+            "svn.info.checksum"
+        };
+        
+        // Property shouldn't be set for a directory.
+        for (int i = 0; i < propNames.length; i++) {
+            assertPropertyUnset(propNames[i]);
+        }
 			
         executeTarget("testInfoFile");
-        String[] propNames = {
+        
+        propNames = new String[] {
             "svn.info.path",
             "svn.info.name",
             "svn.info.url",
@@ -858,33 +889,9 @@ public abstract class SvnTest extends BuildFileTest {
             "svn.info.lastPropUpdate",
             "svn.info.checksum"
         };
+        
         for (int i = 0; i < propNames.length; i++) {
             assertPropertySet(propNames[i], true);
-        }
-			
-        executeTarget("testInfoDir");
-        propNames = new String[] {
-            "svn.info.path",
-            "svn.info.name",
-            "svn.info.url",
-            "svn.info.repouuid",
-            "svn.info.rev",
-            "svn.info.nodekind",
-            "svn.info.schedule",
-            "svn.info.author",
-            "svn.info.lastRev",
-            "svn.info.lastDate"
-        };
-        for (int i = 0; i < propNames.length; i++) {
-            assertPropertySet(propNames[i], true);
-        }
-        propNames = new String[] {
-            "svn.info.lastTextUpdate",
-            "svn.info.lastPropUpdate",
-            "svn.info.checksum"
-        };
-        for (int i = 0; i < propNames.length; i++) {
-            assertPropertySet(propNames[i], false);
         }
 			
         executeTarget("testInfoCustomPrefix");

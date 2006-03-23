@@ -1,6 +1,7 @@
 package org.tigris.subversion.svnant;
 
 import java.io.File;
+import java.net.MalformedURLException;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -20,11 +21,9 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
 public class Info extends SvnCommand {
 
     /**
-     * The target to retrieve properties for.  A <code>File</code>
-     * object if representative of a WC path.  Otherwise, a
-     * <code>SVNUrl</code> object.
+     * The target to retrieve properties for.
      */
-    private Object target = null;
+    private String target = null;
 
     /** Whether or not to print the properties. */
     private boolean verbose = false;
@@ -92,7 +91,7 @@ public class Info extends SvnCommand {
             }
         }
         catch (Exception e) {
-            throw new BuildException("Failed to set info properties", e);
+            throw new BuildException("Failed to set 'info' properties", e);
         }
     }
 
@@ -101,48 +100,76 @@ public class Info extends SvnCommand {
      * allow for use of
      * <code>ISVNInfo.getInfoFromWorkingCopy()</code>, which uses only
      * the meta data from the WC.
+     *
+     * @exception SVNClientException If ISVNInfo.getInfo(target)
+     * fails.
      */
-    private ISVNInfo acquireInfo(ISVNClientAdapter svnClient, Object target)
-        throws SVNClientException{
-        return (target instanceof File ?
-                svnClient.getInfo((File) target) :
-                svnClient.getInfo((SVNUrl) target));
+    private ISVNInfo acquireInfo(ISVNClientAdapter svnClient, String target)
+        throws SVNClientException {
+        File targetAsFile = new File(Project.translatePath(target));
+        if (targetAsFile.exists()) {
+            // Since the target exists locally, assume it's not a URL.
+            return svnClient.getInfo(targetAsFile);
+        }
+        else {
+            try {
+                SVNUrl url = new SVNUrl(target);
+                return svnClient.getInfo(url);
+            }
+            catch (MalformedURLException malformedURL) {
+                // Since we don't have a valid URL with which to
+                // contact the repository, assume the target is a
+                // local file, even though it doesn't exist locally.
+                return svnClient.getInfo(targetAsFile);
+            }
+        }
     }
 
     /**
-     * Retrieve a value for the named property.
+     * Retrieve a value for the named property.  If the named property
+     * is not recognized and in verbose mode, log a message
+     * accordingly.  Assumes that {@link #info} has already been
+     * initialized (typically handled by invocation of {@link
+     * #execute()}).
      *
      * @param propName Name of the property to retrieve a value for.
-     * @return The value of the property, or <code>null
+     * @return The value of the named property, or if not recognized,
+     * the empty string
      */
     public String getValue(String propName) {
-        String value = null;
+        Object value = null;
 
         // ASSUMPTION: DIR_PROP_NAMES is a subset of FILE_PROP_NAMES.
         if (FILE_PROP_NAMES[0].equals(propName)) {
-            value = this.info.getFile().getAbsolutePath();
+            value = this.info.getFile();
+            if (value != null) {
+                value = ((File) value).getAbsolutePath();
+            }
         } else if (FILE_PROP_NAMES[1].equals(propName)) {
-            value = this.info.getFile().getName();
+            value = this.info.getFile();
+            if (value != null) {
+                value = ((File) value).getName();
+            }
         } else if (FILE_PROP_NAMES[2].equals(propName)) {
-            value = this.info.getUrl().toString();
+            value = this.info.getUrl();
         } else if (FILE_PROP_NAMES[3].equals(propName)) {
             value = this.info.getUuid();
         } else if (FILE_PROP_NAMES[4].equals(propName)) {
-            value = this.info.getRevision().toString();
+            value = this.info.getRevision();
         } else if (FILE_PROP_NAMES[5].equals(propName)) {
-            value = this.info.getNodeKind().toString();
+            value = this.info.getNodeKind();
         } else if (FILE_PROP_NAMES[6].equals(propName)) {
-            value = this.info.getSchedule().toString();
+            value = this.info.getSchedule();
         } else if (FILE_PROP_NAMES[7].equals(propName)) {
             value = this.info.getLastCommitAuthor();
         } else if (FILE_PROP_NAMES[8].equals(propName)) {
-            value = this.info.getLastChangedRevision().toString();
+            value = this.info.getLastChangedRevision();
         } else if (FILE_PROP_NAMES[9].equals(propName)) {
-            value = this.info.getLastChangedDate().toString();
+            value = this.info.getLastChangedDate();
         } else if (FILE_PROP_NAMES[10].equals(propName)) {
-            value = this.info.getLastDateTextUpdate().toString();
+            value = this.info.getLastDateTextUpdate();
         } else if (FILE_PROP_NAMES[11].equals(propName)) {
-            value = this.info.getLastDatePropsUpdate().toString();
+            value = this.info.getLastDatePropsUpdate();
         } else if (FILE_PROP_NAMES[12].equals(propName)) { 
             // ### FIXME: Implement checksum in svnClientAdapter.
             log("    " + "Property '" + propName + "' not implemented",
@@ -154,7 +181,7 @@ public class Info extends SvnCommand {
             }
         }
 
-        return value;
+        return (value == null ? "" : value.toString());
     }
 
     /**
@@ -164,19 +191,16 @@ public class Info extends SvnCommand {
         if (target == null) {
             throw new BuildException("target must be set to a file or " +
                                      "directory in your working copy, or " +
-                                     "to an URI");
+                                     "to a URI");
         }
     }
 
     /**
      * Set the path to the target WC file or directory, or to an URI.
-     * @param file
+     * @param target The target for which to retrieve info.
      */
     public void setTarget(String target) {
-        // Determine whether target is a WC path.
-        String localTarget = Project.translatePath(target);
-        File f = new File(localTarget);
-        this.target = (f.exists() ? localTarget : target);
+        this.target = target;
     }
 
     /**
