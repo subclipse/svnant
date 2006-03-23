@@ -26,7 +26,7 @@
   <!-- ================================================================= -->
   <!-- compile                                                           -->
   <!-- ================================================================= -->
-  <target name="compile" description="compile all sources files">
+  <target name="compile" description="compile all source files">
     <mkdir dir="${build.classes.dir}" />
     <depend srcDir="${src.main.dir}"
             destDir="${build.classes.dir}"
@@ -44,7 +44,8 @@
   <!-- ================================================================= -->
   <!-- create svnant.jar                                                 -->
   <!-- ================================================================= -->
-  <target name="svnant.jar" depends="compile" description="generate svnant.jar">
+  <target name="svnant.jar" depends="compile"
+          description="generate svnant.jar">
     <tstamp/>
     <mkdir dir="${build.lib.dir}" />
     <jar jarfile="${build.lib.dir}/svnant.jar"
@@ -93,7 +94,8 @@
   <!-- ================================================================= -->
   <!-- run junit tests                                                   -->
   <!-- ================================================================= -->
-  <target name="runTests" depends="svnant.jar,compileTests" description="run junit tests">
+  <target name="runTests" depends="svnant.jar,compileTests"
+          description="run junit tests">
     <echo message="Please wait, tests can take a long time to execute...."
       level="info"/>
 	<junit printsummary="yes" haltonfailure="false">
@@ -110,7 +112,8 @@
   <!-- ================================================================= -->
   <!-- make distribution                                                 -->
   <!-- ================================================================= -->
-  <target name="makeDistrib" depends="clean,svnant.jar,docs" description="make binary distribution">
+  <target name="makeDistrib" depends="clean, svnant.jar, docs"
+          description="make binary distribution">
 	  <mkdir dir="${build.distrib.dir}"/>
 		<mkdir dir="${build.distrib.dir}/lib"/>
 		<mkdir dir="${build.distrib.dir}/doc"/>
