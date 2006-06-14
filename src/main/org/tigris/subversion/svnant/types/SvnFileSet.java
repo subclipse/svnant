@@ -64,8 +64,8 @@ import org.tigris.subversion.svnant.SvnTask;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.commandline.CmdLineClientAdapterFactory;
-import org.tigris.subversion.svnclientadapter.javahl.JavaSvnClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.javahl.JhlClientAdapterFactory;
+import org.tigris.subversion.svnclientadapter.javasvn.JavaSvnClientAdapterFactory;
 
 /**
  * This class implements a custom FileSet for ANT. It returns a set of files

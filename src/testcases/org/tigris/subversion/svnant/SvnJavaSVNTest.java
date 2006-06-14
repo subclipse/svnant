@@ -2,7 +2,7 @@ package org.tigris.subversion.svnant;
 
 import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
-import org.tigris.subversion.svnclientadapter.javahl.JavaSvnClientAdapterFactory;
+import org.tigris.subversion.svnclientadapter.javasvn.JavaSvnClientAdapterFactory;
 
 public class SvnJavaSVNTest extends SvnTest {
 

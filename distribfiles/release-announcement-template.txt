@@ -28,9 +28,9 @@ Release notes for @SVNANTVERSION@:
 Download: 
 
 [PATH TO ARCHIVE, E.G.
-http://subclipse.tigris.org/files/documents/906/23927/svnant-1.0.0-rc1.zip]
+http://subclipse.tigris.org/files/documents/906/23927/svnant-1.0.0.zip]
 
 
 Version control:
 
-http://svn.collab.net/repos/subclipse/tags/svnant/@SVNANTVERSION@/
+http://subclipse.tigris.org/svn/subclipse/tags/svnant/@SVNANTVERSION@/

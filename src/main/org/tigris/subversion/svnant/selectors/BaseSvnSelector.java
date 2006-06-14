@@ -62,8 +62,8 @@ import org.tigris.subversion.svnant.SvnTask;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.commandline.CmdLineClientAdapterFactory;
-import org.tigris.subversion.svnclientadapter.javahl.JavaSvnClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.javahl.JhlClientAdapterFactory;
+import org.tigris.subversion.svnclientadapter.javasvn.JavaSvnClientAdapterFactory;
 
 /**
  * This is an abstract class that implements all functionality shared

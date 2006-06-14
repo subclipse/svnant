@@ -1,16 +1,18 @@
 <?xml version="1.0"?>
-
+<!-- Sample build file used to retrieve svnant's sources -->
 <project name="svn-test" basedir="." default="checkoutThis">
   
-  <!--  all properties are in build.properties  --> 
+  <!--  all properties are in build.properties --> 
   <property file="build.properties" /> 
 
+  <!-- path to the svnant libraries. Usually they will be located in ANT_HOME/lib -->
   <path id="project.classpath">
     <pathelement location="${svnjavahl.jar}" /> 
     <pathelement location="${svnant.jar}" />
     <pathelement location="${svnClientAdapter.jar}" />
   </path>  
   
+  <!-- load the svn task -->
   <taskdef resource="svntask.properties" classpathref="project.classpath"/>
   
   <target name="clean">
@@ -19,13 +21,13 @@
   </target>
 
   <target name="checkoutLatest">
-    <svn>
+    <svn username="${svnant.repository.user}" password="${svnant.repository.passwd}">
       <checkout url="${svnant.latest.url}" revision="HEAD" destPath="src_latest" />
     </svn>
   </target>
 
   <target name="checkoutThis">
-    <svn>
+    <svn username="${svnant.repository.user}" password="${svnant.repository.passwd}">
       <checkout url="${svnant.this.url}" revision="HEAD" destPath="src_${svnant.version}" />
     </svn>
   </target>

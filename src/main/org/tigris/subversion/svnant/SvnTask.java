@@ -64,8 +64,8 @@ import org.tigris.subversion.svnclientadapter.ISVNNotifyListener;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.commandline.CmdLineClientAdapterFactory;
-import org.tigris.subversion.svnclientadapter.javahl.JavaSvnClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.javahl.JhlClientAdapterFactory;
+import org.tigris.subversion.svnclientadapter.javasvn.JavaSvnClientAdapterFactory;
 
 /**
  * Svn Task
@@ -93,7 +93,7 @@ public class SvnTask extends Task {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password = "\"\"".equals(password) ? "" : password;
     }
 
     /**
