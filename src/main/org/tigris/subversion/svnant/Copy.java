@@ -82,9 +82,6 @@ public class Copy extends SvnCommand {
     private String message = null; 
 
     public void execute(ISVNClientAdapter svnClient) throws BuildException {
-        validateAttributes();
-
-		log("Svn : Copy");
 
         try {
             if (srcPath != null) {

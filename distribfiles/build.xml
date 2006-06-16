@@ -13,7 +13,7 @@
   </path>  
   
   <!-- load the svn task -->
-  <taskdef resource="svntask.properties" classpathref="project.classpath"/>
+  <typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpath="${svnant.jar}" />
   
   <target name="clean">
     <delete dir="src_latest"/>

@@ -78,9 +78,6 @@ public class Mkdir extends SvnCommand {
     private String message = null;
 
     public void execute(ISVNClientAdapter svnClient) throws BuildException {
-        validateAttributes();
-
-		log("Svn : Creating a new directory under revision control");
 
         if (url != null) {
             try {

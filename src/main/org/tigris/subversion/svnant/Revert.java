@@ -87,9 +87,6 @@ public class Revert extends SvnCommand {
 
 	public void execute(ISVNClientAdapter svnClient) throws BuildException {
 		this.svnClient = svnClient;
-		validateAttributes();
-		
-		log("Svn : Revert");		
 		
 		if (file != null)
 			revertFile(file,false);
@@ -166,7 +163,7 @@ public class Revert extends SvnCommand {
                 svnClient.revert(filesAndDirs[i],false);
             }
         } catch (SVNClientException e) {
-            log("Cannot revert file "+file.getAbsolutePath());
+            logError("Cannot revert file " + file.getAbsolutePath());
         }
 	}
 

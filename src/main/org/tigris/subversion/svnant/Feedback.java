@@ -56,7 +56,6 @@ package org.tigris.subversion.svnant;
 
 import java.io.File;
 
-import org.apache.tools.ant.Project;
 import org.tigris.subversion.svnclientadapter.ISVNNotifyListener;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 
@@ -71,7 +70,6 @@ public class Feedback implements ISVNNotifyListener {
 	public Feedback(SvnCommand command)
 	{
 		this.svnCommand = command;
-
 	}
     
     public void setCommand(int cmd) {
@@ -79,22 +77,22 @@ public class Feedback implements ISVNNotifyListener {
     }
 
     public void logMessage(String message) {
-		svnCommand.log(message);
+		svnCommand.logVerbose(message);
 	}
 
     public void logRevision(long revision, String path) {
     }
 
     public void logCommandLine(String message) {
-        svnCommand.log(message);
+        svnCommand.logVerbose(message);
     }
 
     public void logError(String message) {
-        svnCommand.log(message,Project.MSG_ERR);
+        svnCommand.logError(message);
     }
     
     public void logCompleted(String message) {
-        svnCommand.log(message);
+        svnCommand.logVerbose(message);
     }
 
     public void onNotify(File path, SVNNodeKind nodeKind) {

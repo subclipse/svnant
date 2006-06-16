@@ -74,9 +74,6 @@ public class Propdel extends SvnCommand {
     private boolean recurse = false;
 
     public void execute(ISVNClientAdapter svnClient) throws BuildException {
-        validateAttributes();
-
-        log("Svn : Propdel");
 
         try {
             svnClient.propertyDel(path,propName,recurse);

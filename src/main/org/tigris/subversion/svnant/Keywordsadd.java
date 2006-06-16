@@ -77,8 +77,6 @@ public class Keywordsadd extends Keywords {
 	public void execute(ISVNClientAdapter svnClient) throws BuildException {
         super.execute(svnClient);        
 
-        log("Svn : Keywordsadd");
-        
         if (file != null) {
             try {            
                 svnClient.addKeywords(file,keywords);

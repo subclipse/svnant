@@ -77,9 +77,6 @@ public class Propset extends SvnCommand {
     private boolean recurse = false;
 
     public void execute(ISVNClientAdapter svnClient) throws BuildException {
-        validateAttributes();
-
-        log("Svn : Propset");
 
         try {
             if (propValue != null)

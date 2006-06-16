@@ -95,9 +95,6 @@ public class Commit extends SvnCommand {
 
     public void execute(ISVNClientAdapter svnClient) throws BuildException {
 		this.svnClient = svnClient;
-        validateAttributes();
-		
-		log("Svn : Sending changes from your working copy to the repository :");
 		
         // deal with the single file
         if (file != null) {
@@ -146,7 +143,7 @@ public class Commit extends SvnCommand {
     private void svnCommitFile(File file) throws BuildException {
         if (file.exists()) {
             if (file.isDirectory()) {
-                log(
+                logWarning(
                     "Directory "
                         + file.getAbsolutePath()
                         + " cannot be commited using the file attribute.  "
@@ -180,7 +177,7 @@ public class Commit extends SvnCommand {
         throws BuildException {
         if (dir.exists()) {
             if (!dir.isDirectory()) {
-                log(
+                logWarning(
                     "File "
                         + dir.getAbsolutePath()
                         + " cannot be commited using the dir attribute.  "

@@ -55,8 +55,10 @@
 package org.tigris.subversion.svnant;
 
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectComponent;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.StringUtils;
 
 
 /**
@@ -65,7 +67,56 @@ import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  */
 public abstract class SvnCommand extends ProjectComponent {
+	protected SvnTask task;
 
+	protected abstract void validateAttributes();
+	
 	public abstract void execute(ISVNClientAdapter svnClient) throws BuildException;
+
+	public final void execute(SvnTask task, ISVNClientAdapter svnClient) throws BuildException
+	{
+		this.task = task;
+		String[] nameSegments = StringUtils.split(getClass().getName(), ".");
+		String className = "<" + nameSegments[nameSegments.length -1] + ">"; 
+			
+		logInfo(className + " started ...");
+		try {
+			execute(svnClient);
+		} catch (BuildException ex) {
+			logInfo(className + " failed !");
+			throw ex;
+		}
+		logInfo(className + " finished.");
+	}
+
+	public void logVerbose(String message)
+	{
+		getProject().log(this.task, message, Project.MSG_VERBOSE);
+	}
+
+	public void logWarning(String message)
+	{
+		getProject().log(this.task, message, Project.MSG_WARN);
+	}
+
+	public void logError(String message)
+	{
+		getProject().log(this.task, message, Project.MSG_ERR);
+	}
+
+	public void logInfo(String message)
+	{
+		getProject().log(this.task, message, Project.MSG_INFO);
+	}
+
+	public void log(String message)
+	{
+		getProject().log(this.task, message, Project.MSG_INFO);
+	}
+
+	public void log(String message, int level)
+	{
+		getProject().log(this.task, message, level);
+	}
 
 }

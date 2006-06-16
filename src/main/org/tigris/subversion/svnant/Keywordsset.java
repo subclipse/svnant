@@ -77,8 +77,6 @@ public class Keywordsset extends Keywords {
 	public void execute(ISVNClientAdapter svnClient) throws BuildException {
         super.execute(svnClient);        
 
-        log("Svn : Keywordsset");
-        
         if (file != null) {
             try {            
                 svnClient.setKeywords(file,keywords,false);

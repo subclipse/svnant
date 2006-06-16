@@ -95,9 +95,6 @@ public class Delete extends SvnCommand {
 
 	public void execute(ISVNClientAdapter svnClient) throws BuildException {
 		this.svnClient = svnClient;
-		validateAttributes();
-		
-		log("Svn : Delete");		
 		
 		if (url != null)
 			deleteUrl(url,message);
@@ -182,7 +179,7 @@ public class Delete extends SvnCommand {
         try {
             svnClient.remove(filesAndDirs,force);
         } catch (SVNClientException e) {
-            log("Cannot delete file "+file.getAbsolutePath());
+            logError("Cannot delete file " + file.getAbsolutePath());
         }
 	}
 

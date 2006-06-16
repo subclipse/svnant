@@ -58,6 +58,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNNotifyListener;
@@ -233,8 +234,13 @@ public class SvnTask extends Task {
                 // if an exception is thrown, javahl is not available or 
                 // already registered ...
             }
-            javahlAvailable = 
-                SVNClientAdapterFactory.isSVNClientAvailable(JhlClientAdapterFactory.JAVAHL_CLIENT);
+            javahlAvailable = false;
+            try {
+            	javahlAvailable = SVNClientAdapterFactory.isSVNClientAvailable(JhlClientAdapterFactory.JAVAHL_CLIENT);
+            } catch (Exception ex) {
+            	//If anything goes wrong ... 
+            }            
+
             javahlAvailableInitialized = true;
         }
         return javahlAvailable;
@@ -254,8 +260,12 @@ public class SvnTask extends Task {
                 // if an exception is thrown, JavaSVN is not available or 
                 // already registered ...
             }
-            javaSVNAvailable = 
-                SVNClientAdapterFactory.isSVNClientAvailable(JavaSvnClientAdapterFactory.JAVASVN_CLIENT);
+            javaSVNAvailable = false;
+            try {
+            	javaSVNAvailable = SVNClientAdapterFactory.isSVNClientAvailable(JavaSvnClientAdapterFactory.JAVASVN_CLIENT);
+            } catch (Exception ex) {
+            	//If anything goes wrong ... 
+            }            
             javaSVNAvailableInitialized = true;
         }
         return javaSVNAvailable;
@@ -286,17 +296,17 @@ public class SvnTask extends Task {
         
         if ((javahl) && (isJavahlAvailable())) {
             svnClient = SVNClientAdapterFactory.createSVNClient(JhlClientAdapterFactory.JAVAHL_CLIENT);
-            log("Using javahl");
+            log("Using javahl", Project.MSG_VERBOSE);
         }
         else
         if ((javasvn) && isJavaSVNAvailable()) {
             svnClient = SVNClientAdapterFactory.createSVNClient(JavaSvnClientAdapterFactory.JAVASVN_CLIENT);
-            log("Using javasvn");
+            log("Using javasvn", Project.MSG_VERBOSE);
         }
         else
         if (isCommandLineAvailable()) {
             svnClient = SVNClientAdapterFactory.createSVNClient(CmdLineClientAdapterFactory.COMMANDLINE_CLIENT);
-            log("Using command line interface");
+            log("Using command line interface", Project.MSG_VERBOSE);
         } 
         else
             throw new BuildException("Cannot use javahl, JavaSVN nor command line svn client");
@@ -316,7 +326,7 @@ public class SvnTask extends Task {
             SvnCommand command = (SvnCommand) commands.get(i);
             Feedback feedback = new Feedback(command);
 			svnClient.addNotifyListener(feedback);
-            command.execute(svnClient);
+            command.execute(this, svnClient);
             svnClient.removeNotifyListener(feedback);
         }
         

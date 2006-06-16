@@ -85,10 +85,7 @@ public class Diff extends SvnCommand {
 	 * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.SVNClientAdapter)
 	 */
 	public void execute(ISVNClientAdapter svnClient) throws BuildException {
-        validateAttributes();
 
-        log("Svn : diff");
-        
         try {
             if (oldUrl != null)
                 svnClient.diff(oldUrl, oldTargetRevision,

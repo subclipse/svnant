@@ -87,10 +87,7 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
 	private SVNRevision revision = SVNRevision.HEAD;    
 
     public void execute(ISVNClientAdapter svnClient) throws BuildException {
-        validateAttributes();
 
-		log("Svn : Exporting");        
-        
         try {
 			if (srcUrl != null)
 				svnClient.doExport(srcUrl,destPath,revision,force);

@@ -87,9 +87,7 @@ public class Propget extends SvnCommand {
 	 * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
 	 */
 	public void execute(ISVNClientAdapter svnClient) throws BuildException {
-        validateAttributes();
 
-        log("Svn : Propget");
         ISVNProperty svnProperty;
         try {
         	svnProperty = svnClient.propertyGet(path,name);

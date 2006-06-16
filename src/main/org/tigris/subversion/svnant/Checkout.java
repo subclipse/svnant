@@ -82,9 +82,7 @@ public class Checkout extends SvnCommand {
 	private SVNRevision revision = SVNRevision.HEAD;
 
 	public void execute(ISVNClientAdapter svnClient) throws BuildException {
-		validateAttributes();
 
-		log("Svn : Checking out a working copy from a repository :");
 		try {
 			svnClient.checkout(url, destPath, revision, recurse);
 		} catch (Exception e) {

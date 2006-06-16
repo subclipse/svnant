@@ -91,9 +91,6 @@ public class Add extends SvnCommand {
 
     public void execute(ISVNClientAdapter svnClient) throws BuildException {
         this.svnClient = svnClient;
-        validateAttributes();
-
-		log("Svn : Putting files and directories under revision control :");
 
         // deal with the single file
         if (file != null) {
@@ -133,7 +130,7 @@ public class Add extends SvnCommand {
     private void svnAddFile(File file) throws BuildException {
         if (file.exists()) {
             if (file.isDirectory()) {
-                log(
+                logWarning(
                     "Directory "
                         + file.getAbsolutePath()
                         + " cannot be added using the file attribute.  "
@@ -155,7 +152,7 @@ public class Add extends SvnCommand {
                     + file.getAbsolutePath()
                     + " to add to the repository.";
             if (!failonerror) {
-                log(message);
+            	logWarning(message);
             } else {
                 throw new BuildException(message);
             }
@@ -172,7 +169,7 @@ public class Add extends SvnCommand {
     private void svnAddDir(File dir, boolean recursive) throws BuildException {
         if (dir.exists()) {
             if (!dir.isDirectory()) {
-                log(
+                logWarning(
                     "File "
                         + dir.getAbsolutePath()
                         + " cannot be added using the dir attribute.  "
@@ -195,7 +192,7 @@ public class Add extends SvnCommand {
                     + dir.getAbsolutePath()
                     + " to add to the repository.";
             if (!failonerror) {
-                log(message);
+                logWarning(message);
             } else {
                 throw new BuildException(message);
             }

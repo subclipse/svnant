@@ -83,9 +83,6 @@ public class Switch extends SvnCommand {
 	private boolean recurse = true;
 
 	public void execute(ISVNClientAdapter svnClient) throws BuildException {
-		validateAttributes();
-
-		log("Svn : Switching");
 
 		try {
 			svnClient.switchToUrl(path, url, revision, recurse);

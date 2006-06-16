@@ -90,7 +90,6 @@ public abstract class Keywords extends SvnCommand {
 
     public void execute(ISVNClientAdapter svnClient) throws BuildException {
         this.svnClient = svnClient;
-        validateAttributes();
         
         // we do nothing there but this function is overloaded  
     }

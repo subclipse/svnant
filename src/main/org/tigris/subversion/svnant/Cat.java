@@ -82,9 +82,7 @@ public class Cat extends SvnCommand {
 	private SVNRevision revision = SVNRevision.HEAD;
 
 	public void execute(ISVNClientAdapter svnClient) throws BuildException {
-		validateAttributes();
 
-		log("Svn : Cat");
         InputStream is = null;
         FileOutputStream os = null;
 		try {

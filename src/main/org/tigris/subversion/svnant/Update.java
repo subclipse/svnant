@@ -89,9 +89,6 @@ public class Update extends SvnCommand {
 
 	public void execute(ISVNClientAdapter svnClient) throws BuildException {
 		this.svnClient = svnClient;
-		validateAttributes();
-		
-		log("Svn : Updating");
 		
 		if (file != null)
 		{
@@ -145,7 +142,7 @@ public class Update extends SvnCommand {
 			try {
 				svnClient.update(dir,revision,false);
 			} catch (SVNClientException e) {
-				log("Cannot update directory "+dir.getAbsolutePath());
+				logError("Cannot update directory " + dir.getAbsolutePath());
 			}
 		}
 
@@ -155,7 +152,7 @@ public class Update extends SvnCommand {
 			try {
 				svnClient.update(file,revision,false);
 			} catch (SVNClientException e) {
-				log("Cannot update file "+file.getAbsolutePath());
+				logError("Cannot update file " + file.getAbsolutePath());
 			}
 		}
 	}

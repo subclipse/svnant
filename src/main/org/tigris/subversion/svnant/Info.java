@@ -71,12 +71,8 @@ public class Info extends SvnCommand {
      * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
      */
     public void execute(ISVNClientAdapter svnClient) throws BuildException {
-        if (verbose) {
-            log("Svn: Info");
-        }
-        validateAttributes();
 
-        Project project = super.getProject();
+        Project project = getProject();
         try {
             this.info = acquireInfo(svnClient, this.target);
             String[] propNames = (SVNNodeKind.DIR == this.info.getNodeKind() ?
@@ -85,8 +81,9 @@ public class Info extends SvnCommand {
                 String value = getValue(propNames[i]);
                 project.setProperty(propPrefix + propNames[i], value);
                 if (verbose) {
-                    log("    " + propPrefix + propNames[i] + ": " + value,
-                        Project.MSG_INFO);
+                    logInfo(propPrefix + propNames[i] + ": " + value);
+                } else {
+                	logVerbose(propPrefix + propNames[i] + ": " + value);
                 }
             }
         }
@@ -176,8 +173,9 @@ public class Info extends SvnCommand {
                 Project.MSG_WARN);
         } else {
             if (verbose) {
-                log("    " + "Property '" + propName + "' not recognized",
-                    Project.MSG_INFO);
+                logInfo("    " + "Property '" + propName + "' not recognized");
+            } else {
+            	logVerbose("    " + "Property '" + propName + "' not recognized");
             }
         }
 
@@ -187,7 +185,7 @@ public class Info extends SvnCommand {
     /**
      * Validates the call to svn info
      */
-    public void validateAttributes() {
+    protected void validateAttributes() {
         if (target == null) {
             throw new BuildException("target must be set to a file or " +
                                      "directory in your working copy, or " +

@@ -87,9 +87,6 @@ public class Ignore extends SvnCommand {
 
     public void execute(ISVNClientAdapter svnClient) throws BuildException {
         this.svnClient = svnClient;
-        validateAttributes();
-
-		log("Svn : Putting patterns to svn:ignore property :");
 
         // deal with the single file
         if (file != null) {
@@ -142,7 +139,7 @@ public class Ignore extends SvnCommand {
             String message = "Warning: Could not find file "
                     + file.getAbsolutePath();
             if (!failonerror) {
-                log(message);
+            	logWarning(message);
             } else {
                 throw new BuildException(message);
             }
@@ -176,7 +173,7 @@ public class Ignore extends SvnCommand {
     private void svnIgnorePattern(File dir, String pattern) throws BuildException {
         if (dir.exists()) {
             if (!dir.isDirectory()) {
-                log(
+                logWarning(
                     "Can't add a pattern to svn:ignore for a file. It needs to be a directory");
             } else {
 
@@ -190,7 +187,7 @@ public class Ignore extends SvnCommand {
         } else {
             String message = "Warning: Could not find directory "+dir.getAbsolutePath();
             if (!failonerror) {
-                log(message);
+            	logWarning(message);
             } else {
                 throw new BuildException(message);
             }

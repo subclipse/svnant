@@ -77,8 +77,6 @@ public class Keywordsremove extends Keywords {
 	public void execute(ISVNClientAdapter svnClient) throws BuildException {
         super.execute(svnClient);        
 
-        log("Svn : Keywordsremove");
-        
         if (file != null) {
             try {            
                 svnClient.removeKeywords(file,keywords);

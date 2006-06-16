@@ -80,9 +80,6 @@ public class Import extends SvnCommand {
 	private boolean recurse = true;
 
     public void execute(ISVNClientAdapter svnClient) throws BuildException {
-        validateAttributes();
-
-		log("Svn : Importing to repository");
 
         try {
         	svnClient.doImport(path, url, message, recurse);
