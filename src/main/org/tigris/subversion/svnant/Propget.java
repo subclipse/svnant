@@ -62,6 +62,7 @@ import org.apache.tools.ant.BuildException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNProperty;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * svn propget. Get a property
@@ -73,7 +74,10 @@ public class Propget extends SvnCommand {
     
     // path of the resource from which we want to get the property
     private File path;
-    
+
+    // url of the resource from which we want to get the property
+    private SVNUrl url;
+
     // the name of the svn property we want to get
     private String name;
     
@@ -90,7 +94,11 @@ public class Propget extends SvnCommand {
 
         ISVNProperty svnProperty;
         try {
-        	svnProperty = svnClient.propertyGet(path,name);
+        	if (path != null) {
+        		svnProperty = svnClient.propertyGet(path,name);
+        	} else {
+        		svnProperty = svnClient.propertyGet(url,name);
+        	}
         } catch (SVNClientException e) {
             throw new BuildException("Can't get property "+name, e);
         }
@@ -98,12 +106,14 @@ public class Propget extends SvnCommand {
         if (property != null && svnProperty != null) {
             getProject().setProperty(property, svnProperty.getValue());
         }
+        
         if (file != null) {
             FileOutputStream os = null;
             try {
             	os = new FileOutputStream(file);
-            	os.write(svnProperty.getData());
-            	
+            	if (svnProperty != null) {
+            		os.write(svnProperty.getData());
+            	}            	
             } catch (IOException e) {
                 throw new BuildException("Can't write property value to file "+file.toString(), e);
             } finally {
@@ -111,19 +121,20 @@ public class Propget extends SvnCommand {
                 	try {
                 		os.close();
                     } catch (IOException e) {
+                    	//An exception during close. Just ignore.
                     }
                 }
             }
-        }
-        
+        }   
 	}
 
     /**
      * Ensure we have a consistent and legal set of attributes
      */
     protected void validateAttributes() throws BuildException {
-        if (path == null)
-            throw new BuildException("path attribute must be set");
+        if (((path == null) && (url == null))
+                || ((path != null) && (url != null)))
+            throw new BuildException("path attribute or url attribute must be set");
         if (name == null)
             throw new BuildException("svnPropertyName attribute must be set");
         if ((property == null) && (file == null))
@@ -141,6 +152,12 @@ public class Propget extends SvnCommand {
 	 */
 	public void setPath(File path) {
 		this.path = path;
+	}
+	/**
+	 * @param url The url to set.
+	 */
+	public void setUrl(SVNUrl url) {
+		this.url = url;
 	}
 	/**
 	 * @param property The property to set.

@@ -1,7 +1,6 @@
 package org.tigris.subversion.svnant;
 
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,13 +23,13 @@ import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
 import org.tigris.subversion.svnclientadapter.ISVNNotifyListener;
 import org.tigris.subversion.svnclientadapter.ISVNProperty;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
-import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNScheduleKind;
-import org.tigris.subversion.svnclientadapter.SVNStatusUtils;
+import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
+import org.tigris.subversion.svnclientadapter.utils.SVNStatusUtils;
 
 /**
  * Set the property <code>javahl</code> and/or <code>javasvn</code> to
@@ -161,6 +160,8 @@ public abstract class SvnTest extends BuildFileTest {
 		assertEquals(0,properties.length);
         
         assertEquals("image/png",getProject().getProperty("propTest.mimeType"));
+        assertNull(getProject().getProperty("propTestUrlBeforeCommit.mimeType"));
+        assertEquals("image/png",getProject().getProperty("propTestUrlAfterCommit.mimeType"));
 		file = new File(WORKINGCOPY_DIR+"/propTest/icon2.gif");
         assertTrue(file.exists());
     }
@@ -181,10 +182,11 @@ public abstract class SvnTest extends BuildFileTest {
     
     public void testKeywords() throws FileNotFoundException, IOException {
         executeTarget("testKeywords");
-        DataInputStream dis = new DataInputStream(new FileInputStream(WORKINGCOPY_DIR+"/keywordsTest/file.txt")); 
-        assertEquals("$LastChangedRevision: 1 $",dis.readLine());
-        assertEquals("$Author: cedric $",dis.readLine());
-        assertEquals("$Id$",dis.readLine());
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(WORKINGCOPY_DIR+"/keywordsTest/file.txt"))); 
+        assertEquals("$LastChangedRevision: 1 $",reader.readLine());
+        assertEquals("$Author: cedric $",reader.readLine());
+        assertEquals("$Id$",reader.readLine());
+        reader.close();
     }
 
     public void testUpdate() {
@@ -193,15 +195,17 @@ public abstract class SvnTest extends BuildFileTest {
 
     public void testRevert() throws FileNotFoundException, IOException {
         executeTarget("testRevert");
-        DataInputStream dis = new DataInputStream(new FileInputStream(WORKINGCOPY_DIR+"/revertTest/file.txt")); 
-        assertEquals("first version",dis.readLine());
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(WORKINGCOPY_DIR+"/revertTest/file.txt"))); 
+        assertEquals("first version",reader.readLine());
+        reader.close();
     }
 
     public void testCat() throws FileNotFoundException, IOException {
         executeTarget("testCat");
-        DataInputStream dis = new DataInputStream(new FileInputStream(WORKINGCOPY_DIR+"/catTest/filecat.txt")); 
-        assertEquals("first line",dis.readLine());        
-        assertEquals("second line",dis.readLine());
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(WORKINGCOPY_DIR+"/catTest/filecat.txt"))); 
+        assertEquals("first line",reader.readLine());        
+        assertEquals("second line",reader.readLine());
+        reader.close();
     }
 
     public void testListener() throws Exception {
@@ -311,7 +315,7 @@ public abstract class SvnTest extends BuildFileTest {
         assertTextStatus(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/statusTest/deleted.txt")), SVNStatusKind.DELETED);
 
         assertEquals("added",getProject().getProperty("testStatus.textStatus"));
-        assertEquals("normal",getProject().getProperty("testStatus.propStatus"));
+        assertEquals("non-svn",getProject().getProperty("testStatus.propStatus"));
         SVNRevision.Number lastCommit = (SVNRevision.Number)SVNRevision.getRevision(getProject().getProperty("testStatus.lastCommitRevision"));
         assertEquals(null,lastCommit);
         
@@ -381,21 +385,21 @@ public abstract class SvnTest extends BuildFileTest {
 		executeTarget("testStatusUnmanaged");
 		
 		assertEquals(project.getProperty("unmanaged1.textStatus"), "unversioned");
-		assertEquals(project.getProperty("unmanaged1.propStatus"), "normal");
+		assertEquals(project.getProperty("unmanaged1.propStatus"), "non-svn");
 		assertEquals(project.getProperty("unmanaged1.lastCommitRevision"), "");
 		assertEquals(project.getProperty("unmanaged1.revision"), "-1");
 		assertEquals(project.getProperty("unmanaged1.lastCommitAuthor"), "");
 		assertEquals(project.getProperty("unmanaged1.url"), "");
 
 		assertEquals(project.getProperty("unmanagedDir.textStatus"), "unversioned");
-		assertEquals(project.getProperty("unmanagedDir.propStatus"), "normal");
+		assertEquals(project.getProperty("unmanagedDir.propStatus"), "non-svn");
 		assertEquals(project.getProperty("unmanagedDir.lastCommitRevision"), "");
 		assertEquals(project.getProperty("unmanagedDir.revision"), "-1");
 		assertEquals(project.getProperty("unmanagedDir.lastCommitAuthor"), "");
 		assertEquals(project.getProperty("unmanagedDir.url"), "");
 
 		assertEquals(project.getProperty("unmanaged2.textStatus"), "unversioned");
-		assertEquals(project.getProperty("unmanaged2.propStatus"), "normal");
+		assertEquals(project.getProperty("unmanaged2.propStatus"), "non-svn");
 		assertEquals(project.getProperty("unmanaged2.lastCommitRevision"), "");
 		assertEquals(project.getProperty("unmanaged2.revision"), "-1");
 		assertEquals(project.getProperty("unmanaged2.lastCommitAuthor"), "");
@@ -459,7 +463,7 @@ public abstract class SvnTest extends BuildFileTest {
 		executeTarget("testAnnotate");
 		File file = new File(WORKINGCOPY_DIR+"/annotateTest/file.txt");
 		ISVNAnnotations annotations = svnClient.annotate(file,new SVNRevision.Number(2),new SVNRevision.Number(3));
-		assertEquals(3,annotations.size());
+		assertEquals(3,annotations.numberOfLines());
 		assertNull(annotations.getAuthor(0));
 		assertEquals(-1,annotations.getRevision(0));
 		assertEquals("user1",annotations.getAuthor(1));

@@ -308,7 +308,10 @@
       <propdel path="workingcopy/propTest/file.png" name="myProperty"/>
 
       <propget path="workingcopy/propTest/file.png" name="svn:mime-type" property="propTest.mimeType"/>
+      <propget url="${urlRepos}/propTest/file.png" name="svn:mime-type" property="propTestUrlBeforeCommit.mimeType"/>
       <propget path="workingcopy/propTest/file.png" name="myPicture" file="workingcopy/propTest/icon2.gif"/>
+      <commit message="propTest added" dir="workingcopy/propTest"/>
+      <propget url="${urlRepos}/propTest/file.png" name="svn:mime-type" property="propTestUrlAfterCommit.mimeType"/>
     </svn>
   </target>
 

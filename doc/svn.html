@@ -9,7 +9,7 @@
 <style type="text/css">	
 body {
 	font: 80% Verdana, Arial, Helvetica, sans-serif;
-	margin: 0; padding: 0;
+	margin: 12px; padding: 12px;
 /*	background: rgb(95%,95%,80%);  */
 	color: black;
 }
@@ -24,7 +24,7 @@ h2 {
 }
 h3 {
 	border:1px solid rgb(85%,85%,70%);
-	color: rgb(85%,85%,70%);
+	color: rgb(55%,55%,40%);
 	padding: 0.66em 0 0.33em 1em;
 	background-color: #f3f1f4;
 }
@@ -59,19 +59,17 @@ th {
 
 <body lang="en-US" dir="LTR">
 
-<H1><A NAME="svn"></A>Svn</H1>
-by
-<ul>
-	<li><A HREF="mailto:cchab@tigris.org">C&eacute;dric Chabanois</A>
-</ul>
+<H1>&lt;Svn&gt;</H1>
+By <A HREF="mailto:users@subclipse.tigris.org">C&eacute;dric Chabanois et al.</A>
 
 
 <H2>Description</H2>
-<p>This task provide an interface to <A HREF="http://subversion.tigris.org/">Subversion</A> 
+<p>This task provides an interface to <A HREF="http://subversion.tigris.org/">Subversion</A> 
 revision control system that is a compelling replacement for CVS in the open source community.
 <br>
-SvnAnt uses JavaHL (Java bindings for the Subversion's API) if it
-can find the corresponding library (svnjavahl.dll on windows).
+With the help of the underlying svnClientAdapter, &lt;svn&gt; task uses JavaHL (a 
+native JNI interface to the subversion api) if it
+can find the corresponding library (e.g. svnjavahl.dll on windows).
 Otherwise it uses svn command line interface.</p>
 
 <h2>Setup</h2>
@@ -111,8 +109,8 @@ SvnAnt's JAR file to perform that registration follows:</p>
 	</tr>
 	<tr>
 		<td>javahl</td>
-		<td>Set to &ldquo;false&rdquo; to use command line client interface to svn<BR>(<B>experimental</B>). Defaults to true</td>
-		<td>No</td>
+		<td>Set to &ldquo;false&rdquo; to use command line client interface instead of JNI JavaHL binding.</td>
+		<td>No (Defaults to true)</td>
 	</tr>
 </table>
 
@@ -308,6 +306,7 @@ source and destination can each be either a working copy (WC) path or URL:
 	<li>URL-&gt;URL: complete server-side copy;&nbsp; used to branch &amp; tag</li>
 </ul>
 </p>
+<br/>
 
 <table>
 	<tr>
@@ -497,6 +496,7 @@ two urls (oldUrl and newUrl).
 	</li>
 </ol>
 </p>
+<br/>
 <table>
 	<tr>
 		<td>Attribute</td>
@@ -649,6 +649,7 @@ given files. Valid keywords are:
 	<li>Id : A compressed summary of the previous</li>
 </ul>
 </p>
+<br/>
 <table>
 	<tr>
 		<td>Attribute</td>
@@ -801,7 +802,11 @@ URL:&nbsp; complete server-side rename.
 	<tr>
 		<td>path</td>
 		<td>path of the file or directory on which to get the property</td>
-		<td>Yes</td>
+		<td ROWSPAN=2>One of the two</td>
+	</tr>
+	<tr>
+		<td>url</td>
+		<td>url of the file or directory in repository on which to get the property</td>
 	</tr>
 	<tr>
 		<td>name</td>
@@ -1008,6 +1013,7 @@ The value of propStatusProperty can be :
 	<li>modified</li>
 </ul>
 </p>
+<p></p>
 <div class="sample">
 <p>
 Example : <br>
