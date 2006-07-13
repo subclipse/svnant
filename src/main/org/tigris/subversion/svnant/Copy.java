@@ -171,11 +171,7 @@ public class Copy extends SvnCommand {
      * @param revision
      */
     public void setRevision(String revision) {
-        try {
-            this.revision = SVNRevision.getRevision(revision);
-        } catch (ParseException e) {
-            this.revision = null;
-        }
+		this.revision = getRevisionFrom(revision);
     }
 
 

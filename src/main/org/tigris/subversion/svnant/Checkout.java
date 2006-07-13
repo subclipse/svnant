@@ -55,7 +55,6 @@
 package org.tigris.subversion.svnant;
 
 import java.io.File;
-import java.text.ParseException;
 
 import org.apache.tools.ant.BuildException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
@@ -133,11 +132,7 @@ public class Checkout extends SvnCommand {
 	 * @param revision
 	 */
 	public void setRevision(String revision) {
-		try {
-			this.revision = SVNRevision.getRevision(revision);
-		} catch (ParseException e) {
-			this.revision = null;
-		}
+		this.revision = getRevisionFrom(revision);
 	}
 
 }

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -314,14 +315,14 @@ public abstract class SvnTest extends BuildFileTest {
         
         assertTextStatus(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/statusTest/deleted.txt")), SVNStatusKind.DELETED);
 
-        assertEquals("added",getProject().getProperty("testStatus.textStatus"));
-        assertEquals("non-svn",getProject().getProperty("testStatus.propStatus"));
-        SVNRevision.Number lastCommit = (SVNRevision.Number)SVNRevision.getRevision(getProject().getProperty("testStatus.lastCommitRevision"));
+        assertEquals("added",getProject().getProperty("a_testStatus.textStatus"));
+        assertEquals("non-svn",getProject().getProperty("a_testStatus.propStatus"));
+        SVNRevision.Number lastCommit = (SVNRevision.Number)SVNRevision.getRevision(getProject().getProperty("a_testStatus.lastCommitRevision"));
         assertEquals(null,lastCommit);
         
-        SVNRevision.Number revision = (SVNRevision.Number)SVNRevision.getRevision(getProject().getProperty("testStatus.revision"));
+        SVNRevision.Number revision = (SVNRevision.Number)SVNRevision.getRevision(getProject().getProperty("a_testStatus.revision"));
         assertEquals(0,revision.getNumber());
-        assertNotNull(getProject().getProperty("testStatus.lastCommitAuthor"));
+        assertNotNull(getProject().getProperty("a_testStatus.lastCommitAuthor"));
         
     }
     
@@ -378,7 +379,17 @@ public abstract class SvnTest extends BuildFileTest {
         // usernames
 //        statuses = svnClient.getStatus(new File(WORKINGCOPY_DIR+"/statusTest/longUserName.dir"),true,true);
 //        assertEquals(2, statuses.length);
-//        assertEquals(new File(WORKINGCOPY_DIR+"/statusTest/longUserName.dir").getAbsoluteFile(), statuses[0].getFile());        
+//        assertEquals(new File(WORKINGCOPY_DIR+"/statusTest/longUserName.dir").getAbsoluteFile(), statuses[0].getFile());
+        
+        ISVNStatus status = svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/statusTest/committed.txt"));
+
+        assertEquals(status.getTextStatus().toString(), getProject().getProperty("testStatus.textStatus"));
+        assertEquals(status.getPropStatus().toString(), getProject().getProperty("testStatus.propStatus"));
+        assertEquals(status.getLastChangedRevision().toString(), getProject().getProperty("testStatus.lastCommitRevision"));
+        assertEquals(status.getRevision().toString(), getProject().getProperty("testStatus.revision"));
+        assertEquals(status.getLastCommitAuthor(), getProject().getProperty("testStatus.lastCommitAuthor"));
+        assertEquals(new SimpleDateFormat("yyyy/MM/dd HH:mm").format(status.getLastChangedDate()), getProject().getProperty("testStatus.lastChangedDate"));
+        assertEquals(status.getUrl().toString(), getProject().getProperty("testStatus.url"));
     }
 
     public void testStatusUnmanaged() throws Exception {  

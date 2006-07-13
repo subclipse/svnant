@@ -112,6 +112,16 @@ SvnAnt's JAR file to perform that registration follows:</p>
 		<td>Set to &ldquo;false&rdquo; to use command line client interface instead of JNI JavaHL binding.</td>
 		<td>No (Defaults to true)</td>
 	</tr>
+	<tr>
+		<td>javasvn</td>
+		<td>Set to &ldquo;false&rdquo; to use command line client interface instead of JavaSVN binding.</td>
+		<td>No (Defaults to false)</td>
+	</tr>
+	<tr>
+		<td>dateFormatter</td>
+		<td>formatter definition used to format/parse dates (e.g. when revision is specified as date).</td>
+		<td>No (Defaults to "MM/DD/YYYY HH:MM AM_PM")</td>
+	</tr>
 </table>
 
 <H2>Svn commands specified as nested elements</H2>
@@ -213,7 +223,7 @@ SvnAnt's JAR file to perform that registration follows:</p>
 	<tr>
 		<td>revision</td>
 		<td>revision to get.<BR>Possible values are :<BR>- a date with the
-			following format : MM/DD/YYYY HH:MM AM_PM<BR>- a revision number<BR>-
+			format as specified in dateFormatter attribute<BR>- a revision number<BR>-
 			HEAD, BASE, COMMITED or PREV<BR>Default is &quot;HEAD&quot;
 		</td>
 		<td>No</td>
@@ -248,7 +258,7 @@ SvnAnt's JAR file to perform that registration follows:</p>
 	<tr>
 		<td>revision</td>
 		<td>revision to checkout.<BR>Possible values are :<BR>- a date with
-			the following format : MM/DD/YYYY HH:MM AM_PM<BR>- a revision
+			the format as specified in dateFormatter attribute<BR>- a revision
 			number<BR>- HEAD, BASE, COMMITED or PREV<BR>Default is &quot;HEAD&quot;
 		</td>
 		<td>No</td>
@@ -340,8 +350,8 @@ source and destination can each be either a working copy (WC) path or URL:
 	<tr>
 		<td>revision</td>
 		<td>revision to copy from (when srcUrl is set)<BR>Possible values
-			are :<BR>- a date with the following format : MM/DD/YYYY HH:MM
-			AM_PM<BR>- a revision number<BR>- HEAD, BASE, COMMITED or
+			are :<BR>- a date with the format as specified in dateFormatter attribute
+			<BR>- a revision number<BR>- HEAD, BASE, COMMITED or
 			PREV<BR>Default is &quot;HEAD&quot;
 		</td>
 		<td>no</td>
@@ -521,7 +531,7 @@ two urls (oldUrl and newUrl).
 		<td>revision</td>
 		<td>revision of the source url to export from. Defaults is
 			&quot;HEAD&quot;<BR>Possible values are :<BR>- a date with the
-			following format : MM/DD/YYYY HH:MM AM_PM<BR>- a revision number<BR>-
+			format as specified in dateFormatter attribute<BR>- a revision number<BR>-
 			HEAD, BASE, COMMITED or PREV
 		</td>
 		<td>No</td>
@@ -927,7 +937,7 @@ will store any arbitrary properties set:
 	<tr>
 		<td>revision</td>
 		<td>revision. Defaults is &quot;HEAD&quot;<BR>Possible values are
-			:<BR>- a date with the following format : MM/DD/YYYY HH:MM AM_PM<BR>-
+			:<BR>- a date with the format as specified in dateFormatter attribute<BR>-
 			a revision number<BR>- HEAD, BASE, COMMITED or PREV</td>
 		<td>No</td>
 	</tr>
@@ -974,6 +984,13 @@ will store any arbitrary properties set:
 		<td>lastChangedRevisionProperty</td>
 		<td>Name of the property to set to the last changed revision of the
 			item (or &ldquo;&rdquo; if unversioned)</td>
+		<td>No</td>
+	</tr>
+	<tr>
+		<td>lastChangedDateProperty</td>
+		<td>Name of the property to set to the last changed date of the
+			item (or &ldquo;&rdquo; if unversioned). 
+			The date is formatted according to task's "dateFormatter"</td>
 		<td>No</td>
 	</tr>
 	<tr>
@@ -1057,7 +1074,7 @@ working copy to a branch or tag within the same repository.</p>
 	<tr>
 		<td>revision</td>
 		<td>revision. Defaults is &quot;HEAD&quot;<BR>Possible values are
-			:<BR>- a date with the following format : MM/DD/YYYY HH:MM AM_PM<BR>-
+			:<BR>- a date with the format as specified in dateFormatter attribute<BR>-
 			a revision number<BR>- HEAD, BASE, COMMITED or PREV</td>
 		<td>No</td>
 	</tr>
@@ -1103,7 +1120,7 @@ Else synchronize working copy to revision.</p>
 	<tr>
 		<td>revision</td>
 		<td>revision. Defaults is &quot;HEAD&quot;<BR>Possible values are
-			:<BR>- a date with the following format : MM/DD/YYYY HH:MM AM_PM<BR>-
+			:<BR>- a date with the format as specified in dateFormatter attribute<BR>-
 			a revision number<BR>- HEAD, BASE, COMMITED or PREV</td>
 		<td>No</td>
 	</tr>

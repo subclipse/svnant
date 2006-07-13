@@ -429,7 +429,7 @@
     <copy todir="workingcopy/statusTest">
       <fileset dir="model/statusTest"></fileset>
     </copy>
-    <svn javahl="${javahl}" javasvn="${javasvn}">
+    <svn javahl="${javahl}" javasvn="${javasvn}" dateFormatter="yyyy/MM/dd HH:mm">
       <add dir="workingcopy/statusTest" recurse="false"/>
       <commit dir="workingcopy/statusTest" message="statusTest committed" recurse="false"/>
       <add dir="workingcopy/statusTest/managedDir" recurse="false"/>
@@ -448,12 +448,22 @@
       <checkout url="${urlRepos}/statusTest" revision="HEAD" destPath="workingcopy/statusTest/nonManaged.dir/statusTest" recurse="false" />
     	
       <status path="workingcopy/statusTest/added.txt" 
+      	textStatusProperty="a_testStatus.textStatus"
+        propStatusProperty="a_testStatus.propStatus"
+        lastChangedRevisionProperty="a_testStatus.lastCommitRevision"
+      	revisionProperty="a_testStatus.revision"
+      	lastCommitAuthorProperty="a_testStatus.lastCommitAuthor"
+      	lastChangedDateProperty="a_testStatus.lastChangedDate"
+      	urlProperty="a_testStatus.url"
+      />
+      <status path="workingcopy/statusTest/committed.txt" 
       	textStatusProperty="testStatus.textStatus"
         propStatusProperty="testStatus.propStatus"
         lastChangedRevisionProperty="testStatus.lastCommitRevision"
       	revisionProperty="testStatus.revision"
-      	lastCommitAuthorProperty="testStatus.lastCommitAuthor"
-      	urlProperty="testStatus.url"
+       	lastCommitAuthorProperty="testStatus.lastCommitAuthor"
+       	lastChangedDateProperty="testStatus.lastChangedDate"
+       	urlProperty="testStatus.url"
       />
     </svn>
   	<!-- we try with a long username -->

@@ -56,6 +56,7 @@ package org.tigris.subversion.svnant;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -75,20 +76,23 @@ import org.tigris.subversion.svnclientadapter.javasvn.JavaSvnClientAdapterFactor
  *
  */
 public class SvnTask extends Task {
-    private String username = null;
-    private String password = null;
-    private List commands = new ArrayList();
-    private boolean javahl = true;
-    private boolean javasvn = true;
-    private List notifyListeners = new ArrayList();
-    
-    private static boolean javahlAvailableInitialized = false;
+
+	private static boolean javahlAvailableInitialized = false;
     private static boolean javahlAvailable;
     private static boolean javaSVNAvailableInitialized = false;
     private static boolean javaSVNAvailable;
     private static boolean commandLineAvailableInitialized = false;
     private static boolean commandLineAvailable;
-
+	
+    private String username = null;
+    private String password = null;    
+    private boolean javahl = true;
+    private boolean javasvn = true;
+    private String dateFormatter = null;
+    
+    private List commands = new ArrayList();
+    private List notifyListeners = new ArrayList();
+    
     public void setUsername(String username) {
         this.username = username;
     }
@@ -107,113 +111,135 @@ public class SvnTask extends Task {
 
     /**
      * set javasvn to false to use command line interface
-     * @param javahl
+     * @param javasvn
      */
     public void setJavasvn(boolean javasvn) {
         this.javasvn = javasvn;
     }
 
+    /**
+     * @return dateFormatter used to parse revision dates
+     */
+    public String getDateFormatter()
+    {
+    	return dateFormatter != null ? dateFormatter : "MM/dd/yyyy hh:mm a";
+    }
+    
+    /**
+     * set dateFormatter used to parse revision dates
+     * @param dateFormatter
+     */
+    public void setDateFormatter(String dateFormatter) {
+        this.dateFormatter = dateFormatter;
+    }
+
     public void addCheckout(Checkout a) {
-        commands.add(a);
+        addCommand(a);
     }
 
     public void addAdd(Add a) {
-        commands.add(a);
+        addCommand(a);
     }
 
     public void addCommit(Commit a) {
-        commands.add(a);
+        addCommand(a);
     }
 
     public void addCopy(Copy a) {
-        commands.add(a);
+        addCommand(a);
     }
 
     public void addDelete(Delete a) {
-        commands.add(a);
+        addCommand(a);
     }
 
     public void addExport(Export a) {
-        commands.add(a);
+        addCommand(a);
     }
 
     public void addImport(Import a) {
-        commands.add(a);
+        addCommand(a);
     }
 
     public void addMkdir(Mkdir a) {
-        commands.add(a);
+        addCommand(a);
     }
 
     public void addMove(Move a) {
-        commands.add(a);
+        addCommand(a);
     }
 
     public void addUpdate(Update a) {
-        commands.add(a);
+        addCommand(a);
     }
     
     public void addPropset(Propset a) {
-        commands.add(a);
+        addCommand(a);
     }
     
     public void addDiff(Diff a) {
-        commands.add(a);
+        addCommand(a);
     }
 
     public void addKeywordsSet(Keywordsset a) {
-        commands.add(a);
+        addCommand(a);
     }
     
     public void addKeywordsAdd(Keywordsadd a) {
-        commands.add(a);
+        addCommand(a);
     }
     
     public void addKeywordsRemove(Keywordsremove a) {
-        commands.add(a);
+        addCommand(a);
     }    
 
     public void addRevert(Revert a) {
-        commands.add(a);
+        addCommand(a);
     }
 
     public void addCat(Cat a) {
-        commands.add(a);
+        addCommand(a);
     }
 
     public void addPropdel(Propdel a) {
-        commands.add(a);
+        addCommand(a);
     }
     
     public void addIgnore(Ignore a) {
-        commands.add(a);
+        addCommand(a);
     }
     
     public void addCreateRepository(CreateRepository a) {
-        commands.add(a);
+        addCommand(a);
     }
     
 //    public void addSummaryStatus(StatusSummary a) {
-//        commands.add(a);
+//        addCommand(a);
 //    }
 
     public void addStatus(Status a) {
-    	commands.add(a);
+    	addCommand(a);
     }
     
     public void addSwitch(Switch a) {
-    	commands.add(a);
+    	addCommand(a);
     }
     
     public void addPropget(Propget a) {
-    	commands.add(a);
+    	addCommand(a);
     }
     
     /**
      * Add the info command to the list of commands to execute.
      */
     public void addInfo(Info a) {
-        commands.add(a);
+        addCommand(a);
+    }
+
+    private void addCommand(SvnCommand cmd)
+    {
+    	cmd.setTask(this);
+    	commands.add(cmd);
     }
     
     public void addNotifyListener(ISVNNotifyListener notifyListener) {
@@ -290,6 +316,11 @@ public class SvnTask extends Task {
         return commandLineAvailable;
     }
     
+    public void maybeConfigure() throws BuildException
+    {
+    	super.maybeConfigure();
+    }
+    
     public void execute() throws BuildException {
 
         ISVNClientAdapter svnClient;
@@ -326,7 +357,7 @@ public class SvnTask extends Task {
             SvnCommand command = (SvnCommand) commands.get(i);
             Feedback feedback = new Feedback(command);
 			svnClient.addNotifyListener(feedback);
-            command.execute(this, svnClient);
+            command.executeCommand(svnClient);
             svnClient.removeNotifyListener(feedback);
         }
         

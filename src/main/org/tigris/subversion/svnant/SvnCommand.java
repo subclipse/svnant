@@ -54,10 +54,15 @@
  */ 
 package org.tigris.subversion.svnant;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectComponent;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.utils.StringUtils;
 
 
@@ -67,15 +72,15 @@ import org.tigris.subversion.svnclientadapter.utils.StringUtils;
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  */
 public abstract class SvnCommand extends ProjectComponent {
+	
 	protected SvnTask task;
 
 	protected abstract void validateAttributes();
 	
 	public abstract void execute(ISVNClientAdapter svnClient) throws BuildException;
 
-	public final void execute(SvnTask task, ISVNClientAdapter svnClient) throws BuildException
+	public final void executeCommand(ISVNClientAdapter svnClient) throws BuildException
 	{
-		this.task = task;
 		String[] nameSegments = StringUtils.split(getClass().getName(), ".");
 		String className = "<" + nameSegments[nameSegments.length -1] + ">"; 
 			
@@ -89,6 +94,46 @@ public abstract class SvnCommand extends ProjectComponent {
 		logInfo(className + " finished.");
 	}
 
+	/**
+	 * @return the task
+	 */
+	protected SvnTask getTask() {
+		return task;
+	}
+
+	/**
+	 * @param task the task to set
+	 */
+	protected void setTask(SvnTask task) {
+		this.task = task;
+	}
+
+	/**
+	 * Convert the revision string to SVNRevision.
+	 * In case the date was supplied as revision, use proper dateFormatter
+	 * @param revision
+	 * @return SVNRevision constructed from given string or null if unable to do so 
+	 */
+	public SVNRevision getRevisionFrom(String revision)
+	{
+		try {
+			return SVNRevision.getRevision(revision, new SimpleDateFormat(task.getDateFormatter()));
+		} catch (ParseException e) {
+			logWarning("Unable to parse revision string");
+			return null;
+		}
+	}
+	
+	/**
+	 * Ansewer a give date as string formatted according to current formatter
+	 * @param aDate
+	 * @return a String representation of the date
+	 */
+	public String getDateStringFor(Date aDate)
+	{
+		return new SimpleDateFormat(task.getDateFormatter()).format(aDate);
+	}
+	
 	public void logVerbose(String message)
 	{
 		getProject().log(this.task, message, Project.MSG_VERBOSE);

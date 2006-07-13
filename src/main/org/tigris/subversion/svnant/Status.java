@@ -55,6 +55,7 @@
 package org.tigris.subversion.svnant;
 
 import java.io.File;
+import java.util.Date;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -73,6 +74,7 @@ public class Status extends SvnCommand {
 	private String propStatusProperty = null;
 	private String revisionProperty = null;
 	private String lastChangedRevisionProperty = null;
+	private String lastChangedDateProperty = null;
 	private String lastCommitAuthorProperty = null;
 	private String urlProperty = null;
 	
@@ -81,16 +83,16 @@ public class Status extends SvnCommand {
 	 */
 	public void execute(ISVNClientAdapter svnClient) throws BuildException {
 		
-		Project project = getProject();
+		Project aProject = getProject();
 		try {
 			ISVNStatus status = svnClient.getSingleStatus(path);
 			
 			if (textStatusProperty != null) {
-				project.setProperty(textStatusProperty, status.getTextStatus().toString());
+				aProject.setProperty(textStatusProperty, status.getTextStatus().toString());
 			}
 			
 			if (propStatusProperty != null) {
-				project.setProperty(propStatusProperty, status.getPropStatus().toString());
+				aProject.setProperty(propStatusProperty, status.getPropStatus().toString());
 			}
 			
 			if (revisionProperty != null) {
@@ -100,7 +102,7 @@ public class Status extends SvnCommand {
 				} else {
 					revision = status.getRevision().toString();
 				}
-				project.setProperty(revisionProperty, revision);
+				aProject.setProperty(revisionProperty, revision);
 			}
 			if (lastChangedRevisionProperty != null) {
 				String lastChangedRevision;
@@ -109,18 +111,27 @@ public class Status extends SvnCommand {
 				} else {
 					lastChangedRevision = status.getLastChangedRevision().toString();
 				}
-				project.setProperty(lastChangedRevisionProperty, lastChangedRevision);
+				aProject.setProperty(lastChangedRevisionProperty, lastChangedRevision);
 			}
 			if (lastCommitAuthorProperty != null) {
 				String lastCommitAuthor = status.getLastCommitAuthor();
 				if (lastCommitAuthor == null) {
 					lastCommitAuthor = "";
 				}
-				project.setProperty(lastCommitAuthorProperty,lastCommitAuthor);
+				aProject.setProperty(lastCommitAuthorProperty,lastCommitAuthor);
+			}
+			if (lastChangedDateProperty != null) {
+				Date lastChangedDate = status.getLastChangedDate();
+				if (lastChangedDate == null) {
+					aProject.setProperty(lastChangedDateProperty, "");
+				} else {
+					aProject.setProperty(lastChangedDateProperty, getDateStringFor(lastChangedDate));
+				}
+				
 			}
 			if (urlProperty != null) {
 				SVNUrl statusUrl = status.getUrl();
-				project.setProperty(urlProperty, (statusUrl != null) ? statusUrl.toString() : "");
+				aProject.setProperty(urlProperty, (statusUrl != null) ? statusUrl.toString() : "");
 			}
 			
 		} catch (SVNClientException e) {
@@ -175,10 +186,17 @@ public class Status extends SvnCommand {
 	}
 	
 	/**
-	 * @param lastCommitAuthorProperty. The lastCommitAuthor to set.
+	 * @param lastCommitAuthorProperty The lastCommitAuthor to set.
 	 */
 	public void setLastCommitAuthorProperty(String lastCommitAuthorProperty) {
 		this.lastCommitAuthorProperty = lastCommitAuthorProperty;
+	}
+
+	/**
+	 * @param lastChangedDateProperty The lastChangedDateProperty to set.
+	 */
+	public void setLastChangedDateProperty(String lastChangedDateProperty) {
+		this.lastChangedDateProperty = lastChangedDateProperty;
 	}
 
 	/**

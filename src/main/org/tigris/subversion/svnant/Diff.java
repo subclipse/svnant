@@ -126,11 +126,7 @@ public class Diff extends SvnCommand {
 	 * @param revision
 	 */
 	public void setNewTargetRevision(String revision) {
-		try {
-            newTargetRevision = SVNRevision.getRevision(revision);
-        } catch (ParseException e) {
-            newTargetRevision = null;
-        }
+		this.newTargetRevision = getRevisionFrom(revision);
 	}
 
 	/**
@@ -151,11 +147,7 @@ public class Diff extends SvnCommand {
 	 * @param revision
 	 */
 	public void setOldTargetRevision(String revision) {
-		try {
-			oldTargetRevision = SVNRevision.getRevision(revision);
-		} catch (ParseException e) {
-            oldTargetRevision = null;
-		}
+		this.oldTargetRevision = getRevisionFrom(revision);
 	}
 
 	/**
