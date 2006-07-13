@@ -50,6 +50,8 @@ public class Info extends SvnCommand {
         "lastDate"
     };
 
+    //TODO check the properties, the code and the documentation
+    
     /** Available file properties. */
     private static final String[] FILE_PROP_NAMES = {
         "path", 

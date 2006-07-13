@@ -622,8 +622,8 @@ Otherwise, create <CODE>newEntry </CODE>underneath <CODE>url </CODE>and begin co
 </table>
 
 <h3><a name="info">info</a></h3>
-<p>Gets the information from the repo for a file or directory and sets
-the values to Ant properties.</p>
+<p>Gets the information from the repository for a file, directory or url and sets
+the values to ant properties.</p>
 
 <table>
 	<tr>
@@ -632,19 +632,80 @@ the values to Ant properties.</p>
 		<td>Required</td>
 	</tr>
 	<tr>
-		<td>file</td>
+		<td>target</td>
 		<td>Directory or file to gather the information about.</td>
 		<td>Yes</td>
 	</tr>
 	<tr>
 		<td>propPrefix</td>
-		<td>Prefix to use for the Ant properties.  Default is &quot;svn.info.&quot;.</td>
+		<td>Prefix to use for the properties.  Default is &quot;svn.info.&quot;.</td>
 		<td>False</td>
 	</tr>
 	<tr>
 		<td>verbose</td>
-		<td>Turns on verbosity for this Ant task.  Default is &quot;false&quot;.</td>
+		<td>Turns on verbosity for this task.  Default is &quot;false&quot;.</td>
 		<td>False</td>
+	</tr>
+</table>
+
+The task sets the following properties (prefix applied accordingly): <br>
+
+<table>
+	<tr>
+		<td>Property</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>path</td>
+		<td>Always</td>
+	</tr>
+	<tr>
+		<td>name</td>
+		<td>For files only</td>
+	</tr>
+	<tr>
+		<td>url</td>
+		<td>Always</td>
+	</tr>
+	<tr>
+		<td>repouuid</td>
+		<td>Always</td>
+	</tr>
+	<tr>
+		<td>rev</td>
+		<td>Always</td>
+	</tr>
+	<tr>
+		<td>nodekind</td>
+		<td>Always</td>
+	</tr>
+	<tr>
+		<td>schedule</td>
+		<td>Always</td>
+	</tr>
+	<tr>
+		<td>author</td>
+		<td>Always</td>
+	</tr>
+	<tr>
+		<td>lastRev</td>
+		<td>Always</td>
+	</tr>
+	<tr>
+		<td>lastDate</td>
+		<td>Always</td>
+	</tr>
+	<tr>
+		<td>lastTextUpdate</td>
+		<td>For files only</td>
+	</tr>
+	<tr>
+		<td>lastPropUpdate</td>
+		<td>For files only</td>
+	</tr>
+	<tr>
+		<td>checksum</td>
+		<td>For files only</td>
 	</tr>
 </table>
 
