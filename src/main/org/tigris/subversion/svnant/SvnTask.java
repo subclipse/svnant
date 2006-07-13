@@ -213,9 +213,9 @@ public class SvnTask extends Task {
         addCommand(a);
     }
     
-//    public void addSummaryStatus(StatusSummary a) {
-//        addCommand(a);
-//    }
+    public void addWcVersion(WcVersion a) {
+        addCommand(a);
+    }
 
     public void addStatus(Status a) {
     	addCommand(a);

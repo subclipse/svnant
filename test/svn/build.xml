@@ -465,6 +465,7 @@
        	lastChangedDateProperty="testStatus.lastChangedDate"
        	urlProperty="testStatus.url"
       />
+      <wcVersion path="workingcopy/statusTest" prefix="wc."/>
     </svn>
   	<!-- we try with a long username -->
   	<svn javahl="${javahl}" javasvn="${javasvn}" username="Cedric Chabanois">

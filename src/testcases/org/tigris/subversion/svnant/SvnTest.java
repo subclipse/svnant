@@ -392,6 +392,22 @@ public abstract class SvnTest extends BuildFileTest {
         assertEquals(status.getUrl().toString(), getProject().getProperty("testStatus.url"));
     }
 
+    public void testWcVersion() throws Exception {  
+        
+		executeTarget("testStatus");
+
+        ISVNStatus status = svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/statusTest"));
+
+        assertEquals(status.getUrl().toString(), getProject().getProperty("wc.repository.url"));
+//        assertEquals("", getProject().getProperty("wc.repository.path"));
+        assertEquals("4", getProject().getProperty("wc.revision.max"));
+        assertEquals("4M", getProject().getProperty("wc.revision.max-with-flags"));
+        assertEquals("4", getProject().getProperty("wc.committed.max"));
+        assertEquals("4M", getProject().getProperty("wc.committed.max-with-flags"));
+        assertEquals("true", getProject().getProperty("wc.modified"));
+        assertNull(getProject().getProperty("wc.mixed"));
+    }
+
     public void testStatusUnmanaged() throws Exception {  
 		executeTarget("testStatusUnmanaged");
 		
