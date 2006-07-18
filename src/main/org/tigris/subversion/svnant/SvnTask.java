@@ -56,7 +56,6 @@ package org.tigris.subversion.svnant;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;

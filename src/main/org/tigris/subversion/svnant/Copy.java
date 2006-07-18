@@ -55,7 +55,6 @@
 package org.tigris.subversion.svnant;
 
 import java.io.File;
-import java.text.ParseException;
 
 import org.apache.tools.ant.BuildException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
