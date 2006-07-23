@@ -3,9 +3,8 @@ package org.tigris.subversion.svnant;
 import java.io.File;
 import java.net.MalformedURLException;
 
-import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
-
+import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNInfo;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
@@ -72,13 +71,13 @@ public class Info extends SvnCommand {
     /**
      * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
      */
-    public void execute(ISVNClientAdapter svnClient) throws BuildException {
+    public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
 
         Project theProject = getProject();
         try {
             this.info = acquireInfo(svnClient);
             if (this.info.getRevision() == null) {
-            	throw new BuildException(this.target + " - Not a versioned resource");
+            	throw new SvnCommandException(this.target + " - Not a versioned resource");
             }
             String[] propNames = (SVNNodeKind.DIR == this.info.getNodeKind() ?
                                   DIR_PROP_NAMES : FILE_PROP_NAMES);
@@ -93,7 +92,7 @@ public class Info extends SvnCommand {
             }
         }
         catch (Exception e) {
-            throw new BuildException("Failed to set 'info' properties", e);
+            throw new SvnCommandException("Failed to set 'info' properties", e);
         }
     }
 
@@ -190,9 +189,9 @@ public class Info extends SvnCommand {
     /**
      * Validates the call to svn info
      */
-    protected void validateAttributes() {
+    protected void validateAttributes() throws SvnCommandValidationException {
         if (target == null) {
-            throw new BuildException("target must be set to a file or " +
+            throw new SvnCommandValidationException("target must be set to a file or " +
                                      "directory in your working copy, or " +
                                      "to a URI");
         }

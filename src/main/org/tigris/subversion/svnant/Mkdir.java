@@ -56,7 +56,7 @@ package org.tigris.subversion.svnant;
 
 import java.io.File;
 
-import org.apache.tools.ant.BuildException;
+import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
@@ -77,19 +77,19 @@ public class Mkdir extends SvnCommand {
     /** message (when url is used) */
     private String message = null;
 
-    public void execute(ISVNClientAdapter svnClient) throws BuildException {
+    public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
 
         if (url != null) {
             try {
                 svnClient.mkdir(url, message);
             } catch (SVNClientException e) {
-                throw new BuildException("Can't make dir "+url, e);
+                throw new SvnCommandException("Can't make dir "+url, e);
             }
         } else {
             try {
                 svnClient.mkdir(path);
             } catch (SVNClientException e) {
-                throw new BuildException("Can't make dir "+path, e);
+                throw new SvnCommandException("Can't make dir "+path, e);
             }
         }
 
@@ -98,13 +98,13 @@ public class Mkdir extends SvnCommand {
     /**
      * Ensure we have a consistent and legal set of attributes
      */
-    protected void validateAttributes() throws BuildException {
+    protected void validateAttributes() throws SvnCommandValidationException {
         if ((url == null) && (path == null))
-            throw new BuildException("url or path attributes must be set");
+            throw new SvnCommandValidationException("url or path attributes must be set");
         if ((url != null) && (path != null))
-            throw new BuildException("Either url or path attributes must be set");
+            throw new SvnCommandValidationException("Either url or path attributes must be set");
         if ((url != null) && (message == null))
-            throw new BuildException("Message attribute must be set when url is used");
+            throw new SvnCommandValidationException("Message attribute must be set when url is used");
 
     }
 

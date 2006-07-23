@@ -59,7 +59,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.tools.ant.BuildException;
+import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
@@ -80,7 +80,7 @@ public class Cat extends SvnCommand {
 	/** revision */
 	private SVNRevision revision = SVNRevision.HEAD;
 
-	public void execute(ISVNClientAdapter svnClient) throws BuildException {
+	public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
 
         InputStream is = null;
         FileOutputStream os = null;
@@ -93,7 +93,7 @@ public class Cat extends SvnCommand {
                 os.write(buffer,0,read);
             }
 		} catch (Exception e) {
-			throw new BuildException("Can't get the content of the specified file", e);
+			throw new SvnCommandException("Can't get the content of the specified file", e);
 		} finally {
             if (os != null) {
                 try {
@@ -111,14 +111,14 @@ public class Cat extends SvnCommand {
 	/**
 	 * Ensure we have a consistent and legal set of attributes
 	 */
-	protected void validateAttributes() throws BuildException {
+	protected void validateAttributes() throws SvnCommandValidationException {
         if (url == null)
-            throw new BuildException("you must set url attr");
+            throw new SvnCommandValidationException("you must set url attr");
 		if (destFile == null)
 			destFile = new File(getProject().getBaseDir(),
                                 url.getLastPathSegment());
 		if (revision == null)
-			throw new BuildException("Invalid revision. Revision should be a number, a date in MM/DD/YYYY HH:MM AM_PM format or HEAD, BASE, COMMITED or PREV");
+			throw new SvnCommandValidationException("Invalid revision. Revision should be a number, a date in MM/DD/YYYY HH:MM AM_PM format or HEAD, BASE, COMMITED or PREV");
 	}
 
 	/**

@@ -57,8 +57,8 @@ package org.tigris.subversion.svnant;
 import java.io.File;
 import java.util.Date;
 
-import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
+import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
@@ -81,7 +81,7 @@ public class Status extends SvnCommand {
 	/* (non-Javadoc)
 	 * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
 	 */
-	public void execute(ISVNClientAdapter svnClient) throws BuildException {
+	public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
 		
 		Project aProject = getProject();
 		try {
@@ -135,7 +135,7 @@ public class Status extends SvnCommand {
 			}
 			
 		} catch (SVNClientException e) {
-			throw new BuildException("Can't get status of "+path, e);
+			throw new SvnCommandException("Can't get status of "+path, e);
 		}
 
 	}
@@ -143,9 +143,9 @@ public class Status extends SvnCommand {
 	/**
 	 * Ensure we have a consistent and legal set of attributes
 	 */
-	protected void validateAttributes() throws BuildException {
+	protected void validateAttributes() throws SvnCommandValidationException {
         if (path == null) {
-        	throw new BuildException("path attribute must be set");
+        	throw new SvnCommandValidationException("path attribute must be set");
         }
 	}	
 	

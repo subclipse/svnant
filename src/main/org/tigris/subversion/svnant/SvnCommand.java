@@ -75,9 +75,9 @@ public abstract class SvnCommand extends ProjectComponent {
 	
 	protected SvnTask task;
 
-	protected abstract void validateAttributes();
+	protected abstract void validateAttributes() throws SvnCommandValidationException;
 	
-	public abstract void execute(ISVNClientAdapter svnClient) throws BuildException;
+	public abstract void execute(ISVNClientAdapter svnClient) throws SvnCommandException;
 
 	public final void executeCommand(ISVNClientAdapter svnClient) throws BuildException
 	{
@@ -86,10 +86,22 @@ public abstract class SvnCommand extends ProjectComponent {
 			
 		logInfo(className + " started ...");
 		try {
+			validateAttributes();
 			execute(svnClient);
-		} catch (BuildException ex) {
-			logInfo(className + " failed !");
-			throw ex;
+		} catch (SvnCommandException ex) {
+			if (this.task.isFailonerror()) {
+				logInfo(className + " failed !");
+				throw new BuildException(ex.getMessage(), ex.getCause());
+			} else {
+				logError(className + " failed :" + ex.getLocalizedMessage());				
+			}
+		} catch (SvnCommandValidationException e) {
+			if (this.task.isFailonerror()) {
+				logInfo(className + " failed !");
+				throw new BuildException(e.getMessage());
+			} else {
+				logError(className + " failed :" + e.getLocalizedMessage());								
+			}
 		}
 		logInfo(className + " finished.");
 	}
@@ -162,6 +174,37 @@ public abstract class SvnCommand extends ProjectComponent {
 	public void log(String message, int level)
 	{
 		getProject().log(this.task, message, level);
+	}
+
+	public static class SvnCommandException extends Exception
+	{
+		public SvnCommandException() {
+			super();
+		}
+
+		public SvnCommandException(String arg0, Throwable arg1) {
+			super(arg0, arg1);
+		}
+
+		public SvnCommandException(String arg0) {
+			super(arg0);
+		}
+
+		public SvnCommandException(Throwable arg0) {
+			super(arg0);
+		}
+		
+	}
+	
+	public static class SvnCommandValidationException extends Exception
+	{
+		public SvnCommandValidationException() {
+			super();
+		}
+
+		public SvnCommandValidationException(String message) {
+			super(message);
+		}
 	}
 
 }

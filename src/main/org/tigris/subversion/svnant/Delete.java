@@ -57,9 +57,9 @@ package org.tigris.subversion.svnant;
 import java.io.File;
 import java.util.Vector;
 
-import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
+import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
@@ -93,7 +93,7 @@ public class Delete extends SvnCommand {
 	
 	private ISVNClientAdapter svnClient;
 
-	public void execute(ISVNClientAdapter svnClient) throws BuildException {
+	public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
 		this.svnClient = svnClient;
 		
 		if (url != null)
@@ -117,22 +117,22 @@ public class Delete extends SvnCommand {
 	/**
 	 * Ensure we have a consistent and legal set of attributes
 	 */
-	protected void validateAttributes() throws BuildException {
+	protected void validateAttributes() throws SvnCommandValidationException {
 		if ((url != null) && (message == null))
-			throw new BuildException("Message attribute must be set when using url attribute"); 
+			throw new SvnCommandValidationException("Message attribute must be set when using url attribute"); 
 	}
 
 	/**
 	 * delete directly on repository
 	 * @param url
 	 * @param message
-	 * @throws BuildException
+	 * @throws SvnCommandException
 	 */
-	private void deleteUrl(SVNUrl url, String message) throws BuildException {
+	private void deleteUrl(SVNUrl url, String message) throws SvnCommandException {
 		try {
 			svnClient.remove(new SVNUrl[] { url },message);
 		} catch (SVNClientException e) {
-			throw new BuildException("Cannot delete url "+url.toString(),e);
+			throw new SvnCommandException("Cannot delete url "+url.toString(),e);
 		}
 	}
 	
@@ -141,13 +141,13 @@ public class Delete extends SvnCommand {
 	 * When file is a directory, all subdirectories/files are deleted too
 	 * @param file
 	 * @param force
-	 * @throws BuildException
+	 * @throws SvnCommandException
 	 */
-	private void deleteFile(File file, boolean force) throws BuildException {
+	private void deleteFile(File file, boolean force) throws SvnCommandException {
 		try {
 			svnClient.remove(new File[] { file },force);
 		} catch (SVNClientException e) {
-			throw new BuildException("Cannot delete file or directory "+file.getAbsolutePath(),e);
+			throw new SvnCommandException("Cannot delete file or directory "+file.getAbsolutePath(),e);
 		}
 	}
 
@@ -155,9 +155,9 @@ public class Delete extends SvnCommand {
 	 * add a fileset (both dirs and files) to the repository
 	 * @param svnClient
 	 * @param fs
-	 * @throws BuildException
+	 * @throws SvnCommandException
 	 */
-	private void deleteFileSet(FileSet fs) throws BuildException {
+	private void deleteFileSet(FileSet fs) throws SvnCommandException {
 		DirectoryScanner ds = fs.getDirectoryScanner(getProject());
 		File baseDir = fs.getDir(getProject()); // base dir
 		String[] files = ds.getIncludedFiles();

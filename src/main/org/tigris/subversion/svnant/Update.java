@@ -57,9 +57,9 @@ package org.tigris.subversion.svnant;
 import java.io.File;
 import java.util.Vector;
 
-import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
+import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
@@ -86,7 +86,7 @@ public class Update extends SvnCommand {
 	
 	private boolean recurse = true;
 
-	public void execute(ISVNClientAdapter svnClient) throws BuildException {
+	public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
 		this.svnClient = svnClient;
 		
 		if (file != null)
@@ -94,7 +94,7 @@ public class Update extends SvnCommand {
 			try {
 				svnClient.update(file, revision, false);
 			} catch (SVNClientException e) {
-				throw new BuildException("Cannot update file "+file.getAbsolutePath(),e);
+				throw new SvnCommandException("Cannot update file "+file.getAbsolutePath(),e);
 			}
 		}
 			
@@ -102,7 +102,7 @@ public class Update extends SvnCommand {
 			try {
 				svnClient.update(dir, revision, recurse);
 			} catch (SVNClientException e) {
-				throw new BuildException("Cannot update dir "+dir.getAbsolutePath(),e);
+				throw new SvnCommandException("Cannot update dir "+dir.getAbsolutePath(),e);
 			}			
 		}
 		
@@ -118,18 +118,18 @@ public class Update extends SvnCommand {
 	/**
 	 * Ensure we have a consistent and legal set of attributes
 	 */
-	protected void validateAttributes() throws BuildException {
+	protected void validateAttributes() throws SvnCommandValidationException {
 		if ((file == null) && (dir == null) && (filesets.size() == 0))
-			throw new BuildException("file, url or fileset must be set"); 
+			throw new SvnCommandValidationException("file, url or fileset must be set"); 
 	}
 
 	/**
 	 * updates a fileset (both dirs and files)
 	 * @param svnClient
 	 * @param fs
-	 * @throws BuildException
+	 * @throws SvnCommandException
 	 */
-	private void updateFileSet(FileSet fs) throws BuildException {
+	private void updateFileSet(FileSet fs) throws SvnCommandException {
 		DirectoryScanner ds = fs.getDirectoryScanner(getProject());
 		File baseDir = fs.getDir(getProject()); // base dir
 		String[] files = ds.getIncludedFiles();

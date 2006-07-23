@@ -56,8 +56,8 @@ package org.tigris.subversion.svnant;
 
 import java.io.File;
 
-import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
+import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
@@ -79,9 +79,9 @@ public class WcVersion extends SvnCommand {
     /* (non-Javadoc)
      * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
      */
-    public void execute(ISVNClientAdapter svnClient) throws BuildException {
+    public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
         if (!getPath().exists() || !getPath().isDirectory()) {
-            throw new BuildException("Path does not exist: " + getPath().getAbsolutePath());
+            throw new SvnCommandException("Path does not exist: " + getPath().getAbsolutePath());
         }
         
         WCVersionSummary wcVersionSummary;
@@ -89,7 +89,7 @@ public class WcVersion extends SvnCommand {
         try {
             wcVersionSummary = getWorkingCopySumary(svnClient, getPath());
         } catch (SVNClientException e) {
-            throw new BuildException("Can't get summary status for path " + getPath(), e);
+            throw new SvnCommandException("Can't get summary status for path " + getPath(), e);
         }
 
         // Save the status to ant properties.
@@ -121,9 +121,9 @@ public class WcVersion extends SvnCommand {
     /**
      * Ensure we have a consistent and legal set of attributes
      */
-    protected void validateAttributes() throws BuildException {
+    protected void validateAttributes() throws SvnCommandValidationException {
         if (path == null) {
-            throw new BuildException("path attribute must be set");
+            throw new SvnCommandValidationException("path attribute must be set");
         }
     }   
     

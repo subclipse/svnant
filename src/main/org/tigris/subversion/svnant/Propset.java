@@ -57,7 +57,7 @@ package org.tigris.subversion.svnant;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.tools.ant.BuildException;
+import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
@@ -76,7 +76,7 @@ public class Propset extends SvnCommand {
     private String propValue = null;
     private boolean recurse = false;
 
-    public void execute(ISVNClientAdapter svnClient) throws BuildException {
+    public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
 
         try {
             if (propValue != null)
@@ -84,25 +84,25 @@ public class Propset extends SvnCommand {
             else
                 svnClient.propertySet(path,propName,file,recurse);
         } catch (SVNClientException e) {
-            throw new BuildException("Can't set property "+propName, e);
+            throw new SvnCommandException("Can't set property "+propName, e);
         } catch (IOException e) {
-            throw new BuildException("Can't set property "+propName, e);
+            throw new SvnCommandException("Can't set property "+propName, e);
         }
     }
 
     /**
      * Ensure we have a consistent and legal set of attributes
      */
-    protected void validateAttributes() throws BuildException {
+    protected void validateAttributes() throws SvnCommandValidationException {
         if (path == null)
-            throw new BuildException("path attribute must be set");
+            throw new SvnCommandValidationException("path attribute must be set");
         if (propName == null)
-            throw new BuildException("name attribute must be set");
+            throw new SvnCommandValidationException("name attribute must be set");
         if ((propValue == null) && (file == null))
-            throw new BuildException("value or file attribute must be set");
+            throw new SvnCommandValidationException("value or file attribute must be set");
             
         if ((propValue != null) && (file != null))
-            throw new BuildException("file attribute must not be set when value attribute is set");
+            throw new SvnCommandValidationException("file attribute must not be set when value attribute is set");
             
 
     }

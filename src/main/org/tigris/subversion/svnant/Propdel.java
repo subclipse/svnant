@@ -56,7 +56,7 @@ package org.tigris.subversion.svnant;
 
 import java.io.File;
 
-import org.apache.tools.ant.BuildException;
+import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
@@ -73,23 +73,23 @@ public class Propdel extends SvnCommand {
     private String propName = null;
     private boolean recurse = false;
 
-    public void execute(ISVNClientAdapter svnClient) throws BuildException {
+    public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
 
         try {
             svnClient.propertyDel(path,propName,recurse);
         } catch (SVNClientException e) {
-            throw new BuildException("Can't delete property "+propName, e);
+            throw new SvnCommandException("Can't delete property "+propName, e);
         }
     }
 
     /**
      * Ensure we have a consistent and legal set of attributes
      */
-    protected void validateAttributes() throws BuildException {
+    protected void validateAttributes() throws SvnCommandValidationException {
         if (path == null)
-            throw new BuildException("path attribute must be set");
+            throw new SvnCommandValidationException("path attribute must be set");
         if (propName == null)
-            throw new BuildException("name attribute must be set");
+            throw new SvnCommandValidationException("name attribute must be set");
     }
 
     /**

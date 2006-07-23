@@ -56,7 +56,7 @@ package org.tigris.subversion.svnant;
 
 import java.io.File;
 
-import org.apache.tools.ant.BuildException;
+import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
@@ -81,21 +81,21 @@ public class Switch extends SvnCommand {
 
 	private boolean recurse = true;
 
-	public void execute(ISVNClientAdapter svnClient) throws BuildException {
+	public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
 
 		try {
 			svnClient.switchToUrl(path, url, revision, recurse);
 		} catch (SVNClientException e) {
-			throw new BuildException("Cannot switch to url : "+url.toString(),e);
+			throw new SvnCommandException("Cannot switch to url : "+url.toString(),e);
 		}
 	}
 
 	/**
 	 * Ensure we have a consistent and legal set of attributes
 	 */
-	protected void validateAttributes() throws BuildException {
+	protected void validateAttributes() throws SvnCommandValidationException {
 		if ((path == null) || (url == null))
-			throw new BuildException("path and url must be set");
+			throw new SvnCommandValidationException("path and url must be set");
 	}
 
 	/**

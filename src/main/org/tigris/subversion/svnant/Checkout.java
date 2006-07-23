@@ -56,7 +56,7 @@ package org.tigris.subversion.svnant;
 
 import java.io.File;
 
-import org.apache.tools.ant.BuildException;
+import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
@@ -80,25 +80,25 @@ public class Checkout extends SvnCommand {
 	/** revision to checkout */
 	private SVNRevision revision = SVNRevision.HEAD;
 
-	public void execute(ISVNClientAdapter svnClient) throws BuildException {
+	public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
 
 		try {
 			svnClient.checkout(url, destPath, revision, recurse);
 		} catch (Exception e) {
-			throw new BuildException("Can't checkout", e);
+			throw new SvnCommandException("Can't checkout", e);
 		}
 	}
 
 	/**
 	 * Ensure we have a consistent and legal set of attributes
 	 */
-	protected void validateAttributes() throws BuildException {
+	protected void validateAttributes() throws SvnCommandValidationException {
 		if (destPath == null)
 			destPath = getProject().getBaseDir();
 		if (url == null)
-			throw new BuildException("url must be set");
+			throw new SvnCommandValidationException("url must be set");
 		if (revision == null)
-			throw new BuildException("Invalid revision. Revision should be a number, a date in MM/DD/YYYY HH:MM AM_PM format or HEAD, BASE, COMMITED or PREV");
+			throw new SvnCommandValidationException("Invalid revision. Revision should be a number, a date in MM/DD/YYYY HH:MM AM_PM format or HEAD, BASE, COMMITED or PREV");
 
 	}
 

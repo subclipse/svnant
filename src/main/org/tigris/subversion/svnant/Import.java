@@ -56,7 +56,7 @@ package org.tigris.subversion.svnant;
 
 import java.io.File;
 
-import org.apache.tools.ant.BuildException;
+import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
@@ -79,12 +79,12 @@ public class Import extends SvnCommand {
 
 	private boolean recurse = true;
 
-    public void execute(ISVNClientAdapter svnClient) throws BuildException {
+    public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
 
         try {
         	svnClient.doImport(path, url, message, recurse);
         } catch (SVNClientException e) {
-            throw new BuildException("Can't import", e);
+            throw new SvnCommandException("Can't import", e);
         }
 
     }
@@ -92,11 +92,11 @@ public class Import extends SvnCommand {
     /**
      * Ensure we have a consistent and legal set of attributes
      */
-    protected void validateAttributes() throws BuildException {
+    protected void validateAttributes() throws SvnCommandValidationException {
     	if ((url == null) || (path == null))
-    		throw new BuildException("url and path attributes must be set");
+    		throw new SvnCommandValidationException("url and path attributes must be set");
     	if (message == null)
-    		throw new BuildException("message attribute must be set");
+    		throw new SvnCommandValidationException("message attribute must be set");
     }
     
     /**

@@ -56,7 +56,7 @@ package org.tigris.subversion.svnant;
 
 import java.io.File;
 
-import org.apache.tools.ant.BuildException;
+import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
@@ -75,21 +75,21 @@ public class CreateRepository extends SvnCommand {
 	/* (non-Javadoc)
 	 * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
 	 */
-	public void execute(ISVNClientAdapter svnClient) throws BuildException {
+	public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
 
 		try {
 			svnClient.createRepository(path,repositoryType);
 		} catch (SVNClientException e) {
-			throw new BuildException("Cannot create repository at "+path.getAbsolutePath(),e);
+			throw new SvnCommandException("Cannot create repository at "+path.getAbsolutePath(),e);
 		}		
 	}
 
 	/**
 	 * Ensure we have a consistent and legal set of attributes
 	 */
-	protected void validateAttributes() throws BuildException {
+	protected void validateAttributes() throws SvnCommandValidationException {
 		if (path == null)
-			throw new BuildException("Path attribute must be set"); 
+			throw new SvnCommandValidationException("Path attribute must be set"); 
 	}	
 	
 	/**

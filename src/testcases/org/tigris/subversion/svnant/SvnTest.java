@@ -334,6 +334,7 @@ public abstract class SvnTest extends BuildFileTest {
         // and svnjavahl for now. svnjavahl does not return ignored files for now 
         statuses = svnClient.getStatus(new File(WORKINGCOPY_DIR+"/statusTest"),false,true);
         // let's verify we don't forget some files (ignored ones for example)
+//TODO some test are disabled ?       
 //        assertEquals(8,statuses.length);
         
 //        statuses = svnClient.getStatus(new File(WORKINGCOPY_DIR+"/statusTest"),true);
@@ -377,6 +378,7 @@ public abstract class SvnTest extends BuildFileTest {
   
         // this test does not pass with command line interface : there is a problem with long
         // usernames
+//      TODO some test are disabled ?       
 //        statuses = svnClient.getStatus(new File(WORKINGCOPY_DIR+"/statusTest/longUserName.dir"),true,true);
 //        assertEquals(2, statuses.length);
 //        assertEquals(new File(WORKINGCOPY_DIR+"/statusTest/longUserName.dir").getAbsoluteFile(), statuses[0].getFile());
@@ -470,6 +472,7 @@ public abstract class SvnTest extends BuildFileTest {
 		
 		// this does not work for now because working copy dir needs to be updated
 		// before
+//		TODO some test are disabled ?       
 //		dirEntry = svnClient.getDirEntry(new File(WORKINGCOPY_DIR+"/entryTest/"),SVNRevision.BASE);
 //		assertNotNull(dirEntry);
 //		assertEquals(SVNNodeKind.DIR,dirEntry.getNodeKind());

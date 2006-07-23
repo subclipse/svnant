@@ -58,8 +58,8 @@ package org.tigris.subversion.svnant;
 import java.io.File;
 import java.util.Vector;
 
-import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.FileSet;
+import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNKeywords;
 
@@ -88,7 +88,7 @@ public abstract class Keywords extends SvnCommand {
 
     protected ISVNClientAdapter svnClient;
 
-    public void execute(ISVNClientAdapter svnClient) throws BuildException {
+    public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
         this.svnClient = svnClient;
         
         // we do nothing there but this function is overloaded  
@@ -97,10 +97,10 @@ public abstract class Keywords extends SvnCommand {
     /**
      * Ensure we have a consistent and legal set of attributes
      */
-    protected void validateAttributes() throws BuildException {
+    protected void validateAttributes() throws SvnCommandValidationException {
 
         if ((file == null) && (dir == null) && (filesets.size() == 0))
-            throw new BuildException("file, url or fileset must be set");
+            throw new SvnCommandValidationException("file, url or fileset must be set");
     }
     
 	public void setHeadURL(boolean b) {

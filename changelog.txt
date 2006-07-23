@@ -5,6 +5,7 @@
 - Added "url" option to <propget> command
 - Added "lastChangedDateProperty" to <status> command
 - Added "dateFormatter" attribute to <svn> task
+- Added the "failonerror" attribute to <svn> task
 - Added the <wcVersion> command
 
 - Added ..... the selectors ...

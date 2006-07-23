@@ -56,7 +56,7 @@ package org.tigris.subversion.svnant;
 
 import java.io.File;
 
-import org.apache.tools.ant.BuildException;
+import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
@@ -76,19 +76,19 @@ public class Move extends SvnCommand {
 	private String message = null;
     private boolean force = false;
 
-    public void execute(ISVNClientAdapter svnClient) throws BuildException {
+    public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
 
         if (srcPath != null) {
             try {
                 svnClient.move(srcPath, destPath, force);
             } catch (SVNClientException e) {
-                throw new BuildException("Can't copy", e);
+                throw new SvnCommandException("Can't copy", e);
             }
         } else {
             try {
                 svnClient.move(srcUrl, destUrl, message, SVNRevision.HEAD);
             } catch (SVNClientException e) {
-                throw new BuildException("Can't copy", e);
+                throw new SvnCommandException("Can't copy", e);
             }
         }
 
@@ -97,25 +97,25 @@ public class Move extends SvnCommand {
     /**
      * Ensure we have a consistent and legal set of attributes
      */
-    protected void validateAttributes() throws BuildException {
+    protected void validateAttributes() throws SvnCommandValidationException {
         if (((srcPath == null) && (srcUrl == null))
             || ((srcPath != null) && (srcUrl != null)))
-            throw new BuildException("Either srcPath attribute or srcUrl attribute must be set");
+            throw new SvnCommandValidationException("Either srcPath attribute or srcUrl attribute must be set");
 
         if (srcPath != null) {
             if (destPath == null)
-                throw new BuildException("destPath attribute must be set when srcPath is set");
+                throw new SvnCommandValidationException("destPath attribute must be set when srcPath is set");
             if (destUrl != null)
-                throw new BuildException("destUrl attribute cannot be used when srcPath is set");
+                throw new SvnCommandValidationException("destUrl attribute cannot be used when srcPath is set");
         }
 
         if (srcUrl != null) {
             if (destUrl == null)
-                throw new BuildException("destUrl attribute must be set when srcUrl is set");
+                throw new SvnCommandValidationException("destUrl attribute must be set when srcUrl is set");
             if (destPath != null)
-                throw new BuildException("destPath attribute cannot be used when srcUrl is set");
+                throw new SvnCommandValidationException("destPath attribute cannot be used when srcUrl is set");
             if (message == null)
-            	throw new BuildException("message attribute must be set when srcUrl is set");
+            	throw new SvnCommandValidationException("message attribute must be set when srcUrl is set");
         }
     }
 

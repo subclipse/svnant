@@ -56,7 +56,7 @@ package org.tigris.subversion.svnant;
 
 import java.io.File;
 
-import org.apache.tools.ant.BuildException;
+import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
@@ -85,7 +85,7 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
 	/** revision to checkout (only useful when exporting directly from repository) */
 	private SVNRevision revision = SVNRevision.HEAD;    
 
-    public void execute(ISVNClientAdapter svnClient) throws BuildException {
+    public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
 
         try {
 			if (srcUrl != null)
@@ -93,7 +93,7 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
 			else
 				svnClient.doExport(srcPath,destPath,force);
         } catch (SVNClientException e) {
-        	throw new BuildException("Can't export",e);
+        	throw new SvnCommandException("Can't export",e);
         }
 
     }
@@ -101,15 +101,15 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
     /**
      * Ensure we have a consistent and legal set of attributes
      */
-    protected void validateAttributes() throws BuildException {
+    protected void validateAttributes() throws SvnCommandValidationException {
         if (destPath == null)
-            throw new BuildException("destPath attribute must be set");
+            throw new SvnCommandValidationException("destPath attribute must be set");
 
         if ((srcUrl == null) && (srcPath == null))
-            throw new BuildException("Either srcUrl or srcPath must be set");
+            throw new SvnCommandValidationException("Either srcUrl or srcPath must be set");
 
         if ((srcUrl != null) && (srcPath != null))
-            throw new BuildException("Either srcUrl or srcPath must be set");
+            throw new SvnCommandValidationException("Either srcUrl or srcPath must be set");
     }
 
 	/**

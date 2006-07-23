@@ -56,7 +56,7 @@ package org.tigris.subversion.svnant;
 
 import java.io.File;
 
-import org.apache.tools.ant.BuildException;
+import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
@@ -83,7 +83,7 @@ public class Diff extends SvnCommand {
 	/* (non-Javadoc)
 	 * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.SVNClientAdapter)
 	 */
-	public void execute(ISVNClientAdapter svnClient) throws BuildException {
+	public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
 
         try {
             if (oldUrl != null)
@@ -95,22 +95,22 @@ public class Diff extends SvnCommand {
                                newPath, newTargetRevision,
                                outFile, recurse);            
         } catch (SVNClientException e) {
-            throw new BuildException("Can't get the differences",e);
+            throw new SvnCommandException("Can't get the differences",e);
         }
 	}
 
     /**
      * Ensure we have a consistent and legal set of attributes
      */
-    protected void validateAttributes() throws BuildException {
+    protected void validateAttributes() throws SvnCommandValidationException {
         if (oldUrl != null) {
             if ((oldPath != null) || (newPath != null))
-                throw new BuildException("paths cannot be with urls when diffing");
+                throw new SvnCommandValidationException("paths cannot be with urls when diffing");
         }
         else
         {
             if ((oldUrl != null) || (newUrl != null))
-                throw new BuildException("paths cannot be with urls when diffing");
+                throw new SvnCommandValidationException("paths cannot be with urls when diffing");
         }
     }
 

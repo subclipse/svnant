@@ -57,7 +57,7 @@ package org.tigris.subversion.svnant;
 import java.io.File;
 import java.io.FileFilter;
 
-import org.apache.tools.ant.BuildException;
+import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
@@ -85,7 +85,7 @@ public class Ignore extends SvnCommand {
 
     private ISVNClientAdapter svnClient;
 
-    public void execute(ISVNClientAdapter svnClient) throws BuildException {
+    public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
         this.svnClient = svnClient;
 
         // deal with the single file
@@ -102,21 +102,21 @@ public class Ignore extends SvnCommand {
     /**
      * Ensure we have a consistent and legal set of attributes
      */
-    protected void validateAttributes() throws BuildException {
+    protected void validateAttributes() throws SvnCommandValidationException {
 
         if ((file == null) && (dir == null))
-            throw new BuildException("file or dir must be set");
+            throw new SvnCommandValidationException("file or dir must be set");
         
         if (dir != null) {
             if (file != null)
-                throw new BuildException("file must not be set when dir attribute is present");
+                throw new SvnCommandValidationException("file must not be set when dir attribute is present");
             if (pattern == null)
-                throw new BuildException("pattern must be set when dir attribute is present");            
+                throw new SvnCommandValidationException("pattern must be set when dir attribute is present");            
         }
 
         if (file != null) {
             if (pattern != null)
-                throw new BuildException("pattern must not be set when file attribute is present");            
+                throw new SvnCommandValidationException("pattern must not be set when file attribute is present");            
         }
 
     }
@@ -125,14 +125,14 @@ public class Ignore extends SvnCommand {
      * Add a file to svn:ignore
      * @param svnClient
      * @param file
-     * @throws BuildException
+     * @throws SvnCommandException
      */
-    private void svnIgnoreFile(File file) throws BuildException {
+    private void svnIgnoreFile(File file) throws SvnCommandException {
         if (file.exists()) {
             try {
                 svnClient.addToIgnoredPatterns(file.getParentFile(),file.getName());
             } catch (SVNClientException e) {
-                throw new BuildException(
+                throw new SvnCommandException(
                         "Can't add file "+file.getAbsolutePath()+"to svn:ignore",e);
             }
         } else {
@@ -141,7 +141,7 @@ public class Ignore extends SvnCommand {
             if (!failonerror) {
             	logWarning(message);
             } else {
-                throw new BuildException(message);
+                throw new SvnCommandException(message);
             }
         }
     }
@@ -151,9 +151,9 @@ public class Ignore extends SvnCommand {
      * @param svnClient
      * @param dir
      * @param recursive
-     * @throws BuildException
+     * @throws SvnCommandException
      */
-    private void svnIgnorePattern(File dir, String pattern, boolean recursive) throws BuildException {
+    private void svnIgnorePattern(File dir, String pattern, boolean recursive) throws SvnCommandException {
         
         // first add the pattern to the directory
         svnIgnorePattern(dir, pattern);
@@ -170,7 +170,7 @@ public class Ignore extends SvnCommand {
         }
     }
 
-    private void svnIgnorePattern(File dir, String pattern) throws BuildException {
+    private void svnIgnorePattern(File dir, String pattern) throws SvnCommandException {
         if (dir.exists()) {
             if (!dir.isDirectory()) {
                 logWarning(
@@ -180,7 +180,7 @@ public class Ignore extends SvnCommand {
                 try {
                     svnClient.addToIgnoredPatterns(dir, pattern);
                 } catch (SVNClientException e) {
-                    throw new BuildException(
+                    throw new SvnCommandException(
                         "Can't add pattern "+pattern+" to svn:ignore for "+dir.getAbsolutePath(), e);
                 }
             }
@@ -189,7 +189,7 @@ public class Ignore extends SvnCommand {
             if (!failonerror) {
             	logWarning(message);
             } else {
-                throw new BuildException(message);
+                throw new SvnCommandException(message);
             }
         }
 

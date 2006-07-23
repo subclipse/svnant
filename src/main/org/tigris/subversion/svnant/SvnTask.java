@@ -88,7 +88,8 @@ public class SvnTask extends Task {
     private boolean javahl = true;
     private boolean javasvn = true;
     private String dateFormatter = null;
-    
+	private boolean failonerror = true;
+
     private List commands = new ArrayList();
     private List notifyListeners = new ArrayList();
     
@@ -132,7 +133,21 @@ public class SvnTask extends Task {
         this.dateFormatter = dateFormatter;
     }
 
-    public void addCheckout(Checkout a) {
+    /**
+	 * @return the failonerror
+	 */
+	public boolean isFailonerror() {
+		return failonerror;
+	}
+
+	/**
+	 * @param failonerror the failonerror to set
+	 */
+	public void setFailonerror(boolean failonerror) {
+		this.failonerror = failonerror;
+	}
+
+	public void addCheckout(Checkout a) {
         addCommand(a);
     }
 

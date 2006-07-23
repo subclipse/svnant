@@ -56,7 +56,6 @@ package org.tigris.subversion.svnant;
 
 import java.io.File;
 
-import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
@@ -74,14 +73,14 @@ public class Keywordsremove extends Keywords {
 	/* (non-Javadoc)
 	 * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
 	 */
-	public void execute(ISVNClientAdapter svnClient) throws BuildException {
+	public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
         super.execute(svnClient);        
 
         if (file != null) {
             try {            
                 svnClient.removeKeywords(file,keywords);
             } catch (SVNClientException e) {
-                throw new BuildException("Can't remove keywords on file "+file.toString(), e);
+                throw new SvnCommandException("Can't remove keywords on file "+file.toString(), e);
             }
         }
         else
@@ -89,7 +88,7 @@ public class Keywordsremove extends Keywords {
             try {            
                 svnClient.removeKeywords(dir,keywords);
             } catch (SVNClientException e) {
-                throw new BuildException("Can't remove keywords on directory "+dir.toString(), e);
+                throw new SvnCommandException("Can't remove keywords on directory "+dir.toString(), e);
             }            
         }
         else
@@ -106,9 +105,9 @@ public class Keywordsremove extends Keywords {
      * add keywords on a fileset 
      * @param svnClient
      * @param fs
-     * @throws BuildException
+     * @throws SvnCommandException
      */
-    private void keywordsRemove(FileSet fs, SVNKeywords keywords) throws BuildException {
+    private void keywordsRemove(FileSet fs, SVNKeywords keywords) throws SvnCommandException {
         DirectoryScanner ds = fs.getDirectoryScanner(getProject());
         File baseDir = fs.getDir(getProject()); // base dir
         String[] files = ds.getIncludedFiles();
@@ -118,7 +117,7 @@ public class Keywordsremove extends Keywords {
             try {
                 svnClient.removeKeywords(file,keywords);
             } catch (SVNClientException e) {
-                throw new BuildException("Can't set keywords on file "+file.toString(), e);
+                throw new SvnCommandException("Can't set keywords on file "+file.toString(), e);
             }
         }
     }
