@@ -74,14 +74,17 @@ public class Info extends SvnCommand {
      */
     public void execute(ISVNClientAdapter svnClient) throws BuildException {
 
-        Project project = getProject();
+        Project theProject = getProject();
         try {
-            this.info = acquireInfo(svnClient, this.target);
+            this.info = acquireInfo(svnClient);
+            if (this.info.getRevision() == null) {
+            	throw new BuildException(this.target + " - Not a versioned resource");
+            }
             String[] propNames = (SVNNodeKind.DIR == this.info.getNodeKind() ?
                                   DIR_PROP_NAMES : FILE_PROP_NAMES);
             for (int i = 0; i < propNames.length; i++) {
                 String value = getValue(propNames[i]);
-                project.setProperty(propPrefix + propNames[i], value);
+                theProject.setProperty(propPrefix + propNames[i], value);
                 if (verbose) {
                     logInfo(propPrefix + propNames[i] + ": " + value);
                 } else {
@@ -103,16 +106,16 @@ public class Info extends SvnCommand {
      * @exception SVNClientException If ISVNInfo.getInfo(target)
      * fails.
      */
-    private ISVNInfo acquireInfo(ISVNClientAdapter svnClient, String target)
+    private ISVNInfo acquireInfo(ISVNClientAdapter svnClient)
         throws SVNClientException {
-        File targetAsFile = new File(Project.translatePath(target));
+        File targetAsFile = new File(Project.translatePath(this.target));
         if (targetAsFile.exists()) {
             // Since the target exists locally, assume it's not a URL.
             return svnClient.getInfo(targetAsFile);
         }
         else {
             try {
-                SVNUrl url = new SVNUrl(target);
+                SVNUrl url = new SVNUrl(this.target);
                 return svnClient.getInfo(url);
             }
             catch (MalformedURLException malformedURL) {
@@ -129,7 +132,7 @@ public class Info extends SvnCommand {
      * is not recognized and in verbose mode, log a message
      * accordingly.  Assumes that {@link #info} has already been
      * initialized (typically handled by invocation of {@link
-     * #execute()}).
+     * #execute(ISVNClientAdapter)}).
      *
      * @param propName Name of the property to retrieve a value for.
      * @return The value of the named property, or if not recognized,

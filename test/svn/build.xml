@@ -1043,7 +1043,7 @@
 
   <target name="testInfoBadFile" depends="init">
     <svn javahl="${javahl}" javasvn="${javasvn}">
-      <info target="${basedir}/nullfile.txt"/>
+      <info target="${basedir}/fakefile.txt"/>
     </svn>
   </target>
 
