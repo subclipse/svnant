@@ -240,22 +240,26 @@ public abstract class BuildFileTest extends TestCase {
     protected void executeTarget(String targetName) { 
         PrintStream sysOut = System.out;
         PrintStream sysErr = System.err;
+        PrintStream out = null;
+        PrintStream err = null;
         try { 
             sysOut.flush();
             sysErr.flush();
             outBuffer = new StringBuffer();
-            PrintStream out = new PrintStream(new AntOutputStream());
+            out = new PrintStream(new AntOutputStream());
             System.setOut(out);
             errBuffer = new StringBuffer();
-            PrintStream err = new PrintStream(new AntOutputStream());
+            err = new PrintStream(new AntOutputStream());
             System.setErr(err);
             logBuffer = new StringBuffer();
             fullLogBuffer = new StringBuffer();
             buildException = null;
             project.executeTarget(targetName);
-        } finally { 
+        } finally {
             System.setOut(sysOut);
             System.setErr(sysErr);
+            out.close();
+            err.close();
         }
         
     }

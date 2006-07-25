@@ -705,6 +705,7 @@ public abstract class SvnTest extends BuildFileTest {
 							)
 					);
 		String content1 = br1.readLine();
+		br1.close();
 		assertTrue( content1.matches(".*[0-9]+.*") );
 
     	// Test file2.txt
@@ -717,6 +718,7 @@ public abstract class SvnTest extends BuildFileTest {
 							)
 					);
 		String content2 = br2.readLine();
+		br2.close();
 		assertTrue( content2.matches(".*[0-9]+.*") );
     }
 
