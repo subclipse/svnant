@@ -11,10 +11,9 @@
   <path id="project.classpath">
     <pathelement location="${svnant.jar}" />
     <pathelement location="${svnClientAdapter.jar}"/>
-    <pathelement location="${jakarta-regexp.jar}"/>
     <pathelement location="${svnjavahl.jar}"/>
     <pathelement location="${javasvn.jar}"/>
-    <pathelement location="${jsch.jar}"/>
+    <pathelement location="${ganymed.jar}"/>
   </path>  
   
   <!-- Define svnant tasks and types. -->
@@ -1031,7 +1030,7 @@
 
   <target name="testInfoDirectory" depends="init">
     <svn javahl="${javahl}" javasvn="${javasvn}">
-      <info target="${basedir}"/>
+      <info target="${basedir}/workingcopy"/>
     </svn>
   </target>
 
@@ -1049,7 +1048,7 @@
 
   <target name="testInfoCustomPrefix" depends="init">
     <svn javahl="${javahl}" javasvn="${javasvn}">
-      <info target="${basedir}" propPrefix="wc.info" />
+      <info target="${basedir}/workingcopy" propPrefix="wc.info" />
     </svn>
   </target>
 

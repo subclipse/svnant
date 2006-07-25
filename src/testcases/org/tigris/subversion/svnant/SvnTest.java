@@ -329,6 +329,24 @@ public abstract class SvnTest extends BuildFileTest {
     public void testStatus() throws Exception {  
       
 		executeTarget("testStatus");
+		
+        File file = new File(WORKINGCOPY_DIR+"/statusTest/added.txt");
+		ISVNInfo info = svnClient.getInfo(file);
+		assertEquals(SVNNodeKind.FILE,info.getNodeKind());
+        assertNull(info.getLastChangedRevision());
+        assertEquals(SVNScheduleKind.ADD,info.getSchedule());
+        assertEquals(file.getCanonicalFile(),info.getFile().getCanonicalFile());
+        
+        file = new File("nonExistingFile");
+        info = svnClient.getInfo(file);
+        assertEquals(null, info.getUrl());
+
+        // make sure that the top most directory is said to be versionned. It is in a directory where there is no
+        // .svn directory but it is versionned however. 
+        file = new File(WORKINGCOPY_DIR+"/statusTest/nonManaged.dir/statusTest");
+        info = svnClient.getInfo(file);
+        assertEquals(SVNNodeKind.DIR,info.getNodeKind());
+
         ISVNStatus[] statuses;  
         // getStatus(File, boolean) does not have the same result with command line interface
         // and svnjavahl for now. svnjavahl does not return ignored files for now 
@@ -435,26 +453,71 @@ public abstract class SvnTest extends BuildFileTest {
 		assertEquals(project.getProperty("unmanaged2.url"), "");
     }
     
+    /**
+     * Test the info command.
+     */
     public void testInfo() throws Exception {
-		executeTarget("testStatus");
-        File file = new File(WORKINGCOPY_DIR+"/statusTest/added.txt");
-		ISVNInfo info = svnClient.getInfo(file);
-		assertEquals(SVNNodeKind.FILE,info.getNodeKind());
-        assertNull(info.getLastChangedRevision());
-        assertEquals(SVNScheduleKind.ADD,info.getSchedule());
-        assertEquals(file.getCanonicalFile(),info.getFile().getCanonicalFile());
+        expectBuildException("testInfoNoAttributes",
+                             "Dir or file must be set.");
+        expectBuildException("testInfoBadFile",
+                             "fakefile.txt:  (Not a versioned resource)");
         
-        file = new File("nonExistingFile");
-        info = svnClient.getInfo(file);
-        assertEquals(null, info.getUrl());
-
-        // make sure that the top most directory is said to be versionned. It is in a directory where there is no
-        // .svn directory but it is versionned however. 
-        file = new File(WORKINGCOPY_DIR+"/statusTest/nonManaged.dir/statusTest");
-        info = svnClient.getInfo(file);
-        assertEquals(SVNNodeKind.DIR,info.getNodeKind());
+        executeTarget("testInfoDirectory");
+        
+        String[] propNames = new String[] {
+            "svn.info.path",
+            "svn.info.url",
+            "svn.info.repouuid",
+            "svn.info.rev",
+            "svn.info.nodekind",
+            "svn.info.schedule",
+            "svn.info.author",
+            "svn.info.lastRev",
+            "svn.info.lastDate"
+        };
+        
+        for (int i = 0; i < propNames.length; i++) {
+            assertPropertySet(propNames[i], true);
+        }
+        
+        propNames = new String[] {
+            "svn.info.name",
+            "svn.info.lastTextUpdate",
+            "svn.info.lastPropUpdate",
+            "svn.info.checksum"
+        };
+        
+        // Property shouldn't be set for a directory.
+        for (int i = 0; i < propNames.length; i++) {
+            assertPropertyUnset(propNames[i]);
+        }
+			
+        executeTarget("testInfoFile");
+        
+        propNames = new String[] {
+            "svn.info.path",
+            "svn.info.name",
+            "svn.info.url",
+            "svn.info.repouuid",
+            "svn.info.rev",
+            "svn.info.nodekind",
+            "svn.info.schedule",
+            "svn.info.author",
+            "svn.info.lastRev",
+            "svn.info.lastDate",
+            "svn.info.lastTextUpdate",
+            "svn.info.lastPropUpdate",
+            "svn.info.checksum"
+        };
+        
+        for (int i = 0; i < propNames.length; i++) {
+            assertPropertySet(propNames[i], true);
+        }
+			
+        executeTarget("testInfoCustomPrefix");
+        assertPropertySet("wc.info.path", true);
     }
-    
+
 	public void testEntry() throws Exception {
 		executeTarget("testEntry");
 		
@@ -867,71 +930,6 @@ public abstract class SvnTest extends BuildFileTest {
             assertNull("Property '" + propName + "' should be null",
                        super.project.getProperty(propName));
         }
-    }
-
-    /**
-     * Test the info command.
-     */
-    public void testSvnInfo() throws Exception {
-        expectBuildException("testInfoNoAttributes",
-                             "Dir or file must be set.");
-        expectBuildException("testInfoBadFile",
-                             "fakefile.txt:  (Not a versioned resource)");
-        
-        executeTarget("testInfoDirectory");
-        
-        String[] propNames = new String[] {
-            "svn.info.path",
-            "svn.info.url",
-            "svn.info.repouuid",
-            "svn.info.rev",
-            "svn.info.nodekind",
-            "svn.info.schedule",
-            "svn.info.author",
-            "svn.info.lastRev",
-            "svn.info.lastDate"
-        };
-        
-        for (int i = 0; i < propNames.length; i++) {
-            assertPropertySet(propNames[i], true);
-        }
-        
-        propNames = new String[] {
-            "svn.info.name",
-            "svn.info.lastTextUpdate",
-            "svn.info.lastPropUpdate",
-            "svn.info.checksum"
-        };
-        
-        // Property shouldn't be set for a directory.
-        for (int i = 0; i < propNames.length; i++) {
-            assertPropertyUnset(propNames[i]);
-        }
-			
-        executeTarget("testInfoFile");
-        
-        propNames = new String[] {
-            "svn.info.path",
-            "svn.info.name",
-            "svn.info.url",
-            "svn.info.repouuid",
-            "svn.info.rev",
-            "svn.info.nodekind",
-            "svn.info.schedule",
-            "svn.info.author",
-            "svn.info.lastRev",
-            "svn.info.lastDate",
-            "svn.info.lastTextUpdate",
-            "svn.info.lastPropUpdate",
-            "svn.info.checksum"
-        };
-        
-        for (int i = 0; i < propNames.length; i++) {
-            assertPropertySet(propNames[i], true);
-        }
-			
-        executeTarget("testInfoCustomPrefix");
-        assertPropertySet("wc.info.path", true);
     }
 
     /**
