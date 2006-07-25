@@ -58,7 +58,6 @@ import java.io.File;
 
 import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnant.SvnAntValidationException;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 /**
@@ -74,7 +73,7 @@ public class Propdel extends SvnCommand {
     private String propName = null;
     private boolean recurse = false;
 
-    public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
+    public void execute() throws SvnAntException {
 
         try {
             svnClient.propertyDel(path,propName,recurse);
@@ -95,13 +94,15 @@ public class Propdel extends SvnCommand {
 
     /**
      * set the path of the file or directory on which to set the property
+     * @param path
      */
     public void setPath(File path) {
         this.path = path;
     }
 
     /**
-     * set the name of the property 
+     * set the name of the property
+     * @param propName 
      */
     public void setName(String propName) {
         this.propName = propName;
@@ -109,7 +110,7 @@ public class Propdel extends SvnCommand {
     
     /**
      * if set, property will be set recursively
-     * @param recursive
+     * @param recurse
      */
     public void setRecurse(boolean recurse) {
         this.recurse = recurse;

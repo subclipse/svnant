@@ -58,7 +58,6 @@ import java.io.File;
 
 import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnant.SvnAntValidationException;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 /**
@@ -76,7 +75,7 @@ public class CreateRepository extends SvnCommand {
 	/* (non-Javadoc)
 	 * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
 	 */
-	public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
+	public void execute() throws SvnAntException {
 
 		try {
 			svnClient.createRepository(path,repositoryType);

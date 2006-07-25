@@ -58,7 +58,6 @@ import java.io.File;
 
 import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnant.SvnAntValidationException;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
@@ -77,7 +76,7 @@ public class Move extends SvnCommand {
 	private String message = null;
     private boolean force = false;
 
-    public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
+    public void execute() throws SvnAntException {
 
         if (srcPath != null) {
             try {

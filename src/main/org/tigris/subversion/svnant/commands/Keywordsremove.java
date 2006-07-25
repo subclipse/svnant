@@ -59,7 +59,6 @@ import java.io.File;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
 import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNKeywords;
 
@@ -74,8 +73,8 @@ public class Keywordsremove extends Keywords {
 	/* (non-Javadoc)
 	 * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
 	 */
-	public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
-        super.execute(svnClient);        
+	public void execute() throws SvnAntException {
+        super.execute();        
 
         if (file != null) {
             try {            
@@ -108,17 +107,17 @@ public class Keywordsremove extends Keywords {
      * @param fs
      * @throws SvnAntException
      */
-    private void keywordsRemove(FileSet fs, SVNKeywords keywords) throws SvnAntException {
+    private void keywordsRemove(FileSet fs, SVNKeywords theKeywords) throws SvnAntException {
         DirectoryScanner ds = fs.getDirectoryScanner(getProject());
         File baseDir = fs.getDir(getProject()); // base dir
         String[] files = ds.getIncludedFiles();
 
         for (int i = 0; i < files.length; i++) {
-            File file = new File(baseDir, files[i]);
+            File aFile = new File(baseDir, files[i]);
             try {
-                svnClient.removeKeywords(file,keywords);
+                svnClient.removeKeywords(aFile,theKeywords);
             } catch (SVNClientException e) {
-                throw new SvnAntException("Can't set keywords on file "+file.toString(), e);
+                throw new SvnAntException("Can't set keywords on file "+aFile.toString(), e);
             }
         }
     }

@@ -61,7 +61,6 @@ import java.util.Vector;
 import org.apache.tools.ant.types.FileSet;
 import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnant.SvnAntValidationException;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNKeywords;
 
 /**
@@ -86,12 +85,7 @@ public abstract class Keywords extends SvnCommand {
     /** set keywords substitution recursively ? (only for dir attribute) */
     protected boolean recurse = true;
 
-
-    protected ISVNClientAdapter svnClient;
-
-    public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
-        this.svnClient = svnClient;
-        
+    public void execute() throws SvnAntException {
         // we do nothing there but this function is overloaded  
     }
 
@@ -159,7 +153,7 @@ public abstract class Keywords extends SvnCommand {
 
     /**
      * if set, keywords substitution will be set recursively
-     * @param recursive
+     * @param recurse
      */
     public void setRecurse(boolean recurse) {
         this.recurse = recurse;
@@ -167,6 +161,7 @@ public abstract class Keywords extends SvnCommand {
 
     /**
      * Adds a set of files on which to apply keywords substitution
+     * @param set
      */
     public void addFileset(FileSet set) {
         filesets.addElement(set);
@@ -174,6 +169,7 @@ public abstract class Keywords extends SvnCommand {
 
     /**
      * Adds a set of files on which to apply keywords substitution
+     * @param set
      */
     public void add(FileSet set) {
         filesets.addElement(set);

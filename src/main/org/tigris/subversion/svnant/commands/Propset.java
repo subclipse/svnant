@@ -59,7 +59,6 @@ import java.io.IOException;
 
 import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnant.SvnAntValidationException;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 /**
@@ -77,7 +76,7 @@ public class Propset extends SvnCommand {
     private String propValue = null;
     private boolean recurse = false;
 
-    public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
+    public void execute() throws SvnAntException {
 
         try {
             if (propValue != null)
@@ -110,27 +109,31 @@ public class Propset extends SvnCommand {
 
     /**
      * set the path of the file or directory on which to set the property
+     * @param path
      */
     public void setPath(File path) {
         this.path = path;
     }
 
     /**
-     * set the name of the property 
+     * set the name of the property
+     * @param propName 
      */
     public void setName(String propName) {
         this.propName = propName;
     }
     
     /**
-     * set the value of the property 
+     * set the value of the property
+     * @param propValue 
      */
     public void setValue(String propValue) {
         this.propValue = propValue;
     }
   
     /**
-     * set the file that will be used as a value 
+     * set the file that will be used as a value
+     * @param file
      */
     public void setFile(File file) {
         this.file = file;
@@ -138,7 +141,7 @@ public class Propset extends SvnCommand {
     
     /**
      * if set, property will be set recursively
-     * @param recursive
+     * @param recurse
      */
     public void setRecurse(boolean recurse) {
         this.recurse = recurse;

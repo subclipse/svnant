@@ -59,7 +59,6 @@ import java.io.FileFilter;
 
 import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnant.SvnAntValidationException;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 /**
@@ -84,10 +83,7 @@ public class Ignore extends SvnCommand {
     /** pattern to add to .svnignore */
     private String pattern;
 
-    private ISVNClientAdapter svnClient;
-
-    public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
-        this.svnClient = svnClient;
+    public void execute() throws SvnAntException {
 
         // deal with the single file
         if (file != null) {
@@ -125,20 +121,20 @@ public class Ignore extends SvnCommand {
     /**
      * Add a file to svn:ignore
      * @param svnClient
-     * @param file
+     * @param aFile
      * @throws SvnAntException
      */
-    private void svnIgnoreFile(File file) throws SvnAntException {
-        if (file.exists()) {
+    private void svnIgnoreFile(File aFile) throws SvnAntException {
+        if (aFile.exists()) {
             try {
-                svnClient.addToIgnoredPatterns(file.getParentFile(),file.getName());
+                svnClient.addToIgnoredPatterns(aFile.getParentFile(),aFile.getName());
             } catch (SVNClientException e) {
                 throw new SvnAntException(
-                        "Can't add file "+file.getAbsolutePath()+"to svn:ignore",e);
+                        "Can't add file "+aFile.getAbsolutePath()+"to svn:ignore",e);
             }
         } else {
             String message = "Warning: Could not find file "
-                    + file.getAbsolutePath();
+                    + aFile.getAbsolutePath();
             if (!failonerror) {
             	logWarning(message);
             } else {
@@ -150,43 +146,43 @@ public class Ignore extends SvnCommand {
     /**
      * add the pattern to svn:ignore property on the directory
      * @param svnClient
-     * @param dir
+     * @param aDir
      * @param recursive
      * @throws SvnAntException
      */
-    private void svnIgnorePattern(File dir, String pattern, boolean recursive) throws SvnAntException {
+    private void svnIgnorePattern(File aDir, String aPattern, boolean recursive) throws SvnAntException {
         
         // first add the pattern to the directory
-        svnIgnorePattern(dir, pattern);
+        svnIgnorePattern(aDir, aPattern);
         
         if (recursive) {
-            File file[] = dir.listFiles( new FileFilter() {
+            File files[] = aDir.listFiles( new FileFilter() {
                 public boolean accept(File pathname) {
                     return pathname.isDirectory() && !pathname.getName().equals(svnClient.getAdminDirectoryName()); 
                 }
             });
-            for (int i = 0; i < file.length;i++) {
-                svnIgnorePattern(file[i],pattern,true);
+            for (int i = 0; i < files.length;i++) {
+                svnIgnorePattern(files[i],aPattern,true);
             }
         }
     }
 
-    private void svnIgnorePattern(File dir, String pattern) throws SvnAntException {
-        if (dir.exists()) {
-            if (!dir.isDirectory()) {
+    private void svnIgnorePattern(File aDir, String aPattern) throws SvnAntException {
+        if (aDir.exists()) {
+            if (!aDir.isDirectory()) {
                 logWarning(
                     "Can't add a pattern to svn:ignore for a file. It needs to be a directory");
             } else {
 
                 try {
-                    svnClient.addToIgnoredPatterns(dir, pattern);
+                    svnClient.addToIgnoredPatterns(aDir, aPattern);
                 } catch (SVNClientException e) {
                     throw new SvnAntException(
-                        "Can't add pattern "+pattern+" to svn:ignore for "+dir.getAbsolutePath(), e);
+                        "Can't add pattern "+aPattern+" to svn:ignore for "+aDir.getAbsolutePath(), e);
                 }
             }
         } else {
-            String message = "Warning: Could not find directory "+dir.getAbsolutePath();
+            String message = "Warning: Could not find directory "+aDir.getAbsolutePath();
             if (!failonerror) {
             	logWarning(message);
             } else {
@@ -216,7 +212,7 @@ public class Ignore extends SvnCommand {
 
 	/**
 	 * if set, pattern will be added recursively on svn:ignore
-	 * @param recursive
+	 * @param recurse
 	 */
     public void setRecurse(boolean recurse) {
         this.recurse = recurse;

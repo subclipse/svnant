@@ -61,7 +61,6 @@ import java.io.InputStream;
 
 import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnant.SvnAntValidationException;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
@@ -81,7 +80,7 @@ public class Cat extends SvnCommand {
 	/** revision */
 	private SVNRevision revision = SVNRevision.HEAD;
 
-	public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
+	public void execute() throws SvnAntException {
 
         InputStream is = null;
         FileOutputStream os = null;

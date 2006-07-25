@@ -58,7 +58,6 @@ import java.io.File;
 
 import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnant.SvnAntValidationException;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
@@ -78,7 +77,7 @@ public class Mkdir extends SvnCommand {
     /** message (when url is used) */
     private String message = null;
 
-    public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
+    public void execute() throws SvnAntException {
 
         if (url != null) {
             try {

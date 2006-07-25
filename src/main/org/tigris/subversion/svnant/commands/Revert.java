@@ -61,7 +61,6 @@ import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
 import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnant.SvnAntValidationException;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 /**
@@ -84,10 +83,7 @@ public class Revert extends SvnCommand {
 	/** filesets to revert */
 	private Vector filesets = new Vector();	
 	
-	private ISVNClientAdapter svnClient;
-
-	public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
-		this.svnClient = svnClient;
+	public void execute() throws SvnAntException {
 		
 		if (file != null)
 			revertFile(file,false);
@@ -124,15 +120,15 @@ public class Revert extends SvnCommand {
 	/**
 	 * Revert file or directory
      *
-	 * @param file
+	 * @param aFile
 	 * @param force
 	 * @throws SvnAntException
 	 */
-	private void revertFile(File file, boolean recurse) throws SvnAntException {
+	private void revertFile(File aFile, boolean doRecurse) throws SvnAntException {
 		try {
-            svnClient.revert(file, recurse);
+            svnClient.revert(aFile, doRecurse);
 		} catch (SVNClientException e) {
-			throw new SvnAntException("Cannot revert file or directory "+file.getAbsolutePath(),e);
+			throw new SvnAntException("Cannot revert file or directory "+aFile.getAbsolutePath(),e);
 		}
 	}
 
@@ -184,12 +180,17 @@ public class Revert extends SvnCommand {
 		this.dir = dir;
 	}
 	
+	/**
+	 * Set the recurse flag
+	 * @param recurse
+	 */
 	public void setRecurse(boolean recurse) {
 		this.recurse = recurse;
 	}
 
 	/**
 	 * Adds a set of files to add
+	 * @param set
 	 */
 	public void addFileset(FileSet set) {
 		filesets.addElement(set);
@@ -197,6 +198,7 @@ public class Revert extends SvnCommand {
 	
 	/**
 	 * Adds a set of files to add
+	 * @param set
 	 */
 	public void add(FileSet set) {
 		filesets.addElement(set);

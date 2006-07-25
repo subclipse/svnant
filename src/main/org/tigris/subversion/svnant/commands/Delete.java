@@ -61,7 +61,6 @@ import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
 import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnant.SvnAntValidationException;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
@@ -92,10 +91,7 @@ public class Delete extends SvnCommand {
 	/** filesets to delete */
 	private Vector filesets = new Vector();	
 	
-	private ISVNClientAdapter svnClient;
-
-	public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
-		this.svnClient = svnClient;
+	public void execute() throws SvnAntException {
 		
 		if (url != null)
 			deleteUrl(url,message);
@@ -125,30 +121,30 @@ public class Delete extends SvnCommand {
 
 	/**
 	 * delete directly on repository
-	 * @param url
-	 * @param message
+	 * @param anUrl
+	 * @param aMessage
 	 * @throws SvnAntException
 	 */
-	private void deleteUrl(SVNUrl url, String message) throws SvnAntException {
+	private void deleteUrl(SVNUrl anUrl, String aMessage) throws SvnAntException {
 		try {
-			svnClient.remove(new SVNUrl[] { url },message);
+			svnClient.remove(new SVNUrl[] { anUrl },aMessage);
 		} catch (SVNClientException e) {
-			throw new SvnAntException("Cannot delete url "+url.toString(),e);
+			throw new SvnAntException("Cannot delete url "+anUrl.toString(),e);
 		}
 	}
 	
 	/**
 	 * Delete file or directory
 	 * When file is a directory, all subdirectories/files are deleted too
-	 * @param file
-	 * @param force
+	 * @param aFile
+	 * @param appyForce
 	 * @throws SvnAntException
 	 */
-	private void deleteFile(File file, boolean force) throws SvnAntException {
+	private void deleteFile(File aFile, boolean appyForce) throws SvnAntException {
 		try {
-			svnClient.remove(new File[] { file },force);
+			svnClient.remove(new File[] { aFile },appyForce);
 		} catch (SVNClientException e) {
-			throw new SvnAntException("Cannot delete file or directory "+file.getAbsolutePath(),e);
+			throw new SvnAntException("Cannot delete file or directory "+aFile.getAbsolutePath(),e);
 		}
 	}
 
@@ -217,12 +213,17 @@ public class Delete extends SvnCommand {
 		this.dir = dir;
 	}
 	
+	/**
+	 * Set the force flag
+	 * @param force
+	 */
 	public void setForce(boolean force) {
 		this.force = force;
 	}
 
 	/**
 	 * Adds a set of files to add
+	 * @param set
 	 */
 	public void addFileset(FileSet set) {
 		filesets.addElement(set);
@@ -230,6 +231,7 @@ public class Delete extends SvnCommand {
 	
 	/**
 	 * Adds a set of files to add
+	 * @param set
 	 */
 	public void add(FileSet set) {
 		filesets.addElement(set);

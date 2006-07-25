@@ -58,7 +58,6 @@ import java.io.File;
 
 import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnant.SvnAntValidationException;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
@@ -81,7 +80,7 @@ public class Checkout extends SvnCommand {
 	/** revision to checkout */
 	private SVNRevision revision = SVNRevision.HEAD;
 
-	public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
+	public void execute() throws SvnAntException {
 
 		try {
 			svnClient.checkout(url, destPath, revision, recurse);

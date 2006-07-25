@@ -58,7 +58,6 @@ import java.io.File;
 
 import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnant.SvnAntValidationException;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
@@ -82,7 +81,7 @@ public class Switch extends SvnCommand {
 
 	private boolean recurse = true;
 
-	public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
+	public void execute() throws SvnAntException {
 
 		try {
 			svnClient.switchToUrl(path, url, revision, recurse);

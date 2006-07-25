@@ -6,10 +6,10 @@ import java.net.MalformedURLException;
 import org.apache.tools.ant.Project;
 import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnant.SvnAntValidationException;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNInfo;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
+import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
@@ -70,14 +70,14 @@ public class Info extends SvnCommand {
     };
 
     /**
-     * @see org.tigris.subversion.svnant.commands.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
+     * @see org.tigris.subversion.svnant.commands.SvnCommand#execute()
      */
-    public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
+    public void execute() throws SvnAntException {
 
         Project theProject = getProject();
         try {
-            this.info = acquireInfo(svnClient);
-            if (this.info.getRevision() == null) {
+            this.info = acquireInfo();
+            if ((this.info.getRevision() == null) || (SVNRevision.INVALID_REVISION.equals(this.info.getRevision()))) {
             	throw new SvnAntException(this.target + " - Not a versioned resource");
             }
             String[] propNames = (SVNNodeKind.DIR == this.info.getNodeKind() ?
@@ -106,7 +106,7 @@ public class Info extends SvnCommand {
      * @exception SVNClientException If ISVNInfo.getInfo(target)
      * fails.
      */
-    private ISVNInfo acquireInfo(ISVNClientAdapter svnClient)
+    private ISVNInfo acquireInfo()
         throws SVNClientException {
         File targetAsFile = new File(Project.translatePath(this.target));
         if (targetAsFile.exists()) {
@@ -132,7 +132,7 @@ public class Info extends SvnCommand {
      * is not recognized and in verbose mode, log a message
      * accordingly.  Assumes that {@link #info} has already been
      * initialized (typically handled by invocation of {@link
-     * #execute(ISVNClientAdapter)}).
+     * #execute()}).
      *
      * @param propName Name of the property to retrieve a value for.
      * @return The value of the named property, or if not recognized,

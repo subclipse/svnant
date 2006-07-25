@@ -77,20 +77,26 @@ import org.tigris.subversion.svnclientadapter.utils.StringUtils;
 public abstract class SvnCommand extends ProjectComponent {
 	
 	protected SvnTask task;
+	protected ISVNClientAdapter svnClient;
 
 	protected abstract void validateAttributes() throws SvnAntValidationException;
 	
-	public abstract void execute(ISVNClientAdapter svnClient) throws SvnAntException;
+	/**
+	 * Execute the command.
+	 * @throws SvnAntException in case an error was encountered during execution
+	 */
+	public abstract void execute() throws SvnAntException;
 
 	public final void executeCommand(ISVNClientAdapter svnClient) throws BuildException
 	{
+		this.svnClient = svnClient;
 		String[] nameSegments = StringUtils.split(getClass().getName(), ".");
 		String className = "<" + nameSegments[nameSegments.length -1] + ">"; 
 			
 		logInfo(className + " started ...");
 		try {
 			validateAttributes();
-			execute(svnClient);
+			execute();
 		} catch (SvnAntException ex) {
 			if (this.task.isFailonerror()) {
 				logInfo(className + " failed !");

@@ -59,7 +59,6 @@ import java.io.File;
 import org.apache.tools.ant.Project;
 import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnant.SvnAntValidationException;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
@@ -80,7 +79,7 @@ public class WcVersion extends SvnCommand {
     /* (non-Javadoc)
      * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
      */
-    public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
+    public void execute() throws SvnAntException {
         if (!getPath().exists() || !getPath().isDirectory()) {
             throw new SvnAntException("Path does not exist: " + getPath().getAbsolutePath());
         }
@@ -88,7 +87,7 @@ public class WcVersion extends SvnCommand {
         WCVersionSummary wcVersionSummary;
         
         try {
-            wcVersionSummary = getWorkingCopySumary(svnClient, getPath());
+            wcVersionSummary = getWorkingCopySumary(getPath());
         } catch (SVNClientException e) {
             throw new SvnAntException("Can't get summary status for path " + getPath(), e);
         }
@@ -135,7 +134,7 @@ public class WcVersion extends SvnCommand {
      * @return The <code>WCVersionSummary</code> storing version information about the working copy.
      * @throws SVNClientException Raised if there is a problem fetching working copy status.
      */
-    private WCVersionSummary getWorkingCopySumary(ISVNClientAdapter svnClient, File wcPathFile) throws SVNClientException {
+    private WCVersionSummary getWorkingCopySumary(File wcPathFile) throws SVNClientException {
         ISVNStatus rootStatus = svnClient.getSingleStatus(wcPathFile);
         String[] pathSegs = rootStatus.getUrl().getPathSegments();
         StringBuffer pathBuffer = new StringBuffer();

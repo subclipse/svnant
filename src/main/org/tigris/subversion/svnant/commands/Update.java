@@ -61,7 +61,6 @@ import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
 import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnant.SvnAntValidationException;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
@@ -81,14 +80,11 @@ public class Update extends SvnCommand {
 	/** filesets to update */
 	private Vector filesets = new Vector();	
 	
-	private ISVNClientAdapter svnClient;
-
 	private SVNRevision revision = SVNRevision.HEAD;
 	
 	private boolean recurse = true;
 
-	public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
-		this.svnClient = svnClient;
+	public void execute() throws SvnAntException {
 		
 		if (file != null)
 		{
@@ -138,21 +134,21 @@ public class Update extends SvnCommand {
 
 		// first : we update directories
 		for (int i = 0; i < dirs.length; i++) {
-			File dir = new File(baseDir, dirs[i]);
+			File aDir = new File(baseDir, dirs[i]);
 			try {
-				svnClient.update(dir,revision,false);
+				svnClient.update(aDir,revision,false);
 			} catch (SVNClientException e) {
-				logError("Cannot update directory " + dir.getAbsolutePath());
+				logError("Cannot update directory " + aDir.getAbsolutePath());
 			}
 		}
 
 		// then we update files
 		for (int i = 0; i < files.length; i++) {
-			File file = new File(baseDir, files[i]);
+			File aFile = new File(baseDir, files[i]);
 			try {
-				svnClient.update(file,revision,false);
+				svnClient.update(aFile,revision,false);
 			} catch (SVNClientException e) {
-				logError("Cannot update file " + file.getAbsolutePath());
+				logError("Cannot update file " + aFile.getAbsolutePath());
 			}
 		}
 	}
@@ -192,6 +188,7 @@ public class Update extends SvnCommand {
 
 	/**
 	 * Adds a set of files to update
+	 * @param set
 	 */
 	public void addFileset(FileSet set) {
 		filesets.addElement(set);
@@ -199,6 +196,7 @@ public class Update extends SvnCommand {
 	
 	/**
 	 * Adds a set of files to update
+	 * @param set
 	 */
 	public void add(FileSet set) {
 		filesets.addElement(set);
