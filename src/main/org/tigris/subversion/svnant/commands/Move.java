@@ -52,44 +52,44 @@
  * <http://www.apache.org/>.
  *
  */ 
-package org.tigris.subversion.svnant;
+package org.tigris.subversion.svnant.commands;
 
 import java.io.File;
 
-import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnAntValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
+import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
- * @author cedric
+ * svn Move. Moves or renames a file
+ * @author Cédric Chabanois 
+ *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  *
- * Creates a directory directly in a repository or creates a
- * directory on disk and schedules it for addition 
  */
-public class Mkdir extends SvnCommand {
-    /** the url of dir to create */
-    private SVNUrl url = null;
+public class Move extends SvnCommand {
+    private File srcPath = null;
+    private File destPath = null;
+    private SVNUrl srcUrl = null;
+    private SVNUrl destUrl = null;
+	private String message = null;
+    private boolean force = false;
 
-    /** the path to create */
-    private File path = null;
+    public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
 
-    /** message (when url is used) */
-    private String message = null;
-
-    public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
-
-        if (url != null) {
+        if (srcPath != null) {
             try {
-                svnClient.mkdir(url, message);
+                svnClient.move(srcPath, destPath, force);
             } catch (SVNClientException e) {
-                throw new SvnCommandException("Can't make dir "+url, e);
+                throw new SvnAntException("Can't copy", e);
             }
         } else {
             try {
-                svnClient.mkdir(path);
+                svnClient.move(srcUrl, destUrl, message, SVNRevision.HEAD);
             } catch (SVNClientException e) {
-                throw new SvnCommandException("Can't make dir "+path, e);
+                throw new SvnAntException("Can't copy", e);
             }
         }
 
@@ -98,38 +98,74 @@ public class Mkdir extends SvnCommand {
     /**
      * Ensure we have a consistent and legal set of attributes
      */
-    protected void validateAttributes() throws SvnCommandValidationException {
-        if ((url == null) && (path == null))
-            throw new SvnCommandValidationException("url or path attributes must be set");
-        if ((url != null) && (path != null))
-            throw new SvnCommandValidationException("Either url or path attributes must be set");
-        if ((url != null) && (message == null))
-            throw new SvnCommandValidationException("Message attribute must be set when url is used");
+    protected void validateAttributes() throws SvnAntValidationException {
+        if (((srcPath == null) && (srcUrl == null))
+            || ((srcPath != null) && (srcUrl != null)))
+            throw new SvnAntValidationException("Either srcPath attribute or srcUrl attribute must be set");
 
+        if (srcPath != null) {
+            if (destPath == null)
+                throw new SvnAntValidationException("destPath attribute must be set when srcPath is set");
+            if (destUrl != null)
+                throw new SvnAntValidationException("destUrl attribute cannot be used when srcPath is set");
+        }
+
+        if (srcUrl != null) {
+            if (destUrl == null)
+                throw new SvnAntValidationException("destUrl attribute must be set when srcUrl is set");
+            if (destPath != null)
+                throw new SvnAntValidationException("destPath attribute cannot be used when srcUrl is set");
+            if (message == null)
+            	throw new SvnAntValidationException("message attribute must be set when srcUrl is set");
+        }
     }
 
 	/**
-	 * set the url of the new directory
-	 * @param url
+	 * set the path to move from
+	 * @param srcPath
 	 */
-    public void setUrl(SVNUrl url) {
-        this.url = url;
+    public void setSrcPath(File srcPath) {
+        this.srcPath = srcPath;
     }
 
 	/**
-	 * set the path of the new directory
-	 * @param path
+	 * set the path to move to
+	 * @param destPath
 	 */
-    public void setPath(File path) {
-        this.path = path;
+    public void setDestPath(File destPath) {
+        this.destPath = destPath;
     }
 
 	/**
-	 * set the message for commit (only when using url)
-	 * @param message
+	 * set the url to move from
+	 * @param srcUrl
 	 */
+    public void setSrcUrl(SVNUrl srcUrl) {
+        this.srcUrl = srcUrl;
+    }
+
+	/**
+	 * set the url to move to
+	 * @param destUrl
+	 */
+    public void setDestUrl(SVNUrl destUrl) {
+        this.destUrl = destUrl;
+    }
+    
+    /**
+     * set the message for commit when using destUrl
+     * @param message
+     */
     public void setMessage(String message) {
-        this.message = message;
+    	this.message = message;
+    }
+
+    /**
+     * set the force parameter
+     * @param force
+     */
+    public void setForce(boolean force) {
+        this.force = force;
     }
 
 }

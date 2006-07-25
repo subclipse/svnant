@@ -59,13 +59,10 @@ import java.io.File;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.ProjectComponent;
 import org.apache.tools.ant.types.Reference;
+import org.tigris.subversion.svnant.ISvnAntProjectComponent;
 import org.tigris.subversion.svnant.SvnTask;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
-import org.tigris.subversion.svnclientadapter.commandline.CmdLineClientAdapterFactory;
-import org.tigris.subversion.svnclientadapter.javahl.JhlClientAdapterFactory;
-import org.tigris.subversion.svnclientadapter.javasvn.JavaSvnClientAdapterFactory;
 
 /**
  * This class implements a custom FileSet for ANT. It returns a set of files
@@ -87,7 +84,7 @@ import org.tigris.subversion.svnclientadapter.javasvn.JavaSvnClientAdapterFactor
  * 
  * @author Jean-Pierre Fiset <a href="mailto:jp@fiset.ca">jp@fiset.ca</a>
  */
-public class SvnFileSet extends org.apache.tools.ant.types.FileSet {
+public class SvnFileSet extends org.apache.tools.ant.types.FileSet implements ISvnAntProjectComponent {
 
     /**
      * 'javahl' property for file selector. If set,
@@ -119,6 +116,27 @@ public class SvnFileSet extends org.apache.tools.ant.types.FileSet {
         this.javahl = fileset_.javahl;
     }
 
+    /* (non-Javadoc)
+	 * @see org.tigris.subversion.svnant.ISvnAntProjectComponent#getJavahl()
+	 */
+	public boolean getJavahl() {
+		return javahl;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tigris.subversion.svnant.ISvnAntProjectComponent#getJavaSvn()
+	 */
+	public boolean getJavaSvn() {
+		return javasvn;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tigris.subversion.svnant.ISvnAntProjectComponent#getProjectComponent()
+	 */
+	public ProjectComponent getProjectComponent() {
+		return this;
+	}
+
     /**
      * Creates a deep clone of this instance, except for the nested
      * selectors (the list of selectors is a shallow clone of this
@@ -147,36 +165,7 @@ public class SvnFileSet extends org.apache.tools.ant.types.FileSet {
     public void setJavasvn(boolean javasvn_) {
         javasvn = javasvn_;
     }
-    
-	/**
-	 * This method returns a SVN client adapter, based on the property set when the file selector
-	 * was declared. More specifically, the 'javahl' and 'javasvn' flags are verified, as well as the
-	 * availability of JAVAHL ad JavaSVN adapters, to decide what flavour to use.
-	 * @return An instance of SVN client adapter that meets the specified constraints, if any.
-	 * @throws BuildException Thrown in a situation where no adapter can fit the constraints.
-	 */
-	private ISVNClientAdapter getClientAdapter() throws BuildException {
-	    ISVNClientAdapter svnClient;
-	    
-	    if( true == javahl && true == SvnTask.isJavahlAvailable() ) {
-	        svnClient = SVNClientAdapterFactory.createSVNClient(JhlClientAdapterFactory.JAVAHL_CLIENT);
-	        log("Using javahl");
-	    }
-	    else if( true == javasvn && true == SvnTask.isJavaSVNAvailable() ) {
-	        svnClient = SVNClientAdapterFactory.createSVNClient(JavaSvnClientAdapterFactory.JAVASVN_CLIENT);
-	        log("Using javasvn");
-	    }
-	    else if( true == SvnTask.isCommandLineAvailable() ) {
-	        svnClient = SVNClientAdapterFactory.createSVNClient(CmdLineClientAdapterFactory.COMMANDLINE_CLIENT);
-	        log("Using command line interface");
-	    } 
-	    else {
-	        throw new BuildException("Cannot use javahl, JavaSVN nor command line svn client");
-	    }
-	    
-	    return svnClient;
-	}
-	
+    	
     /**
      * Returns the directory scanner needed to access the files to process.
      * @return a <code>DirectoryScanner</code> instance.
@@ -201,7 +190,7 @@ public class SvnFileSet extends org.apache.tools.ant.types.FileSet {
             throw new BuildException(dir.getAbsolutePath()
                                      + " is not a directory.");
         }
-        DirectoryScanner ds = new SvnDirScanner( getClientAdapter() );
+        DirectoryScanner ds = new SvnDirScanner( SvnTask.getClientAdapter(this) );
         setupDirectoryScanner(ds, p);
         ds.setFollowSymlinks(followSymlinks);
         ds.scan();

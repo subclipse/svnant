@@ -52,101 +52,78 @@
  * <http://www.apache.org/>.
  *
  */ 
-package org.tigris.subversion.svnant;
+package org.tigris.subversion.svnant.commands;
 
 import java.io.File;
 
-import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
+import org.apache.tools.ant.DirectoryScanner;
+import org.apache.tools.ant.types.FileSet;
+import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
+import org.tigris.subversion.svnclientadapter.SVNKeywords;
 
 /**
- * svn Export.   
- * Exports a clean directory tree from the repository or
- * Exports a clean directory tree from the working copy 
+ * add keywords on files
  * @author Cédric Chabanois 
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  *
- */public class Export extends SvnCommand {
+ */
+public class Keywordsadd extends Keywords {
+   
+	/* (non-Javadoc)
+	 * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
+	 */
+	public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
+        super.execute(svnClient);        
 
-	 private boolean force = false;
-    
-    /** the source url */
-    private SVNUrl srcUrl = null;
-    
-    /** the source path */
-    private File srcPath = null;
-    
-    /** the destination path */
-    private File destPath = null;
-	
-	/** revision to checkout (only useful when exporting directly from repository) */
-	private SVNRevision revision = SVNRevision.HEAD;    
-
-    public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
-
-        try {
-			if (srcUrl != null)
-				svnClient.doExport(srcUrl,destPath,revision,force);
-			else
-				svnClient.doExport(srcPath,destPath,force);
-        } catch (SVNClientException e) {
-        	throw new SvnCommandException("Can't export",e);
+        if (file != null) {
+            try {            
+                svnClient.addKeywords(file,keywords);
+            } catch (SVNClientException e) {
+                throw new SvnAntException("Can't add keywords on file "+file.toString(), e);
+            }
         }
-
-    }
+        else
+        if (dir != null) {
+            try {            
+                svnClient.addKeywords(dir,keywords);
+            } catch (SVNClientException e) {
+                throw new SvnAntException("Can't add keywords on directory "+dir.toString(), e);
+            }            
+        }
+        else
+        // deal with filesets
+        if (filesets.size() > 0) {
+            for (int i = 0; i < filesets.size(); i++) {
+                FileSet fs = (FileSet) filesets.elementAt(i);
+                keywordsAdd(fs,keywords);
+            }
+        }
+	}
 
     /**
-     * Ensure we have a consistent and legal set of attributes
+     * add keywords on a fileset 
+     * @param svnClient
+     * @param fs
+     * @throws SvnAntException
      */
-    protected void validateAttributes() throws SvnCommandValidationException {
-        if (destPath == null)
-            throw new SvnCommandValidationException("destPath attribute must be set");
+    private void keywordsAdd(FileSet fs, SVNKeywords keywords) throws SvnAntException {
+        DirectoryScanner ds = fs.getDirectoryScanner(getProject());
+        File baseDir = fs.getDir(getProject()); // base dir
+        String[] files = ds.getIncludedFiles();
 
-        if ((srcUrl == null) && (srcPath == null))
-            throw new SvnCommandValidationException("Either srcUrl or srcPath must be set");
-
-        if ((srcUrl != null) && (srcPath != null))
-            throw new SvnCommandValidationException("Either srcUrl or srcPath must be set");
+        for (int i = 0; i < files.length; i++) {
+            File file = new File(baseDir, files[i]);
+            try {
+                svnClient.addKeywords(file,keywords);
+            } catch (SVNClientException e) {
+                throw new SvnAntException("Can't set keywords on file "+file.toString(), e);
+            }
+        }
     }
 
-	/**
-	 * Sets the revision
-	 * 
-	 * @param revision
-	 */
-	public void setRevision(String revision) {
-		this.revision = getRevisionFrom(revision);
-	}
 
-	/**
-	 * set the url to export from
-	 * @param srcUrl
-	 */
-	public void setSrcUrl(SVNUrl srcUrl) {
-		this.srcUrl = srcUrl;
-	}
-
-	/**
-	 * set the path to export from
-	 * @param srcPath
-	 */
-	public void setSrcPath(File srcPath) {
-		this.srcPath = srcPath;
-	}
-
-	/**
-	 * set the destination path; required
-	 * @param destPath
-	 */
-	public void setDestPath(File destPath) {
-		this.destPath = destPath;
-	}
-
-    public void setForce(boolean force) {
-        this.force = force;
-    }
+    
 
 }

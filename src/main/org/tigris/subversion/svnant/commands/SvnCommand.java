@@ -52,7 +52,7 @@
  * <http://www.apache.org/>.
  *
  */ 
-package org.tigris.subversion.svnant;
+package org.tigris.subversion.svnant.commands;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -61,6 +61,9 @@ import java.util.Date;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectComponent;
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnAntValidationException;
+import org.tigris.subversion.svnant.SvnTask;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.utils.StringUtils;
@@ -75,9 +78,9 @@ public abstract class SvnCommand extends ProjectComponent {
 	
 	protected SvnTask task;
 
-	protected abstract void validateAttributes() throws SvnCommandValidationException;
+	protected abstract void validateAttributes() throws SvnAntValidationException;
 	
-	public abstract void execute(ISVNClientAdapter svnClient) throws SvnCommandException;
+	public abstract void execute(ISVNClientAdapter svnClient) throws SvnAntException;
 
 	public final void executeCommand(ISVNClientAdapter svnClient) throws BuildException
 	{
@@ -88,14 +91,14 @@ public abstract class SvnCommand extends ProjectComponent {
 		try {
 			validateAttributes();
 			execute(svnClient);
-		} catch (SvnCommandException ex) {
+		} catch (SvnAntException ex) {
 			if (this.task.isFailonerror()) {
 				logInfo(className + " failed !");
 				throw new BuildException(ex.getMessage(), ex.getCause());
 			} else {
 				logError(className + " failed :" + ex.getLocalizedMessage());				
 			}
-		} catch (SvnCommandValidationException e) {
+		} catch (SvnAntValidationException e) {
 			if (this.task.isFailonerror()) {
 				logInfo(className + " failed !");
 				throw new BuildException(e.getMessage());
@@ -109,14 +112,14 @@ public abstract class SvnCommand extends ProjectComponent {
 	/**
 	 * @return the task
 	 */
-	protected SvnTask getTask() {
+	public SvnTask getTask() {
 		return task;
 	}
 
 	/**
 	 * @param task the task to set
 	 */
-	protected void setTask(SvnTask task) {
+	public void setTask(SvnTask task) {
 		this.task = task;
 	}
 
@@ -174,37 +177,6 @@ public abstract class SvnCommand extends ProjectComponent {
 	public void log(String message, int level)
 	{
 		getProject().log(this.task, message, level);
-	}
-
-	public static class SvnCommandException extends Exception
-	{
-		public SvnCommandException() {
-			super();
-		}
-
-		public SvnCommandException(String arg0, Throwable arg1) {
-			super(arg0, arg1);
-		}
-
-		public SvnCommandException(String arg0) {
-			super(arg0);
-		}
-
-		public SvnCommandException(Throwable arg0) {
-			super(arg0);
-		}
-		
-	}
-	
-	public static class SvnCommandValidationException extends Exception
-	{
-		public SvnCommandValidationException() {
-			super();
-		}
-
-		public SvnCommandValidationException(String message) {
-			super(message);
-		}
 	}
 
 }

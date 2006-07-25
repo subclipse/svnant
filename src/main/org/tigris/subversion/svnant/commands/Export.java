@@ -52,50 +52,49 @@
  * <http://www.apache.org/>.
  *
  */ 
-package org.tigris.subversion.svnant;
+package org.tigris.subversion.svnant.commands;
 
 import java.io.File;
 
-import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnAntValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
- * svn Copy. Duplicate something in working copy or repos, remembering history.
+ * svn Export.   
+ * Exports a clean directory tree from the repository or
+ * Exports a clean directory tree from the working copy 
  * @author Cédric Chabanois 
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  *
- */
-public class Copy extends SvnCommand {
-    private File srcPath = null;
-    private File destPath = null;
-    private SVNUrl srcUrl = null;
-    private SVNUrl destUrl = null;
-    
-    /** revision to copy from (head by default) */
-    private SVNRevision revision = SVNRevision.HEAD; 
-    
-    /** message for commit (only when target is an url) */
-    private String message = null; 
+ */public class Export extends SvnCommand {
 
-    public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
+	 private boolean force = false;
+    
+    /** the source url */
+    private SVNUrl srcUrl = null;
+    
+    /** the source path */
+    private File srcPath = null;
+    
+    /** the destination path */
+    private File destPath = null;
+	
+	/** revision to checkout (only useful when exporting directly from repository) */
+	private SVNRevision revision = SVNRevision.HEAD;    
+
+    public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
 
         try {
-            if (srcPath != null) {
-                if (destPath != null)
-                    svnClient.copy(srcPath, destPath);
-                else
-                    svnClient.copy(srcPath, destUrl, message);
-            } else {
-            	if (destPath != null)
-            		svnClient.copy(srcUrl,destPath,revision);
-            	else
-            		svnClient.copy(srcUrl,destUrl,message, revision);
-            }
+			if (srcUrl != null)
+				svnClient.doExport(srcUrl,destPath,revision,force);
+			else
+				svnClient.doExport(srcPath,destPath,force);
         } catch (SVNClientException e) {
-            throw new SvnCommandException("Can't copy", e);
+        	throw new SvnAntException("Can't export",e);
         }
 
     }
@@ -103,76 +102,55 @@ public class Copy extends SvnCommand {
     /**
      * Ensure we have a consistent and legal set of attributes
      */
-    protected void validateAttributes() throws SvnCommandValidationException {
-        if (((srcPath == null) && (srcUrl == null))
-            || ((srcPath != null) && (srcUrl != null)))
-            throw new SvnCommandValidationException("srcPath attribute or srcUrl attribute must be set");
+    protected void validateAttributes() throws SvnAntValidationException {
+        if (destPath == null)
+            throw new SvnAntValidationException("destPath attribute must be set");
 
-        if (((destPath == null) && (destUrl == null))
-            || ((destPath != null) && (destUrl != null)))
-            throw new SvnCommandValidationException("destPath attribute or destUrl attribute must be set");
-        
-        if ((destUrl != null) && (message == null))
-            throw new SvnCommandValidationException("message attribute needed when destUrl is set");
-        
-        if ((destUrl == null) && (message != null))
-            throw new SvnCommandValidationException("message attribute cannot be used when destUrl is not set");
-            
-        if (revision == null)
-            throw new SvnCommandValidationException("Invalid revision. Revision should be a number, a date in MM/DD/YYYY HH:MM AM_PM format or HEAD, BASE, COMMITED or PREV");
-        
+        if ((srcUrl == null) && (srcPath == null))
+            throw new SvnAntValidationException("Either srcUrl or srcPath must be set");
+
+        if ((srcUrl != null) && (srcPath != null))
+            throw new SvnAntValidationException("Either srcUrl or srcPath must be set");
     }
 
 	/**
-	 * set the path to copy from
-	 * @param srcPath
+	 * Sets the revision
+	 * 
+	 * @param revision
 	 */
-    public void setSrcPath(File srcPath) {
-        this.srcPath = srcPath;
-    }
+	public void setRevision(String revision) {
+		this.revision = getRevisionFrom(revision);
+	}
 
 	/**
-	 * set the path to copy to
-	 * @param destPath
-	 */
-    public void setDestPath(File destPath) {
-        this.destPath = destPath;
-    }
-
-	/**
-	 * set the url to copy from
+	 * set the url to export from
 	 * @param srcUrl
 	 */
-    public void setSrcUrl(SVNUrl srcUrl) {
-        this.srcUrl = srcUrl;
-    }
+	public void setSrcUrl(SVNUrl srcUrl) {
+		this.srcUrl = srcUrl;
+	}
 
 	/**
-	 * set the url to copy to
-	 * @param destUrl
+	 * set the path to export from
+	 * @param srcPath
 	 */
-    public void setDestUrl(SVNUrl destUrl) {
-        this.destUrl = destUrl;
-    }
+	public void setSrcPath(File srcPath) {
+		this.srcPath = srcPath;
+	}
 
-    /**
-     * set the message for the commit (only when copying directly to repository
-     * using an url)
-     * @param message
-     */
-    public void setMessage(String message) {
-        this.message = message;
-    }
+	/**
+	 * set the destination path; required
+	 * @param destPath
+	 */
+	public void setDestPath(File destPath) {
+		this.destPath = destPath;
+	}
 
-    /**
-     * Sets the revision
-     * 
-     * @param revision
-     */
-    public void setRevision(String revision) {
-		this.revision = getRevisionFrom(revision);
-    }
-
-
+	/**
+	 * @param force the force to set
+	 */
+	public void setForce(boolean force) {
+		this.force = force;
+	}
 
 }

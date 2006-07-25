@@ -57,13 +57,14 @@ package org.tigris.subversion.svnant.selectors;
 import java.io.File;
 
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.ProjectComponent;
 import org.apache.tools.ant.types.selectors.BaseExtendSelector;
+import org.tigris.subversion.svnant.ISvnAntProjectComponent;
+import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnant.SvnTask;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
-import org.tigris.subversion.svnclientadapter.commandline.CmdLineClientAdapterFactory;
-import org.tigris.subversion.svnclientadapter.javahl.JhlClientAdapterFactory;
-import org.tigris.subversion.svnclientadapter.javasvn.JavaSvnClientAdapterFactory;
+import org.tigris.subversion.svnclientadapter.utils.StringUtils;
 
 /**
  * This is an abstract class that implements all functionality shared
@@ -77,10 +78,8 @@ import org.tigris.subversion.svnclientadapter.javasvn.JavaSvnClientAdapterFactor
  * @author Jean-Pierre Fiset <a href="mailto:jp@fiset.ca">jp@fiset.ca</a>
  *
  */
-public abstract class BaseSvnSelector extends BaseExtendSelector {
+public abstract class BaseSvnSelector extends BaseExtendSelector implements ISvnAntProjectComponent {
 
-
-    
     /**
      * 'javahl' property for file selector. If set,
      * JAVAHL bindings are used, if available. Preempts
@@ -94,6 +93,32 @@ public abstract class BaseSvnSelector extends BaseExtendSelector {
      * command line, but not JAVAHL bindings.  
      */
     private boolean javasvn = true;
+
+    /**
+     * 'failonerror' property for file selector.
+     */
+	private boolean failonerror = true;
+
+    /* (non-Javadoc)
+	 * @see org.tigris.subversion.svnant.ISvnAntProjectComponent#getJavahl()
+	 */
+	public boolean getJavahl() {
+		return javahl;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tigris.subversion.svnant.ISvnAntProjectComponent#getJavaSvn()
+	 */
+	public boolean getJavaSvn() {
+		return javasvn;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tigris.subversion.svnant.ISvnAntProjectComponent#getProjectComponent()
+	 */
+	public ProjectComponent getProjectComponent() {
+		return this;
+	}
 
     /**
      * Accessor method to 'javahl' property. If reset (false),
@@ -113,8 +138,29 @@ public abstract class BaseSvnSelector extends BaseExtendSelector {
         javasvn = javasvn_;
     }
     
+	/**
+	 * @param failonerror the failonerror to set
+	 */
+	public void setFailonerror(boolean failonerror) {
+		this.failonerror = failonerror;
+	}
+
 	final public boolean isSelected(File basedir_, String filename_, File file_) throws BuildException {
-		return isSelected(getClientAdapter(), basedir_, filename_, file_);
+		
+		String[] nameSegments = StringUtils.split(getClass().getName(), ".");
+		String className = nameSegments[nameSegments.length -1]; 
+
+		try {
+			return isSelected(SvnTask.getClientAdapter(this), basedir_, filename_, file_);
+		} catch (SvnAntException ex) {
+			if (this.failonerror) {
+				log("selector " + className + " failed !", Project.MSG_INFO);
+				throw new BuildException(ex.getMessage(), ex.getCause());
+			} else {
+				log("selector " + className + " failed :" + ex.getLocalizedMessage(), Project.MSG_ERR);
+				return false;
+			}
+		}
 	}
 	
 	/**
@@ -124,37 +170,9 @@ public abstract class BaseSvnSelector extends BaseExtendSelector {
 	 * @param basedir_ A java.io.File object for the base directory
 	 * @param filename_ The name of the file to check
 	 * @param file_ A File object for this filename
-	 * @exception BuildException if an error occurs
+	 * @exception SvnAntException if an error occurs
 	 * @return Returns true if the file should be selected. Otherwise, false. 
 	 */
-	abstract public boolean isSelected(ISVNClientAdapter svnClient_, File basedir_, String filename_, File file_) throws BuildException;
+	abstract public boolean isSelected(ISVNClientAdapter svnClient_, File basedir_, String filename_, File file_) throws SvnAntException;
 	
-	/**
-	 * This method returns a SVN client adapter, based on the property set when the file selector
-	 * was declared. More specifically, the 'javahl' and 'javasvn' flags are verified, as well as the
-	 * availability of JAVAHL ad JavaSVN adapters, to decide what flavour to use.
-	 * @return An instance of SVN client adapter that meets the specified constraints, if any.
-	 * @throws BuildException Thrown in a situation where no adapter can fit the constraints.
-	 */
-	private ISVNClientAdapter getClientAdapter() throws BuildException {
-	    ISVNClientAdapter svnClient;
-	    
-	    if( true == javahl && true == SvnTask.isJavahlAvailable() ) {
-	        svnClient = SVNClientAdapterFactory.createSVNClient(JhlClientAdapterFactory.JAVAHL_CLIENT);
-	        log("Using javahl");
-	    }
-	    else if( true == javasvn && true == SvnTask.isJavaSVNAvailable() ) {
-	        svnClient = SVNClientAdapterFactory.createSVNClient(JavaSvnClientAdapterFactory.JAVASVN_CLIENT);
-	        log("Using javasvn");
-	    }
-	    else if( true == SvnTask.isCommandLineAvailable() ) {
-	        svnClient = SVNClientAdapterFactory.createSVNClient(CmdLineClientAdapterFactory.COMMANDLINE_CLIENT);
-	        log("Using command line interface");
-	    } 
-	    else {
-	        throw new BuildException("Cannot use javahl, JavaSVN nor command line svn client");
-	    }
-	    
-	    return svnClient;
-	}
 }

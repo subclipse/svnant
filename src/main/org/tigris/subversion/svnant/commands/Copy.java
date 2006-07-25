@@ -52,122 +52,128 @@
  * <http://www.apache.org/>.
  *
  */ 
-package org.tigris.subversion.svnant;
+package org.tigris.subversion.svnant.commands;
 
 import java.io.File;
 
-import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnAntValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
- * svn Diff.   
- * display the differences between two paths. (Unified format)
- * 
+ * svn Copy. Duplicate something in working copy or repos, remembering history.
  * @author Cédric Chabanois 
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  *
  */
-public class Diff extends SvnCommand {
-    private SVNUrl oldUrl = null;
-    private SVNUrl newUrl = null;
-    private File oldPath = null;
-    private File newPath = null;
-    private SVNRevision oldTargetRevision = null;
-    private SVNRevision newTargetRevision = null;
-    private File outFile = new File("patch");
-    private boolean recurse = true; 
+public class Copy extends SvnCommand {
+    private File srcPath = null;
+    private File destPath = null;
+    private SVNUrl srcUrl = null;
+    private SVNUrl destUrl = null;
+    
+    /** revision to copy from (head by default) */
+    private SVNRevision revision = SVNRevision.HEAD; 
+    
+    /** message for commit (only when target is an url) */
+    private String message = null; 
 
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.SVNClientAdapter)
-	 */
-	public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
+    public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
 
         try {
-            if (oldUrl != null)
-                svnClient.diff(oldUrl, oldTargetRevision,
-                               newUrl, newTargetRevision,
-                               outFile, recurse);
-            else
-                svnClient.diff(oldPath, oldTargetRevision,
-                               newPath, newTargetRevision,
-                               outFile, recurse);            
+            if (srcPath != null) {
+                if (destPath != null)
+                    svnClient.copy(srcPath, destPath);
+                else
+                    svnClient.copy(srcPath, destUrl, message);
+            } else {
+            	if (destPath != null)
+            		svnClient.copy(srcUrl,destPath,revision);
+            	else
+            		svnClient.copy(srcUrl,destUrl,message, revision);
+            }
         } catch (SVNClientException e) {
-            throw new SvnCommandException("Can't get the differences",e);
+            throw new SvnAntException("Can't copy", e);
         }
-	}
+
+    }
 
     /**
      * Ensure we have a consistent and legal set of attributes
      */
-    protected void validateAttributes() throws SvnCommandValidationException {
-        if (oldUrl != null) {
-            if ((oldPath != null) || (newPath != null))
-                throw new SvnCommandValidationException("paths cannot be with urls when diffing");
-        }
-        else
-        {
-            if ((oldUrl != null) || (newUrl != null))
-                throw new SvnCommandValidationException("paths cannot be with urls when diffing");
-        }
+    protected void validateAttributes() throws SvnAntValidationException {
+        if (((srcPath == null) && (srcUrl == null))
+            || ((srcPath != null) && (srcUrl != null)))
+            throw new SvnAntValidationException("srcPath attribute or srcUrl attribute must be set");
+
+        if (((destPath == null) && (destUrl == null))
+            || ((destPath != null) && (destUrl != null)))
+            throw new SvnAntValidationException("destPath attribute or destUrl attribute must be set");
+        
+        if ((destUrl != null) && (message == null))
+            throw new SvnAntValidationException("message attribute needed when destUrl is set");
+        
+        if ((destUrl == null) && (message != null))
+            throw new SvnAntValidationException("message attribute cannot be used when destUrl is not set");
+            
+        if (revision == null)
+            throw new SvnAntValidationException("Invalid revision. Revision should be a number, a date in MM/DD/YYYY HH:MM AM_PM format or HEAD, BASE, COMMITED or PREV");
+        
     }
 
 	/**
-	 * @param file
+	 * set the path to copy from
+	 * @param srcPath
 	 */
-	public void setNewPath(File file) {
-		newPath = file;
-	}
+    public void setSrcPath(File srcPath) {
+        this.srcPath = srcPath;
+    }
 
 	/**
-	 * @param revision
+	 * set the path to copy to
+	 * @param destPath
 	 */
-	public void setNewTargetRevision(String revision) {
-		this.newTargetRevision = getRevisionFrom(revision);
-	}
+    public void setDestPath(File destPath) {
+        this.destPath = destPath;
+    }
 
 	/**
-	 * @param url
+	 * set the url to copy from
+	 * @param srcUrl
 	 */
-	public void setNewUrl(SVNUrl url) {
-		newUrl = url;
-	}
+    public void setSrcUrl(SVNUrl srcUrl) {
+        this.srcUrl = srcUrl;
+    }
 
 	/**
-	 * @param file
+	 * set the url to copy to
+	 * @param destUrl
 	 */
-	public void setOldPath(File file) {
-		oldPath = file;
-	}
+    public void setDestUrl(SVNUrl destUrl) {
+        this.destUrl = destUrl;
+    }
 
-	/**
-	 * @param revision
-	 */
-	public void setOldTargetRevision(String revision) {
-		this.oldTargetRevision = getRevisionFrom(revision);
-	}
+    /**
+     * set the message for the commit (only when copying directly to repository
+     * using an url)
+     * @param message
+     */
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-	/**
-	 * @param url
-	 */
-	public void setOldUrl(SVNUrl url) {
-		oldUrl = url;
-	}
+    /**
+     * Sets the revision
+     * 
+     * @param revision
+     */
+    public void setRevision(String revision) {
+		this.revision = getRevisionFrom(revision);
+    }
 
-	/**
-	 * @param file
-	 */
-	public void setOutFile(File file) {
-		outFile = file;
-	}
 
-	/**
-	 * @param b
-	 */
-	public void setRecurse(boolean b) {
-		recurse = b;
-	}
 
 }

@@ -52,13 +52,14 @@
  * <http://www.apache.org/>.
  *
  */ 
-package org.tigris.subversion.svnant;
+package org.tigris.subversion.svnant.commands;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnAntValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNProperty;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
@@ -90,7 +91,7 @@ public class Propget extends SvnCommand {
 	/* (non-Javadoc)
 	 * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
 	 */
-	public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
+	public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
 
         ISVNProperty svnProperty;
         try {
@@ -100,7 +101,7 @@ public class Propget extends SvnCommand {
         		svnProperty = svnClient.propertyGet(url,name);
         	}
         } catch (SVNClientException e) {
-            throw new SvnCommandException("Can't get property "+name, e);
+            throw new SvnAntException("Can't get property "+name, e);
         }
         
         if (property != null && svnProperty != null) {
@@ -115,7 +116,7 @@ public class Propget extends SvnCommand {
             		os.write(svnProperty.getData());
             	}            	
             } catch (IOException e) {
-                throw new SvnCommandException("Can't write property value to file "+file.toString(), e);
+                throw new SvnAntException("Can't write property value to file "+file.toString(), e);
             } finally {
                 if (os != null) {
                 	try {
@@ -131,14 +132,14 @@ public class Propget extends SvnCommand {
     /**
      * Ensure we have a consistent and legal set of attributes
      */
-    protected void validateAttributes() throws SvnCommandValidationException {
+    protected void validateAttributes() throws SvnAntValidationException {
         if (((path == null) && (url == null))
                 || ((path != null) && (url != null)))
-            throw new SvnCommandValidationException("path attribute or url attribute must be set");
+            throw new SvnAntValidationException("path attribute or url attribute must be set");
         if (name == null)
-            throw new SvnCommandValidationException("svnPropertyName attribute must be set");
+            throw new SvnAntValidationException("svnPropertyName attribute must be set");
         if ((property == null) && (file == null))
-            throw new SvnCommandValidationException("property or file attribute must be set");
+            throw new SvnAntValidationException("property or file attribute must be set");
     }
     
 	/**

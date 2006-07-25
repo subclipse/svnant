@@ -52,43 +52,30 @@
  * <http://www.apache.org/>.
  *
  */ 
-package org.tigris.subversion.svnant.selectors;
-
-import java.io.File;
-
-import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.ISVNStatus;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
+package org.tigris.subversion.svnant;
 
 /**
- * This is an abstract class that implements all functionality shared
- * between all file selectors, within svn-ant, that depends on a file
- * status. It implements the 'isSelected' method, and redirects the
- * control flow to one of the subclasses by providing the svn status. 
+ * Custom svnAnt's exception used for signaling problems during argument/parameter validations.
  * 
- * @author Jean-Pierre Fiset <a href="mailto:jp@fiset.ca">jp@fiset.ca</a>
- *
+ * @author Martin Letenay
  */
-public abstract class StatusBasedSelector extends BaseSvnSelector {
+public class SvnAntValidationException extends Exception
+{
+	private static final long serialVersionUID = 1L;
 
-	final public boolean isSelected(ISVNClientAdapter svnClient_, File basedir_, String filename_, File file_) throws SvnAntException {
-		ISVNStatus status;
-		try {
-			status = svnClient_.getSingleStatus(file_);
-		} catch (SVNClientException e) {
-			throw new SvnAntException("Error occurred while obtaining status of " + file_.getAbsolutePath(), e);
-		}
-		
-		return isSelected(status);
-	}
-	
 	/**
-	 * This method must be reimplemented by all subclasses. A subclass must
-	 * decide the selection criteria based on the given status. 
-	 * @param status_ Status of the file being selected.
-	 * @return True if the file should be selected. Otherwise, false.
+	 * Constructor
+	 *
 	 */
-	abstract public boolean isSelected(ISVNStatus status_);
-	
+	public SvnAntValidationException() {
+		super();
+	}
+
+	/**
+	 * Constructor
+	 * @param message
+	 */
+	public SvnAntValidationException(String message) {
+		super(message);
+	}
 }

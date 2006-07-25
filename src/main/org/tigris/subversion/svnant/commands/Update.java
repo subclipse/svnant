@@ -52,90 +52,135 @@
  * <http://www.apache.org/>.
  *
  */ 
-package org.tigris.subversion.svnant;
+package org.tigris.subversion.svnant.commands;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.util.Vector;
 
-import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
+import org.apache.tools.ant.DirectoryScanner;
+import org.apache.tools.ant.types.FileSet;
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnAntValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
- * svn Cat. 
+ * svn Update. Bring changes from the repository into the working copy.
  * @author Cédric Chabanois 
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
+ *
  */
-public class Cat extends SvnCommand {
+public class Update extends SvnCommand {
+	/** file to update */
+	private File file = null;
 	
-	/** url */
-	private SVNUrl url = null;
+	/** dir to update */
+	private File dir = null;
 	
-	/** destination file. */ 
-	private File destFile = null;
+	/** filesets to update */
+	private Vector filesets = new Vector();	
 	
-	/** revision */
+	private ISVNClientAdapter svnClient;
+
 	private SVNRevision revision = SVNRevision.HEAD;
+	
+	private boolean recurse = true;
 
-	public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
-
-        InputStream is = null;
-        FileOutputStream os = null;
-		try {
-            os = new FileOutputStream(destFile);
-            is = svnClient.getContent(url, revision);
-            byte[] buffer = new byte[5000];
-            int read;
-            while ((read = is.read(buffer)) != -1) {
-                os.write(buffer,0,read);
-            }
-		} catch (Exception e) {
-			throw new SvnCommandException("Can't get the content of the specified file", e);
-		} finally {
-            if (os != null) {
-                try {
-                    os.close();
-                } catch (IOException e) {}
-            }
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {}
-            }        
+	public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
+		this.svnClient = svnClient;
+		
+		if (file != null)
+		{
+			try {
+				svnClient.update(file, revision, false);
+			} catch (SVNClientException e) {
+				throw new SvnAntException("Cannot update file "+file.getAbsolutePath(),e);
+			}
+		}
+			
+		if (dir != null) {
+			try {
+				svnClient.update(dir, revision, recurse);
+			} catch (SVNClientException e) {
+				throw new SvnAntException("Cannot update dir "+dir.getAbsolutePath(),e);
+			}			
+		}
+		
+		// deal with filesets
+		if (filesets.size() > 0) {
+			for (int i = 0; i < filesets.size(); i++) {
+				FileSet fs = (FileSet) filesets.elementAt(i);
+				updateFileSet(fs);
+			}
 		}
 	}
 
 	/**
 	 * Ensure we have a consistent and legal set of attributes
 	 */
-	protected void validateAttributes() throws SvnCommandValidationException {
-        if (url == null)
-            throw new SvnCommandValidationException("you must set url attr");
-		if (destFile == null)
-			destFile = new File(getProject().getBaseDir(),
-                                url.getLastPathSegment());
-		if (revision == null)
-			throw new SvnCommandValidationException("Invalid revision. Revision should be a number, a date in MM/DD/YYYY HH:MM AM_PM format or HEAD, BASE, COMMITED or PREV");
+	protected void validateAttributes() throws SvnAntValidationException {
+		if ((file == null) && (dir == null) && (filesets.size() == 0))
+			throw new SvnAntValidationException("file, url or fileset must be set"); 
 	}
 
 	/**
-	 * Sets the URL; required.
-	 * @param url The url to set
+	 * updates a fileset (both dirs and files)
+	 * @param svnClient
+	 * @param fs
+	 * @throws SvnAntException
 	 */
-	public void setUrl(SVNUrl url) {
-		this.url = url;
+	private void updateFileSet(FileSet fs) throws SvnAntException {
+		DirectoryScanner ds = fs.getDirectoryScanner(getProject());
+		File baseDir = fs.getDir(getProject()); // base dir
+		String[] files = ds.getIncludedFiles();
+		String[] dirs = ds.getIncludedDirectories();
+
+		// first : we update directories
+		for (int i = 0; i < dirs.length; i++) {
+			File dir = new File(baseDir, dirs[i]);
+			try {
+				svnClient.update(dir,revision,false);
+			} catch (SVNClientException e) {
+				logError("Cannot update directory " + dir.getAbsolutePath());
+			}
+		}
+
+		// then we update files
+		for (int i = 0; i < files.length; i++) {
+			File file = new File(baseDir, files[i]);
+			try {
+				svnClient.update(file,revision,false);
+			} catch (SVNClientException e) {
+				logError("Cannot update file " + file.getAbsolutePath());
+			}
+		}
 	}
 
 	/**
-	 * Sets the destination file 
+	 * set the file to update
+	 * @param file
 	 */
-	public void setDestFile(File destFile) {
-		this.destFile = destFile;
+	public void setFile(File file) {
+		this.file = file;
 	}
 
+	/**
+	 * set the directory to update
+	 * @param dir
+	 */
+	public void setDir(File dir) {
+		this.dir = dir;
+	}
+	
+	/**
+	 * if set, directory will be updated recursively 
+	 * @param recurse
+	 */
+	public void setRecurse(boolean recurse) {
+		this.recurse = recurse;
+	}
+	
 	/**
 	 * Sets the revision
 	 * 
@@ -145,4 +190,17 @@ public class Cat extends SvnCommand {
 		this.revision = getRevisionFrom(revision);
 	}
 
+	/**
+	 * Adds a set of files to update
+	 */
+	public void addFileset(FileSet set) {
+		filesets.addElement(set);
+	}	
+	
+	/**
+	 * Adds a set of files to update
+	 */
+	public void add(FileSet set) {
+		filesets.addElement(set);
+	}	
 }

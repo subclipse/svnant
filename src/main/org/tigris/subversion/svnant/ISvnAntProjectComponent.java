@@ -52,43 +52,31 @@
  * <http://www.apache.org/>.
  *
  */ 
-package org.tigris.subversion.svnant.selectors;
+package org.tigris.subversion.svnant;
 
-import java.io.File;
-
-import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.ISVNStatus;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
+import org.apache.tools.ant.ProjectComponent;
 
 /**
- * This is an abstract class that implements all functionality shared
- * between all file selectors, within svn-ant, that depends on a file
- * status. It implements the 'isSelected' method, and redirects the
- * control flow to one of the subclasses by providing the svn status. 
- * 
- * @author Jean-Pierre Fiset <a href="mailto:jp@fiset.ca">jp@fiset.ca</a>
+ * An interface defining a project component of SvnAnt,
+ * e.g. <svn> task, svn related selector etc.
+ * Primary used for obtaining appropriate ISVNClientAdapter implementation. 
  *
+ * @author Martin Letenay 
  */
-public abstract class StatusBasedSelector extends BaseSvnSelector {
+public interface ISvnAntProjectComponent {
 
-	final public boolean isSelected(ISVNClientAdapter svnClient_, File basedir_, String filename_, File file_) throws SvnAntException {
-		ISVNStatus status;
-		try {
-			status = svnClient_.getSingleStatus(file_);
-		} catch (SVNClientException e) {
-			throw new SvnAntException("Error occurred while obtaining status of " + file_.getAbsolutePath(), e);
-		}
-		
-		return isSelected(status);
-	}
+	/**
+	 * @return true when JavaHL is to be used as preferred client adapter implementation
+	 */
+	boolean getJavahl();
 	
 	/**
-	 * This method must be reimplemented by all subclasses. A subclass must
-	 * decide the selection criteria based on the given status. 
-	 * @param status_ Status of the file being selected.
-	 * @return True if the file should be selected. Otherwise, false.
+	 * @return true when JavaSVN is to be used as preferred client adapter implementation
 	 */
-	abstract public boolean isSelected(ISVNStatus status_);
+	boolean getJavaSvn();
 	
+	/**
+	 * @return the ant's project component element. Used for redirecting loging there.
+	 */
+	ProjectComponent getProjectComponent();
 }

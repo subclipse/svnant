@@ -52,138 +52,67 @@
  * <http://www.apache.org/>.
  *
  */ 
-
-package org.tigris.subversion.svnant;
+package org.tigris.subversion.svnant.commands;
 
 import java.io.File;
-import java.util.Vector;
 
-import org.apache.tools.ant.types.FileSet;
-import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnAntValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.SVNKeywords;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 /**
- * ancestor of KeywordSet ...
+ * svn propdel. Delete a property
  * @author Cédric Chabanois 
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  *
  */
-public abstract class Keywords extends SvnCommand {
-    // the keywords available for substitution
-    protected SVNKeywords keywords;
+public class Propdel extends SvnCommand {
+    /** the path of the file or dir on which to delete the property */
+    private File path = null;
 
-    /** file concerned by keywords substitution */
-    protected File file = null;
+    private String propName = null;
+    private boolean recurse = false;
 
-    /** filesets concerned by keywords substitution */
-    protected Vector filesets = new Vector();
+    public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
 
-    /** directory concerned by keywords substitution */
-    protected File dir = null;
-
-    /** set keywords substitution recursively ? (only for dir attribute) */
-    protected boolean recurse = true;
-
-
-    protected ISVNClientAdapter svnClient;
-
-    public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
-        this.svnClient = svnClient;
-        
-        // we do nothing there but this function is overloaded  
+        try {
+            svnClient.propertyDel(path,propName,recurse);
+        } catch (SVNClientException e) {
+            throw new SvnAntException("Can't delete property "+propName, e);
+        }
     }
 
     /**
      * Ensure we have a consistent and legal set of attributes
      */
-    protected void validateAttributes() throws SvnCommandValidationException {
+    protected void validateAttributes() throws SvnAntValidationException {
+        if (path == null)
+            throw new SvnAntValidationException("path attribute must be set");
+        if (propName == null)
+            throw new SvnAntValidationException("name attribute must be set");
+    }
 
-        if ((file == null) && (dir == null) && (filesets.size() == 0))
-            throw new SvnCommandValidationException("file, url or fileset must be set");
+    /**
+     * set the path of the file or directory on which to set the property
+     */
+    public void setPath(File path) {
+        this.path = path;
+    }
+
+    /**
+     * set the name of the property 
+     */
+    public void setName(String propName) {
+        this.propName = propName;
     }
     
-	public void setHeadURL(boolean b) {
-		keywords.setHeadUrl(b);
-	}
-
-    public void setURL(boolean b) {
-        keywords.setHeadUrl(b);
-    }
-
-	public void setId(boolean b) {
-        keywords.setId(b);
-	}
-
-	public void setLastChangedBy(boolean b) {
-		keywords.setLastChangedBy(b);
-	}
-
-    public void setAuthor(boolean b) {
-        keywords.setLastChangedBy(b);
-    }
-
-	public void setLastChangedDate(boolean b) {
-		keywords.setLastChangedDate(b);
-	}
-
-    public void setDate(boolean b) {
-        keywords.setLastChangedDate(b);
-    }
-
-
-	public void setLastChangedRevision(boolean b) {
-		keywords.setLastChangedRevision(b);
-	}
-    
-    public void setRev(boolean b) {
-        keywords.setLastChangedRevision(b);
-    }
-
     /**
-     * set file on which to set keywords substitution 
-     * @param file
-     */
-    public void setFile(File file) {
-        this.file = file;
-    }
-
-    /**
-     * set directory on which to set keywords substitution 
-     * @param dir
-     */
-    public void setDir(File dir) {
-        this.dir = dir;
-    }
-
-    /**
-     * if set, keywords substitution will be set recursively
+     * if set, property will be set recursively
      * @param recursive
      */
     public void setRecurse(boolean recurse) {
         this.recurse = recurse;
-    }
-
-    /**
-     * Adds a set of files on which to apply keywords substitution
-     */
-    public void addFileset(FileSet set) {
-        filesets.addElement(set);
-    }
-
-    /**
-     * Adds a set of files on which to apply keywords substitution
-     */
-    public void add(FileSet set) {
-        filesets.addElement(set);
-    }
-
-    /**
-     * set the keywords
-     * @param keywords
-     */
-    public void setKeywords(SVNKeywords keywords) {
-        this.keywords = keywords;
     }
 
 }

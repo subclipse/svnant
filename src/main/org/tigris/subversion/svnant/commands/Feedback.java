@@ -52,84 +52,51 @@
  * <http://www.apache.org/>.
  *
  */ 
-package org.tigris.subversion.svnant;
+package org.tigris.subversion.svnant.commands;
 
 import java.io.File;
 
-import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
+import org.tigris.subversion.svnclientadapter.ISVNNotifyListener;
+import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 
 /**
- * @author cedric
+ * @author Cédric Chabanois 
+ *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  *
- * Commit an unversioned file or tree into the repository. 
  */
-public class Import extends SvnCommand {
-
-	/** the url */
-    private SVNUrl url = null;
-
-    /** the path to import */
-    private File path = null;
-    
-	/** message */
-	private String message = null;	
-
-	private boolean recurse = true;
-
-    public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
-
-        try {
-        	svnClient.doImport(path, url, message, recurse);
-        } catch (SVNClientException e) {
-            throw new SvnCommandException("Can't import", e);
-        }
-
-    }
-
-    /**
-     * Ensure we have a consistent and legal set of attributes
-     */
-    protected void validateAttributes() throws SvnCommandValidationException {
-    	if ((url == null) || (path == null))
-    		throw new SvnCommandValidationException("url and path attributes must be set");
-    	if (message == null)
-    		throw new SvnCommandValidationException("message attribute must be set");
-    }
-    
-    /**
-     * set the url to import to
-     * @param url
-     */
-    public void setUrl(SVNUrl url) {
-    	this.url = url;
-    }
-    
-    /**
-     * set the path to import from
-     * @param path
-     */
-    public void setPath(File path) {
-    	this.path = path;
-    }
-    
-    
-    /**
-     * set the message for immediate commit
-     * @param message
-     */
-    public void setMessage(String message) {
-    	this.message = message;
-    }
-
-	/**
-	 * if not set, import will operate on single directory only  
-	 * @param recurse
-	 */
-	public void setRecurse(boolean recurse) {
-		this.recurse = recurse;    
+public class Feedback implements ISVNNotifyListener {
+	private SvnCommand svnCommand;
+	
+	public Feedback(SvnCommand command)
+	{
+		this.svnCommand = command;
 	}
     
+    public void setCommand(int cmd) {
+        
+    }
+
+    public void logMessage(String message) {
+		svnCommand.logVerbose(message);
+	}
+
+    public void logRevision(long revision, String path) {
+    }
+
+    public void logCommandLine(String message) {
+        svnCommand.logVerbose(message);
+    }
+
+    public void logError(String message) {
+        svnCommand.logError(message);
+    }
+    
+    public void logCompleted(String message) {
+        svnCommand.logVerbose(message);
+    }
+
+    public void onNotify(File path, SVNNodeKind nodeKind) {
+        
+    }
+
 }

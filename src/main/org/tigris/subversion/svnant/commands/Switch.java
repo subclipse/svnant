@@ -51,155 +51,76 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
-package org.tigris.subversion.svnant;
+ */
+package org.tigris.subversion.svnant.commands;
 
 import java.io.File;
-import java.util.Vector;
 
-import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.types.FileSet;
-import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnAntValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
- * svn Update. Bring changes from the repository into the working copy.
- * @author Cédric Chabanois 
+ * svn Switch.
+ * Update the working copy to mirror a new URL within the repository.
+ * This behaviour is similar to 'svn update', and is the way to
+ * move a working copy to a branch or tag within the same repository.
+ *
+ * @author Cédric Chabanois
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  *
  */
-public class Update extends SvnCommand {
-	/** file to update */
-	private File file = null;
-	
-	/** dir to update */
-	private File dir = null;
-	
-	/** filesets to update */
-	private Vector filesets = new Vector();	
-	
-	private ISVNClientAdapter svnClient;
+public class Switch extends SvnCommand {
+	private File path = null;
+
+    private SVNUrl url;
 
 	private SVNRevision revision = SVNRevision.HEAD;
-	
+
 	private boolean recurse = true;
 
-	public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
-		this.svnClient = svnClient;
-		
-		if (file != null)
-		{
-			try {
-				svnClient.update(file, revision, false);
-			} catch (SVNClientException e) {
-				throw new SvnCommandException("Cannot update file "+file.getAbsolutePath(),e);
-			}
-		}
-			
-		if (dir != null) {
-			try {
-				svnClient.update(dir, revision, recurse);
-			} catch (SVNClientException e) {
-				throw new SvnCommandException("Cannot update dir "+dir.getAbsolutePath(),e);
-			}			
-		}
-		
-		// deal with filesets
-		if (filesets.size() > 0) {
-			for (int i = 0; i < filesets.size(); i++) {
-				FileSet fs = (FileSet) filesets.elementAt(i);
-				updateFileSet(fs);
-			}
+	public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
+
+		try {
+			svnClient.switchToUrl(path, url, revision, recurse);
+		} catch (SVNClientException e) {
+			throw new SvnAntException("Cannot switch to url : "+url.toString(),e);
 		}
 	}
 
 	/**
 	 * Ensure we have a consistent and legal set of attributes
 	 */
-	protected void validateAttributes() throws SvnCommandValidationException {
-		if ((file == null) && (dir == null) && (filesets.size() == 0))
-			throw new SvnCommandValidationException("file, url or fileset must be set"); 
+	protected void validateAttributes() throws SvnAntValidationException {
+		if ((path == null) || (url == null))
+			throw new SvnAntValidationException("path and url must be set");
 	}
 
 	/**
-	 * updates a fileset (both dirs and files)
-	 * @param svnClient
-	 * @param fs
-	 * @throws SvnCommandException
+	 * @param path The path to set.
 	 */
-	private void updateFileSet(FileSet fs) throws SvnCommandException {
-		DirectoryScanner ds = fs.getDirectoryScanner(getProject());
-		File baseDir = fs.getDir(getProject()); // base dir
-		String[] files = ds.getIncludedFiles();
-		String[] dirs = ds.getIncludedDirectories();
-
-		// first : we update directories
-		for (int i = 0; i < dirs.length; i++) {
-			File dir = new File(baseDir, dirs[i]);
-			try {
-				svnClient.update(dir,revision,false);
-			} catch (SVNClientException e) {
-				logError("Cannot update directory " + dir.getAbsolutePath());
-			}
-		}
-
-		// then we update files
-		for (int i = 0; i < files.length; i++) {
-			File file = new File(baseDir, files[i]);
-			try {
-				svnClient.update(file,revision,false);
-			} catch (SVNClientException e) {
-				logError("Cannot update file " + file.getAbsolutePath());
-			}
-		}
+	public void setPath(File path) {
+		this.path = path;
 	}
-
 	/**
-	 * set the file to update
-	 * @param file
-	 */
-	public void setFile(File file) {
-		this.file = file;
-	}
-
-	/**
-	 * set the directory to update
-	 * @param dir
-	 */
-	public void setDir(File dir) {
-		this.dir = dir;
-	}
-	
-	/**
-	 * if set, directory will be updated recursively 
-	 * @param recurse
+	 * @param recurse The recurse to set.
 	 */
 	public void setRecurse(boolean recurse) {
 		this.recurse = recurse;
 	}
-	
 	/**
-	 * Sets the revision
-	 * 
-	 * @param revision
+	 * @param revision The revision to set.
 	 */
 	public void setRevision(String revision) {
 		this.revision = getRevisionFrom(revision);
 	}
-
 	/**
-	 * Adds a set of files to update
+	 * @param url The url to set.
 	 */
-	public void addFileset(FileSet set) {
-		filesets.addElement(set);
-	}	
-	
-	/**
-	 * Adds a set of files to update
-	 */
-	public void add(FileSet set) {
-		filesets.addElement(set);
-	}	
+	public void setUrl(SVNUrl url) {
+		this.url = url;
+	}
 }

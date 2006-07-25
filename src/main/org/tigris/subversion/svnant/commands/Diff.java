@@ -52,119 +52,123 @@
  * <http://www.apache.org/>.
  *
  */ 
-package org.tigris.subversion.svnant;
+package org.tigris.subversion.svnant.commands;
 
 import java.io.File;
 
-import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnAntValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
- * svn Move. Moves or renames a file
+ * svn Diff.   
+ * display the differences between two paths. (Unified format)
+ * 
  * @author Cédric Chabanois 
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  *
  */
-public class Move extends SvnCommand {
-    private File srcPath = null;
-    private File destPath = null;
-    private SVNUrl srcUrl = null;
-    private SVNUrl destUrl = null;
-	private String message = null;
-    private boolean force = false;
+public class Diff extends SvnCommand {
+    private SVNUrl oldUrl = null;
+    private SVNUrl newUrl = null;
+    private File oldPath = null;
+    private File newPath = null;
+    private SVNRevision oldTargetRevision = null;
+    private SVNRevision newTargetRevision = null;
+    private File outFile = new File("patch");
+    private boolean recurse = true; 
 
-    public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
+	/* (non-Javadoc)
+	 * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.SVNClientAdapter)
+	 */
+	public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
 
-        if (srcPath != null) {
-            try {
-                svnClient.move(srcPath, destPath, force);
-            } catch (SVNClientException e) {
-                throw new SvnCommandException("Can't copy", e);
-            }
-        } else {
-            try {
-                svnClient.move(srcUrl, destUrl, message, SVNRevision.HEAD);
-            } catch (SVNClientException e) {
-                throw new SvnCommandException("Can't copy", e);
-            }
+        try {
+            if (oldUrl != null)
+                svnClient.diff(oldUrl, oldTargetRevision,
+                               newUrl, newTargetRevision,
+                               outFile, recurse);
+            else
+                svnClient.diff(oldPath, oldTargetRevision,
+                               newPath, newTargetRevision,
+                               outFile, recurse);            
+        } catch (SVNClientException e) {
+            throw new SvnAntException("Can't get the differences",e);
         }
-
-    }
+	}
 
     /**
      * Ensure we have a consistent and legal set of attributes
      */
-    protected void validateAttributes() throws SvnCommandValidationException {
-        if (((srcPath == null) && (srcUrl == null))
-            || ((srcPath != null) && (srcUrl != null)))
-            throw new SvnCommandValidationException("Either srcPath attribute or srcUrl attribute must be set");
-
-        if (srcPath != null) {
-            if (destPath == null)
-                throw new SvnCommandValidationException("destPath attribute must be set when srcPath is set");
-            if (destUrl != null)
-                throw new SvnCommandValidationException("destUrl attribute cannot be used when srcPath is set");
+    protected void validateAttributes() throws SvnAntValidationException {
+        if (oldUrl != null) {
+            if ((oldPath != null) || (newPath != null))
+                throw new SvnAntValidationException("paths cannot be with urls when diffing");
         }
-
-        if (srcUrl != null) {
-            if (destUrl == null)
-                throw new SvnCommandValidationException("destUrl attribute must be set when srcUrl is set");
-            if (destPath != null)
-                throw new SvnCommandValidationException("destPath attribute cannot be used when srcUrl is set");
-            if (message == null)
-            	throw new SvnCommandValidationException("message attribute must be set when srcUrl is set");
+        else
+        {
+            if ((oldUrl != null) || (newUrl != null))
+                throw new SvnAntValidationException("paths cannot be with urls when diffing");
         }
     }
 
 	/**
-	 * set the path to move from
-	 * @param srcPath
+	 * @param file
 	 */
-    public void setSrcPath(File srcPath) {
-        this.srcPath = srcPath;
-    }
+	public void setNewPath(File file) {
+		newPath = file;
+	}
 
 	/**
-	 * set the path to move to
-	 * @param destPath
+	 * @param revision
 	 */
-    public void setDestPath(File destPath) {
-        this.destPath = destPath;
-    }
+	public void setNewTargetRevision(String revision) {
+		this.newTargetRevision = getRevisionFrom(revision);
+	}
 
 	/**
-	 * set the url to move from
-	 * @param srcUrl
+	 * @param url
 	 */
-    public void setSrcUrl(SVNUrl srcUrl) {
-        this.srcUrl = srcUrl;
-    }
+	public void setNewUrl(SVNUrl url) {
+		newUrl = url;
+	}
 
 	/**
-	 * set the url to move to
-	 * @param destUrl
+	 * @param file
 	 */
-    public void setDestUrl(SVNUrl destUrl) {
-        this.destUrl = destUrl;
-    }
-    
-    /**
-     * set the message for commit when using destUrl
-     * @param message
-     */
-    public void setMessage(String message) {
-    	this.message = message;
-    }
+	public void setOldPath(File file) {
+		oldPath = file;
+	}
 
-    /**
-     * set the force parameter
-     * @param force
-     */
-    public void setForce(boolean force) {
-        this.force = force;
-    }
+	/**
+	 * @param revision
+	 */
+	public void setOldTargetRevision(String revision) {
+		this.oldTargetRevision = getRevisionFrom(revision);
+	}
+
+	/**
+	 * @param url
+	 */
+	public void setOldUrl(SVNUrl url) {
+		oldUrl = url;
+	}
+
+	/**
+	 * @param file
+	 */
+	public void setOutFile(File file) {
+		outFile = file;
+	}
+
+	/**
+	 * @param b
+	 */
+	public void setRecurse(boolean b) {
+		recurse = b;
+	}
 
 }

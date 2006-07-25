@@ -52,95 +52,139 @@
  * <http://www.apache.org/>.
  *
  */ 
-package org.tigris.subversion.svnant;
+
+package org.tigris.subversion.svnant.commands;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.Vector;
 
-import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
+import org.apache.tools.ant.types.FileSet;
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnAntValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
+import org.tigris.subversion.svnclientadapter.SVNKeywords;
 
 /**
- * svn propset. Set a property
+ * ancestor of KeywordSet ...
  * @author Cédric Chabanois 
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  *
  */
-public class Propset extends SvnCommand {
-    /** the path of the file or dir on which to set the property */
-    private File path = null;
+public abstract class Keywords extends SvnCommand {
+    // the keywords available for substitution
+    protected SVNKeywords keywords;
 
-    private File file;    
-    private String propName = null;
-    private String propValue = null;
-    private boolean recurse = false;
+    /** file concerned by keywords substitution */
+    protected File file = null;
 
-    public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
+    /** filesets concerned by keywords substitution */
+    protected Vector filesets = new Vector();
 
-        try {
-            if (propValue != null)
-                svnClient.propertySet(path,propName,propValue,recurse);
-            else
-                svnClient.propertySet(path,propName,file,recurse);
-        } catch (SVNClientException e) {
-            throw new SvnCommandException("Can't set property "+propName, e);
-        } catch (IOException e) {
-            throw new SvnCommandException("Can't set property "+propName, e);
-        }
+    /** directory concerned by keywords substitution */
+    protected File dir = null;
+
+    /** set keywords substitution recursively ? (only for dir attribute) */
+    protected boolean recurse = true;
+
+
+    protected ISVNClientAdapter svnClient;
+
+    public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
+        this.svnClient = svnClient;
+        
+        // we do nothing there but this function is overloaded  
     }
 
     /**
      * Ensure we have a consistent and legal set of attributes
      */
-    protected void validateAttributes() throws SvnCommandValidationException {
-        if (path == null)
-            throw new SvnCommandValidationException("path attribute must be set");
-        if (propName == null)
-            throw new SvnCommandValidationException("name attribute must be set");
-        if ((propValue == null) && (file == null))
-            throw new SvnCommandValidationException("value or file attribute must be set");
-            
-        if ((propValue != null) && (file != null))
-            throw new SvnCommandValidationException("file attribute must not be set when value attribute is set");
-            
+    protected void validateAttributes() throws SvnAntValidationException {
 
-    }
-
-    /**
-     * set the path of the file or directory on which to set the property
-     */
-    public void setPath(File path) {
-        this.path = path;
-    }
-
-    /**
-     * set the name of the property 
-     */
-    public void setName(String propName) {
-        this.propName = propName;
+        if ((file == null) && (dir == null) && (filesets.size() == 0))
+            throw new SvnAntValidationException("file, url or fileset must be set");
     }
     
-    /**
-     * set the value of the property 
-     */
-    public void setValue(String propValue) {
-        this.propValue = propValue;
+	public void setHeadURL(boolean b) {
+		keywords.setHeadUrl(b);
+	}
+
+    public void setURL(boolean b) {
+        keywords.setHeadUrl(b);
     }
-  
+
+	public void setId(boolean b) {
+        keywords.setId(b);
+	}
+
+	public void setLastChangedBy(boolean b) {
+		keywords.setLastChangedBy(b);
+	}
+
+    public void setAuthor(boolean b) {
+        keywords.setLastChangedBy(b);
+    }
+
+	public void setLastChangedDate(boolean b) {
+		keywords.setLastChangedDate(b);
+	}
+
+    public void setDate(boolean b) {
+        keywords.setLastChangedDate(b);
+    }
+
+
+	public void setLastChangedRevision(boolean b) {
+		keywords.setLastChangedRevision(b);
+	}
+    
+    public void setRev(boolean b) {
+        keywords.setLastChangedRevision(b);
+    }
+
     /**
-     * set the file that will be used as a value 
+     * set file on which to set keywords substitution 
+     * @param file
      */
     public void setFile(File file) {
         this.file = file;
     }
-    
+
     /**
-     * if set, property will be set recursively
+     * set directory on which to set keywords substitution 
+     * @param dir
+     */
+    public void setDir(File dir) {
+        this.dir = dir;
+    }
+
+    /**
+     * if set, keywords substitution will be set recursively
      * @param recursive
      */
     public void setRecurse(boolean recurse) {
         this.recurse = recurse;
+    }
+
+    /**
+     * Adds a set of files on which to apply keywords substitution
+     */
+    public void addFileset(FileSet set) {
+        filesets.addElement(set);
+    }
+
+    /**
+     * Adds a set of files on which to apply keywords substitution
+     */
+    public void add(FileSet set) {
+        filesets.addElement(set);
+    }
+
+    /**
+     * set the keywords
+     * @param keywords
+     */
+    public void setKeywords(SVNKeywords keywords) {
+        this.keywords = keywords;
     }
 
 }

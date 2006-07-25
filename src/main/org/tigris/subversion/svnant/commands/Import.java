@@ -51,75 +51,86 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */
-package org.tigris.subversion.svnant;
+ */ 
+package org.tigris.subversion.svnant.commands;
 
 import java.io.File;
 
-import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnAntValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
- * svn Switch.
- * Update the working copy to mirror a new URL within the repository.
- * This behaviour is similar to 'svn update', and is the way to
- * move a working copy to a branch or tag within the same repository.
+ * @author cedric
  *
- * @author Cédric Chabanois
- *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
- *
+ * Commit an unversioned file or tree into the repository. 
  */
-public class Switch extends SvnCommand {
-	private File path = null;
+public class Import extends SvnCommand {
 
-    private SVNUrl url;
+	/** the url */
+    private SVNUrl url = null;
 
-	private SVNRevision revision = SVNRevision.HEAD;
+    /** the path to import */
+    private File path = null;
+    
+	/** message */
+	private String message = null;	
 
 	private boolean recurse = true;
 
-	public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
+    public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
 
-		try {
-			svnClient.switchToUrl(path, url, revision, recurse);
-		} catch (SVNClientException e) {
-			throw new SvnCommandException("Cannot switch to url : "+url.toString(),e);
-		}
-	}
+        try {
+        	svnClient.doImport(path, url, message, recurse);
+        } catch (SVNClientException e) {
+            throw new SvnAntException("Can't import", e);
+        }
+
+    }
+
+    /**
+     * Ensure we have a consistent and legal set of attributes
+     */
+    protected void validateAttributes() throws SvnAntValidationException {
+    	if ((url == null) || (path == null))
+    		throw new SvnAntValidationException("url and path attributes must be set");
+    	if (message == null)
+    		throw new SvnAntValidationException("message attribute must be set");
+    }
+    
+    /**
+     * set the url to import to
+     * @param url
+     */
+    public void setUrl(SVNUrl url) {
+    	this.url = url;
+    }
+    
+    /**
+     * set the path to import from
+     * @param path
+     */
+    public void setPath(File path) {
+    	this.path = path;
+    }
+    
+    
+    /**
+     * set the message for immediate commit
+     * @param message
+     */
+    public void setMessage(String message) {
+    	this.message = message;
+    }
 
 	/**
-	 * Ensure we have a consistent and legal set of attributes
-	 */
-	protected void validateAttributes() throws SvnCommandValidationException {
-		if ((path == null) || (url == null))
-			throw new SvnCommandValidationException("path and url must be set");
-	}
-
-	/**
-	 * @param path The path to set.
-	 */
-	public void setPath(File path) {
-		this.path = path;
-	}
-	/**
-	 * @param recurse The recurse to set.
+	 * if not set, import will operate on single directory only  
+	 * @param recurse
 	 */
 	public void setRecurse(boolean recurse) {
-		this.recurse = recurse;
+		this.recurse = recurse;    
 	}
-	/**
-	 * @param revision The revision to set.
-	 */
-	public void setRevision(String revision) {
-		this.revision = getRevisionFrom(revision);
-	}
-	/**
-	 * @param url The url to set.
-	 */
-	public void setUrl(SVNUrl url) {
-		this.url = url;
-	}
+    
 }

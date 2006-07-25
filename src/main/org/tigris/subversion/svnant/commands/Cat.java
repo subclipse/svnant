@@ -52,77 +52,102 @@
  * <http://www.apache.org/>.
  *
  */ 
-package org.tigris.subversion.svnant;
+package org.tigris.subversion.svnant.commands;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
-import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.types.FileSet;
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnAntValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
-import org.tigris.subversion.svnclientadapter.SVNKeywords;
+import org.tigris.subversion.svnclientadapter.SVNRevision;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
- * add keywords on files
+ * svn Cat. 
  * @author Cédric Chabanois 
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
- *
  */
-public class Keywordsadd extends Keywords {
-   
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
-	 */
-	public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
-        super.execute(svnClient);        
+public class Cat extends SvnCommand {
+	
+	/** url */
+	private SVNUrl url = null;
+	
+	/** destination file. */ 
+	private File destFile = null;
+	
+	/** revision */
+	private SVNRevision revision = SVNRevision.HEAD;
 
-        if (file != null) {
-            try {            
-                svnClient.addKeywords(file,keywords);
-            } catch (SVNClientException e) {
-                throw new SvnCommandException("Can't add keywords on file "+file.toString(), e);
+	public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
+
+        InputStream is = null;
+        FileOutputStream os = null;
+		try {
+            os = new FileOutputStream(destFile);
+            is = svnClient.getContent(url, revision);
+            byte[] buffer = new byte[5000];
+            int read;
+            while ((read = is.read(buffer)) != -1) {
+                os.write(buffer,0,read);
             }
-        }
-        else
-        if (dir != null) {
-            try {            
-                svnClient.addKeywords(dir,keywords);
-            } catch (SVNClientException e) {
-                throw new SvnCommandException("Can't add keywords on directory "+dir.toString(), e);
-            }            
-        }
-        else
-        // deal with filesets
-        if (filesets.size() > 0) {
-            for (int i = 0; i < filesets.size(); i++) {
-                FileSet fs = (FileSet) filesets.elementAt(i);
-                keywordsAdd(fs,keywords);
+		} catch (Exception e) {
+			throw new SvnAntException("Can't get the content of the specified file", e);
+		} finally {
+            if (os != null) {
+                try {
+                    os.close();
+                } catch (IOException e) { 
+                	//Just ignore, it's exception during stream closing }
+                }
             }
-        }
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) { 
+                	//Just ignore, it's exception during stream closing }
+                }
+            }        
+		}
 	}
 
-    /**
-     * add keywords on a fileset 
-     * @param svnClient
-     * @param fs
-     * @throws SvnCommandException
-     */
-    private void keywordsAdd(FileSet fs, SVNKeywords keywords) throws SvnCommandException {
-        DirectoryScanner ds = fs.getDirectoryScanner(getProject());
-        File baseDir = fs.getDir(getProject()); // base dir
-        String[] files = ds.getIncludedFiles();
+	/**
+	 * Ensure we have a consistent and legal set of attributes
+	 */
+	protected void validateAttributes() throws SvnAntValidationException {
+        if (url == null)
+            throw new SvnAntValidationException("you must set url attr");
+		if (destFile == null)
+			destFile = new File(getProject().getBaseDir(),
+                                url.getLastPathSegment());
+		if (revision == null)
+			throw new SvnAntValidationException("Invalid revision. Revision should be a number, a date in MM/DD/YYYY HH:MM AM_PM format or HEAD, BASE, COMMITED or PREV");
+	}
 
-        for (int i = 0; i < files.length; i++) {
-            File file = new File(baseDir, files[i]);
-            try {
-                svnClient.addKeywords(file,keywords);
-            } catch (SVNClientException e) {
-                throw new SvnCommandException("Can't set keywords on file "+file.toString(), e);
-            }
-        }
-    }
+	/**
+	 * Sets the URL; required.
+	 * @param url The url to set
+	 */
+	public void setUrl(SVNUrl url) {
+		this.url = url;
+	}
 
+	/**
+	 * @param destFile the destFile to set
+	 */
+	public void setDestFile(File destFile) {
+		this.destFile = destFile;
+	}
 
-    
+	/**
+	 * Sets the revision
+	 * 
+	 * @param revision
+	 */
+	public void setRevision(String revision) {
+		this.revision = getRevisionFrom(revision);
+	}
 
 }

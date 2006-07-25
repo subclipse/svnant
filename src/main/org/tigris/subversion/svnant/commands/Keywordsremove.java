@@ -52,60 +52,78 @@
  * <http://www.apache.org/>.
  *
  */ 
-package org.tigris.subversion.svnant;
+package org.tigris.subversion.svnant.commands;
 
 import java.io.File;
 
-import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
+import org.apache.tools.ant.DirectoryScanner;
+import org.apache.tools.ant.types.FileSet;
+import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
+import org.tigris.subversion.svnclientadapter.SVNKeywords;
 
 /**
- * Create a new, empty repository at path.
- * 
- * @author Cédric Chabanois (cchabanois at no-log.org)
+ * remove some keywords on given files
+ * @author Cédric Chabanois 
+ *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
+ *
  */
-public class CreateRepository extends SvnCommand {
-	/** path of the repository to create */
-	private File path = null;
-	
-	/** the type of the repository to create */
-	private String repositoryType = null;
-    
+public class Keywordsremove extends Keywords {
+   
 	/* (non-Javadoc)
 	 * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
 	 */
-	public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
+	public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
+        super.execute(svnClient);        
 
-		try {
-			svnClient.createRepository(path,repositoryType);
-		} catch (SVNClientException e) {
-			throw new SvnCommandException("Cannot create repository at "+path.getAbsolutePath(),e);
-		}		
+        if (file != null) {
+            try {            
+                svnClient.removeKeywords(file,keywords);
+            } catch (SVNClientException e) {
+                throw new SvnAntException("Can't remove keywords on file "+file.toString(), e);
+            }
+        }
+        else
+        if (dir != null) {
+            try {            
+                svnClient.removeKeywords(dir,keywords);
+            } catch (SVNClientException e) {
+                throw new SvnAntException("Can't remove keywords on directory "+dir.toString(), e);
+            }            
+        }
+        else
+        // deal with filesets
+        if (filesets.size() > 0) {
+            for (int i = 0; i < filesets.size(); i++) {
+                FileSet fs = (FileSet) filesets.elementAt(i);
+                keywordsRemove(fs,keywords);
+            }
+        }
 	}
 
-	/**
-	 * Ensure we have a consistent and legal set of attributes
-	 */
-	protected void validateAttributes() throws SvnCommandValidationException {
-		if (path == null)
-			throw new SvnCommandValidationException("Path attribute must be set"); 
-	}	
-	
-	/**
-	 * @param path The path to set.
-	 */
-	public void setPath(File path) {
-		this.path = path;
-	}
-	
-	
-	/**
-	 * set the repository type : either fsfs or bdb
-	 * 
-	 * @param repositoryType The repositoryType to set.
-	 */
-	public void setRepositoryType(String repositoryType) {
-		this.repositoryType = repositoryType;
-	}
+    /**
+     * add keywords on a fileset 
+     * @param svnClient
+     * @param fs
+     * @throws SvnAntException
+     */
+    private void keywordsRemove(FileSet fs, SVNKeywords keywords) throws SvnAntException {
+        DirectoryScanner ds = fs.getDirectoryScanner(getProject());
+        File baseDir = fs.getDir(getProject()); // base dir
+        String[] files = ds.getIncludedFiles();
+
+        for (int i = 0; i < files.length; i++) {
+            File file = new File(baseDir, files[i]);
+            try {
+                svnClient.removeKeywords(file,keywords);
+            } catch (SVNClientException e) {
+                throw new SvnAntException("Can't set keywords on file "+file.toString(), e);
+            }
+        }
+    }
+
+
+    
+
 }

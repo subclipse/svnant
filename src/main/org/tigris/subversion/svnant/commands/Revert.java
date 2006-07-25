@@ -52,14 +52,15 @@
  * <http://www.apache.org/>.
  *
  */ 
-package org.tigris.subversion.svnant;
+package org.tigris.subversion.svnant.commands;
 
 import java.io.File;
 import java.util.Vector;
 
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
-import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnAntValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
@@ -85,7 +86,7 @@ public class Revert extends SvnCommand {
 	
 	private ISVNClientAdapter svnClient;
 
-	public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
+	public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
 		this.svnClient = svnClient;
 		
 		if (file != null)
@@ -106,17 +107,17 @@ public class Revert extends SvnCommand {
 	/**
 	 * Ensure we have a consistent and legal set of attributes
 	 */
-	protected void validateAttributes() throws SvnCommandValidationException {
+	protected void validateAttributes() throws SvnAntValidationException {
         if (file != null) {
             if (dir != null)
-                throw new SvnCommandValidationException("Don't use both file and dir attribute");
+                throw new SvnAntValidationException("Don't use both file and dir attribute");
             if (filesets.size() > 0)
-                throw new SvnCommandValidationException("Don't use both file attribute and filesets");
+                throw new SvnAntValidationException("Don't use both file attribute and filesets");
         }
         else
         if (dir != null) {
             if (filesets.size() > 0)
-                throw new SvnCommandValidationException("Don't use both file attribute and filesets");            
+                throw new SvnAntValidationException("Don't use both file attribute and filesets");            
         }
 	}
 
@@ -125,13 +126,13 @@ public class Revert extends SvnCommand {
      *
 	 * @param file
 	 * @param force
-	 * @throws SvnCommandException
+	 * @throws SvnAntException
 	 */
-	private void revertFile(File file, boolean recurse) throws SvnCommandException {
+	private void revertFile(File file, boolean recurse) throws SvnAntException {
 		try {
             svnClient.revert(file, recurse);
 		} catch (SVNClientException e) {
-			throw new SvnCommandException("Cannot revert file or directory "+file.getAbsolutePath(),e);
+			throw new SvnAntException("Cannot revert file or directory "+file.getAbsolutePath(),e);
 		}
 	}
 
@@ -139,9 +140,9 @@ public class Revert extends SvnCommand {
 	 * revert a fileset (both dirs and files)
 	 * @param svnClient
 	 * @param fs
-	 * @throws SvnCommandException
+	 * @throws SvnAntException
 	 */
-	private void revertFileSet(FileSet fs) throws SvnCommandException {
+	private void revertFileSet(FileSet fs) throws SvnAntException {
 		DirectoryScanner ds = fs.getDirectoryScanner(getProject());
 		File baseDir = fs.getDir(getProject()); // base dir
 		String[] files = ds.getIncludedFiles();

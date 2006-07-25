@@ -52,7 +52,7 @@
  * <http://www.apache.org/>.
  *
  */ 
-package org.tigris.subversion.svnant;
+package org.tigris.subversion.svnant.commands;
 
 import java.io.File;
 import java.util.Stack;
@@ -60,7 +60,8 @@ import java.util.Vector;
 
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
-import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnAntValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
@@ -93,7 +94,7 @@ public class Commit extends SvnCommand {
 
     private ISVNClientAdapter svnClient;
 
-    public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
+    public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
 		this.svnClient = svnClient;
 		
         // deal with the single file
@@ -118,29 +119,29 @@ public class Commit extends SvnCommand {
     /**
      * Ensure we have a consistent and legal set of attributes
      */
-    protected void validateAttributes() throws SvnCommandValidationException {
+    protected void validateAttributes() throws SvnAntValidationException {
 
         if ((file == null) && (dir == null) && (filesets.size() == 0))
-            throw new SvnCommandValidationException("file, url or fileset must be set");
+            throw new SvnAntValidationException("file, url or fileset must be set");
         if (file != null)
             if ((dir != null) || (filesets.size() != 0))
-                throw new SvnCommandValidationException("dir and fileset must not be set when file attribute is present");
+                throw new SvnAntValidationException("dir and fileset must not be set when file attribute is present");
 
         if (dir != null)
             if ((file != null) || (filesets.size() != 0))
-                throw new SvnCommandValidationException("file and fileset must not be set when dir attribute is present");
+                throw new SvnAntValidationException("file and fileset must not be set when dir attribute is present");
 
         if (message == null)
-            throw new SvnCommandValidationException("Message must be set");
+            throw new SvnAntValidationException("Message must be set");
     }
 
     /**
      * commit a file to the repository
      * @param svnClient
      * @param file
-     * @throws SvnCommandException
+     * @throws SvnAntException
      */
-    private void svnCommitFile(File file) throws SvnCommandException {
+    private void svnCommitFile(File file) throws SvnAntException {
         if (file.exists()) {
             if (file.isDirectory()) {
                 logWarning(
@@ -152,7 +153,7 @@ public class Commit extends SvnCommand {
                 try {
                     svnClient.commit(new File[] { file }, message, false);
                 } catch (Exception e) {
-                    throw new SvnCommandException(
+                    throw new SvnAntException(
                         "Can't commit file " + file.getAbsolutePath(),
                         e);
                 }
@@ -162,7 +163,7 @@ public class Commit extends SvnCommand {
                 "Warning: Could not find file "
                     + file.getAbsolutePath()
                     + " to commit to the repository.";
-            throw new SvnCommandException(message);
+            throw new SvnAntException(message);
         }
     }
 
@@ -171,10 +172,10 @@ public class Commit extends SvnCommand {
      * @param svnClient
      * @param dir
      * @param recursive
-     * @throws SvnCommandException
+     * @throws SvnAntException
      */
     private void svnCommitDir(File dir, boolean recursive)
-        throws SvnCommandException {
+        throws SvnAntException {
         if (dir.exists()) {
             if (!dir.isDirectory()) {
                 logWarning(
@@ -186,7 +187,7 @@ public class Commit extends SvnCommand {
                 try {
                     svnClient.commit(new File[] { dir }, message, recursive);
                 } catch (Exception e) {
-                    throw new SvnCommandException(
+                    throw new SvnAntException(
                         "Can't commit directory " + dir.getAbsolutePath(),
                         e);
                 }
@@ -196,7 +197,7 @@ public class Commit extends SvnCommand {
                 "Warning: Could not find directory "
                     + dir.getAbsolutePath()
                     + " to add to the repository.";
-            throw new SvnCommandException(message);
+            throw new SvnAntException(message);
 
         }
 
@@ -207,13 +208,13 @@ public class Commit extends SvnCommand {
      * @param svnClient
      * @param file
      * @param baseDir
-     * @throws SvnCommandException
+     * @throws SvnAntException
      */
     private void svnPrepareCommitFileWithDirs(
         Vector filesToCommit,
         File file,
         File baseDir)
-        throws SvnCommandException {
+        throws SvnAntException {
 
         if (filesToCommit.contains(file))
             return; // we already know that we will commit it
@@ -223,7 +224,7 @@ public class Commit extends SvnCommand {
 			if (!SVNStatusUtils.isManaged(svnClient.getSingleStatus(file)))
 			    return;
 		} catch (SVNClientException e1) {
-            throw new SvnCommandException("Cannot get status of file :"+file.toString(),e1);
+            throw new SvnAntException("Cannot get status of file :"+file.toString(),e1);
 		}
 
         // determine directories to commit
@@ -244,7 +245,7 @@ public class Commit extends SvnCommand {
 			    status = svnClient.getSingleStatus(currentDir);
 			}
 		} catch (SVNClientException e) {
-            throw new SvnCommandException("Cannot get status of directory :"+currentDir.toString(),e);
+            throw new SvnAntException("Cannot get status of directory :"+currentDir.toString(),e);
 		}
 
         // add them to the vector
@@ -262,9 +263,9 @@ public class Commit extends SvnCommand {
      * add a fileset (both dirs and files) to the repository
      * @param svnClient
      * @param fs
-     * @throws SvnCommandException
+     * @throws SvnAntException
      */
-    private void svnCommitFileSet(FileSet fs) throws SvnCommandException {
+    private void svnCommitFileSet(FileSet fs) throws SvnAntException {
         DirectoryScanner ds = fs.getDirectoryScanner(getProject());
         File baseDir = fs.getDir(getProject()); // base dir
         String[] includedFiles = ds.getIncludedFiles();
@@ -290,7 +291,7 @@ public class Commit extends SvnCommand {
         try {
             svnClient.commit(files, message, false);
         } catch (Exception e) {
-            throw new SvnCommandException("Can't commit fileset : ", e);
+            throw new SvnAntException("Can't commit fileset : ", e);
         }
 
     }

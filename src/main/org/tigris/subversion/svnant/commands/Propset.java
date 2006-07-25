@@ -52,44 +52,60 @@
  * <http://www.apache.org/>.
  *
  */ 
-package org.tigris.subversion.svnant;
+package org.tigris.subversion.svnant.commands;
 
 import java.io.File;
+import java.io.IOException;
 
-import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnAntValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 /**
- * svn propdel. Delete a property
+ * svn propset. Set a property
  * @author Cédric Chabanois 
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  *
  */
-public class Propdel extends SvnCommand {
-    /** the path of the file or dir on which to delete the property */
+public class Propset extends SvnCommand {
+    /** the path of the file or dir on which to set the property */
     private File path = null;
 
+    private File file;    
     private String propName = null;
+    private String propValue = null;
     private boolean recurse = false;
 
-    public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
+    public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
 
         try {
-            svnClient.propertyDel(path,propName,recurse);
+            if (propValue != null)
+                svnClient.propertySet(path,propName,propValue,recurse);
+            else
+                svnClient.propertySet(path,propName,file,recurse);
         } catch (SVNClientException e) {
-            throw new SvnCommandException("Can't delete property "+propName, e);
+            throw new SvnAntException("Can't set property "+propName, e);
+        } catch (IOException e) {
+            throw new SvnAntException("Can't set property "+propName, e);
         }
     }
 
     /**
      * Ensure we have a consistent and legal set of attributes
      */
-    protected void validateAttributes() throws SvnCommandValidationException {
+    protected void validateAttributes() throws SvnAntValidationException {
         if (path == null)
-            throw new SvnCommandValidationException("path attribute must be set");
+            throw new SvnAntValidationException("path attribute must be set");
         if (propName == null)
-            throw new SvnCommandValidationException("name attribute must be set");
+            throw new SvnAntValidationException("name attribute must be set");
+        if ((propValue == null) && (file == null))
+            throw new SvnAntValidationException("value or file attribute must be set");
+            
+        if ((propValue != null) && (file != null))
+            throw new SvnAntValidationException("file attribute must not be set when value attribute is set");
+            
+
     }
 
     /**
@@ -104,6 +120,20 @@ public class Propdel extends SvnCommand {
      */
     public void setName(String propName) {
         this.propName = propName;
+    }
+    
+    /**
+     * set the value of the property 
+     */
+    public void setValue(String propValue) {
+        this.propValue = propValue;
+    }
+  
+    /**
+     * set the file that will be used as a value 
+     */
+    public void setFile(File file) {
+        this.file = file;
     }
     
     /**

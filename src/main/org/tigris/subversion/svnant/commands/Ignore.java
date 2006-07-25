@@ -52,12 +52,13 @@
  * <http://www.apache.org/>.
  *
  */ 
-package org.tigris.subversion.svnant;
+package org.tigris.subversion.svnant.commands;
 
 import java.io.File;
 import java.io.FileFilter;
 
-import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnAntValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
@@ -85,7 +86,7 @@ public class Ignore extends SvnCommand {
 
     private ISVNClientAdapter svnClient;
 
-    public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
+    public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
         this.svnClient = svnClient;
 
         // deal with the single file
@@ -102,21 +103,21 @@ public class Ignore extends SvnCommand {
     /**
      * Ensure we have a consistent and legal set of attributes
      */
-    protected void validateAttributes() throws SvnCommandValidationException {
+    protected void validateAttributes() throws SvnAntValidationException {
 
         if ((file == null) && (dir == null))
-            throw new SvnCommandValidationException("file or dir must be set");
+            throw new SvnAntValidationException("file or dir must be set");
         
         if (dir != null) {
             if (file != null)
-                throw new SvnCommandValidationException("file must not be set when dir attribute is present");
+                throw new SvnAntValidationException("file must not be set when dir attribute is present");
             if (pattern == null)
-                throw new SvnCommandValidationException("pattern must be set when dir attribute is present");            
+                throw new SvnAntValidationException("pattern must be set when dir attribute is present");            
         }
 
         if (file != null) {
             if (pattern != null)
-                throw new SvnCommandValidationException("pattern must not be set when file attribute is present");            
+                throw new SvnAntValidationException("pattern must not be set when file attribute is present");            
         }
 
     }
@@ -125,14 +126,14 @@ public class Ignore extends SvnCommand {
      * Add a file to svn:ignore
      * @param svnClient
      * @param file
-     * @throws SvnCommandException
+     * @throws SvnAntException
      */
-    private void svnIgnoreFile(File file) throws SvnCommandException {
+    private void svnIgnoreFile(File file) throws SvnAntException {
         if (file.exists()) {
             try {
                 svnClient.addToIgnoredPatterns(file.getParentFile(),file.getName());
             } catch (SVNClientException e) {
-                throw new SvnCommandException(
+                throw new SvnAntException(
                         "Can't add file "+file.getAbsolutePath()+"to svn:ignore",e);
             }
         } else {
@@ -141,7 +142,7 @@ public class Ignore extends SvnCommand {
             if (!failonerror) {
             	logWarning(message);
             } else {
-                throw new SvnCommandException(message);
+                throw new SvnAntException(message);
             }
         }
     }
@@ -151,9 +152,9 @@ public class Ignore extends SvnCommand {
      * @param svnClient
      * @param dir
      * @param recursive
-     * @throws SvnCommandException
+     * @throws SvnAntException
      */
-    private void svnIgnorePattern(File dir, String pattern, boolean recursive) throws SvnCommandException {
+    private void svnIgnorePattern(File dir, String pattern, boolean recursive) throws SvnAntException {
         
         // first add the pattern to the directory
         svnIgnorePattern(dir, pattern);
@@ -170,7 +171,7 @@ public class Ignore extends SvnCommand {
         }
     }
 
-    private void svnIgnorePattern(File dir, String pattern) throws SvnCommandException {
+    private void svnIgnorePattern(File dir, String pattern) throws SvnAntException {
         if (dir.exists()) {
             if (!dir.isDirectory()) {
                 logWarning(
@@ -180,7 +181,7 @@ public class Ignore extends SvnCommand {
                 try {
                     svnClient.addToIgnoredPatterns(dir, pattern);
                 } catch (SVNClientException e) {
-                    throw new SvnCommandException(
+                    throw new SvnAntException(
                         "Can't add pattern "+pattern+" to svn:ignore for "+dir.getAbsolutePath(), e);
                 }
             }
@@ -189,7 +190,7 @@ public class Ignore extends SvnCommand {
             if (!failonerror) {
             	logWarning(message);
             } else {
-                throw new SvnCommandException(message);
+                throw new SvnAntException(message);
             }
         }
 

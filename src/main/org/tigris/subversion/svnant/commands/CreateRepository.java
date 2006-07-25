@@ -52,87 +52,61 @@
  * <http://www.apache.org/>.
  *
  */ 
-package org.tigris.subversion.svnant;
+package org.tigris.subversion.svnant.commands;
 
 import java.io.File;
 
-import org.tigris.subversion.svnant.SvnCommand.SvnCommandValidationException;
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnAntValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 /**
- * svn Checkout. Check out a working copy from a repository 
- * @author Cédric Chabanois 
- *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
+ * Create a new, empty repository at path.
+ * 
+ * @author Cédric Chabanois (cchabanois at no-log.org)
  */
-public class Checkout extends SvnCommand {
+public class CreateRepository extends SvnCommand {
+	/** path of the repository to create */
+	private File path = null;
 	
-	/** url to checkout from */
-	private SVNUrl url = null;
-	
-	/** checkout recursively ? */
-	private boolean recurse = true;
-	
-	/** destinaty directory. */ 
-	private File destPath = null;
-	
-	/** revision to checkout */
-	private SVNRevision revision = SVNRevision.HEAD;
-
-	public void execute(ISVNClientAdapter svnClient) throws SvnCommandException {
+	/** the type of the repository to create */
+	private String repositoryType = null;
+    
+	/* (non-Javadoc)
+	 * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
+	 */
+	public void execute(ISVNClientAdapter svnClient) throws SvnAntException {
 
 		try {
-			svnClient.checkout(url, destPath, revision, recurse);
-		} catch (Exception e) {
-			throw new SvnCommandException("Can't checkout", e);
-		}
+			svnClient.createRepository(path,repositoryType);
+		} catch (SVNClientException e) {
+			throw new SvnAntException("Cannot create repository at "+path.getAbsolutePath(),e);
+		}		
 	}
 
 	/**
 	 * Ensure we have a consistent and legal set of attributes
 	 */
-	protected void validateAttributes() throws SvnCommandValidationException {
-		if (destPath == null)
-			destPath = getProject().getBaseDir();
-		if (url == null)
-			throw new SvnCommandValidationException("url must be set");
-		if (revision == null)
-			throw new SvnCommandValidationException("Invalid revision. Revision should be a number, a date in MM/DD/YYYY HH:MM AM_PM format or HEAD, BASE, COMMITED or PREV");
-
-	}
-
+	protected void validateAttributes() throws SvnAntValidationException {
+		if (path == null)
+			throw new SvnAntValidationException("Path attribute must be set"); 
+	}	
+	
 	/**
-	 * if false, operate on single directory only 
-	 * @param recurse whether you want it to checkout files recursively.
+	 * @param path The path to set.
 	 */
-	public void setRecurse(boolean recurse) {
-		this.recurse = recurse;
+	public void setPath(File path) {
+		this.path = path;
 	}
-
+	
+	
 	/**
-	 * Sets the URL; required.
-	 * @param url The url to set
-	 */
-	public void setUrl(SVNUrl url) {
-		this.url = url;
-	}
-
-	/**
-	 * Sets the destination directory; required 
-	 * @param destPath destination directory for checkout.
-	 */
-	public void setDestpath(File destPath) {
-		this.destPath = destPath;
-	}
-
-	/**
-	 * Sets the revision
+	 * set the repository type : either fsfs or bdb
 	 * 
-	 * @param revision
+	 * @param repositoryType The repositoryType to set.
 	 */
-	public void setRevision(String revision) {
-		this.revision = getRevisionFrom(revision);
+	public void setRepositoryType(String repositoryType) {
+		this.repositoryType = repositoryType;
 	}
-
 }

@@ -59,7 +59,35 @@ import java.util.List;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.ProjectComponent;
 import org.apache.tools.ant.Task;
+import org.tigris.subversion.svnant.commands.Add;
+import org.tigris.subversion.svnant.commands.Cat;
+import org.tigris.subversion.svnant.commands.Checkout;
+import org.tigris.subversion.svnant.commands.Commit;
+import org.tigris.subversion.svnant.commands.Copy;
+import org.tigris.subversion.svnant.commands.CreateRepository;
+import org.tigris.subversion.svnant.commands.Delete;
+import org.tigris.subversion.svnant.commands.Diff;
+import org.tigris.subversion.svnant.commands.Export;
+import org.tigris.subversion.svnant.commands.Feedback;
+import org.tigris.subversion.svnant.commands.Ignore;
+import org.tigris.subversion.svnant.commands.Import;
+import org.tigris.subversion.svnant.commands.Info;
+import org.tigris.subversion.svnant.commands.Keywordsadd;
+import org.tigris.subversion.svnant.commands.Keywordsremove;
+import org.tigris.subversion.svnant.commands.Keywordsset;
+import org.tigris.subversion.svnant.commands.Mkdir;
+import org.tigris.subversion.svnant.commands.Move;
+import org.tigris.subversion.svnant.commands.Propdel;
+import org.tigris.subversion.svnant.commands.Propget;
+import org.tigris.subversion.svnant.commands.Propset;
+import org.tigris.subversion.svnant.commands.Revert;
+import org.tigris.subversion.svnant.commands.Status;
+import org.tigris.subversion.svnant.commands.SvnCommand;
+import org.tigris.subversion.svnant.commands.Switch;
+import org.tigris.subversion.svnant.commands.Update;
+import org.tigris.subversion.svnant.commands.WcVersion;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNNotifyListener;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
@@ -74,7 +102,7 @@ import org.tigris.subversion.svnclientadapter.javasvn.JavaSvnClientAdapterFactor
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  *
  */
-public class SvnTask extends Task {
+public class SvnTask extends Task implements ISvnAntProjectComponent {
 
 	private static boolean javahlAvailableInitialized = false;
     private static boolean javahlAvailable;
@@ -93,15 +121,42 @@ public class SvnTask extends Task {
     private List commands = new ArrayList();
     private List notifyListeners = new ArrayList();
     
+	/* (non-Javadoc)
+	 * @see org.tigris.subversion.svnant.ISvnAntProjectComponent#getJavahl()
+	 */
+	public boolean getJavahl() {
+		return javahl;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tigris.subversion.svnant.ISvnAntProjectComponent#getJavaSvn()
+	 */
+	public boolean getJavaSvn() {
+		return javasvn;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tigris.subversion.svnant.ISvnAntProjectComponent#getProjectComponent()
+	 */
+	public ProjectComponent getProjectComponent() {
+		return this;
+	}
+
+	/**
+	 * @param username the username to set
+	 */
     public void setUsername(String username) {
         this.username = username;
     }
 
+    /**
+	 * @param password the password to set
+	 */
     public void setPassword(String password) {
         this.password = "\"\"".equals(password) ? "" : password;
     }
 
-    /**
+	/**
      * set javahl to false to use command line interface
      * @param javahl
      */
@@ -337,25 +392,7 @@ public class SvnTask extends Task {
     
     public void execute() throws BuildException {
 
-        ISVNClientAdapter svnClient;
-        
-        if ((javahl) && (isJavahlAvailable())) {
-            svnClient = SVNClientAdapterFactory.createSVNClient(JhlClientAdapterFactory.JAVAHL_CLIENT);
-            log("Using javahl", Project.MSG_VERBOSE);
-        }
-        else
-        if ((javasvn) && isJavaSVNAvailable()) {
-            svnClient = SVNClientAdapterFactory.createSVNClient(JavaSvnClientAdapterFactory.JAVASVN_CLIENT);
-            log("Using javasvn", Project.MSG_VERBOSE);
-        }
-        else
-        if (isCommandLineAvailable()) {
-            svnClient = SVNClientAdapterFactory.createSVNClient(CmdLineClientAdapterFactory.COMMANDLINE_CLIENT);
-            log("Using command line interface", Project.MSG_VERBOSE);
-        } 
-        else
-            throw new BuildException("Cannot use javahl, JavaSVN nor command line svn client");
-        
+        ISVNClientAdapter svnClient = getClientAdapter(this);        
 
         if (username != null)
             svnClient.setUsername(username);
@@ -376,5 +413,36 @@ public class SvnTask extends Task {
         }
         
     }
+
+	/**
+	 * This method returns a SVN client adapter, based on the property set when the file selector
+	 * was declared. More specifically, the 'javahl' and 'javasvn' flags are verified, as well as the
+	 * availability of JAVAHL ad JavaSVN adapters, to decide what flavour to use.
+	 * @param component a ISVNAntProjectComponent for which the client adapter is created
+	 * @return An instance of SVN client adapter that meets the specified constraints, if any.
+	 * @throws BuildException Thrown in a situation where no adapter can fit the constraints.
+	 */
+	public static ISVNClientAdapter getClientAdapter(ISvnAntProjectComponent component) throws BuildException {
+		ISVNClientAdapter svnClient;
+        
+        if ((component.getJavahl()) && (isJavahlAvailable())) {
+            svnClient = SVNClientAdapterFactory.createSVNClient(JhlClientAdapterFactory.JAVAHL_CLIENT);
+            component.getProjectComponent().log("Using javahl", Project.MSG_VERBOSE);
+        }
+        else
+        if ((component.getJavaSvn()) && isJavaSVNAvailable()) {
+            svnClient = SVNClientAdapterFactory.createSVNClient(JavaSvnClientAdapterFactory.JAVASVN_CLIENT);
+            component.getProjectComponent().log("Using javasvn", Project.MSG_VERBOSE);
+        }
+        else
+        if (isCommandLineAvailable()) {
+            svnClient = SVNClientAdapterFactory.createSVNClient(CmdLineClientAdapterFactory.COMMANDLINE_CLIENT);
+            component.getProjectComponent().log("Using command line interface", Project.MSG_VERBOSE);
+        } 
+        else {
+            throw new BuildException("Cannot use javahl, JavaSVN nor command line svn client");
+        }
+		return svnClient;
+	}
 
 }
