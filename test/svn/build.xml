@@ -173,7 +173,6 @@
     </svn>
   </target>
 
-  <!-- this test does not test svnant but svnClientAdapter -->
   <target name="testLog" depends="init">
     <copy todir="workingcopy/logTest">
       <fileset dir="model/logTest"></fileset>
@@ -181,6 +180,24 @@
     <svn javahl="${javahl}" javasvn="${javasvn}">
       <add dir="workingcopy/logTest"/>
       <commit dir="workingcopy/logTest" message="logTest directory added to repository"/>	
+    </svn>
+    <svn javahl="${javahl}" javasvn="${javasvn}">
+    	<log
+    		destFile="workingcopy/log.xml"
+    		path="workingcopy/logTest"
+    		stopOnCopy="true"
+    		asXml="true"
+    		startRevision="HEAD"
+    		stopRevision="1"
+    		/>    	
+    	<log
+    		destFile="workingcopy/log.txt"
+    		path="workingcopy/logTest"
+    		stopOnCopy="false"
+    		asXml="false"
+    		startRevision="BASE"
+    		stopRevision="1"
+    		/>
     </svn>
   </target>
 

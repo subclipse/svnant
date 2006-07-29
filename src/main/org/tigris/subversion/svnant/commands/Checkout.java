@@ -98,8 +98,7 @@ public class Checkout extends SvnCommand {
 		if (url == null)
 			throw new SvnAntValidationException("url must be set");
 		if (revision == null)
-			throw new SvnAntValidationException("Invalid revision. Revision should be a number, a date in MM/DD/YYYY HH:MM AM_PM format or HEAD, BASE, COMMITED or PREV");
-
+			throw SvnAntValidationException.createInvalidRevisionException();
 	}
 
 	/**

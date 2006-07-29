@@ -119,7 +119,7 @@ public class Copy extends SvnCommand {
             throw new SvnAntValidationException("message attribute cannot be used when destUrl is not set");
             
         if (revision == null)
-            throw new SvnAntValidationException("Invalid revision. Revision should be a number, a date in MM/DD/YYYY HH:MM AM_PM format or HEAD, BASE, COMMITED or PREV");
+            throw SvnAntValidationException.createInvalidRevisionException();
         
     }
 

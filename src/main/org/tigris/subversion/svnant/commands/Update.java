@@ -117,7 +117,9 @@ public class Update extends SvnCommand {
 	 */
 	protected void validateAttributes() throws SvnAntValidationException {
 		if ((file == null) && (dir == null) && (filesets.size() == 0))
-			throw new SvnAntValidationException("file, url or fileset must be set"); 
+			throw new SvnAntValidationException("file, url or fileset must be set");         
+		if (revision == null)
+			throw SvnAntValidationException.createInvalidRevisionException();
 	}
 
 	/**

@@ -78,4 +78,9 @@ public class SvnAntValidationException extends Exception
 	public SvnAntValidationException(String message) {
 		super(message);
 	}
+	
+	public static SvnAntValidationException createInvalidRevisionException()
+	{
+		return new SvnAntValidationException("Invalid revision. Revision should be a number, a date in the format as specified in dateFormatter attribute or HEAD, BASE, COMMITED or PREV");
+	}
 }

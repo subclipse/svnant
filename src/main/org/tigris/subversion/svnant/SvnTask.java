@@ -77,6 +77,7 @@ import org.tigris.subversion.svnant.commands.Info;
 import org.tigris.subversion.svnant.commands.Keywordsadd;
 import org.tigris.subversion.svnant.commands.Keywordsremove;
 import org.tigris.subversion.svnant.commands.Keywordsset;
+import org.tigris.subversion.svnant.commands.Log;
 import org.tigris.subversion.svnant.commands.Mkdir;
 import org.tigris.subversion.svnant.commands.Move;
 import org.tigris.subversion.svnant.commands.Propdel;
@@ -226,7 +227,18 @@ public class SvnTask extends Task implements ISvnAntProjectComponent {
         addCommand(a);
     }
 
+    /**
+     * Add the info command to the list of commands to execute.
+     */
+    public void addInfo(Info a) {
+        addCommand(a);
+    }
+
     public void addImport(Import a) {
+        addCommand(a);
+    }
+    
+    public void addLog(Log a) {
         addCommand(a);
     }
 
@@ -298,12 +310,6 @@ public class SvnTask extends Task implements ISvnAntProjectComponent {
     	addCommand(a);
     }
     
-    /**
-     * Add the info command to the list of commands to execute.
-     */
-    public void addInfo(Info a) {
-        addCommand(a);
-    }
 
     private void addCommand(SvnCommand cmd)
     {

@@ -110,6 +110,9 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
 
         if ((srcUrl != null) && (srcPath != null))
             throw new SvnAntValidationException("Either srcUrl or srcPath must be set");
+        
+		if (revision == null)
+			throw SvnAntValidationException.createInvalidRevisionException();
     }
 
 	/**

@@ -95,7 +95,9 @@ public class Switch extends SvnCommand {
 	 */
 	protected void validateAttributes() throws SvnAntValidationException {
 		if ((path == null) || (url == null))
-			throw new SvnAntValidationException("path and url must be set");
+			throw new SvnAntValidationException("path and url must be set");        
+		if (revision == null)
+			throw SvnAntValidationException.createInvalidRevisionException();
 	}
 
 	/**

@@ -122,7 +122,7 @@ public class Cat extends SvnCommand {
 			destFile = new File(getProject().getBaseDir(),
                                 url.getLastPathSegment());
 		if (revision == null)
-			throw new SvnAntValidationException("Invalid revision. Revision should be a number, a date in MM/DD/YYYY HH:MM AM_PM format or HEAD, BASE, COMMITED or PREV");
+			throw SvnAntValidationException.createInvalidRevisionException();
 	}
 
 	/**
