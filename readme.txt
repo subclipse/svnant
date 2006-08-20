@@ -1,15 +1,31 @@
-svnant
+SvnAnt
 ======
 You can find latest version of svnant on http://subclipse.tigris.org
 
-To provide access to the Subversion API, svnant uses either the javahl
-Subversion Java bindings
-<http://svn.collab.net/repos/svn/trunk/subversion/bindings/java/javahl/>
-(which are JNI-based, and must setup appropriately), or Subverion's
-command line programs (which must be installed and in your PATH).
+Installation
+============
+Put the svnant.jar and svnClientAdapter.jar files to classpath of your ant build file.
+(Or directly to your ANT_HOME/lib directory.)
+If you plan to use JavaHL instead of commandline, put the svnjavahl.jar to the classpath too.
+(An of course put the appropriate native OS library on your PATH/LD_PATH too)
 
+In the build file, load the <svn> task.
+E.g. like this:
+  <taskdef resource="svntask.properties" classpathref="project.classpath"/>
+(where svnant.jar lies in the "project.classpath")
+
+To provide access to the Subversion API, svnant uses svnClientAdapter on top of 
+either the JavaHL native Subversion Java (JNI) bindings or Subverion's
+command line programs (which must be installed and in your PATH).
+See the subclipse's FAQ <http://subclipse.tigris.org/faq.html#get-javahl">
+for info how to get JavaHL for your operating system.
+
+Documentation
+=============
 Documentation of the <svn> task is in the /doc directory.
 
+Play around
+===========
 To access the sources, just type "ant" in the directory containing the
 build.xml bundled with the distribution.  The default target will
 retrieve the sources corresponding to the version you have.  If you

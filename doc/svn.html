@@ -218,7 +218,7 @@ SvnAnt's JAR file to perform that registration follows:</p>
 	<tr>
 		<td>destFile</td>
 		<td>Name of the destination file</td>
-		<td>No <BR>(default is the name of the file on the url)</td>
+		<td>No <BR>(default is the name of the file on the url placed in the ant project's basedir)</td>
 	</tr>
 	<tr>
 		<td>url</td>
@@ -539,7 +539,7 @@ two urls (oldUrl and newUrl).
 			format as specified in dateFormatter attribute<BR>- a revision number<BR>-
 			HEAD, BASE, COMMITED or PREV
 		</td>
-		<td>No</td>
+		<td>No (defaults to HEAD)</td>
 	</tr>
 </table>
 
@@ -1217,6 +1217,11 @@ Crawls the working copy and retrieves the maximum revision number, revision rang
 		<td>prefix</td>
 		<td>a string which will be prefixed to output properties set/filled by this command</td>
 		<td>No</td>
+	</tr>
+	<tr>
+		<td>processUnversioned</td>
+		<td>flag whether presence of unversioned resoures should be treated as changes</td>
+		<td>No (defaults to false)</td>
 	</tr>
 </table>
 

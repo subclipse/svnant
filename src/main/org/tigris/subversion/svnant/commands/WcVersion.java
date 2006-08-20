@@ -75,6 +75,7 @@ public class WcVersion extends SvnCommand {
     
     private File path;
     private String prefix;
+    private boolean processUnversioned = false;
 
     /* (non-Javadoc)
      * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
@@ -143,7 +144,7 @@ public class WcVersion extends SvnCommand {
         }
         ISVNStatus[] statuses = svnClient.getStatus(wcPathFile, true, true);
 
-        return new WCVersionSummary(rootStatus, statuses, wcPathFile);
+        return new WCVersionSummary(rootStatus, statuses, wcPathFile, processUnversioned);
     }    
 
     /**
@@ -175,10 +176,25 @@ public class WcVersion extends SvnCommand {
     }
     
     /**
-     * Holds summary status information about a working copy path. 
-     * 
-     * @author Matt Doran (matt.doran@papercut.biz)
-     */
+	 * @return Returns whether unversioned resources should be processed.
+	 */
+	public boolean getProcessUnversioned() {
+		return processUnversioned;
+	}
+
+	/**
+	 * @param processUnversioned
+	 *            Whether unversioned resources should be processed.
+	 */
+	public void setProcessUnversioned(boolean processUnversioned) {
+		this.processUnversioned = processUnversioned;
+	}
+    
+    /**
+	 * Holds summary status information about a working copy path.
+	 * 
+	 * @author Matt Doran (matt.doran@papercut.biz)
+	 */
     private static class WCVersionSummary {
         protected String wcPath;
         protected long maxRevision = 0;
@@ -195,7 +211,7 @@ public class WcVersion extends SvnCommand {
          * @param wcPathFile The working copy path.
          * @throws SVNClientException Raised if there is a problem fetching working copy status.
          */
-        protected WCVersionSummary(ISVNStatus rootStatus, ISVNStatus[] statuses, File wcPathFile) {
+        protected WCVersionSummary(ISVNStatus rootStatus, ISVNStatus[] statuses, File wcPathFile, boolean processUnversioned) {
             this.wcPath = wcPathFile.getAbsolutePath();            
             this.reposURL = rootStatus.getUrl().toString();
             
@@ -209,33 +225,36 @@ public class WcVersion extends SvnCommand {
             for (int i = 0; i < statuses.length; i++) {
                 ISVNStatus status = statuses[i];
                 
-                if (!SVNStatusUtils.isManaged(status)) {
-                    // Don't care about unversioned files
+                if (!SVNStatusUtils.isManaged(status) && !processUnversioned) {
+                	// Don't care about unversioned files
                     continue;
                 }
                 
                 if (!this.hasModified 
-                        && (status.getTextStatus() != SVNStatusKind.NORMAL
-                            || status.getPropStatus() != SVNStatusKind.NORMAL)) {
+                		&& ((status.getTextStatus() != SVNStatusKind.NORMAL
+                				&& status.getTextStatus() != SVNStatusKind.IGNORED)
+                			|| (status.getPropStatus() != SVNStatusKind.NORMAL
+                				&& status.getPropStatus() != SVNStatusKind.NONE))) {                	
                 	this.hasModified = true;
                 }
                 
-                SVNRevision.Number rev = status.getLastChangedRevision();
-                long revNum = (rev != null) ? rev.getNumber() : 0;           
-                if (revNum > this.maxRevision) {
-                	this.maxRevision = revNum;
-                }
-                
-                if (revNum < this.minRevision) {
-                	this.minRevision = revNum;
-                }
-                
-                SVNRevision.Number comRev = status.getLastChangedRevision();
-                long committedRev = (comRev != null) ? comRev.getNumber() : 0;
-                if (committedRev > this.maxCommitted) {
-                	this.maxCommitted = committedRev;
-                }
-                
+                if (SVNStatusUtils.isManaged(status)) {
+                	SVNRevision.Number rev = status.getLastChangedRevision();
+                	long revNum = (rev != null) ? rev.getNumber() : 0;
+                	if (revNum > this.maxRevision) {
+                		this.maxRevision = revNum;
+                	}
+                	
+                	if (revNum < this.minRevision) {
+                		this.minRevision = revNum;
+                	}
+
+                	SVNRevision.Number comRev = status.getLastChangedRevision();
+                	long committedRev = (comRev != null) ? comRev.getNumber() : 0;
+                	if (committedRev > this.maxCommitted) {
+                		this.maxCommitted = committedRev;
+                	}
+                }                
             }
             
             if ((this.minRevision > 0) && (this.minRevision != this.maxRevision)) {
