@@ -6,14 +6,14 @@
   <property file="build.properties" /> 
 
   <!-- path to the svnant libraries. Usually they will be located in ANT_HOME/lib -->
-  <path id="project.classpath">
-    <pathelement location="${svnjavahl.jar}" /> 
-    <pathelement location="${svnant.jar}" />
-    <pathelement location="${svnClientAdapter.jar}" />
+  <path id="svnant.classpath">
+    <fileset dir="${lib.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
   </path>  
   
   <!-- load the svn task -->
-  <typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpath="${svnant.jar}" />
+  <typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="svnant.classpath" />
   
   <target name="clean">
     <delete dir="src_latest"/>
