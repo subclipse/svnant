@@ -99,13 +99,14 @@ import org.tigris.subversion.svnclientadapter.SVNNodeKind;
  */
 public class SvnDirScanner extends DirectoryScanner {
 
-    private ISVNClientAdapter m_clientAdapter;
+    private ISVNClientAdapter svnClient;
 
     /**
      * Sole constructor.
+     * @param clientAdapter
      */
-    public SvnDirScanner( ISVNClientAdapter clientAdapter_ ) {
-    	m_clientAdapter = clientAdapter_;
+    public SvnDirScanner( ISVNClientAdapter clientAdapter ) {
+    	svnClient = clientAdapter;
     }
     
     /**
@@ -120,7 +121,7 @@ public class SvnDirScanner extends DirectoryScanner {
         if (files == null) {
             // Obtain the entries from the client adapter
            	try {
-           		files = m_clientAdapter.getStatus(file,false,true); // descend=false, getAll=true
+           		files = svnClient.getStatus(file,false,true); // descend=false, getAll=true
     		} catch (SVNClientException e) {
     			throw new RuntimeException("Error scanning: " + e, e);
     		}
@@ -1245,15 +1246,13 @@ public class SvnDirScanner extends DirectoryScanner {
             for (int i = 0; i < files.length; i++) {
             	String name = files[i].getFile().getName();
                 if( name.equals(current) ) {
-                    base = new File(base, name);
-                    return findFileCaseInsensitive(base, pathElements);
+                    return findFileCaseInsensitive(new File(base, name), pathElements);
                 }
             }
             for (int i = 0; i < files.length; i++) {
             	String name = files[i].getFile().getName();
                 if( name.equalsIgnoreCase(current) ) {
-                    base = new File(base, name);
-                    return findFileCaseInsensitive(base, pathElements);
+                    return findFileCaseInsensitive(new File(base, name), pathElements);
                 }
             }
         }
@@ -1296,8 +1295,7 @@ public class SvnDirScanner extends DirectoryScanner {
             for (int i = 0; i < files.length; i++) {
             	String name = files[i].getFile().getName();
                 if( name.equals(current) ) {
-                    base = new File(base, name);
-                    return findFile(base, pathElements);
+                    return findFile(new File(base, name), pathElements);
                 }
             }
         }
@@ -1325,8 +1323,7 @@ public class SvnDirScanner extends DirectoryScanner {
                 if (fileUtils.isSymbolicLink(base, current)) {
                     return true;
                 } else {
-                    base = new File(base, current);
-                    return isSymlink(base, pathElements);
+                    return isSymlink(new File(base, current), pathElements);
                 }
             } catch (IOException ioe) {
                 String msg = "IOException caught while checking "

@@ -4,11 +4,11 @@
 	<classpathentry kind="src" path="src/testcases"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/ant.jar"/>
-	<classpathentry sourcepath="C:/Documents and Settings/Martin/My Documents/Subclipse/svnClientAdapter" kind="lib" path="lib/svnClientAdapter.jar"/>
+	<classpathentry sourcepath="/svnClientAdapter/src/main" kind="lib" path="lib/svnClientAdapter.jar"/>
 	<classpathentry kind="lib" path="lib/junit.jar"/>
 	<classpathentry kind="lib" path="lib/svnjavahl.jar"/>
 	<classpathentry kind="lib" path="lib/javasvn.jar"/>
 	<classpathentry kind="lib" path="lib/ant-launcher.jar"/>
 	<classpathentry kind="lib" path="lib/ganymed.jar"/>
-	<classpathentry kind="output" path="build/classes"/>
+	<classpathentry kind="output" path="build/bin"/>
 </classpath>

@@ -113,7 +113,6 @@ public class SvnFileSet extends org.apache.tools.ant.types.FileSet implements IS
      */
     protected SvnFileSet(SvnFileSet fileset_) {
         this.javahl = fileset_.javahl;
-        this.javahl = fileset_.javahl;
     }
 
     /* (non-Javadoc)

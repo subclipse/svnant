@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE types [
-	<!ENTITY common_params SYSTEM "javahl_javasvn.txt">
+	<!ENTITY javahl_javasvn_params SYSTEM "javahl_javasvn.txt">
+	<!ENTITY fail_on_error_params SYSTEM "fail_on_error.txt">
 ]>
 
 <ant:types 
@@ -97,7 +98,7 @@
 				</ant:example>
 			</p>
 		</ant:fullDescription>
-		&common_params;
+		&javahl_javasvn_params; &fail_on_error_params;
 	</ant:type>
 	
 	<!-- ***************************** -->
@@ -129,7 +130,7 @@
 				</ant:example>
 			</p>
 		</ant:fullDescription>
-		&common_params;
+		&javahl_javasvn_params; &fail_on_error_params;
 	</ant:type>	
 
 	<!-- ***************************** -->
@@ -161,7 +162,7 @@
 				</ant:example>
 			</p>
 		</ant:fullDescription>
-		&common_params;
+		&javahl_javasvn_params; &fail_on_error_params;
 	</ant:type>	
 
 	<!-- ***************************** -->
@@ -195,7 +196,7 @@
 				</ant:example>
 			</p>
 		</ant:fullDescription>
-		&common_params;
+		&javahl_javasvn_params; &fail_on_error_params;
 	</ant:type>	
 
 	<!-- ***************************** -->
@@ -226,7 +227,7 @@
 				</ant:example>
 			</p>
 		</ant:fullDescription>
-		&common_params;
+		&javahl_javasvn_params; &fail_on_error_params;
 	</ant:type>	
 
 	<!-- ***************************** -->
@@ -260,7 +261,7 @@
 				</ant:example>
 			</p>
 		</ant:fullDescription>
-		&common_params;
+		&javahl_javasvn_params; &fail_on_error_params;
 	</ant:type>	
 
 	<!-- ***************************** -->
@@ -291,7 +292,7 @@
 				</ant:example>
 			</p>
 		</ant:fullDescription>
-		&common_params;
+		&javahl_javasvn_params; &fail_on_error_params;
 	</ant:type>	
 
 	<!-- ***************************** -->
@@ -323,7 +324,7 @@
 				</ant:example>
 			</p>
 		</ant:fullDescription>
-		&common_params;
+		&javahl_javasvn_params; &fail_on_error_params;
 	</ant:type>	
 
 	<!-- ***************************** -->
@@ -359,7 +360,7 @@
 				</ant:example>
 			</p>
 		</ant:fullDescription>
-		&common_params;
+		&javahl_javasvn_params; &fail_on_error_params;
 	</ant:type>	
 
 	<!-- ***************************** -->
@@ -395,7 +396,7 @@
 				</ant:example>
 			</p>
 		</ant:fullDescription>
-		&common_params;
+		&javahl_javasvn_params; &fail_on_error_params;
 	</ant:type>	
 		
 </ant:types>

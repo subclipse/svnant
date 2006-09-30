@@ -87,9 +87,14 @@ public abstract class SvnCommand extends ProjectComponent {
 	 */
 	public abstract void execute() throws SvnAntException;
 
-	public final void executeCommand(ISVNClientAdapter svnClient) throws BuildException
+	/**
+	 * Execute the receiver (a svn command) using the supplied clientAdapter
+	 * @param svnClientAdapter
+	 * @throws BuildException
+	 */
+	public final void executeCommand(ISVNClientAdapter svnClientAdapter) throws BuildException
 	{
-		this.svnClient = svnClient;
+		this.svnClient = svnClientAdapter;
 		String[] nameSegments = StringUtils.split(getClass().getName(), ".");
 		String className = "<" + nameSegments[nameSegments.length -1] + ">"; 
 			
@@ -155,21 +160,37 @@ public abstract class SvnCommand extends ProjectComponent {
 		return new SimpleDateFormat(task.getDateFormatter()).format(aDate);
 	}
 	
+	/**
+	 * Log the message with VERBOSE level
+	 * @param message
+	 */
 	public void logVerbose(String message)
 	{
 		getProject().log(this.task, message, Project.MSG_VERBOSE);
 	}
 
+	/**
+	 * Log the message with WARNING level
+	 * @param message
+	 */
 	public void logWarning(String message)
 	{
 		getProject().log(this.task, message, Project.MSG_WARN);
 	}
 
+	/**
+	 * Log the message with ERROR level
+	 * @param message
+	 */
 	public void logError(String message)
 	{
 		getProject().log(this.task, message, Project.MSG_ERR);
 	}
 
+	/**
+	 * Log the message with INFO level
+	 * @param message
+	 */
 	public void logInfo(String message)
 	{
 		getProject().log(this.task, message, Project.MSG_INFO);

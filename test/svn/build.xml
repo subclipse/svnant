@@ -1069,6 +1069,57 @@
     </svn>
   </target>
 
+	<target name="testSvnExists" depends="init">
+		<!-- Prepare test -->
+	    <copy todir="workingcopy">
+	      <fileset dir="model/svnExistsTest"/>
+	    </copy>
+		<svn javahl="${javahl}" javasvn="${javasvn}">
+			<add file="workingcopy/added.txt"/>
+			<add file="workingcopy/checkedin.txt"/>
+			<commit file="workingcopy/checkedin.txt" message="ci"/>
+		</svn>
+
+		<property name="workingcopy.dir" location="workingcopy"/>
+		
+		<!-- Conduct Test -->
+		<condition property="svnExists.local.checkedin" value="true">
+			<svnExists javahl="${javahl}" javasvn="${javasvn}" target="${workingcopy.dir}/checkedin.txt"/>
+		</condition>
+		<echo>svnExists.local.checkedin: ${svnExists.local.checkedin}</echo>
+		
+		<condition property="svnExists.local.added" value="true">
+			<svnExists javahl="${javahl}" javasvn="${javasvn}" target="${workingcopy.dir}/added.txt"/>
+		</condition>
+		<echo>svnExists.local.added: ${svnExists.local.added}</echo>
+		
+		<condition property="svnExists.local.private" value="true">
+			<svnExists javahl="${javahl}" javasvn="${javasvn}" target="${workingcopy.dir}/private.txt"/>
+		</condition>
+		<echo>svnExists.local.private: ${svnExists.local.private}</echo>
+		
+		<condition property="svnExists.local.inexistant" value="true">
+			<svnExists javahl="${javahl}" javasvn="${javasvn}" target="${workingcopy.dir}/inexistant.txt"/>
+		</condition>
+		<echo>svnExists.local.inexistant: ${svnExists.local.inexistant}</echo>
+		
+		<condition property="svnExists.server.checkedin" value="true">
+			<svnExists javahl="${javahl}" javasvn="${javasvn}" target="${urlRepos}/checkedin.txt"/>
+		</condition>
+		<echo>svnExists.server.checkedin: ${svnExists.server.checkedin}</echo>
+		
+		<condition property="svnExists.server.added" value="true">
+			<svnExists javahl="${javahl}" javasvn="${javasvn}" target="${urlRepos}/added.txt"/>
+		</condition>
+		<echo>svnExists.server.added: ${svnExists.server.added}</echo>
+		
+		<condition property="svnExists.server.private" value="true">
+			<svnExists javahl="${javahl}" javasvn="${javasvn}" target="${urlRepos}/private.txt"/>
+		</condition>
+		<echo>svnExists.server.private: ${svnExists.server.private}</echo>
+		
+	</target>
+
   <target name="all" depends="init">
   </target>
 	

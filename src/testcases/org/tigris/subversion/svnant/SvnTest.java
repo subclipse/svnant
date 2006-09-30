@@ -917,6 +917,19 @@ public abstract class SvnTest extends BuildFileTest {
 		assertTrue( (new File(dir, "file3.xml")).exists() );
     }
     
+    public void testSvnExists() throws Exception {
+    	executeTarget("testSvnExists");
+    	
+    	// Test for expected results
+		assertEquals(project.getProperty("svnExists.local.checkedin"),  "true");
+		assertEquals(project.getProperty("svnExists.local.added"),      "true");
+		assertEquals(project.getProperty("svnExists.local.private"),    null);
+		assertEquals(project.getProperty("svnExists.local.inexistant"), null);
+		assertEquals(project.getProperty("svnExists.server.checkedin"), "true");
+		assertEquals(project.getProperty("svnExists.server.added"),     null);
+		assertEquals(project.getProperty("svnExists.server.private"),   null);
+    }
+    
     /**
      * Asserts whether an Ant property is set.
      */

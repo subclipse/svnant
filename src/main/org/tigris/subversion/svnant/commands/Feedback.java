@@ -67,13 +67,17 @@ import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 public class Feedback implements ISVNNotifyListener {
 	private SvnCommand svnCommand;
 	
+	/**
+	 * Constructor
+	 * @param command
+	 */
 	public Feedback(SvnCommand command)
 	{
 		this.svnCommand = command;
 	}
     
     public void setCommand(int cmd) {
-        
+        //Do nothing
     }
 
     public void logMessage(String message) {
@@ -81,6 +85,7 @@ public class Feedback implements ISVNNotifyListener {
 	}
 
     public void logRevision(long revision, String path) {
+    	//Do nothing
     }
 
     public void logCommandLine(String message) {
@@ -96,7 +101,7 @@ public class Feedback implements ISVNNotifyListener {
     }
 
     public void onNotify(File path, SVNNodeKind nodeKind) {
-        
+        //Do nothing
     }
 
 }
