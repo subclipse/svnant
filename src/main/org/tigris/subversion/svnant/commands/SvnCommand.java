@@ -57,6 +57,7 @@ package org.tigris.subversion.svnant.commands;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -143,7 +144,7 @@ public abstract class SvnCommand extends ProjectComponent {
 	public SVNRevision getRevisionFrom(String revision)
 	{
 		try {
-			return SVNRevision.getRevision(revision, new SimpleDateFormat(task.getDateFormatter()));
+			return SVNRevision.getRevision(revision, getDateFormatter());
 		} catch (ParseException e) {
 			logWarning("Unable to parse revision string");
 			return null;
@@ -151,15 +152,25 @@ public abstract class SvnCommand extends ProjectComponent {
 	}
 	
 	/**
-	 * Ansewer a give date as string formatted according to current formatter
+	 * Answer a given date as string formatted according to current formatter
 	 * @param aDate
 	 * @return a String representation of the date
 	 */
 	public String getDateStringFor(Date aDate)
 	{
-		return new SimpleDateFormat(task.getDateFormatter()).format(aDate);
+		return getDateFormatter().format(aDate);
 	}
 	
+	private SimpleDateFormat getDateFormatter()
+	{
+		final SimpleDateFormat formatter = new SimpleDateFormat(task.getDateFormatter());
+		final TimeZone timezone = task.getDateTimeZone();
+		if (timezone != null) {
+			formatter.setTimeZone(timezone);
+		}
+		return formatter;
+	}
+
 	/**
 	 * Log the message with VERBOSE level
 	 * @param message

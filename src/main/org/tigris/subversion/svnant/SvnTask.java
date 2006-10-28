@@ -56,6 +56,7 @@ package org.tigris.subversion.svnant;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -117,6 +118,7 @@ public class SvnTask extends Task implements ISvnAntProjectComponent {
     private boolean javahl = true;
     private boolean javasvn = true;
     private String dateFormatter = null;
+    private TimeZone dateTimeZone = null;
 	private boolean failonerror = true;
 
     private List commands = new ArrayList();
@@ -174,7 +176,7 @@ public class SvnTask extends Task implements ISvnAntProjectComponent {
     }
 
     /**
-     * @return dateFormatter used to parse revision dates
+     * @return dateFormatter used to parse/format revision dates
      */
     public String getDateFormatter()
     {
@@ -182,11 +184,27 @@ public class SvnTask extends Task implements ISvnAntProjectComponent {
     }
     
     /**
-     * set dateFormatter used to parse revision dates
+     * set dateFormatter used to parse/format revision dates
      * @param dateFormatter
      */
     public void setDateFormatter(String dateFormatter) {
         this.dateFormatter = dateFormatter;
+    }
+
+    /**
+     * @return dateTimeZone used to parse/format revision dates
+     */
+    public TimeZone getDateTimeZone()
+    {
+    	return dateTimeZone;
+    }
+    
+    /**
+     * set dateTimezone used to parse/format revision dates
+     * @param dateTimezone
+     */
+    public void setDateTimezone(String dateTimeZone) {
+	    this.dateTimeZone = TimeZone.getTimeZone(dateTimeZone);
     }
 
     /**
