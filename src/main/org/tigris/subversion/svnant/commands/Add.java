@@ -87,6 +87,9 @@ public class Add extends SvnCommand {
     /** add recursively ? (only for dir attribute) */
     private boolean recurse = true;
 
+    /** check directories already under version control during add ? (only for dir attribute) */
+    private boolean force = false;
+
     public void execute() throws SvnAntException {
 
         // deal with the single file
@@ -96,7 +99,7 @@ public class Add extends SvnCommand {
 
         // deal with a directory
         if (dir != null) {
-            svnAddDir(dir, recurse);
+            svnAddDir(dir, recurse, force);
         }
 
         // deal with filesets
@@ -163,7 +166,7 @@ public class Add extends SvnCommand {
      * @param recursive
      * @throws SvnAntException
      */
-    private void svnAddDir(File aDir, boolean recursive) throws SvnAntException {
+    private void svnAddDir(File aDir, boolean recursive, boolean force) throws SvnAntException {
         if (aDir.exists()) {
             if (!aDir.isDirectory()) {
                 logWarning(
@@ -174,7 +177,7 @@ public class Add extends SvnCommand {
             } else {
 
                 try {
-                    svnClient.addDirectory(aDir, recursive);
+                    svnClient.addDirectory(aDir, recursive, force);
                 } catch (Exception e) {
                     throw new SvnAntException(
                         "Can't add directory "
@@ -296,6 +299,14 @@ public class Add extends SvnCommand {
 	 */
     public void setRecurse(boolean recurse) {
         this.recurse = recurse;
+    }
+
+	/**
+	 * if set, directory will be checked for new content even if already managed by subversion (see setDir)
+	 * @param recurse
+	 */
+    public void setForce(boolean force) {
+        this.force = force;
     }
 
     /**
