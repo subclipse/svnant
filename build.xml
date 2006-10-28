@@ -3,9 +3,42 @@
 
 <project name="svnant" default="all" basedir=".">
 
-	<!-- all properties are in build.properties -->
+	<!-- user defined values can be defined in build.properties -->
 	<property file="build.properties" />
 
+	<!-- ================================================================= -->
+	<!-- Default properties -->
+	<!-- the above call the to build.properties file can supply non-default values -->
+	<!-- ================================================================= -->
+
+	<!-- svnant version -->
+	<property name="svnant.version" value="1.1.0-rc1" />
+
+	<!-- compile with debug on or off -->
+	<property name="debug" value="off" />
+	
+	<!-- locations of directories -->
+	<property name="src.main.dir" value="src/main" />
+	<property name="src.testcases.dir" value="src/testcases" />
+	<property name="src.doc.dir" value="src/doc" />
+	<property name="build.dir" value="build" />
+	<property name="build.distrib.dir" value="${build.dir}/distrib" />
+	<property name="build.classes.dir" value="${build.dir}/classes" />
+	<property name="build.lib.dir" value="${build.dir}/lib" />
+	<property name="build.cache.dir" value="build/depcache" />
+	<property name="distribfiles.dir" value="distribfiles" />
+
+	<!-- Required libraries -->
+	<property name="lib.dir" value="lib" />
+	<property name="svnClientAdapter.jar" value="${lib.dir}/svnClientAdapter.jar" />
+	<property name="svnjavahl.jar" value="${lib.dir}/svnjavahl.jar" />
+	<property name="javasvn.jar" value="${lib.dir}/javasvn.jar" />
+	<property name="ganymed.jar" value="${lib.dir}/ganymed.jar" />
+	<property name="ant.jar" value="${lib.dir}/ant.jar" />
+	<property name="ant-launcher.jar" value="${lib.dir}/ant-launcher.jar" />
+	<property name="junit.jar" value="${lib.dir}/junit.jar" />
+
+	
 	<path id="project.classpath">
 		<pathelement location="${ant.jar}" />
 		<pathelement location="${ant-launcher.jar}" />
