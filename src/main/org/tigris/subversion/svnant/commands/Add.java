@@ -164,6 +164,7 @@ public class Add extends SvnCommand {
      * @param svnClient
      * @param aDir
      * @param recursive
+     * @param force
      * @throws SvnAntException
      */
     private void svnAddDir(File aDir, boolean recursive, boolean force) throws SvnAntException {
@@ -303,7 +304,7 @@ public class Add extends SvnCommand {
 
 	/**
 	 * if set, directory will be checked for new content even if already managed by subversion (see setDir)
-	 * @param recurse
+	 * @param force
 	 */
     public void setForce(boolean force) {
         this.force = force;

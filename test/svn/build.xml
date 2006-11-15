@@ -12,7 +12,7 @@
     <pathelement location="${svnant.jar}" />
     <pathelement location="${svnClientAdapter.jar}"/>
     <pathelement location="${svnjavahl.jar}"/>
-    <pathelement location="${svnkit.jar}"/>
+    <pathelement location="${javasvn.jar}"/>
     <pathelement location="${ganymed.jar}"/>
   </path>  
   
@@ -37,7 +37,7 @@
     <echo>creating repository (you need svnadmin in your path if using command line interface) ...</echo>
   	<delete dir="repository"/>  
 
-  	<svn javahl="${javahl}" svnkit="${svnkit}">
+  	<svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
   		<createRepository path="repository"/>
   	</svn>
   </target>
@@ -57,7 +57,7 @@
  
     <!-- we checkout it to workingcopy -->
     <mkdir dir="workingcopy"/>
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <checkout url="${urlRepos}" destPath="workingcopy" />
     </svn>
   </target>
@@ -65,11 +65,11 @@
 	<!-- init-selectors is run before each test for file selectors, since they all
 		share the same model of a working copy -->
 	<target name="init-selectors" depends="init">
-		<echo message="javahl = ${javahl}  svnkit = ${svnkit}"/>
+		<echo message="javahl = ${javahl}  javasvn = ${javasvn}"/>
 		<copy todir="workingcopy">
 			<fileset dir="model/selectorTest"></fileset>
 		</copy>
-		<svn javahl="${javahl}" svnkit="${svnkit}">
+		<svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
 			<!-- Normal files -->
 			<add file="workingcopy/normal1.txt"/>
 			<add file="workingcopy/normal2.txt"/>
@@ -121,7 +121,7 @@
 		
 	    <!-- Checkout a second working copy -->
 	    <mkdir dir="workingcopy2"/>
-	    <svn javahl="${javahl}" svnkit="${svnkit}">
+	    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
 	      <checkout url="${urlRepos}" destPath="workingcopy2" />
 	    </svn>
 		
@@ -130,7 +130,7 @@
 		<copy file="workingcopy/conflicted_v1.txt" tofile="workingcopy/conflicted2.txt" overwrite="true"/>
 		<copy file="workingcopy/conflicted_v2.txt" tofile="workingcopy2/conflicted1.txt" overwrite="true"/>
 		<copy file="workingcopy/conflicted_v2.txt" tofile="workingcopy2/conflicted2.txt" overwrite="true"/>
-	    <svn javahl="${javahl}" svnkit="${svnkit}">
+	    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
 	      <commit message="conflicted file" file="workingcopy2/conflicted1.txt" />
 	      <commit message="conflicted file" file="workingcopy2/conflicted2.txt" />
 	      <update file="workingcopy/conflicted1.txt" />
@@ -156,7 +156,7 @@
 		<!-- Replaced files (part 2 of 2) -->
 		<copy file="workingcopy/normal1.txt" tofile="workingcopy/replaced1.txt" overwrite="true"/>
 		<copy file="workingcopy/normal2.txt" tofile="workingcopy/replaced2.txt" overwrite="true"/>
-		<svn javahl="${javahl}" svnkit="${svnkit}">
+		<svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
 			<add file="workingcopy/replaced1.txt"/>
 			<add file="workingcopy/replaced2.txt"/>
 		</svn>
@@ -167,7 +167,7 @@
     <copy todir="workingcopy/listTest">
       <fileset dir="model/listTest"></fileset>
     </copy>
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <add dir="workingcopy/listTest"/>
       <commit dir="workingcopy/listTest" message="listTest directory added to repository"/>	
     </svn>
@@ -177,11 +177,11 @@
     <copy todir="workingcopy/logTest">
       <fileset dir="model/logTest"></fileset>
     </copy>
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <add dir="workingcopy/logTest"/>
       <commit dir="workingcopy/logTest" message="logTest directory added to repository"/>	
     </svn>
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
     	<log
     		destFile="workingcopy/log.xml"
     		path="workingcopy/logTest"
@@ -205,7 +205,7 @@
     <copy todir="workingcopy/checkoutTest">
       <fileset dir="model/checkoutTest"></fileset>
     </copy>
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <add dir="workingcopy/checkoutTest"/>
       <commit dir="workingcopy/checkoutTest" message="checkoutTest directory added to repository"/>
 			
@@ -218,7 +218,7 @@
     <copy todir="workingcopy/addCommitTest">
       <fileset dir="model/addCommitTest"></fileset>
     </copy>
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <add>
         <fileset dir="workingcopy">
           <include name="**/*.add"/>
@@ -237,7 +237,7 @@
     <copy todir="workingcopy/copyTest">
       <fileset dir="model/copyTest"></fileset>
     </copy>
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <add dir="workingcopy/copyTest"/>
       <commit message="copyTest added" dir="workingcopy/copyTest"/>
 			
@@ -251,7 +251,7 @@
     <copy todir="workingcopy/deleteTest">
       <fileset dir="model/deleteTest"></fileset>
     </copy>
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <add dir="workingcopy/deleteTest"/>
       <commit message="deleteTest added" dir="workingcopy/deleteTest"/>
 		
@@ -269,7 +269,7 @@
     <copy todir="workingcopy/exportTest">
       <fileset dir="model/exportTest"></fileset>
     </copy>
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <add dir="workingcopy/exportTest"/>
       <commit message="exportTest added" dir="workingcopy/exportTest"/>
       <export srcUrl="${urlRepos}" revision="1" destPath="export1"/>
@@ -277,7 +277,7 @@
   </target>
 
   <target name="testImport" depends="init">
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <import url="${urlRepos}/" path="model/importTest" message="importTest imported"/>
     </svn>
   </target>
@@ -286,7 +286,7 @@
     <copy todir="workingcopy/mkdirTest">
       <fileset dir="model/mkdirTest"></fileset>
     </copy>
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <add dir="workingcopy/mkdirTest"/>
       <commit message="mkdirTest added" dir="workingcopy/mkdirTest"/>
       <mkdir url="${urlRepos}/mkdirTest/testMkdir1" message="test mkdir 1"/>
@@ -299,7 +299,7 @@
     <copy todir="workingcopy/moveTest">
       <fileset dir="model/moveTest"></fileset>
     </copy>
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <add dir="workingcopy/moveTest"/>
       <commit message="moveTest added" dir="workingcopy/moveTest"/>
       <move srcpath="workingcopy/moveTest/dir1ToRename" destpath="workingcopy/moveTest/dir1Renamed"/>
@@ -314,7 +314,7 @@
     <copy todir="workingcopy/propTest">
       <fileset dir="model/propTest"></fileset>
     </copy>
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <add dir="workingcopy/propTest"/>
       <commit message="propTest added" dir="workingcopy/propTest"/>
 		
@@ -336,7 +336,7 @@
 			<fileset dir="model/propgetInvalidPropTest"></fileset>
 		</copy>
 		
-		<svn javahl="${javahl}" svnkit="${svnkit}">
+		<svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
 			<add dir="workingcopy/propgetInvalidPropTest"/>
 			<commit message="propgetInvalidPropTest added" dir="workingcopy/propgetInvalidPropTest"/>
 			  
@@ -354,13 +354,13 @@
       <fileset dir="model/diffTest"></fileset>
     </copy>
     <copy file="workingcopy/diffTest/file.txt.version1" tofile="workingcopy/diffTest/file.txt"/>
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <add dir="workingcopy/diffTest" recurse="false"/>
       <add file="workingcopy/diffTest/file.txt"/>
       <commit dir="workingcopy/diffTest" message="diffTest/file.txt added to repository"/>
     </svn>
     <copy file="workingcopy/diffTest/file.txt.version2" tofile="workingcopy/diffTest/file.txt" overwrite="true"/>    
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <diff oldPath="workingcopy/diffTest/file.txt" outFile="workingcopy/diffTest/patch.txt"/>
     </svn>
   </target>
@@ -382,24 +382,24 @@
     <copy todir="workingcopy/updateTest">
       <fileset dir="model/updateTest"></fileset>
     </copy>
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <add dir="workingcopy/updateTest"/>
       <commit dir="workingcopy/updateTest" message="updateTest directory added to repository"/>
       <checkout url="${urlRepos}" destPath="coHEAD" />
     </svn>
       <copy file="workingcopy/updateTest/file1.txt" tofile="workingcopy/updateTest/file.txt" />
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <add file="workingcopy/updateTest/file.txt"/>
       <commit dir="workingcopy/updateTest" message="updateTest/file.txt added to repository"/>
     </svn>
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <update dir="coHEAD"/>
     </svn>
     <copy file="workingcopy/updateTest/file2.txt"  tofile="workingcopy/updateTest/file.txt" />
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <commit dir="workingcopy/updateTest" message="updateTest/file.txt modified"/>
     </svn>
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <update dir="coHEAD/updateTest"/>
     </svn>
   </target>
@@ -409,13 +409,13 @@
       <fileset dir="model/revertTest"></fileset>
     </copy>
     <copy file="workingcopy/revertTest/file.txt.version1" tofile="workingcopy/revertTest/file.txt"/>
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <add dir="workingcopy/revertTest" recurse="false"/>
       <add file="workingcopy/revertTest/file.txt"/>
       <commit dir="workingcopy/revertTest" message="revertTest/file.txt added to repository"/>
     </svn>
     <copy file="workingcopy/revertTest/file.txt.version2" tofile="workingcopy/revertTest/file.txt" overwrite="true"/>
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <revert file="workingcopy/revertTest/file.txt"/>
     </svn>
   </target>
@@ -424,7 +424,7 @@
     <copy todir="workingcopy/catTest">
       <fileset dir="model/catTest"></fileset>
     </copy>
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <add dir="workingcopy/catTest"/>
       <commit message="catTest added" dir="workingcopy/catTest"/>
       <cat url="${urlRepos}/catTest/file.txt" destFile="workingcopy/catTest/filecat.txt"/>
@@ -435,7 +435,7 @@
     <copy todir="workingcopy/listenerTest">
       <fileset dir="model/listenerTest"></fileset>
     </copy>
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <add dir="workingcopy/listenerTest"/>
       <commit message="listenerTest added" dir="workingcopy/listenerTest"/>
     </svn>      
@@ -445,7 +445,7 @@
     <copy todir="workingcopy/statusTest">
       <fileset dir="model/statusTest"></fileset>
     </copy>
-    <svn javahl="${javahl}" svnkit="${svnkit}" dateFormatter="yyyy/MM/dd HH:mm">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}" dateFormatter="yyyy/MM/dd HH:mm">
       <add dir="workingcopy/statusTest" recurse="false"/>
       <commit dir="workingcopy/statusTest" message="statusTest committed" recurse="false"/>
       <add dir="workingcopy/statusTest/managedDir" recurse="false"/>
@@ -497,7 +497,7 @@
       <fileset dir="model/statusUnmanagedTest"></fileset>
     </copy>
 	  
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
 		<add dir="workingcopy/statusUnmanagedTest" recurse="false"/>
 		<add dir="workingcopy/statusUnmanagedTest/managedDir" recurse="true"/>
 		<commit dir="workingcopy/statusUnmanagedTest" message="statusUnmanagedTest committed" recurse="true"/>
@@ -552,7 +552,7 @@
     <copy todir="workingcopy/ignoreTest">
       <fileset dir="model/ignoreTest"></fileset>
     </copy>
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <add dir="workingcopy/ignoreTest" recurse="false"/>
       <add dir="workingcopy/ignoreTest/dir1" recurse="false"/>
       <add dir="workingcopy/ignoreTest/dir1/dir2" recurse="false"/>      
@@ -567,7 +567,7 @@
     <copy todir="workingcopy/entryTest">
       <fileset dir="model/entryTest"></fileset>
     </copy>
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <add dir="workingcopy/entryTest"/>
       <commit dir="workingcopy/entryTest" message="entryTest directory added to repository"/>	
     </svn>
@@ -575,22 +575,22 @@
 
   <target name="testResolve" depends="init">
     <copy file="model/resolveTest/file.txt" todir="workingcopy/resolveTest"/>
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <add dir="workingcopy/resolveTest"/>
       <commit dir="workingcopy/resolveTest" message="resolveTest directory added to repository"/>	
     </svn>  
 
     <mkdir dir="workingcopy2"/>
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <checkout url="${urlRepos}" destPath="workingcopy2" />
     </svn>
 
     <echo file="workingcopy2/resolveTest/file.txt" append="true">line 4</echo> 
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <commit dir="workingcopy2/resolveTest" message="file.txt modified"/>	
     </svn>  
     <echo file="workingcopy/resolveTest/file.txt" append="true">the next line</echo>
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <update dir="workingcopy/resolveTest"/>     
     </svn>
     <!-- there is a conflict on workingcopy/resolveTest now -->
@@ -601,7 +601,7 @@
   	<mkdir dir="workingcopy/annotateTest"/>
   	<echo file="workingcopy/annotateTest/file.txt" append="false">line 1
 </echo>
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <add dir="workingcopy/annotateTest"/>
       <commit dir="workingcopy/annotateTest" message="annotateTest directory added to repository"/>	
     </svn>  
@@ -624,7 +624,7 @@
 
   <target name="testRepositoryRoot" depends="init">	
   	<mkdir dir="workingcopy/repositoryRootTest"/>
-  	<svn javahl="${javahl}" svnkit="${svnkit}">
+  	<svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <add dir="workingcopy/repositoryRootTest"/>
   	  <commit dir="workingcopy/repositoryRootTest" message="repositoryRootTest directory added to repository"/>	
     </svn>    	
@@ -635,13 +635,13 @@
       <fileset dir="model/switchTest"></fileset>
     </copy>
   	<!-- first create the branch -->
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <add dir="workingcopy/switchTest"/>
       <commit dir="workingcopy/switchTest" message="switchTest directory added to repository"/>	
       <copy srcUrl="${urlRepos}/switchTest" destUrl="${urlRepos}/switchTestBranch" message="branched" />
     </svn>
   	<!-- switch to the branch -->
-  	<svn javahl="${javahl}" svnkit="${svnkit}">
+  	<svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <switch path="workingcopy/switchTest" url="${urlRepos}/switchTestBranch" revision="1"/>
     </svn>
   </target>
@@ -711,7 +711,7 @@
 
 	<target name="testEmbeddedSelector" depends="init-selectors">
 		<mkdir dir="test"/>
-		<svn javahl="${javahl}" svnkit="${svnkit}">
+		<svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
 			<add>
 				<fileset dir="workingcopy">
 					<svnUnversioned javahl="${javahl}" svnkit="${svnkit}"/>
@@ -730,7 +730,7 @@
 	    <copy todir="workingcopy">
 	      <fileset dir="model/addSvnFileSetTest"/>
 	    </copy>
-		<svn javahl="${javahl}" svnkit="${svnkit}">
+		<svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
 			<add file="workingcopy/normal1.txt"/>
 			<add file="workingcopy/normal2.txt"/>
 			<commit file="workingcopy/normal1.txt" message="ci"/>
@@ -738,7 +738,7 @@
 		</svn>
 		
 		<!-- Perform test -->
-		<svn javahl="${javahl}" svnkit="${svnkit}">
+		<svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
 			<add>
 				<svnFileSet dir="workingcopy" javahl="${javahl}" svnkit="${svnkit}">
 					<svnUnversioned javahl="${javahl}" svnkit="${svnkit}"/>
@@ -760,13 +760,13 @@
 	    <copy todir="workingcopy">
 	      <fileset dir="model/commitSvnFileSetTest"/>
 	    </copy>
-		<svn javahl="${javahl}" svnkit="${svnkit}">
+		<svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
 			<add file="workingcopy/file2.txt"/>
 			<add dir="workingcopy/dir1"/>
 		</svn>
 		
 		<!-- Perform test -->
-		<svn javahl="${javahl}" svnkit="${svnkit}">
+		<svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
 			<commit message="ci">
 				<svnFileSet dir="workingcopy" javahl="${javahl}" svnkit="${svnkit}">
 					<svnAdded javahl="${javahl}" svnkit="${svnkit}"/>
@@ -788,7 +788,7 @@
 	    <copy todir="workingcopy">
 	      <fileset dir="model/deleteSvnFileSetTest"/>
 	    </copy>
-		<svn javahl="${javahl}" svnkit="${svnkit}">
+		<svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
 			<add file="workingcopy/normal1.txt"/>
 			<add file="workingcopy/missing1.txt"/>
 			<add dir="workingcopy/dir1"/>
@@ -800,7 +800,7 @@
 		<delete file="workingcopy/dir1/missing2.txt"/>
 		
 		<!-- Perform test -->
-		<svn javahl="${javahl}" svnkit="${svnkit}">
+		<svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
 			<delete>
 				<svnFileSet dir="workingcopy" javahl="${javahl}" svnkit="${svnkit}">
 					<svnMissing javahl="${javahl}" svnkit="${svnkit}"/>
@@ -811,7 +811,7 @@
 		
 		<!-- Verify -->
 	    <mkdir dir="workingcopy2"/>
-	    <svn javahl="${javahl}" svnkit="${svnkit}">
+	    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
 	      <checkout url="${urlRepos}" destPath="workingcopy2" />
 	    </svn>
 	</target>
@@ -821,7 +821,7 @@
 	    <copy todir="workingcopy">
 	      <fileset dir="model/keywordsSvnFileSetTest"/>
 	    </copy>
-		<svn javahl="${javahl}" svnkit="${svnkit}">
+		<svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
 			<add file="workingcopy/file1.txt"/>
 			<add dir="workingcopy/dir1"/>
 			<commit file="workingcopy/file1.txt" message="ci"/>
@@ -829,7 +829,7 @@
 		</svn>
 		
 		<!-- Perform test -->
-		<svn javahl="${javahl}" svnkit="${svnkit}">
+		<svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
 			<keywordsset keywords="LastChangedRevision">
 				<svnFileSet dir="workingcopy" javahl="${javahl}" svnkit="${svnkit}">
 					<svnNormal javahl="${javahl}" svnkit="${svnkit}"/>
@@ -844,7 +844,7 @@
 	    <copy todir="workingcopy">
 	      <fileset dir="model/revertSvnFileSetTest"/>
 	    </copy>
-		<svn javahl="${javahl}" svnkit="${svnkit}">
+		<svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
 			<add file="workingcopy/normal1.txt"/>
 			<add file="workingcopy/deleted1.txt"/>
 			<add dir="workingcopy/dir1"/>
@@ -856,7 +856,7 @@
 		</svn>
 		
 		<!-- Perform test -->
-		<svn javahl="${javahl}" svnkit="${svnkit}">
+		<svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
 			<revert>
 				<svnFileSet dir="workingcopy" javahl="${javahl}" svnkit="${svnkit}">
 					<svnDeleted javahl="${javahl}" svnkit="${svnkit}"/>
@@ -870,7 +870,7 @@
 	    <copy todir="workingcopy">
 	      <fileset dir="model/updateSvnFileSetTest"/>
 	    </copy>
-		<svn javahl="${javahl}" svnkit="${svnkit}">
+		<svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
 			<add file="workingcopy/normal1.txt"/>
 			<add file="workingcopy/missing1.txt"/>
 			<add dir="workingcopy/dir1"/>
@@ -882,7 +882,7 @@
 		<delete file="workingcopy/dir1/missing2.txt"/>
 		
 		<!-- Perform test : update should restore missing files -->
-		<svn javahl="${javahl}" svnkit="${svnkit}">
+		<svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
 			<update>
 				<svnFileSet dir="workingcopy" javahl="${javahl}" svnkit="${svnkit}">
 					<svnMissing javahl="${javahl}" svnkit="${svnkit}"/>
@@ -906,7 +906,7 @@
 	    <copy todir="workingcopy">
 	      <fileset dir="model/svnFileSetIncludesTest"/>
 	    </copy>
-		<svn javahl="${javahl}" svnkit="${svnkit}">
+		<svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
 			<add file="workingcopy/file11.txt"/>
 			<add file="workingcopy/file12.txt"/>
 			<add dir="workingcopy/dir"/>
@@ -932,7 +932,7 @@
 	    <copy todir="workingcopy">
 	      <fileset dir="model/svnFileSetExcludesTest"/>
 	    </copy>
-		<svn javahl="${javahl}" svnkit="${svnkit}">
+		<svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
 			<add file="workingcopy/file11.txt"/>
 			<add file="workingcopy/file12.txt"/>
 			<add dir="workingcopy/dir"/>
@@ -958,7 +958,7 @@
 	    <copy todir="workingcopy">
 	      <fileset dir="model/svnFileSetNestedIncludeTest"/>
 	    </copy>
-		<svn javahl="${javahl}" svnkit="${svnkit}">
+		<svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
 			<add file="workingcopy/file11.txt"/>
 			<add file="workingcopy/file12.txt"/>
 			<add dir="workingcopy/dir"/>
@@ -985,7 +985,7 @@
 	    <copy todir="workingcopy">
 	      <fileset dir="model/svnFileSetNestedExcludeTest"/>
 	    </copy>
-		<svn javahl="${javahl}" svnkit="${svnkit}">
+		<svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
 			<add file="workingcopy/file11.txt"/>
 			<add file="workingcopy/file12.txt"/>
 			<add dir="workingcopy/dir"/>
@@ -1012,7 +1012,7 @@
 	    <copy todir="workingcopy">
 	      <fileset dir="model/svnFileSetPatternSetTest"/>
 	    </copy>
-		<svn javahl="${javahl}" svnkit="${svnkit}">
+		<svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
 			<add file="workingcopy/file1.xml"/>
 			<add file="workingcopy/file2.txt"/>
 			<add dir="workingcopy/dir1"/>
@@ -1040,31 +1040,38 @@
 	</target>
 
   <target name="testInfoNoAttributes" depends="init">
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <info />
     </svn>
   </target>
 
   <target name="testInfoDirectory" depends="init">
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <info target="${basedir}/workingcopy"/>
     </svn>
   </target>
 
   <target name="testInfoFile" depends="init">
-    <svn javahl="${javahl}" svnkit="${svnkit}">
-      <info target="${basedir}/build.xml"/>
+    <copy todir="workingcopy/infoTest">
+      <fileset dir="model/infoTest"></fileset>
+    </copy>
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
+      <add dir="workingcopy/infoTest"/>
+      <commit dir="workingcopy/infoTest" message="infoTest directory added to repository"/>	
+    </svn>
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
+      <info target="${basedir}/workingcopy/infoTest/file1.txt"/>
     </svn>
   </target>
 
   <target name="testInfoBadFile" depends="init">
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <info target="${basedir}/fakefile.txt"/>
     </svn>
   </target>
 
   <target name="testInfoCustomPrefix" depends="init">
-    <svn javahl="${javahl}" svnkit="${svnkit}">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <info target="${basedir}/workingcopy" propPrefix="wc.info" />
     </svn>
   </target>
@@ -1074,7 +1081,7 @@
 	    <copy todir="workingcopy">
 	      <fileset dir="model/svnExistsTest"/>
 	    </copy>
-		<svn javahl="${javahl}" svnkit="${svnkit}">
+		<svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
 			<add file="workingcopy/added.txt"/>
 			<add file="workingcopy/checkedin.txt"/>
 			<commit file="workingcopy/checkedin.txt" message="ci"/>

@@ -2,17 +2,17 @@ package org.tigris.subversion.svnant;
 
 import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
-import org.tigris.subversion.svnclientadapter.javasvn.JavaSvnClientAdapterFactory;
+import org.tigris.subversion.svnclientadapter.svnkit.SvnKitClientAdapterFactory;
 
-public class SvnJavaSVNTest extends SvnTest {
+public class SvnSvnKitTest extends SvnTest {
 
-    public SvnJavaSVNTest(String name) {
+    public SvnSvnKitTest(String name) {
         super(name);
     }
 
     static {
         try {
-            JavaSvnClientAdapterFactory.setup();
+        	SvnKitClientAdapterFactory.setup();
         } catch (SVNClientException e) {
             // if an exception is thrown, SVNKit is not available or 
             // already registered ...
@@ -32,7 +32,7 @@ public class SvnJavaSVNTest extends SvnTest {
     public void setUp() {
     	super.setUp();
 
-    	svnClient = SVNClientAdapterFactory.createSVNClient(JavaSvnClientAdapterFactory.JAVASVN_CLIENT);
+    	svnClient = SVNClientAdapterFactory.createSVNClient(SvnKitClientAdapterFactory.SVNKIT_CLIENT);
     }
 
     /* (non-Javadoc)

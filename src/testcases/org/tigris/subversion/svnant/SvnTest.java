@@ -337,10 +337,6 @@ public abstract class SvnTest extends BuildFileTest {
         assertEquals(SVNScheduleKind.ADD,info.getSchedule());
         assertEquals(file.getCanonicalFile(),info.getFile().getCanonicalFile());
         
-        file = new File("nonExistingFile");
-        info = svnClient.getInfo(file);
-        assertEquals(null, info.getUrl());
-
         // make sure that the top most directory is said to be versionned. It is in a directory where there is no
         // .svn directory but it is versionned however. 
         file = new File(WORKINGCOPY_DIR+"/statusTest/nonManaged.dir/statusTest");

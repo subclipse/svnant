@@ -124,7 +124,7 @@
 			</classpath>
 			<formatter type="plain" />
 			<test name="org.tigris.subversion.svnant.SvnJavaHLTest" fork="yes" />
-			<test name="org.tigris.subversion.svnant.SvnJavaSVNTest" fork="yes" />
+			<test name="org.tigris.subversion.svnant.SvnSvnKitTest" fork="yes" />
 			<test name="org.tigris.subversion.svnant.SvnCmdLineTest" fork="yes" />
 		</junit>
 	</target>

@@ -96,7 +96,7 @@ import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.commandline.CmdLineClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.javahl.JhlClientAdapterFactory;
-import org.tigris.subversion.svnclientadapter.javasvn.JavaSvnClientAdapterFactory;
+import org.tigris.subversion.svnclientadapter.svnkit.SvnKitClientAdapterFactory;
 
 /**
  * Svn Task
@@ -374,14 +374,14 @@ public class SvnTask extends Task implements ISvnAntProjectComponent {
             // we don't initiliaze svnKitAvailable in the static field because we
             // don't want the check to occur if svnkit is set to false
             try {
-                JavaSvnClientAdapterFactory.setup();
+                SvnKitClientAdapterFactory.setup();
             } catch (SVNClientException e) {
                 // if an exception is thrown, SVNKit is not available or 
                 // already registered ...
             }
             svnKitAvailable = false;
             try {
-            	svnKitAvailable = SVNClientAdapterFactory.isSVNClientAvailable(JavaSvnClientAdapterFactory.JAVASVN_CLIENT);
+            	svnKitAvailable = SVNClientAdapterFactory.isSVNClientAvailable(SvnKitClientAdapterFactory.SVNKIT_CLIENT);
             } catch (Exception ex) {
             	//If anything goes wrong ... 
             }            
@@ -455,7 +455,7 @@ public class SvnTask extends Task implements ISvnAntProjectComponent {
         }
         else
         if ((component.getSvnKit()) && isSVNKitAvailable()) {
-            svnClient = SVNClientAdapterFactory.createSVNClient(JavaSvnClientAdapterFactory.JAVASVN_CLIENT);
+            svnClient = SVNClientAdapterFactory.createSVNClient(SvnKitClientAdapterFactory.SVNKIT_CLIENT);
             component.getProjectComponent().log("Using svnkit", Project.MSG_VERBOSE);
         }
         else
