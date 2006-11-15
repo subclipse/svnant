@@ -14,9 +14,9 @@ public class SvnJavaSVNTest extends SvnTest {
         try {
             JavaSvnClientAdapterFactory.setup();
         } catch (SVNClientException e) {
-            // if an exception is thrown, javaSVN is not available or 
+            // if an exception is thrown, SVNKit is not available or 
             // already registered ...
-        	throw new RuntimeException("Cannot load JavaSVN binding :", e);
+        	throw new RuntimeException("Cannot load SVNKit binding :", e);
         }
     }
 
@@ -24,7 +24,7 @@ public class SvnJavaSVNTest extends SvnTest {
 	{
 		return false;
 	}
-	protected boolean isJavaSVNTest()
+	protected boolean isSVNKitTest()
 	{
 		return true;
 	}
@@ -40,9 +40,9 @@ public class SvnJavaSVNTest extends SvnTest {
      */
     protected void executeTarget(String targetName) {
     	project.setProperty("javahl", "false");
-    	project.setProperty("javasvn", "true");
+    	project.setProperty("svnkit", "true");
         assertPropertyEquals("javahl", "false");
-        assertPropertyEquals("javasvn", "true");
+        assertPropertyEquals("svnkit", "true");
     	super.executeTarget(targetName);
     }
 

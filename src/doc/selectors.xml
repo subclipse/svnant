@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE types [
-	<!ENTITY javahl_javasvn_params SYSTEM "javahl_javasvn.txt">
+	<!ENTITY javahl_svnkit_params SYSTEM "javahl_svnkit.txt">
 	<!ENTITY fail_on_error_params SYSTEM "fail_on_error.txt">
 ]>
 
@@ -40,7 +40,7 @@
 		</p>
 		<h3><a name="bindings">Bindings</a></h3>
 		<p>
-			All file selectors offer two parameters: <b>javahl</b> and <b>javasvn</b>. Those parameters
+			All file selectors offer two parameters: <b>javahl</b> and <b>svnkit</b>. Those parameters
 			are booleans, which means their values can be set to either <b>true</b> or <b>false</b>. 
 			If not specified, those parameters are assumed to be set (true). These two parameters are used
 			to select which client is used to access Subversion.
@@ -49,7 +49,7 @@
 			There are three clients used by svnAnt to access Subversion:
 			<ul>
 				<li>JavaHL;</li>
-				<li>JavaSVN; and,</li>
+				<li>SVNKit; and,</li>
 				<li>Command Line Interface.</li>
 			</ul>
 			To better understand the difference between those three clients, please refer to
@@ -57,14 +57,14 @@
 		</p>
 		<p>
 			The property <b>javahl</b> is considered only if the javahl libraries are available. Similarly,
-			the property <b>javasvn</b> is considered only if JavaSVN is present. Finally, <b>javahl</b>
-			takes precedence over <b>javasvn</b>.
+			the property <b>svnkit</b> is considered only if SVNKit is present. Finally, <b>javahl</b>
+			takes precedence over <b>svnkit</b>.
 		</p>
 		<p>
 			To better illustrate the previous paragraph, use the following steps:
 			<ol>
 				<li>If <b>javahl</b> is <i>true</i> and JavaHL bindings are available, then JavaHL is used.</li>
-				<li>If <b>javasvn</b> is <i>true</i> and JavaSVN is present, then JavaSVN is used.</li>
+				<li>If <b>svnkit</b> is <i>true</i> and SVNKit is present, then SVNKit is used.</li>
 				<li>If the two previous tests failed, for any reason, then the Command Line Interface is used.</li>
 			</ol>
 		</p>
@@ -98,7 +98,7 @@
 				</ant:example>
 			</p>
 		</ant:fullDescription>
-		&javahl_javasvn_params; &fail_on_error_params;
+		&javahl_svnkit_params; &fail_on_error_params;
 	</ant:type>
 	
 	<!-- ***************************** -->
@@ -130,7 +130,7 @@
 				</ant:example>
 			</p>
 		</ant:fullDescription>
-		&javahl_javasvn_params; &fail_on_error_params;
+		&javahl_svnkit_params; &fail_on_error_params;
 	</ant:type>	
 
 	<!-- ***************************** -->
@@ -162,7 +162,7 @@
 				</ant:example>
 			</p>
 		</ant:fullDescription>
-		&javahl_javasvn_params; &fail_on_error_params;
+		&javahl_svnkit_params; &fail_on_error_params;
 	</ant:type>	
 
 	<!-- ***************************** -->
@@ -196,7 +196,7 @@
 				</ant:example>
 			</p>
 		</ant:fullDescription>
-		&javahl_javasvn_params; &fail_on_error_params;
+		&javahl_svnkit_params; &fail_on_error_params;
 	</ant:type>	
 
 	<!-- ***************************** -->
@@ -227,7 +227,7 @@
 				</ant:example>
 			</p>
 		</ant:fullDescription>
-		&javahl_javasvn_params; &fail_on_error_params;
+		&javahl_svnkit_params; &fail_on_error_params;
 	</ant:type>	
 
 	<!-- ***************************** -->
@@ -261,7 +261,7 @@
 				</ant:example>
 			</p>
 		</ant:fullDescription>
-		&javahl_javasvn_params; &fail_on_error_params;
+		&javahl_svnkit_params; &fail_on_error_params;
 	</ant:type>	
 
 	<!-- ***************************** -->
@@ -292,7 +292,7 @@
 				</ant:example>
 			</p>
 		</ant:fullDescription>
-		&javahl_javasvn_params; &fail_on_error_params;
+		&javahl_svnkit_params; &fail_on_error_params;
 	</ant:type>	
 
 	<!-- ***************************** -->
@@ -324,7 +324,7 @@
 				</ant:example>
 			</p>
 		</ant:fullDescription>
-		&javahl_javasvn_params; &fail_on_error_params;
+		&javahl_svnkit_params; &fail_on_error_params;
 	</ant:type>	
 
 	<!-- ***************************** -->
@@ -360,7 +360,7 @@
 				</ant:example>
 			</p>
 		</ant:fullDescription>
-		&javahl_javasvn_params; &fail_on_error_params;
+		&javahl_svnkit_params; &fail_on_error_params;
 	</ant:type>	
 
 	<!-- ***************************** -->
@@ -396,7 +396,7 @@
 				</ant:example>
 			</p>
 		</ant:fullDescription>
-		&javahl_javasvn_params; &fail_on_error_params;
+		&javahl_svnkit_params; &fail_on_error_params;
 	</ant:type>	
 		
 </ant:types>

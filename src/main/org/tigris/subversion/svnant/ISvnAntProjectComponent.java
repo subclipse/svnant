@@ -71,9 +71,9 @@ public interface ISvnAntProjectComponent {
 	boolean getJavahl();
 	
 	/**
-	 * @return true when JavaSVN is to be used as preferred client adapter implementation
+	 * @return true when SVNKit is to be used as preferred client adapter implementation
 	 */
-	boolean getJavaSvn();
+	boolean getSvnKit();
 	
 	/**
 	 * @return the ant's project component element. Used for redirecting loging there.

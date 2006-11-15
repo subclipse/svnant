@@ -86,7 +86,7 @@ public class Exists extends SvnCondition {
     private String target = null;
 	
 	public boolean internalEval() throws SvnAntException {
-		// Obtain a svnClient according to javahl and javasvn properties
+		// Obtain a svnClient according to javahl and svnkit properties
 		ISVNClientAdapter svnClient = SvnTask.getClientAdapter(this);
 
 		// Retrieve info for the requested element

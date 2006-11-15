@@ -33,9 +33,9 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
 import org.tigris.subversion.svnclientadapter.utils.SVNStatusUtils;
 
 /**
- * Set the property <code>javahl</code> and/or <code>javasvn</code> to
+ * Set the property <code>javahl</code> and/or <code>svnkit</code> to
  * <code>true</code> in any of the test/<i>[dir]</i>/build.properties
- * files to run the test cases using the JavaHL or JavaSVN clients (as
+ * files to run the test cases using the JavaHL or SVNKit clients (as
  * opposed to only the command-line client).
  *
  * @author Cédric Chabanois 
@@ -65,7 +65,7 @@ public abstract class SvnTest extends BuildFileTest {
 	}
 
 	protected abstract boolean isJavaHLTest(); 
-	protected abstract boolean isJavaSVNTest(); 
+	protected abstract boolean isSVNKitTest(); 
 	
     public void testCheckout() throws SVNClientException {
         executeTarget("testCheckout");
@@ -247,7 +247,7 @@ public abstract class SvnTest extends BuildFileTest {
             svnTask = (SvnTask)task;
         }
         svnTask.setJavahl(isJavaHLTest());
-        svnTask.setJavasvn(isJavaSVNTest());
+        svnTask.setSvnkit(isSVNKitTest());
         
         svnTask.addNotifyListener(listener);
         executeTarget("testListener");

@@ -32,7 +32,7 @@
 	<property name="lib.dir" value="lib" />
 	<property name="svnClientAdapter.jar" value="${lib.dir}/svnClientAdapter.jar" />
 	<property name="svnjavahl.jar" value="${lib.dir}/svnjavahl.jar" />
-	<property name="javasvn.jar" value="${lib.dir}/javasvn.jar" />
+	<property name="svnkit.jar" value="${lib.dir}/svnkit.jar" />
 	<property name="ganymed.jar" value="${lib.dir}/ganymed.jar" />
 	<property name="ant.jar" value="${lib.dir}/ant.jar" />
 	<property name="ant-launcher.jar" value="${lib.dir}/ant-launcher.jar" />
@@ -44,7 +44,7 @@
 		<pathelement location="${ant-launcher.jar}" />
 		<pathelement location="${svnClientAdapter.jar}" />
 		<pathelement location="${svnjavahl.jar}" />
-		<pathelement location="${javasvn.jar}" />
+		<pathelement location="${svnkit.jar}" />
 		<pathelement location="${ganymed.jar}" />
 		<pathelement location="${junit.jar}" />
 	</path>
@@ -62,7 +62,12 @@
 	<target name="compile" description="compile all source files">
 		<mkdir dir="${build.classes.dir}" />
 		<depend srcDir="${src.main.dir}" destDir="${build.classes.dir}" cache="${build.cache.dir}" />
-		<javac srcdir="${src.main.dir}" destdir="${build.classes.dir}" debug="${debug}" includes="**" classpathref="project.classpath" />
+		<javac srcdir="${src.main.dir}" 
+	      destdir="${build.classes.dir}"
+		  debug="${debug}" 
+	      target="${targetJvm}"
+	      includes="**" 
+	      classpathref="project.classpath" />
 		<copy file="${src.main.dir}/svnantlib.xml" todir="${build.classes.dir}/org/tigris/subversion/svnant" />
 	</target>
 
@@ -97,7 +102,12 @@
 	<!-- ================================================================= -->
 	<target name="compileTests" description="compile junit sources files">
 		<mkdir dir="${build.classes.dir}" />
-		<javac srcdir="${src.testcases.dir}" destdir="${build.classes.dir}" debug="${debug}" includes="**" classpathref="project.classpath">
+		<javac srcdir="${src.testcases.dir}" 
+	      destdir="${build.classes.dir}" 
+	      debug="${debug}" 
+	      includes="**" 
+	      target="${targetJvm}"
+	      classpathref="project.classpath">
 		</javac>
 	</target>
 
@@ -133,10 +143,10 @@
 		<copy file="${lib.dir}/SVNCLIENTADAPTER-LICENSE" todir="${build.distrib.dir}/lib" />
 		<copy file="${svnjavahl.jar}" todir="${build.distrib.dir}/lib" />
 		<copy file="${lib.dir}/JAVAHL-LICENSE" todir="${build.distrib.dir}/lib" />
-		<copy file="${javasvn.jar}" todir="${build.distrib.dir}/lib" />
-		<copy file="JAVASVN-LICENSE" todir="${build.distrib.dir}" />
+		<copy file="${svnkit.jar}" todir="${build.distrib.dir}/lib" />
+		<copy file="${lib.dir}/SVNKit-LICENSE" todir="${build.distrib.dir}" />
 		<copy file="${ganymed.jar}" todir="${build.distrib.dir}/lib" />
-		<copy file="GANYMED-LICENSE" todir="${build.distrib.dir}" />
+		<copy file="${lib.dir}/GANYMED-LICENSE" todir="${build.distrib.dir}" />
 		<copy file="${build.lib.dir}/svnant.jar" todir="${build.distrib.dir}/lib" />
 		<copy todir="${build.distrib.dir}/doc">
 			<fileset dir="doc" />

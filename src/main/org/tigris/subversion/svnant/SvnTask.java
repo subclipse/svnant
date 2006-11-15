@@ -108,15 +108,15 @@ public class SvnTask extends Task implements ISvnAntProjectComponent {
 
 	private static boolean javahlAvailableInitialized = false;
     private static boolean javahlAvailable;
-    private static boolean javaSVNAvailableInitialized = false;
-    private static boolean javaSVNAvailable;
+    private static boolean svnKitAvailableInitialized = false;
+    private static boolean svnKitAvailable;
     private static boolean commandLineAvailableInitialized = false;
     private static boolean commandLineAvailable;
 	
     private String username = null;
     private String password = null;    
     private boolean javahl = true;
-    private boolean javasvn = true;
+    private boolean svnkit = true;
     private String dateFormatter = null;
     private TimeZone dateTimeZone = null;
 	private boolean failonerror = true;
@@ -132,10 +132,10 @@ public class SvnTask extends Task implements ISvnAntProjectComponent {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnant.ISvnAntProjectComponent#getJavaSvn()
+	 * @see org.tigris.subversion.svnant.ISvnAntProjectComponent#getSvnKit()
 	 */
-	public boolean getJavaSvn() {
-		return javasvn;
+	public boolean getSvnKit() {
+		return svnkit;
 	}
 
 	/* (non-Javadoc)
@@ -168,11 +168,11 @@ public class SvnTask extends Task implements ISvnAntProjectComponent {
     }
 
     /**
-     * set javasvn to false to use command line interface
-     * @param javasvn
+     * set svnkit to false to use command line interface
+     * @param svnkit
      */
-    public void setJavasvn(boolean javasvn) {
-        this.javasvn = javasvn;
+    public void setSvnkit(boolean svnkit) {
+        this.svnkit = svnkit;
     }
 
     /**
@@ -366,28 +366,28 @@ public class SvnTask extends Task implements ISvnAntProjectComponent {
     }
     
     /**
-     * check if JavaSVN is available
-     * @return true if JavaSVN is available
+     * check if SVNKit is available
+     * @return true if SVNKit is available
      */
-    static public boolean isJavaSVNAvailable() {
-        if (javaSVNAvailableInitialized == false) {
-            // we don't initiliaze javaSVNAvailable in the static field because we
-            // don't want the check to occur if javaSVN is set to false
+    static public boolean isSVNKitAvailable() {
+        if (svnKitAvailableInitialized == false) {
+            // we don't initiliaze svnKitAvailable in the static field because we
+            // don't want the check to occur if svnkit is set to false
             try {
                 JavaSvnClientAdapterFactory.setup();
             } catch (SVNClientException e) {
-                // if an exception is thrown, JavaSVN is not available or 
+                // if an exception is thrown, SVNKit is not available or 
                 // already registered ...
             }
-            javaSVNAvailable = false;
+            svnKitAvailable = false;
             try {
-            	javaSVNAvailable = SVNClientAdapterFactory.isSVNClientAvailable(JavaSvnClientAdapterFactory.JAVASVN_CLIENT);
+            	svnKitAvailable = SVNClientAdapterFactory.isSVNClientAvailable(JavaSvnClientAdapterFactory.JAVASVN_CLIENT);
             } catch (Exception ex) {
             	//If anything goes wrong ... 
             }            
-            javaSVNAvailableInitialized = true;
+            svnKitAvailableInitialized = true;
         }
-        return javaSVNAvailable;
+        return svnKitAvailable;
     }
     
     /**
@@ -440,8 +440,8 @@ public class SvnTask extends Task implements ISvnAntProjectComponent {
 
 	/**
 	 * This method returns a SVN client adapter, based on the property set when the file selector
-	 * was declared. More specifically, the 'javahl' and 'javasvn' flags are verified, as well as the
-	 * availability of JAVAHL ad JavaSVN adapters, to decide what flavour to use.
+	 * was declared. More specifically, the 'javahl' and 'svnkit' flags are verified, as well as the
+	 * availability of JAVAHL ad SVNKit adapters, to decide what flavour to use.
 	 * @param component a ISVNAntProjectComponent for which the client adapter is created
 	 * @return An instance of SVN client adapter that meets the specified constraints, if any.
 	 * @throws BuildException Thrown in a situation where no adapter can fit the constraints.
@@ -454,17 +454,17 @@ public class SvnTask extends Task implements ISvnAntProjectComponent {
             component.getProjectComponent().log("Using javahl", Project.MSG_VERBOSE);
         }
         else
-        if ((component.getJavaSvn()) && isJavaSVNAvailable()) {
+        if ((component.getSvnKit()) && isSVNKitAvailable()) {
             svnClient = SVNClientAdapterFactory.createSVNClient(JavaSvnClientAdapterFactory.JAVASVN_CLIENT);
-            component.getProjectComponent().log("Using javasvn", Project.MSG_VERBOSE);
+            component.getProjectComponent().log("Using svnkit", Project.MSG_VERBOSE);
         }
         else
         if (isCommandLineAvailable()) {
             svnClient = SVNClientAdapterFactory.createSVNClient(CmdLineClientAdapterFactory.COMMANDLINE_CLIENT);
-            component.getProjectComponent().log("Using command line interface", Project.MSG_VERBOSE);
+            component.getProjectComponent().log("Using command line", Project.MSG_VERBOSE);
         } 
         else {
-            throw new BuildException("Cannot use javahl, JavaSVN nor command line svn client");
+            throw new BuildException("Cannot find javahl, svnkit nor command line svn client");
         }
 		return svnClient;
 	}

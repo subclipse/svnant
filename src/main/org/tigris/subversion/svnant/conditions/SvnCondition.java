@@ -10,7 +10,7 @@ import org.tigris.subversion.svnant.SvnAntException;
 
 /**
  * This is an abstract class that implements functions common to all subclasses.
- * It handles the generic 'javahl' and 'javasvn' properties.
+ * It handles the generic 'javahl' and 'svnkit' properties.
  * 
  * Conditions are from a special type in ANT where they can be used to set values
  * of properties. See taks Condition in ANT documentation.
@@ -20,19 +20,9 @@ import org.tigris.subversion.svnant.SvnAntException;
  */
 public abstract class SvnCondition extends ConditionBase implements Condition, ISvnAntProjectComponent {
 
-    /**
-     * 'javahl' property for file selector. If set,
-     * JAVAHL bindings are used, if available. Preempts
-     * JavaSVN and command line.
-     */
     private boolean javahl = true;
     
-    /**
-     * 'javasvn' property for file selector. If set,
-     * JavaSVN client is used, if available. Preempts
-     * command line, but not JAVAHL bindings.  
-     */
-    private boolean javasvn = true;
+    private boolean svnkit = true;
 
     /* (non-Javadoc)
 	 * @see org.tigris.subversion.svnant.ISvnAntProjectComponent#getJavahl()
@@ -42,10 +32,10 @@ public abstract class SvnCondition extends ConditionBase implements Condition, I
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnant.ISvnAntProjectComponent#getJavaSvn()
+	 * @see org.tigris.subversion.svnant.ISvnAntProjectComponent#getSvnKit()
 	 */
-	public boolean getJavaSvn() {
-		return javasvn;
+	public boolean getSvnKit() {
+		return svnkit;
 	}
 
 	/* (non-Javadoc)
@@ -65,12 +55,12 @@ public abstract class SvnCondition extends ConditionBase implements Condition, I
     }
 
     /**
-     * Accessor method to 'javasvn' property. If reset (false),
-     * JavaSVN is not used.
-     * @param javasvn_ New value for javasvn property.
+     * Accessor method to 'svnkit' property. If reset (false),
+     * SVNKit is not used.
+     * @param svnkit_ New value for svnkit property.
      */
-    public void setJavasvn(boolean javasvn_) {
-        javasvn = javasvn_;
+    public void setSvnkit(boolean svnkit_) {
+        svnkit = svnkit_;
     }
     
 	/* (non-Javadoc)

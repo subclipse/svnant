@@ -69,7 +69,7 @@ import org.tigris.subversion.svnclientadapter.utils.StringUtils;
 /**
  * This is an abstract class that implements all functionality shared
  * between all file selectors in svn-ant. In particular, it implements
- * the handling of the common parameters: javahl and javasvn. It provides
+ * the handling of the common parameters: javahl and svnkit. It provides
  * the logic to select the approrpriate client adapter. Finally, it implements
  * the method required by all Ant selectors (isSelected) and redirects
  * the control flow to a subclass implementation while providing the
@@ -80,19 +80,9 @@ import org.tigris.subversion.svnclientadapter.utils.StringUtils;
  */
 public abstract class BaseSvnSelector extends BaseExtendSelector implements ISvnAntProjectComponent {
 
-    /**
-     * 'javahl' property for file selector. If set,
-     * JAVAHL bindings are used, if available. Preempts
-     * JavaSVN and command line.
-     */
     private boolean javahl = true;
     
-    /**
-     * 'javasvn' property for file selector. If set,
-     * JavaSVN client is used, if available. Preempts
-     * command line, but not JAVAHL bindings.  
-     */
-    private boolean javasvn = true;
+    private boolean svnkit = true;
 
     /**
      * 'failonerror' property for file selector.
@@ -107,10 +97,10 @@ public abstract class BaseSvnSelector extends BaseExtendSelector implements ISvn
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnant.ISvnAntProjectComponent#getJavaSvn()
+	 * @see org.tigris.subversion.svnant.ISvnAntProjectComponent#getSvnKit()
 	 */
-	public boolean getJavaSvn() {
-		return javasvn;
+	public boolean getSvnKit() {
+		return svnkit;
 	}
 
 	/* (non-Javadoc)
@@ -130,12 +120,12 @@ public abstract class BaseSvnSelector extends BaseExtendSelector implements ISvn
     }
 
     /**
-     * Accessor method to 'javasvn' property. If reset (false),
-     * JavaSVN is not used.
-     * @param javasvn_ New value for javasvn property.
+     * Accessor method to 'svnkit' property. If reset (false),
+     * SVNKit is not used.
+     * @param svnkit_ New value for svnkit property.
      */
-    public void setJavasvn(boolean javasvn_) {
-        javasvn = javasvn_;
+    public void setSvnkit(boolean svnkit_) {
+        svnkit = svnkit_;
     }
     
 	/**
