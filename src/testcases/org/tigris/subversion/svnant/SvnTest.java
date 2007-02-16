@@ -512,6 +512,22 @@ public abstract class SvnTest extends BuildFileTest {
 			
         executeTarget("testInfoCustomPrefix");
         assertPropertySet("wc.info.path", true);
+        
+        executeTarget("testInfoURL");
+
+        propNames = new String[] {
+        		"svn.info.url",
+        		"svn.info.repouuid",
+        		"svn.info.rev",
+        		"svn.info.nodekind",
+        		"svn.info.author",
+        		"svn.info.lastRev",
+        		"svn.info.lastDate"
+        };
+
+        for (int i = 0; i < propNames.length; i++) {
+        	assertPropertySet(propNames[i], true);
+        }
     }
 
 	public void testEntry() throws Exception {

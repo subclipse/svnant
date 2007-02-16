@@ -1076,6 +1076,18 @@
     </svn>
   </target>
 
+  <target name="testInfoURL" depends="init">
+    <copy todir="workingcopy/infoTest">
+      <fileset dir="model/infoTest"></fileset>
+    </copy>
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
+      <add dir="workingcopy/infoTest"/>
+      <commit dir="workingcopy/infoTest" message="infoTest directory added to repository"/>	
+      <info target="${urlRepos}/infoTest"/>
+    </svn>
+  </target>
+	
+	
 	<target name="testSvnExists" depends="init">
 		<!-- Prepare test -->
 	    <copy todir="workingcopy">
