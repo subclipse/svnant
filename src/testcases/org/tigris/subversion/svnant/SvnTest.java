@@ -933,13 +933,13 @@ public abstract class SvnTest extends BuildFileTest {
     	executeTarget("testSvnExists");
     	
     	// Test for expected results
-		assertEquals(project.getProperty("svnExists.local.checkedin"),  "true");
-		assertEquals(project.getProperty("svnExists.local.added"),      "true");
-		assertEquals(project.getProperty("svnExists.local.private"),    null);
-		assertEquals(project.getProperty("svnExists.local.inexistant"), null);
-		assertEquals(project.getProperty("svnExists.server.checkedin"), "true");
-		assertEquals(project.getProperty("svnExists.server.added"),     null);
-		assertEquals(project.getProperty("svnExists.server.private"),   null);
+		assertEquals("true", project.getProperty("svnExists.local.checkedin"));
+		assertEquals("true", project.getProperty("svnExists.local.added"));
+		assertEquals(null, project.getProperty("svnExists.local.private"));
+		assertEquals(null, project.getProperty("svnExists.local.inexistant"));
+		assertEquals("true", project.getProperty("svnExists.server.checkedin"));
+		assertEquals(null, project.getProperty("svnExists.server.added"));
+		assertEquals(null, project.getProperty("svnExists.server.private"));
     }
     
     /**
