@@ -14,8 +14,8 @@ automtion.
 
 
 --------------------------  IMPORTANT NOTE  --------------------------
-This release of SvnAnt is built against Subversion 1.2 (JavaHL or
-CLI), and has not been tested with Subversion 1.1.  JavaHL is not
+This release of SvnAnt is built against Subversion 1.5 (JavaHL or
+CLI), and has not been tested with previous Subversion releases.  JavaHL is not
 included, and must be installed separately to be used in lieu of the
 CLI.
 ----------------------------------------------------------------------

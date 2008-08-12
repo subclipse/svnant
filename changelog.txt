@@ -1,3 +1,6 @@
+* 1.2-rc1
+- Built against svnClientAdapter r3957, Subversion 1.5, SVNKit 1.20 beta4
+
 * 1.1-rc3
 - Built against svnClientAdapter r2847, Subversion 1.4.2 and SVNKit 1.1.0
 - renamed references to JavaSVN (former name of SVNKit)
