@@ -11,7 +11,7 @@ If you plan to use JavaHL instead of commandline, put the svnjavahl.jar to the c
 
 In the build file, load the <svn> task.
 E.g. like this:
-  <taskdef resource="svntask.properties" classpathref="project.classpath"/>
+  <typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="svnant.classpath" /> 
 (where svnant.jar lies in the "project.classpath")
 
 To provide access to the Subversion API, svnant uses svnClientAdapter on top of 
