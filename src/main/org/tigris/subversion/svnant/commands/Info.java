@@ -146,11 +146,17 @@ public class Info extends SvnCommand {
             value = this.info.getFile();
             if (value != null) {
                 value = ((File) value).getAbsolutePath();
+            } else {
+            	// assume it's a remote info request; return last part of URL
+            	value = this.info.getUrl().getLastPathSegment();
             }
         } else if (FILE_PROP_NAMES[1].equals(propName)) {
             value = this.info.getFile();
             if (value != null) {
                 value = ((File) value).getName();
+            } else {
+            	// as above
+            	value = this.info.getUrl().getLastPathSegment();
             }
         } else if (FILE_PROP_NAMES[2].equals(propName)) {
             value = this.info.getUrl();

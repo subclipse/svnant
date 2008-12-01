@@ -569,8 +569,7 @@ public abstract class SvnTest extends BuildFileTest {
 		File file = new File(WORKINGCOPY_DIR+"/annotateTest/file.txt");
 		ISVNAnnotations annotations = svnClient.annotate(file,new SVNRevision.Number(2),new SVNRevision.Number(3));
 		assertEquals(3,annotations.numberOfLines());
-		assertNull(annotations.getAuthor(0));
-		assertEquals(-1,annotations.getRevision(0));
+		assertEquals(0,annotations.getRevision(0));
 		assertEquals("user1",annotations.getAuthor(1));
 		assertEquals(2,annotations.getRevision(1));
 		assertEquals("line 2",annotations.getLine(1));

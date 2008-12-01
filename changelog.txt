@@ -1,3 +1,8 @@
+* 1.2.1
+- Built against svnClientAdapter r4107, Subversion 1.5.x, SVNKit 1.2.x
+- fixed remote info bug
+- svnkit exists task
+
 * 1.2-rc1
 - Built against svnClientAdapter r3957, Subversion 1.5, SVNKit 1.20 beta4
 
