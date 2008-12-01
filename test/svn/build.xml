@@ -233,6 +233,13 @@
     </svn>
   </target>
 
+  <target name="testCleanup" depends="init">
+  	<echo file="workingcopy/.svn/lock">test</echo>
+  	<svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
+  	    <cleanup dir="workingcopy" />
+  	</svn>
+  </target>	
+
   <target name="testCopy" depends="init">
     <copy todir="workingcopy/copyTest">
       <fileset dir="model/copyTest"></fileset>

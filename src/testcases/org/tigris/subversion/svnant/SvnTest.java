@@ -104,10 +104,17 @@ public abstract class SvnTest extends BuildFileTest {
         assertEquals('A',messages[0].getChangedPaths()[0].getAction());
     }
 
+
     public void testAddCommit() throws SVNClientException {
        executeTarget("testAddCommit");
 	   assertTrue(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/addCommitTest/file0.add")).getLastChangedRevision().getNumber() > 0);
     }
+    
+    public void testCleanup() throws SVNClientException {
+       executeTarget("testCleanup");
+       assertTrue(!new File(WORKINGCOPY_DIR+"/.svn/lock").exists());
+	}
+     
 
     public void testCopy() throws SVNClientException {
     	executeTarget("testCopy");

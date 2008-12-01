@@ -65,6 +65,7 @@ import org.apache.tools.ant.Task;
 import org.tigris.subversion.svnant.commands.Add;
 import org.tigris.subversion.svnant.commands.Cat;
 import org.tigris.subversion.svnant.commands.Checkout;
+import org.tigris.subversion.svnant.commands.Cleanup;
 import org.tigris.subversion.svnant.commands.Commit;
 import org.tigris.subversion.svnant.commands.Copy;
 import org.tigris.subversion.svnant.commands.CreateRepository;
@@ -229,6 +230,10 @@ public class SvnTask extends Task implements ISvnAntProjectComponent {
         addCommand(a);
     }
 
+    public void addCleanup(Cleanup a) {
+    	addCommand(a);
+    }
+    
     public void addCommit(Commit a) {
         addCommand(a);
     }
