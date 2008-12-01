@@ -12,7 +12,7 @@
 	<!-- ================================================================= -->
 
 	<!-- svnant version -->
-	<property name="svnant.version" value="1.2.0-RC1" />
+	<property name="svnant.version" value="1.2.1" />
 
 	<!-- compile with debug on or off -->
 	<property name="debug" value="off" />
