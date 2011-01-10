@@ -89,10 +89,10 @@ public class Commit extends SvnCommand {
     private boolean recurse = true;
 
     /** filesets to commit */
-    private Vector filesets = new Vector();
+    private Vector<FileSet> filesets = new Vector<FileSet>();
 
     public void execute() throws SvnAntException {
-		
+    
         // deal with the single file
         if (file != null) {
             svnCommitFile(file);
@@ -103,10 +103,10 @@ public class Commit extends SvnCommand {
             svnCommitDir(dir, recurse);
         }
 
-        // deal with filesets		
+        // deal with filesets   
         if (filesets.size() > 0) {
             for (int i = 0; i < filesets.size(); i++) {
-                FileSet fs = (FileSet) filesets.elementAt(i);
+                FileSet fs = filesets.elementAt(i);
                 svnCommitFileSet(fs);
             }
         }
@@ -117,18 +117,23 @@ public class Commit extends SvnCommand {
      */
     protected void validateAttributes() throws SvnAntValidationException {
 
-        if ((file == null) && (dir == null) && (filesets.size() == 0))
+        if ((file == null) && (dir == null) && (filesets.size() == 0)) {
             throw new SvnAntValidationException("file, url or fileset must be set");
-        if (file != null)
-            if ((dir != null) || (filesets.size() != 0))
+        }
+        if (file != null) {
+            if ((dir != null) || (filesets.size() != 0)) {
                 throw new SvnAntValidationException("dir and fileset must not be set when file attribute is present");
-
-        if (dir != null)
-            if ((file != null) || (filesets.size() != 0))
+            }
+        }
+        
+        if (dir != null) {
+            if ((file != null) || (filesets.size() != 0)) {
                 throw new SvnAntValidationException("file and fileset must not be set when dir attribute is present");
-
-        if (message == null)
+            }
+        }
+        if (message == null) {
             throw new SvnAntValidationException("Message must be set");
+        }
     }
 
     /**
@@ -168,8 +173,7 @@ public class Commit extends SvnCommand {
      * @param recursive
      * @throws SvnAntException
      */
-    private void svnCommitDir(File aDir, boolean recursive)
-        throws SvnAntException {
+    private void svnCommitDir(File aDir, boolean recursive) throws SvnAntException {
         if (aDir.exists()) {
             if (!aDir.isDirectory()) {
                 logWarning(
@@ -203,48 +207,49 @@ public class Commit extends SvnCommand {
      * @throws SvnAntException
      */
     private void svnPrepareCommitFileWithDirs(
-        Vector filesToCommit,
+        Vector<File> filesToCommit,
         File aFile,
         File baseDir)
         throws SvnAntException {
 
-        if (filesToCommit.contains(aFile))
+        if (filesToCommit.contains(aFile)) {
             return; // we already know that we will commit it
-
+        }
+        
         try {
-			// file has not been "added", we cannot commit it
-			if (!SVNStatusUtils.isManaged(svnClient.getSingleStatus(aFile)))
-			    return;
-		} catch (SVNClientException e1) {
+            // file has not been "added", we cannot commit it
+            if (!SVNStatusUtils.isManaged(svnClient.getSingleStatus(aFile))) {
+                return;
+            }
+        } catch (SVNClientException e1) {
             throw new SvnAntException("Cannot get status of file :"+aFile.toString(),e1);
-		}
+        }
 
         // determine directories to commit
         // we will commit directories that are necessary to commit in order to
         // commit specified files (ie parent directories that have been added) 
 
-		Stack dirs;
-		File currentDir = null;
-		try {
-			dirs = new Stack();
-			currentDir = aFile.getParentFile();
-			ISVNStatus status = svnClient.getSingleStatus(currentDir);
-			while ((currentDir != null)
-			    && (status.getTextStatus() == SVNStatusKind.ADDED)
-			    && (!currentDir.equals(baseDir))) {
-			    dirs.push(currentDir);
-			    currentDir = currentDir.getParentFile();
-			    status = svnClient.getSingleStatus(currentDir);
-			}
-		} catch (SVNClientException e) {
+        Stack<File> dirs = new Stack<File>();
+        File currentDir = aFile.getParentFile();
+        try {
+            ISVNStatus status = svnClient.getSingleStatus(currentDir);
+            while ((currentDir != null)
+                && (status.getTextStatus() == SVNStatusKind.ADDED)
+                && (!currentDir.equals(baseDir))) {
+                dirs.push(currentDir);
+                currentDir = currentDir.getParentFile();
+                status = svnClient.getSingleStatus(currentDir);
+            }
+        } catch (SVNClientException e) {
             throw new SvnAntException("Cannot get status of directory :"+ currentDir, e);
-		}
+        }
 
         // add them to the vector
         while (dirs.size() > 0) {
-            currentDir = (File) dirs.pop();
-            if (!filesToCommit.contains(currentDir))
+            currentDir = dirs.pop();
+            if (!filesToCommit.contains(currentDir)) {
                 filesToCommit.add(currentDir);
+            }
         }
 
         // now add the file ...
@@ -262,7 +267,7 @@ public class Commit extends SvnCommand {
         File baseDir = fs.getDir(getProject()); // base dir
         String[] includedFiles = ds.getIncludedFiles();
         String[] includedDirs = ds.getIncludedDirectories();
-        Vector filesToCommit = new Vector();
+        Vector<File> filesToCommit = new Vector<File>();
 
         // first : we add directories to the repository
         for (int i = 0; i < includedDirs.length; i++) {
@@ -276,9 +281,10 @@ public class Commit extends SvnCommand {
             svnPrepareCommitFileWithDirs(filesToCommit, aFile, baseDir);
         }
         File[] files = new File[filesToCommit.size()];
-        for (int i = 0; i < filesToCommit.size(); i++)
-            files[i] = ((File) filesToCommit.get(i));
-
+        for (int i = 0; i < filesToCommit.size(); i++) {
+            files[i] = filesToCommit.get(i);
+        }
+        
         // finally we commit files
         try {
             svnClient.commit(files, message, false);
@@ -288,26 +294,26 @@ public class Commit extends SvnCommand {
 
     }
 
-	/**
-	 * set file to commit
-	 * @param file
-	 */
+  /**
+   * set file to commit
+   * @param file
+   */
     public void setFile(File file) {
         this.file = file;
     }
 
-	/**
-	 * set directory to commit
-	 * @param dir
-	 */
+  /**
+   * set directory to commit
+   * @param dir
+   */
     public void setDir(File dir) {
         this.dir = dir;
     }
 
-	/**
-	 * if set, directory will be commited recursively (see setDir)
-	 * @param recurse
-	 */
+  /**
+   * if set, directory will be commited recursively (see setDir)
+   * @param recurse
+   */
     public void setRecurse(boolean recurse) {
         this.recurse = recurse;
     }

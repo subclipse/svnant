@@ -102,8 +102,8 @@ import java.util.TimeZone;
  */
 public class SvnTask extends Task {
 
-    private List commands        = new ArrayList();
-    private List notifyListeners = new ArrayList();
+    private List<SvnCommand>          commands        = new ArrayList<SvnCommand>();
+    private List<ISVNNotifyListener>  notifyListeners = new ArrayList<ISVNNotifyListener>();
     
     /**
      * {@inheritDoc}
@@ -348,11 +348,11 @@ public class SvnTask extends Task {
         ISVNClientAdapter svnClient = SvnFacade.getClientAdapter(this);        
 
         for (int i = 0; i < notifyListeners.size();i++) {
-            svnClient.addNotifyListener((ISVNNotifyListener)notifyListeners.get(i));
+            svnClient.addNotifyListener(notifyListeners.get(i));
         }
 
         for (int i = 0; i < commands.size(); i++) {
-            SvnCommand command = (SvnCommand) commands.get(i);
+            SvnCommand command = commands.get(i);
             Feedback feedback = new Feedback(command);
             svnClient.addNotifyListener(feedback);
             command.executeCommand(svnClient);

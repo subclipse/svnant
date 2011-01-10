@@ -70,10 +70,10 @@ import org.tigris.subversion.svnclientadapter.SVNKeywords;
  */
 public class Keywordsremove extends Keywords {
    
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
-	 */
-	public void execute() throws SvnAntException {
+  /* (non-Javadoc)
+   * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
+   */
+  public void execute() throws SvnAntException {
         super.execute();        
 
         if (file != null) {
@@ -95,11 +95,11 @@ public class Keywordsremove extends Keywords {
         // deal with filesets
         if (filesets.size() > 0) {
             for (int i = 0; i < filesets.size(); i++) {
-                FileSet fs = (FileSet) filesets.elementAt(i);
+                FileSet fs = filesets.elementAt(i);
                 keywordsRemove(fs,keywords);
             }
         }
-	}
+  }
 
     /**
      * add keywords on a fileset 
@@ -121,8 +121,5 @@ public class Keywordsremove extends Keywords {
             }
         }
     }
-
-
-    
 
 }

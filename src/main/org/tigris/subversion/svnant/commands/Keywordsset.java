@@ -70,10 +70,10 @@ import org.tigris.subversion.svnclientadapter.SVNKeywords;
  */
 public class Keywordsset extends Keywords {
    
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
-	 */
-	public void execute() throws SvnAntException {
+    /* (non-Javadoc)
+     * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
+     */
+    public void execute() throws SvnAntException {
         super.execute();        
 
         if (file != null) {
@@ -82,24 +82,20 @@ public class Keywordsset extends Keywords {
             } catch (SVNClientException e) {
                 throw new SvnAntException("Can't set keywords on file "+file.toString(), e);
             }
-        }
-        else
-        if (dir != null) {
+        } else if (dir != null) {
             try {            
                 svnClient.setKeywords(dir,keywords,recurse);
             } catch (SVNClientException e) {
                 throw new SvnAntException("Can't set keywords on directory "+dir.toString(), e);
             }            
-        }
-        else
-        // deal with filesets
-        if (filesets.size() > 0) {
+        } else if (filesets.size() > 0) {
+            // deal with filesets
             for (int i = 0; i < filesets.size(); i++) {
-                FileSet fs = (FileSet) filesets.elementAt(i);
+                FileSet fs = filesets.elementAt(i);
                 keywordsSet(fs,keywords);
             }
         }
-	}
+  }
 
     /**
      * set keywords on a fileset (both dirs and files)
@@ -125,7 +121,5 @@ public class Keywordsset extends Keywords {
         }
     }
 
-
-    
 
 }

@@ -77,7 +77,7 @@ public abstract class Keywords extends SvnCommand {
     protected File file = null;
 
     /** filesets concerned by keywords substitution */
-    protected Vector filesets = new Vector();
+    protected Vector<FileSet> filesets = new Vector<FileSet>();
 
     /** directory concerned by keywords substitution */
     protected File dir = null;
@@ -93,43 +93,42 @@ public abstract class Keywords extends SvnCommand {
      * Ensure we have a consistent and legal set of attributes
      */
     protected void validateAttributes() throws SvnAntValidationException {
-
-        if ((file == null) && (dir == null) && (filesets.size() == 0))
+        if ((file == null) && (dir == null) && (filesets.size() == 0)) {
             throw new SvnAntValidationException("file, url or fileset must be set");
+        }
     }
     
-	public void setHeadURL(boolean b) {
-		keywords.setHeadUrl(b);
-	}
+    public void setHeadURL(boolean b) {
+        keywords.setHeadUrl(b);
+    }
 
     public void setURL(boolean b) {
         keywords.setHeadUrl(b);
     }
 
-	public void setId(boolean b) {
+    public void setId(boolean b) {
         keywords.setId(b);
-	}
+    }
 
-	public void setLastChangedBy(boolean b) {
-		keywords.setLastChangedBy(b);
-	}
+    public void setLastChangedBy(boolean b) {
+        keywords.setLastChangedBy(b);
+    }
 
     public void setAuthor(boolean b) {
         keywords.setLastChangedBy(b);
     }
 
-	public void setLastChangedDate(boolean b) {
-		keywords.setLastChangedDate(b);
-	}
+    public void setLastChangedDate(boolean b) {
+        keywords.setLastChangedDate(b);
+    }
 
     public void setDate(boolean b) {
         keywords.setLastChangedDate(b);
     }
 
-
-	public void setLastChangedRevision(boolean b) {
-		keywords.setLastChangedRevision(b);
-	}
+    public void setLastChangedRevision(boolean b) {
+        keywords.setLastChangedRevision(b);
+    }
     
     public void setRev(boolean b) {
         keywords.setLastChangedRevision(b);

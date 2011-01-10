@@ -70,90 +70,93 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
  *
  */
 public class Revert extends SvnCommand {
-	
-	/** file to revert */
-	private File file = null;
-	
-	/** dir to revert */
-	private File dir = null;
+  
+    /** file to revert */
+    private File file = null;
     
+    /** dir to revert */
+    private File dir = null;
+      
     /** descend recursively */
     private boolean recurse = false;
-	
-	/** filesets to revert */
-	private Vector filesets = new Vector();	
-	
-	public void execute() throws SvnAntException {
-		
-		if (file != null)
-			revertFile(file,false);
-			
-		if (dir != null)
-			revertFile(dir,recurse);
-			
-		// deal with filesets
-		if (filesets.size() > 0) {
-			for (int i = 0; i < filesets.size(); i++) {
-				FileSet fs = (FileSet) filesets.elementAt(i);
-				revertFileSet(fs);
-			}
-		}
-	}
+    
+    /** filesets to revert */
+    private Vector<FileSet> filesets = new Vector<FileSet>(); 
+    
+    public void execute() throws SvnAntException {
+      
+      if (file != null) {
+          revertFile(file,false);
+      }
+      
+      if (dir != null) {
+          revertFile(dir,recurse);
+      }
+      
+      // deal with filesets
+      if (filesets.size() > 0) {
+          for (int i = 0; i < filesets.size(); i++) {
+              FileSet fs = filesets.elementAt(i);
+              revertFileSet(fs);
+          }
+      }
+    }
 
-	/**
-	 * Ensure we have a consistent and legal set of attributes
-	 */
-	protected void validateAttributes() throws SvnAntValidationException {
+    /**
+     * Ensure we have a consistent and legal set of attributes
+     */
+    protected void validateAttributes() throws SvnAntValidationException {
         if (file != null) {
-            if (dir != null)
+            if (dir != null) {
                 throw new SvnAntValidationException("Don't use both file and dir attribute");
-            if (filesets.size() > 0)
+            }
+            if (filesets.size() > 0) {
                 throw new SvnAntValidationException("Don't use both file attribute and filesets");
+            }
+        } else if (dir != null) {
+            if (filesets.size() > 0) {
+                throw new SvnAntValidationException("Don't use both file attribute and filesets");
+            }
         }
-        else
-        if (dir != null) {
-            if (filesets.size() > 0)
-                throw new SvnAntValidationException("Don't use both file attribute and filesets");            
-        }
-	}
+    }
 
-	/**
-	 * Revert file or directory
-     *
-	 * @param aFile
-	 * @param force
-	 * @throws SvnAntException
-	 */
-	private void revertFile(File aFile, boolean doRecurse) throws SvnAntException {
-		try {
+    /**
+     * Revert file or directory
+       *
+     * @param aFile
+     * @param force
+     * @throws SvnAntException
+     */
+    private void revertFile(File aFile, boolean doRecurse) throws SvnAntException {
+        try {
             svnClient.revert(aFile, doRecurse);
-		} catch (SVNClientException e) {
-			throw new SvnAntException("Cannot revert file or directory "+aFile.getAbsolutePath(),e);
-		}
-	}
+        } catch (SVNClientException e) {
+          throw new SvnAntException("Cannot revert file or directory "+aFile.getAbsolutePath(),e);
+        }
+    }
 
-	/**
-	 * revert a fileset (both dirs and files)
-	 * @param svnClient
-	 * @param fs
-	 * @throws SvnAntException
-	 */
-	private void revertFileSet(FileSet fs) throws SvnAntException {
-		DirectoryScanner ds = fs.getDirectoryScanner(getProject());
-		File baseDir = fs.getDir(getProject()); // base dir
-		String[] files = ds.getIncludedFiles();
-		String[] dirs = ds.getIncludedDirectories();
+    /**
+     * revert a fileset (both dirs and files)
+     * @param svnClient
+     * @param fs
+     * @throws SvnAntException
+     */
+    private void revertFileSet(FileSet fs) throws SvnAntException {
+        DirectoryScanner ds = fs.getDirectoryScanner(getProject());
+        File baseDir = fs.getDir(getProject()); // base dir
+        String[] files = ds.getIncludedFiles();
+        String[] dirs = ds.getIncludedDirectories();
         File[] filesAndDirs = new File[files.length+dirs.length];
         int j = 0;
 
-		for (int i = 0; i < dirs.length; i++) {
+        for (int i = 0; i < dirs.length; i++) {
             filesAndDirs[j] = new File(baseDir, dirs[i]);
             j++;
-		}
-		for (int i = 0; i < files.length; i++) {
+        }
+        for (int i = 0; i < files.length; i++) {
             filesAndDirs[j] = new File(baseDir, files[i]);
             j++;
-		}
+        }
         
         try {
             for (int i = 0; i < filesAndDirs.length;i++) {
@@ -162,46 +165,46 @@ public class Revert extends SvnCommand {
         } catch (SVNClientException e) {
             logError("Cannot revert file " + file.getAbsolutePath());
         }
-	}
+    }
 
-	/**
-	 * set file to revert
-	 * @param file
-	 */
-	public void setFile(File file) {
-		this.file = file;
-	}
+    /**
+     * set file to revert
+     * @param file
+     */
+    public void setFile(File file) {
+        this.file = file;
+    }
 
-	/**
-	 * set directory to revert
-	 * @param dir
-	 */
-	public void setDir(File dir) {
-		this.dir = dir;
-	}
-	
-	/**
-	 * Set the recurse flag
-	 * @param recurse
-	 */
-	public void setRecurse(boolean recurse) {
-		this.recurse = recurse;
-	}
+    /**
+     * set directory to revert
+     * @param dir
+     */
+    public void setDir(File dir) {
+        this.dir = dir;
+    }
+  
+    /**
+     * Set the recurse flag
+     * @param recurse
+     */
+    public void setRecurse(boolean recurse) {
+        this.recurse = recurse;
+    }
 
-	/**
-	 * Adds a set of files to add
-	 * @param set
-	 */
-	public void addFileset(FileSet set) {
-		filesets.addElement(set);
-	}	
-	
-	/**
-	 * Adds a set of files to add
-	 * @param set
-	 */
-	public void add(FileSet set) {
-		filesets.addElement(set);
-	}	
-	
+    /**
+     * Adds a set of files to add
+     * @param set
+     */
+    public void addFileset(FileSet set) {
+        filesets.addElement(set);
+    } 
+  
+    /**
+     * Adds a set of files to add
+     * @param set
+     */
+    public void add(FileSet set) {
+        filesets.addElement(set);
+    } 
+  
 }

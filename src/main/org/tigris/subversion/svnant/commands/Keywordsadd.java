@@ -70,10 +70,11 @@ import org.tigris.subversion.svnclientadapter.SVNKeywords;
  */
 public class Keywordsadd extends Keywords {
    
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
-	 */
-	public void execute() throws SvnAntException {
+    /* (non-Javadoc)
+     * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
+     */
+    public void execute() throws SvnAntException {
+      
         super.execute();        
 
         if (file != null) {
@@ -82,24 +83,20 @@ public class Keywordsadd extends Keywords {
             } catch (SVNClientException e) {
                 throw new SvnAntException("Can't add keywords on file "+file.toString(), e);
             }
-        }
-        else
-        if (dir != null) {
+        } else if (dir != null) {
             try {            
                 svnClient.addKeywords(dir,keywords);
             } catch (SVNClientException e) {
                 throw new SvnAntException("Can't add keywords on directory "+dir.toString(), e);
             }            
-        }
-        else
-        // deal with filesets
-        if (filesets.size() > 0) {
+        } else if (filesets.size() > 0) {
+            // deal with filesets
             for (int i = 0; i < filesets.size(); i++) {
-                FileSet fs = (FileSet) filesets.elementAt(i);
+                FileSet fs = filesets.elementAt(i);
                 keywordsAdd(fs,keywords);
             }
         }
-	}
+  }
 
     /**
      * add keywords on a fileset 
@@ -111,7 +108,6 @@ public class Keywordsadd extends Keywords {
         DirectoryScanner ds = fs.getDirectoryScanner(getProject());
         File baseDir = fs.getDir(getProject()); // base dir
         String[] files = ds.getIncludedFiles();
-
         for (int i = 0; i < files.length; i++) {
             File aFile = new File(baseDir, files[i]);
             try {
@@ -122,7 +118,5 @@ public class Keywordsadd extends Keywords {
         }
     }
 
-
-    
 
 }

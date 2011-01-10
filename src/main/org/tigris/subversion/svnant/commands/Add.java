@@ -72,11 +72,12 @@ import org.tigris.subversion.svnclientadapter.utils.SVNStatusUtils;
  *
  */
 public class Add extends SvnCommand {
+  
     /** file to add to the repository */
     private File file = null;
 
     /** filesets to add to the repository */
-    private Vector filesets = new Vector();
+    private Vector<FileSet> filesets = new Vector<FileSet>();
 
     /** do not fail when file or directory to add is not found */
     private boolean failonerror = false;
@@ -105,7 +106,7 @@ public class Add extends SvnCommand {
         // deal with filesets
         if (filesets.size() > 0) {
             for (int i = 0; i < filesets.size(); i++) {
-                FileSet fs = (FileSet) filesets.elementAt(i);
+                FileSet fs = filesets.elementAt(i);
                 svnAddFileSet(fs);
             }
         }
@@ -116,9 +117,9 @@ public class Add extends SvnCommand {
      * Ensure we have a consistent and legal set of attributes
      */
     protected void validateAttributes() throws SvnAntValidationException {
-
-        if ((file == null) && (dir == null) && (filesets.size() == 0))
+        if ((file == null) && (dir == null) && (filesets.size() == 0)) {
             throw new SvnAntValidationException("file, url or fileset must be set");
+        }
     }
 
     /**
@@ -152,7 +153,7 @@ public class Add extends SvnCommand {
                     + aFile.getAbsolutePath()
                     + " to add to the repository.";
             if (!failonerror) {
-            	logWarning(message);
+              logWarning(message);
             } else {
                 throw new SvnAntException(message);
             }
@@ -208,31 +209,32 @@ public class Add extends SvnCommand {
      * @param baseDir
      * @throws SvnAntException
      */
-    private void svnAddFileWithDirs(File aFile, File baseDir)
-        throws SvnAntException {
+    private void svnAddFileWithDirs(File aFile, File baseDir) throws SvnAntException {
 
-        Stack dirs = new Stack();
+        Stack<File> dirs = new Stack<File>();
         File currentDir = aFile.getParentFile();
         
         try {
-			// don't add the file if already added ...
-			if (SVNStatusUtils.isManaged(svnClient.getSingleStatus(aFile)))
-			    return;
-			
-			// determine directories to add to repository			
-			while ((currentDir != null)
-			    && (!SVNStatusUtils.isManaged(svnClient.getSingleStatus(currentDir)))
-			    && (!currentDir.equals(baseDir))) {
-			    dirs.push(currentDir);
-			    currentDir = currentDir.getParentFile();
-			}
-		} catch (SVNClientException e) {
-			throw new SvnAntException("Cannot get status of file or directory",e);
-		}
+            // don't add the file if already added ...
+            if (SVNStatusUtils.isManaged(svnClient.getSingleStatus(aFile))) {
+                return;
+            }
+      
+            // determine directories to add to repository     
+            while ((currentDir != null)
+                && (!SVNStatusUtils.isManaged(svnClient.getSingleStatus(currentDir)))
+                && (!currentDir.equals(baseDir))) {
+                dirs.push(currentDir);
+                currentDir = currentDir.getParentFile();
+            }
+        
+        } catch (SVNClientException e) {
+          throw new SvnAntException("Cannot get status of file or directory",e);
+        }
 
         // add them to the repository
         while (dirs.size() > 0) {
-            currentDir = (File) dirs.pop();
+            currentDir = dirs.pop();
             try {
                 svnClient.addFile(currentDir);
             } catch (Exception e) {
@@ -278,34 +280,34 @@ public class Add extends SvnCommand {
         }
     }
 
-	/**
-	 * set file to add to repository
-	 * @param file
-	 */
+  /**
+   * set file to add to repository
+   * @param file
+   */
     public void setFile(File file) {
         this.file = file;
     }
 
-	/**
-	 * set the directory to add to the repository
-	 * @param dir
-	 */
+  /**
+   * set the directory to add to the repository
+   * @param dir
+   */
     public void setDir(File dir) {
         this.dir = dir;
     }
 
-	/**
-	 * if set, directory will be added recursively (see setDir)
-	 * @param recurse
-	 */
+  /**
+   * if set, directory will be added recursively (see setDir)
+   * @param recurse
+   */
     public void setRecurse(boolean recurse) {
         this.recurse = recurse;
     }
 
-	/**
-	 * if set, directory will be checked for new content even if already managed by subversion (see setDir)
-	 * @param force
-	 */
+  /**
+   * if set, directory will be checked for new content even if already managed by subversion (see setDir)
+   * @param force
+   */
     public void setForce(boolean force) {
         this.force = force;
     }
