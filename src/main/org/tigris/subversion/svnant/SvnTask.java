@@ -54,12 +54,7 @@
  */ 
 package org.tigris.subversion.svnant;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TimeZone;
-
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectComponent;
 import org.apache.tools.ant.Task;
 import org.tigris.subversion.svnant.commands.Add;
@@ -86,6 +81,7 @@ import org.tigris.subversion.svnant.commands.Propdel;
 import org.tigris.subversion.svnant.commands.Propget;
 import org.tigris.subversion.svnant.commands.Propset;
 import org.tigris.subversion.svnant.commands.Revert;
+import org.tigris.subversion.svnant.commands.SingleInfo;
 import org.tigris.subversion.svnant.commands.Status;
 import org.tigris.subversion.svnant.commands.SvnCommand;
 import org.tigris.subversion.svnant.commands.Switch;
@@ -93,11 +89,10 @@ import org.tigris.subversion.svnant.commands.Update;
 import org.tigris.subversion.svnant.commands.WcVersion;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNNotifyListener;
-import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
-import org.tigris.subversion.svnclientadapter.commandline.CmdLineClientAdapterFactory;
-import org.tigris.subversion.svnclientadapter.javahl.JhlClientAdapterFactory;
-import org.tigris.subversion.svnclientadapter.svnkit.SvnKitClientAdapterFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Svn Task
@@ -105,371 +100,265 @@ import org.tigris.subversion.svnclientadapter.svnkit.SvnKitClientAdapterFactory;
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  *
  */
-public class SvnTask extends Task implements ISvnAntProjectComponent {
+public class SvnTask extends Task {
 
-  private static boolean javahlAvailableInitialized = false;
-  private static boolean javahlAvailable;
-  private static boolean svnKitAvailableInitialized = false;
-  private static boolean svnKitAvailable;
-  private static boolean commandLineAvailableInitialized = false;
-  private static boolean commandLineAvailable;
-  
-  private String username = null;
-  private String password = null;    
-  private boolean javahl = true;
-  private boolean svnkit = true;
-  private String dateFormatter = null;
-  private TimeZone dateTimeZone = null;
-  private boolean failonerror = true;
-
-  private List commands = new ArrayList();
-  private List notifyListeners = new ArrayList();
+    private List commands        = new ArrayList();
+    private List notifyListeners = new ArrayList();
     
-  /**
-   * {@inheritDoc}
-   */
-  public boolean getJavahl() {
-    return javahl;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public boolean getSvnKit() {
-    return svnkit;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public ProjectComponent getProjectComponent() {
-    return this;
-  }
-
-  /**
-   * @param username the username to set
-   */
-  public void setUsername(String username) {
-    this.username = username;
-  }
-
-  /**
-   * @param password the password to set
-   */
-  public void setPassword(String password) {
-    this.password = "\"\"".equals(password) ? "" : password;
-  }
-
-  /**
-   * set javahl to false to use command line interface
-   * @param javahl
-   */
-  public void setJavahl(boolean javahl) {
-    this.javahl = javahl;
-  }
-
-  /**
-   * set svnkit to false to use command line interface
-   * @param svnkit
-   */
-  public void setSvnkit(boolean svnkit) {
-    this.svnkit = svnkit;
-  }
-
-  /**
-   * @return dateFormatter used to parse/format revision dates
-   */
-  public String getDateFormatter() {
-    return dateFormatter != null ? dateFormatter : "MM/dd/yyyy hh:mm a";
-  }
-    
-  /**
-   * set dateFormatter used to parse/format revision dates
-   * @param dateFormatter
-   */
-  public void setDateFormatter(String dateFormatter) {
-    this.dateFormatter = dateFormatter;
-  }
-
-  /**
-   * @return dateTimeZone used to parse/format revision dates
-   */
-  public TimeZone getDateTimeZone() {
-    return dateTimeZone;
-  }
-    
-  /**
-   * set dateTimezone used to parse/format revision dates
-   * @param dateTimezone
-   */
-  public void setDateTimezone(String dateTimeZone) {
-    this.dateTimeZone = TimeZone.getTimeZone(dateTimeZone);
-  }
-
-  /**
-   * @return the failonerror
-   */
-  public boolean isFailonerror() {
-    return failonerror;
-  }
-
-  /**
-   * @param failonerror the failonerror to set
-   */
-  public void setFailonerror(boolean failonerror) {
-    this.failonerror = failonerror;
-  }
-
-  public void addCheckout(Checkout a) {
-    addCommand(a);
-  }
-
-  public void addAdd(Add a) {
-    addCommand(a);
-  }
-
-  public void addCleanup(Cleanup a) {
-    addCommand(a);
-  }
-    
-  public void addCommit(Commit a) {
-    addCommand(a);
-  }
-
-  public void addCopy(Copy a) {
-    addCommand(a);
-  }
-
-  public void addDelete(Delete a) {
-    addCommand(a);
-  }
-
-  public void addExport(Export a) {
-    addCommand(a);
-  }
-
-  /**
-   * Add the info command to the list of commands to execute.
-   */
-  public void addInfo(Info a) {
-    addCommand(a);
-  }
-
-  public void addImport(Import a) {
-    addCommand(a);
-  }
-    
-  public void addLog(Log a) {
-    addCommand(a);
-  }
-
-  public void addMkdir(Mkdir a) {
-    addCommand(a);
-  }
-
-  public void addMove(Move a) {
-    addCommand(a);
-  }
-
-  public void addUpdate(Update a) {
-    addCommand(a);
-  }
-    
-  public void addPropset(Propset a) {
-    addCommand(a);
-  }
-    
-  public void addDiff(Diff a) {
-    addCommand(a);
-  }
-
-  public void addKeywordsSet(Keywordsset a) {
-    addCommand(a);
-  }
-    
-  public void addKeywordsAdd(Keywordsadd a) {
-    addCommand(a);
-  }
-    
-  public void addKeywordsRemove(Keywordsremove a) {
-    addCommand(a);
-  }    
-
-  public void addRevert(Revert a) {
-    addCommand(a);
-  }
-
-  public void addCat(Cat a) {
-    addCommand(a);
-  }
-
-  public void addPropdel(Propdel a) {
-    addCommand(a);
-  }
-    
-  public void addIgnore(Ignore a) {
-    addCommand(a);
-  }
-    
-  public void addCreateRepository(CreateRepository a) {
-    addCommand(a);
-  }
-    
-  public void addWcVersion(WcVersion a) {
-    addCommand(a);
-  }
-
-  public void addStatus(Status a) {
-    addCommand(a);
-  }
-    
-  public void addSwitch(Switch a) {
-    addCommand(a);
-  }
-    
-  public void addPropget(Propget a) {
-    addCommand(a);
-  }
-    
-
-  private void addCommand(SvnCommand cmd) {
-    cmd.setTask(this);
-    commands.add(cmd);
-  }
-    
-  public void addNotifyListener(ISVNNotifyListener notifyListener) {
-    notifyListeners.add(notifyListener);
-  }
-
-  /**
-   * check if javahl is available
-   * @return true if javahl is available
-   */
-  static public boolean isJavahlAvailable() {
-    if (javahlAvailableInitialized == false) {
-      // we don't initiliaze javahlAvailable in the static field because we
-      // don't want the check to occur if javahl is set to false
-      try {
-        JhlClientAdapterFactory.setup();
-      } catch (SVNClientException e) {
-        // if an exception is thrown, javahl is not available or 
-        // already registered ...
-      }
-      javahlAvailable = false;
-      try {
-        javahlAvailable = SVNClientAdapterFactory.isSVNClientAvailable(JhlClientAdapterFactory.JAVAHL_CLIENT);
-      } catch (Exception ex) {
-        //If anything goes wrong ... 
-      }            
-
-      javahlAvailableInitialized = true;
-    }
-    return javahlAvailable;
-  }
-    
-  /**
-   * check if SVNKit is available
-   * @return true if SVNKit is available
-   */
-  static public boolean isSVNKitAvailable() {
-    if (svnKitAvailableInitialized == false) {
-      // we don't initiliaze svnKitAvailable in the static field because we
-      // don't want the check to occur if svnkit is set to false
-      try {
-        SvnKitClientAdapterFactory.setup();
-      } catch (SVNClientException e) {
-        // if an exception is thrown, SVNKit is not available or 
-        // already registered ...
-      }
-      svnKitAvailable = false;
-      try {
-        svnKitAvailable = SVNClientAdapterFactory.isSVNClientAvailable(SvnKitClientAdapterFactory.SVNKIT_CLIENT);
-      } catch (Exception ex) {
-        //If anything goes wrong ... 
-      }            
-      svnKitAvailableInitialized = true;
-    }
-    return svnKitAvailable;
-  }
-    
-  /**
-   * check if command line interface is available
-   * @return true if command line interface is available
-   */
-  static public boolean isCommandLineAvailable() {
-    if (commandLineAvailableInitialized == false) {
-      try {
-        CmdLineClientAdapterFactory.setup();
-      } catch (SVNClientException e) {
-        // if an exception is thrown, command line interface is not available or
-        // already registered ...                
-      }
-      commandLineAvailable = 
-          SVNClientAdapterFactory.isSVNClientAvailable(CmdLineClientAdapterFactory.COMMANDLINE_CLIENT);
-      commandLineAvailableInitialized = true;
-    }
-    return commandLineAvailable;
-  }
-    
-  /**
-   * {@inheritDoc}
-   */
-  public void maybeConfigure() throws BuildException {
-    super.maybeConfigure();
-  }
-    
-  /**
-   * {@inheritDoc}
-   */
-  public void execute() throws BuildException {
-
-    ISVNClientAdapter svnClient = getClientAdapter(this);
-
-    if (username != null) {
-      svnClient.setUsername(username);
+    /**
+     * {@inheritDoc}
+     */
+    public ProjectComponent getProjectComponent() {
+        return this;
     }
     
-    if (password != null) {
-      svnClient.setPassword(password);
+
+    /**
+     * @see org.tigris.subversion.svnant.ISvnAntProjectComponent#getJavahl()
+     */
+    public boolean getJavahl() {
+        return SvnFacade.getJavahl( this );
     }
+
+    /**
+     * @see org.tigris.subversion.svnant.ISvnAntProjectComponent#getSvnKit()
+     */
+    public boolean getSvnKit() {
+        return SvnFacade.getSvnKit( this );
+    }
+
+    /**
+     * Sets the referred configuration to be used for the svn task.
+     *
+     * @param refid   The id of the configuration to be used for the svn task.
+     */
+    public void setRefid(String refid) {
+        SvnFacade.setRefid( this, refid );
+    }
+
+    /**
+     * @param username the username to set
+     */
+    public void setUsername(String username) {
+        SvnFacade.setUsername( this, username );
+    }
+
+    /**
+     * @param password the password to set
+     */
+    public void setPassword(String password) {
+        SvnFacade.setPassword( this, password );
+    }
+
+    /**
+     * set javahl to false to use command line interface
+     * @param javahl
+     */
+    public void setJavahl(boolean javahl) {
+        SvnFacade.setJavahl( this, javahl );
+    }
+
+    /**
+     * set svnkit to false to use command line interface
+     * @param svnkit
+     */
+    public void setSvnkit(boolean svnkit) {
+        SvnFacade.setSvnKit( this, svnkit );
+    }
+
+    /**
+     * @return dateFormatter used to parse/format revision dates
+     */
+    public String getDateFormatter() {
+        return SvnFacade.getDateFormatter( this );
+    }
+    
+    /**
+     * set dateFormatter used to parse/format revision dates
+     * @param dateFormatter
+     */
+    public void setDateFormatter(String dateFormatter) {
+        SvnFacade.setDateFormatter( this, dateFormatter );
+    }
+
+    /**
+     * @return dateTimeZone used to parse/format revision dates
+     */
+    public TimeZone getDateTimezone() {
+        return SvnFacade.getDateTimezone( this );
+    }
+    
+    /**
+     * set dateTimezone used to parse/format revision dates
+     * @param dateTimezone
+     */
+    public void setDateTimezone(String dateTimeZone) {
+        SvnFacade.setDateTimezone( this, dateTimeZone );
+    }
+
+    /**
+     * @return the failonerror
+     */
+    public boolean isFailonerror() {
+        return SvnFacade.getFailonerror( this );
+    }
+
+    /**
+     * @param failonerror the failonerror to set
+     */
+    public void setFailonerror(boolean failonerror) {
+        SvnFacade.setFailonerror( this, failonerror );
+    }
+
+    public void addCheckout(Checkout a) {
+        addCommand(a);
+    }
+
+    public void addSingleinfo(SingleInfo a) {
+        addCommand(a);
+    }
+
+    public void addList(org.tigris.subversion.svnant.commands.List a) {
+        addCommand(a);
+    }
+
+    public void addAdd(Add a) {
+        addCommand(a);
+    }
+
+    public void addCleanup(Cleanup a) {
+        addCommand(a);
+    }
+    
+    public void addCommit(Commit a) {
+        addCommand(a);
+    }
+
+    public void addCopy(Copy a) {
+        addCommand(a);
+    }
+
+    public void addDelete(Delete a) {
+        addCommand(a);
+    }
+
+    public void addExport(Export a) {
+        addCommand(a);
+    }
+
+    /**
+     * Add the info command to the list of commands to execute.
+     */
+    public void addInfo(Info a) {
+        addCommand(a);
+    }
+
+    public void addImport(Import a) {
+        addCommand(a);
+    }
+    
+    public void addLog(Log a) {
+        addCommand(a);
+    }
+
+    public void addMkdir(Mkdir a) {
+        addCommand(a);
+    }
+
+    public void addMove(Move a) {
+        addCommand(a);
+    }
+
+    public void addUpdate(Update a) {
+        addCommand(a);
+    }
+    
+    public void addPropset(Propset a) {
+        addCommand(a);
+    }
+    
+    public void addDiff(Diff a) {
+        addCommand(a);
+    }
+
+    public void addKeywordsSet(Keywordsset a) {
+        addCommand(a);
+    }
+    
+    public void addKeywordsAdd(Keywordsadd a) {
+        addCommand(a);
+    }
+    
+    public void addKeywordsRemove(Keywordsremove a) {
+        addCommand(a);
+    }    
+
+    public void addRevert(Revert a) {
+        addCommand(a);
+    }
+
+    public void addCat(Cat a) {
+        addCommand(a);
+    }
+
+    public void addPropdel(Propdel a) {
+        addCommand(a);
+    }
+    
+    public void addIgnore(Ignore a) {
+        addCommand(a);
+    }
+    
+    public void addCreateRepository(CreateRepository a) {
+        addCommand(a);
+    }
+    
+    public void addWcVersion(WcVersion a) {
+        addCommand(a);
+    }
+
+    public void addStatus(Status a) {
+        addCommand(a);
+    }
+    
+    public void addSwitch(Switch a) {
+        addCommand(a);
+    }
+    
+    public void addPropget(Propget a) {
+        addCommand(a);
+    }
+    
+
+    private void addCommand(SvnCommand cmd) {
+        cmd.setTask(this);
+        commands.add(cmd);
+    }
+    
+    public void addNotifyListener(ISVNNotifyListener notifyListener) {
+        notifyListeners.add(notifyListener);
+    }
+
+    public void maybeConfigure() throws BuildException {
+        super.maybeConfigure();
+    }
+    
+    public void execute() throws BuildException {
+
+        ISVNClientAdapter svnClient = SvnFacade.getClientAdapter(this);        
+
+        for (int i = 0; i < notifyListeners.size();i++) {
+            svnClient.addNotifyListener((ISVNNotifyListener)notifyListeners.get(i));
+        }
+
+        for (int i = 0; i < commands.size(); i++) {
+            SvnCommand command = (SvnCommand) commands.get(i);
+            Feedback feedback = new Feedback(command);
+            svnClient.addNotifyListener(feedback);
+            command.executeCommand(svnClient);
+            svnClient.removeNotifyListener(feedback);
+        }
         
-    for (int i = 0; i < notifyListeners.size();i++) {
-      svnClient.addNotifyListener((ISVNNotifyListener)notifyListeners.get(i));
     }
-
-    for (int i = 0; i < commands.size(); i++) {
-      SvnCommand command = (SvnCommand) commands.get(i);
-      Feedback feedback = new Feedback(command);
-      svnClient.addNotifyListener(feedback);
-      command.executeCommand(svnClient);
-      svnClient.removeNotifyListener(feedback);
-    }
-      
-  }
-
-  /**
-   * This method returns a SVN client adapter, based on the property set when the file selector
-   * was declared. More specifically, the 'javahl' and 'svnkit' flags are verified, as well as the
-   * availability of JAVAHL ad SVNKit adapters, to decide what flavour to use.
-   * @param component a ISVNAntProjectComponent for which the client adapter is created
-   * @return An instance of SVN client adapter that meets the specified constraints, if any.
-   * @throws BuildException Thrown in a situation where no adapter can fit the constraints.
-   */
-  public static ISVNClientAdapter getClientAdapter(ISvnAntProjectComponent component) throws BuildException {
-    ISVNClientAdapter svnClient;
-    if ((component.getJavahl()) && (isJavahlAvailable())) {
-      svnClient = SVNClientAdapterFactory.createSVNClient(JhlClientAdapterFactory.JAVAHL_CLIENT);
-      component.getProjectComponent().log("Using javahl", Project.MSG_VERBOSE);
-    } else if ((component.getSvnKit()) && isSVNKitAvailable()) {
-      svnClient = SVNClientAdapterFactory.createSVNClient(SvnKitClientAdapterFactory.SVNKIT_CLIENT);
-      component.getProjectComponent().log("Using svnkit", Project.MSG_VERBOSE);
-    } else if (isCommandLineAvailable()) {
-      svnClient = SVNClientAdapterFactory.createSVNClient(CmdLineClientAdapterFactory.COMMANDLINE_CLIENT);
-      component.getProjectComponent().log("Using command line", Project.MSG_VERBOSE);
-    } else {
-      throw new BuildException("Cannot find javahl, svnkit nor command line svn client");
-    }
-    return svnClient;
-  }
 
 }

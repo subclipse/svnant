@@ -7,7 +7,10 @@
   <!-- Types -->
   <typedef name="svnFileSet"
     classname="org.tigris.subversion.svnant.types.SvnFileSet" />
-		
+
+  <typedef name="svnSetting"
+    classname="org.tigris.subversion.svnant.types.SvnSetting" />
+
   <!-- Selectors -->
   <typedef name="svnNormal"
     classname="org.tigris.subversion.svnant.selectors.Normal" />
@@ -33,5 +36,8 @@
   <!-- Conditions -->
   <typedef name="svnExists"
     classname="org.tigris.subversion.svnant.conditions.Exists" />
-	
+
+  <typedef name="svnAvailable"
+    classname="org.tigris.subversion.svnant.conditions.Available" />
+
 </antlib>

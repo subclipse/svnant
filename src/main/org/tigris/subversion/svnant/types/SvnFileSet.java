@@ -54,15 +54,15 @@
  */ 
 package org.tigris.subversion.svnant.types;
 
-import java.io.File;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectComponent;
+import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Reference;
-import org.tigris.subversion.svnant.ISvnAntProjectComponent;
-import org.tigris.subversion.svnant.SvnTask;
+import org.tigris.subversion.svnant.SvnFacade;
+
+import java.io.File;
 
 /**
  * This class implements a custom FileSet for ANT. It returns a set of files
@@ -84,11 +84,7 @@ import org.tigris.subversion.svnant.SvnTask;
  * 
  * @author Jean-Pierre Fiset <a href="mailto:jp@fiset.ca">jp@fiset.ca</a>
  */
-public class SvnFileSet extends org.apache.tools.ant.types.FileSet implements ISvnAntProjectComponent {
-
-    private boolean javahl = true;
-    
-    private boolean svnkit = true;
+public class SvnFileSet extends FileSet {
 
     /**
      * Constructor for FileSet.
@@ -102,29 +98,15 @@ public class SvnFileSet extends org.apache.tools.ant.types.FileSet implements IS
      * @param fileset the fileset to clone
      */
     protected SvnFileSet(SvnFileSet fileset_) {
-        this.javahl = fileset_.javahl;
+        SvnFacade.setJavahl( this, SvnFacade.getJavahl( fileset_ ) );
     }
 
     /* (non-Javadoc)
-	 * @see org.tigris.subversion.svnant.ISvnAntProjectComponent#getJavahl()
-	 */
-	public boolean getJavahl() {
-		return javahl;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnant.ISvnAntProjectComponent#getSvnKit()
-	 */
-	public boolean getSvnKit() {
-		return svnkit;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnant.ISvnAntProjectComponent#getProjectComponent()
-	 */
-	public ProjectComponent getProjectComponent() {
-		return this;
-	}
+     * @see org.tigris.subversion.svnant.ISvnAntProjectComponent#getProjectComponent()
+     */
+    public ProjectComponent getProjectComponent() {
+        return this;
+    }
 
     /**
      * Creates a deep clone of this instance, except for the nested
@@ -143,7 +125,7 @@ public class SvnFileSet extends org.apache.tools.ant.types.FileSet implements IS
      * @param javahl_ New value for javahl property.
      */
     public void setJavahl(boolean javahl_) {
-        javahl = javahl_;
+        SvnFacade.setJavahl( this, javahl_ );
     }
 
     /**
@@ -152,7 +134,7 @@ public class SvnFileSet extends org.apache.tools.ant.types.FileSet implements IS
      * @param svnkit_ New value for svnkit property.
      */
     public void setSvnkit(boolean svnkit_) {
-        svnkit = svnkit_;
+        SvnFacade.setSvnKit( this, svnkit_ );
     }
     	
     /**
@@ -179,7 +161,7 @@ public class SvnFileSet extends org.apache.tools.ant.types.FileSet implements IS
             throw new BuildException(dir.getAbsolutePath()
                                      + " is not a directory.");
         }
-        DirectoryScanner ds = new SvnDirScanner( SvnTask.getClientAdapter(this) );
+        DirectoryScanner ds = new SvnDirScanner( SvnFacade.getClientAdapter(this) );
         setupDirectoryScanner(ds, p);
         ds.setFollowSymlinks(followSymlinks);
         ds.scan();

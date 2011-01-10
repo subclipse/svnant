@@ -164,7 +164,7 @@ public abstract class SvnCommand extends ProjectComponent {
 	private SimpleDateFormat getDateFormatter()
 	{
 		final SimpleDateFormat formatter = new SimpleDateFormat(task.getDateFormatter());
-		final TimeZone timezone = task.getDateTimeZone();
+		final TimeZone timezone = task.getDateTimezone();
 		if (timezone != null) {
 			formatter.setTimeZone(timezone);
 		}

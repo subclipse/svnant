@@ -54,17 +54,16 @@
  */ 
 package org.tigris.subversion.svnant.selectors;
 
-import java.io.File;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectComponent;
 import org.apache.tools.ant.types.selectors.BaseExtendSelector;
-import org.tigris.subversion.svnant.ISvnAntProjectComponent;
 import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnTask;
+import org.tigris.subversion.svnant.SvnFacade;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.utils.StringUtils;
+
+import java.io.File;
 
 /**
  * This is an abstract class that implements all functionality shared
@@ -78,30 +77,7 @@ import org.tigris.subversion.svnclientadapter.utils.StringUtils;
  * @author Jean-Pierre Fiset <a href="mailto:jp@fiset.ca">jp@fiset.ca</a>
  *
  */
-public abstract class BaseSvnSelector extends BaseExtendSelector implements ISvnAntProjectComponent {
-
-    private boolean javahl = true;
-    
-    private boolean svnkit = true;
-
-    /**
-     * 'failonerror' property for file selector.
-     */
-	private boolean failonerror = true;
-
-    /* (non-Javadoc)
-	 * @see org.tigris.subversion.svnant.ISvnAntProjectComponent#getJavahl()
-	 */
-	public boolean getJavahl() {
-		return javahl;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnant.ISvnAntProjectComponent#getSvnKit()
-	 */
-	public boolean getSvnKit() {
-		return svnkit;
-	}
+public abstract class BaseSvnSelector extends BaseExtendSelector {
 
 	/* (non-Javadoc)
 	 * @see org.tigris.subversion.svnant.ISvnAntProjectComponent#getProjectComponent()
@@ -116,7 +92,7 @@ public abstract class BaseSvnSelector extends BaseExtendSelector implements ISvn
      * @param javahl_ New value for javahl property.
      */
     public void setJavahl(boolean javahl_) {
-        javahl = javahl_;
+        SvnFacade.setJavahl( this, javahl_ );
     }
 
     /**
@@ -125,15 +101,15 @@ public abstract class BaseSvnSelector extends BaseExtendSelector implements ISvn
      * @param svnkit_ New value for svnkit property.
      */
     public void setSvnkit(boolean svnkit_) {
-        svnkit = svnkit_;
+        SvnFacade.setSvnKit( this, svnkit_ );
     }
     
-	/**
-	 * @param failonerror the failonerror to set
-	 */
-	public void setFailonerror(boolean failonerror) {
-		this.failonerror = failonerror;
-	}
+    /**
+     * @param failonerror the failonerror to set
+     */
+    public void setFailonerror(boolean failonerror) {
+        SvnFacade.setFailonerror( this, failonerror );
+    }
 
 	final public boolean isSelected(File basedir_, String filename_, File file_) throws BuildException {
 		
@@ -141,9 +117,9 @@ public abstract class BaseSvnSelector extends BaseExtendSelector implements ISvn
 		String className = nameSegments[nameSegments.length -1]; 
 
 		try {
-			return isSelected(SvnTask.getClientAdapter(this), basedir_, filename_, file_);
+			return isSelected(SvnFacade.getClientAdapter(this), basedir_, filename_, file_);
 		} catch (SvnAntException ex) {
-			if (this.failonerror) {
+			if ( SvnFacade.getFailonerror( this ) ) {
 				log("selector " + className + " failed !", Project.MSG_INFO);
 				throw new BuildException(ex.getMessage(), ex.getCause());
 			} else {

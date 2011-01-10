@@ -54,17 +54,17 @@
  */ 
 package org.tigris.subversion.svnant.conditions;
 
-import java.io.File;
-import java.net.MalformedURLException;
-
 import org.apache.tools.ant.Project;
 import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnTask;
+import org.tigris.subversion.svnant.SvnFacade;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNInfo;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
+
+import java.io.File;
+import java.net.MalformedURLException;
 
 /**
  * Instances of this class are used to test the existence of a repository
@@ -87,7 +87,7 @@ public class Exists extends SvnCondition {
 	
 	public boolean internalEval() throws SvnAntException {
 		// Obtain a svnClient according to javahl and svnkit properties
-		ISVNClientAdapter svnClient = SvnTask.getClientAdapter(this);
+		ISVNClientAdapter svnClient = SvnFacade.getClientAdapter(this);
 
 		// Retrieve info for the requested element
 		ISVNInfo info = null;
