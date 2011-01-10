@@ -32,12 +32,14 @@
     <mkdir dir="${build.classes.dir}" />
     <depend srcDir="${src.main.dir}" destDir="${build.classes.dir}" cache="${build.cache.dir}" />
     <javac srcdir="${src.main.dir}" 
-        destdir="${build.classes.dir}"
+      encoding="${encoding}"
+      destdir="${build.classes.dir}"
       debug="${debug}" 
-        target="${targetJvm}"
-        includes="**" 
+      target="${targetJvm}"
+      includes="**"
       includeantruntime="true"
-        classpathref="project.classpath" />
+      classpathref="project.classpath" 
+    />
     <copy file="${src.main.dir}/svnantlib.xml" todir="${build.classes.dir}/org/tigris/subversion/svnant" />
   </target>
 
@@ -73,12 +75,13 @@
   <target name="compileTests" description="compile junit sources files">
     <mkdir dir="${build.classes.dir}" />
     <javac srcdir="${src.testcases.dir}" 
-        destdir="${build.classes.dir}" 
-        debug="${debug}" 
-        includes="**" 
-        target="${targetJvm}"
-        includeantruntime="true"
-        classpathref="project.classpath">
+      destdir="${build.classes.dir}" 
+      debug="${debug}" 
+      includes="**" 
+      target="${targetJvm}"
+      includeantruntime="true"
+      encoding="${encoding}"
+      classpathref="project.classpath">
     </javac>
   </target>
 
