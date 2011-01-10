@@ -67,15 +67,15 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  *         <a href="mailto:daniel.kasmeroglu@qvitech.com">daniel.kasmeroglu@qvitech.com</a>
  */
 public class List extends SvnCommand {
-	
-	/** url to fetch the list from */
-	private SVNUrl url = null;
-	
+  
+    /** url to fetch the list from */
+    private SVNUrl url = null;
+  
     /** list recursively (complete tree) ? */
     private boolean recurse = false;
 
-	/** revision to list */
-	private SVNRevision revision = SVNRevision.HEAD;
+    /** revision to list */
+    private SVNRevision revision = SVNRevision.HEAD;
 
     /** list only the names (not the complete url) ? */
     private boolean onlynames = false;
@@ -186,22 +186,22 @@ public class List extends SvnCommand {
         this.delimiter = newdelimiter;
     }
 
-	/**
-	 * Sets the URL; required.
-	 * @param url The url to set
-	 */
-	public void setUrl(SVNUrl url) {
-		this.url = url;
-	}
+    /**
+     * Sets the URL; required.
+     * @param url The url to set
+     */
+    public void setUrl(SVNUrl url) {
+      this.url = url;
+    }
 
-	/**
-	 * Sets the revision
-	 * 
-	 * @param revision
-	 */
-	public void setRevision(String revision) {
-		this.revision = getRevisionFrom(revision);
-	}
+    /**
+     * Sets the revision
+     * 
+     * @param revision
+     */
+    public void setRevision(String revision) {
+      this.revision = getRevisionFrom(revision);
+    }
 
     /**
      * @param property The property to set.
