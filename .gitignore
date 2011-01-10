@@ -2,3 +2,4 @@
 /build.properties
 /TEST-org.tigris.subversion.svnant.*.txt
 /svnant-*.properties
+/TEST-*.xml
