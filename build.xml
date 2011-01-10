@@ -92,6 +92,7 @@
   <target name="runTests" depends="svnant.jar,compileTests" description="run junit tests">
     <echo message="Please wait, tests can take a long time to execute...." level="info" />
     <junit printsummary="yes" fork="yes" haltonfailure="false">
+      <jvmarg value="-Djava.library.path=${lib.jni.dir}"/>
       <classpath>
         <pathelement location="${build.classes.dir}" />
         <path refid="project.classpath" />
