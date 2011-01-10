@@ -97,6 +97,7 @@
         <path refid="project.classpath" />
       </classpath>
       <formatter type="plain" />
+      <formatter type="xml" />
       <test name="org.tigris.subversion.svnant.SvnJavaHLTest" fork="yes" />
       <test name="org.tigris.subversion.svnant.SvnSvnKitTest" fork="yes" />
       <test name="org.tigris.subversion.svnant.SvnCmdLineTest" fork="yes" />
