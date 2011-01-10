@@ -34,7 +34,7 @@
     <property name="testReposLocation" location="repository" />
      <!-- we need / separator -->
     <pathconvert property="testReposPath" dirsep="/">
-  	  <path path="${testReposLocation}"/>
+      <path path="${testReposLocation}"/>
     </pathconvert>
     <property name="urlRepository" value="svn+ssh://localhost${testReposPath}" />  
     
