@@ -3,6 +3,7 @@
 - #906: added 'singleinfo', 'list' commands
 - #906: added 'svnAvailable' condition
 - #619, #689: the 'log' command now provides a verbose option for the changed pathes
+- #815: the commands 'singleinfo' and 'info' are now supporting the property 'repourl'
 
 * 1.2.1
 - Built against svnClientAdapter r4107, Subversion 1.5.x, SVNKit 1.2.x

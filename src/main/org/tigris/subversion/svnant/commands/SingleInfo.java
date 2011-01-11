@@ -81,6 +81,7 @@ public class SingleInfo extends SvnCommand {
     
     private static final String PROP_PATH           = "path";
     private static final String PROP_URL            = "url";
+    private static final String PROP_REPOURL        = "repourl";
     private static final String PROP_REPOUUID       = "repouuid";
     private static final String PROP_REV            = "revision";
     private static final String PROP_NODEKIND       = "nodekind";
@@ -98,7 +99,7 @@ public class SingleInfo extends SvnCommand {
         PROP_REV        , PROP_NODEKIND         , PROP_SCHEDULE         ,
         PROP_AUTHOR     , PROP_LASTREV          , PROP_LASTDATE         ,
         PROP_NAME       , PROP_LASTTEXTUPDATE   , PROP_LASTPROPUPDATE   ,
-        PROP_CHECKSUM   
+        PROP_CHECKSUM   , PROP_REPOURL
     };
     
     private String      target      = null;
@@ -183,6 +184,8 @@ public class SingleInfo extends SvnCommand {
                 // as above
                 value = info.getUrl().getLastPathSegment();
             }
+        } else if ( PROP_REPOURL.equals( key ) ) {
+            value = info.getRepository();
         } else if ( PROP_URL.equals( key ) ) {
             value = info.getUrl();
         } else if ( PROP_REPOUUID.equals( key ) ) {

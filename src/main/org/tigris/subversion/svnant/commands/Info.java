@@ -41,6 +41,7 @@ public class Info extends SvnCommand {
     private static final String[] DIR_PROP_NAMES = {
         "path", 
         "url", 
+        "repourl", 
         "repouuid", 
         "rev", 
         "nodekind", 
@@ -57,6 +58,7 @@ public class Info extends SvnCommand {
         "path", 
         "name",
         "url", 
+        "repourl", 
         "repouuid", 
         "rev", 
         "nodekind", 
@@ -78,7 +80,7 @@ public class Info extends SvnCommand {
         try {
             this.info = acquireInfo();
             if ((this.info.getRevision() == null) || (SVNRevision.INVALID_REVISION.equals(this.info.getRevision()))) {
-            	throw new SvnAntException(this.target + " - Not a versioned resource");
+                throw new SvnAntException(this.target + " - Not a versioned resource");
             }
             String[] propNames = (SVNNodeKind.DIR == this.info.getNodeKind() ?
                                   DIR_PROP_NAMES : FILE_PROP_NAMES);
@@ -88,11 +90,10 @@ public class Info extends SvnCommand {
                 if (verbose) {
                     logInfo(propPrefix + propNames[i] + ": " + value);
                 } else {
-                	logVerbose(propPrefix + propNames[i] + ": " + value);
+                    logVerbose(propPrefix + propNames[i] + ": " + value);
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new SvnAntException("Failed to set 'info' properties", e);
         }
     }
@@ -106,19 +107,16 @@ public class Info extends SvnCommand {
      * @exception SVNClientException If ISVNInfo.getInfo(target)
      * fails.
      */
-    private ISVNInfo acquireInfo()
-        throws SVNClientException {
+    private ISVNInfo acquireInfo() throws SVNClientException {
         File targetAsFile = new File(Project.translatePath(this.target));
         if (targetAsFile.exists()) {
             // Since the target exists locally, assume it's not a URL.
             return svnClient.getInfo(targetAsFile);
-        }
-        else {
+        } else {
             try {
                 SVNUrl url = new SVNUrl(this.target);
                 return svnClient.getInfo(url);
-            }
-            catch (MalformedURLException malformedURL) {
+            } catch (MalformedURLException ex) {
                 // Since we don't have a valid URL with which to
                 // contact the repository, assume the target is a
                 // local file, even though it doesn't exist locally.
@@ -147,46 +145,47 @@ public class Info extends SvnCommand {
             if (value != null) {
                 value = ((File) value).getAbsolutePath();
             } else {
-            	// assume it's a remote info request; return last part of URL
-            	value = this.info.getUrl().getLastPathSegment();
+                // assume it's a remote info request; return last part of URL
+                value = this.info.getUrl().getLastPathSegment();
             }
         } else if (FILE_PROP_NAMES[1].equals(propName)) {
             value = this.info.getFile();
             if (value != null) {
                 value = ((File) value).getName();
             } else {
-            	// as above
-            	value = this.info.getUrl().getLastPathSegment();
+                // as above
+                value = this.info.getUrl().getLastPathSegment();
             }
         } else if (FILE_PROP_NAMES[2].equals(propName)) {
             value = this.info.getUrl();
         } else if (FILE_PROP_NAMES[3].equals(propName)) {
-            value = this.info.getUuid();
+            value = this.info.getRepository();
         } else if (FILE_PROP_NAMES[4].equals(propName)) {
-            value = this.info.getRevision();
+            value = this.info.getUuid();
         } else if (FILE_PROP_NAMES[5].equals(propName)) {
-            value = this.info.getNodeKind();
+            value = this.info.getRevision();
         } else if (FILE_PROP_NAMES[6].equals(propName)) {
-            value = this.info.getSchedule();
+            value = this.info.getNodeKind();
         } else if (FILE_PROP_NAMES[7].equals(propName)) {
-            value = this.info.getLastCommitAuthor();
+            value = this.info.getSchedule();
         } else if (FILE_PROP_NAMES[8].equals(propName)) {
-            value = this.info.getLastChangedRevision();
+            value = this.info.getLastCommitAuthor();
         } else if (FILE_PROP_NAMES[9].equals(propName)) {
-            value = this.info.getLastChangedDate();
+            value = this.info.getLastChangedRevision();
         } else if (FILE_PROP_NAMES[10].equals(propName)) {
-            value = this.info.getLastDateTextUpdate();
+            value = this.info.getLastChangedDate();
         } else if (FILE_PROP_NAMES[11].equals(propName)) {
+            value = this.info.getLastDateTextUpdate();
+        } else if (FILE_PROP_NAMES[12].equals(propName)) {
             value = this.info.getLastDatePropsUpdate();
-        } else if (FILE_PROP_NAMES[12].equals(propName)) { 
+        } else if (FILE_PROP_NAMES[13].equals(propName)) { 
             // ### FIXME: Implement checksum in svnClientAdapter.
-            log("    " + "Property '" + propName + "' not implemented",
-                Project.MSG_WARN);
+            log("    " + "Property '" + propName + "' not implemented", Project.MSG_WARN);
         } else {
             if (verbose) {
                 logInfo("    " + "Property '" + propName + "' not recognized");
             } else {
-            	logVerbose("    " + "Property '" + propName + "' not recognized");
+                logVerbose("    " + "Property '" + propName + "' not recognized");
             }
         }
 
@@ -198,9 +197,7 @@ public class Info extends SvnCommand {
      */
     protected void validateAttributes() throws SvnAntValidationException {
         if (target == null) {
-            throw new SvnAntValidationException("target must be set to a file or " +
-                                     "directory in your working copy, or " +
-                                     "to a URI");
+            throw new SvnAntValidationException("target must be set to a file or directory in your working copy, or to a URI");
         }
     }
 
