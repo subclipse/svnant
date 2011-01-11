@@ -60,4 +60,11 @@ public class SvnJavaHLTest extends SvnTest {
         super.testSingleInfo();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public void testLog() throws SVNClientException {
+        super.testLog();
+    }
+
 }
