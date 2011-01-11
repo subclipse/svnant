@@ -191,7 +191,7 @@ public class List extends SvnCommand {
      * @param url The url to set
      */
     public void setUrl(SVNUrl url) {
-      this.url = url;
+        this.url = url;
     }
 
     /**
@@ -200,7 +200,7 @@ public class List extends SvnCommand {
      * @param revision
      */
     public void setRevision(String revision) {
-      this.revision = getRevisionFrom(revision);
+        this.revision = getRevisionFrom(revision);
     }
 
     /**
