@@ -54,9 +54,15 @@
 
 package org.apache.tools.ant;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.io.StringReader;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
 
@@ -120,7 +126,7 @@ public abstract class BuildFileTest extends TestCase {
                    + realLog + "\"", 
                    realLog.indexOf(log) >= 0);
     }
-
+    
     /**
      *  Gets the log the BuildFileTest object.
      *  only valid if configureProject() has
@@ -130,6 +136,61 @@ public abstract class BuildFileTest extends TestCase {
      */    
     protected String getLog() { 
         return logBuffer.toString();
+    }
+    
+    /**
+     * Like {@link #getLog()} but each line is returned separately.
+     * 
+     * @return   A list of lines used for the log. Not <code>null</code>.
+     */
+    protected String[] getLogLinewise() {
+        List<String>   list   = new ArrayList<String>();
+        BufferedReader reader = new BufferedReader(new StringReader(getLog()));
+        try {
+            String         line   = reader.readLine();
+            while(line != null) {
+                list.add(line);
+                line = reader.readLine();
+            }
+        } catch(IOException ex) {
+            // won't happen as we're working in memory only
+        }
+        return list.toArray(new String[list.size()]);
+    }
+
+    /**
+     * Returns a specific line within the log.
+     * 
+     * @param pattern   The regular expression used to select the line. Not <code>null</code>.
+     * 
+     * @return   The line if it could be found. Maybe <code>null</code>.
+     */
+    protected String getSelectedLogLine(Pattern pattern) {
+        BufferedReader reader = new BufferedReader(new StringReader(getLog()));
+        try {
+            String line = reader.readLine();
+            while(line != null) {
+                if(pattern.matcher(line).matches()) {
+                    return line; 
+                }
+                line = reader.readLine();
+            }
+        } catch(IOException ex) {
+            // won't happen as we're working in memory only
+        }
+        return null;
+    }
+
+    /**
+     * Returns a specific line within the log where the line has to start with a specified prefix.
+     * 
+     * @param prefix   The introducing token for the selected line. Neither <code>null</code> nor empty. 
+     * 
+     * @return   The line if it could be found. Maybe <code>null</code>.
+     */
+    protected String getSelectedLogLineByPrefix(String prefix) {
+        String regex = String.format("^%s.*", Pattern.quote(prefix));
+        return getSelectedLogLine(Pattern.compile(regex));
     }
 
     /**
