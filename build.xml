@@ -141,8 +141,8 @@
     <condition property="revision" value="unknown" else="${env.SVN_REVISION}">
       <equals arg1="${env.SVN_REVISION}" arg2="$${env.SVN_REVISION}"/>
     </condition>
-    <echo file="${build.distrib.dir}/revision.txt">SVN Revision: ${revision}</echo>
-    <zip destfile="${build.dir}/svnant-${svnant.version}.zip">
+    <echo file="${build.distrib.dir}/releaseinfo.txt">DEVELOPMENT RELEASE OF REVISION: ${revision}</echo>
+    <zip destfile="${build.dir}/svnant-${svnant.version}-${revision}.zip">
       <zipfileset dir="${build.distrib.dir}" prefix="svnant-${svnant.version}" />
     </zip>
   </target>
