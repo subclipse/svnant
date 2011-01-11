@@ -343,9 +343,21 @@ public class SvnTask extends Task {
         super.maybeConfigure();
     }
     
+    /**
+     * {@inheritDoc}
+     */
     public void execute() throws BuildException {
 
-        ISVNClientAdapter svnClient = SvnFacade.getClientAdapter(this);        
+        ISVNClientAdapter svnClient = null;
+        try {
+            svnClient = SvnFacade.getClientAdapter(this);
+        } catch (BuildException ex) {
+            if (isFailonerror()) {
+                throw ex; 
+            } else {
+                return;
+            }
+        }
 
         for (int i = 0; i < notifyListeners.size();i++) {
             svnClient.addNotifyListener(notifyListeners.get(i));
