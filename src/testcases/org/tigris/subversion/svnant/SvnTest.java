@@ -32,6 +32,8 @@ import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 import org.tigris.subversion.svnclientadapter.utils.SVNStatusUtils;
 
+import junit.framework.Assert;
+
 /**
  * Set the property <code>javahl</code> and/or <code>svnkit</code> to
  * <code>true</code> in any of the test/<i>[dir]</i>/build.properties
@@ -46,10 +48,10 @@ import org.tigris.subversion.svnclientadapter.utils.SVNStatusUtils;
  */
 public abstract class SvnTest extends BuildFileTest {
 
-	protected ISVNClientAdapter svnClient;
-	protected static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
-	protected static final String WORKINGCOPY2_DIR = "test/svn/workingcopy2";
-	protected static final String TEST_DIR = "test/svn/test";
+  protected ISVNClientAdapter svnClient;
+  protected static final String WORKINGCOPY_DIR = "test/svn/workingcopy";
+  protected static final String WORKINGCOPY2_DIR = "test/svn/workingcopy2";
+  protected static final String TEST_DIR = "test/svn/test";
 
     public SvnTest(String name) {
         super(name);
@@ -59,47 +61,81 @@ public abstract class SvnTest extends BuildFileTest {
         configureProject("test/svn/build.xml");
     }
 
-	public void tearDown()
-	{
-		System.out.print(getLog());
-	}
+  public void tearDown()
+  {
+    System.out.print(getLog());
+  }
 
-	protected abstract boolean isJavaHLTest(); 
-	protected abstract boolean isSVNKitTest(); 
-	
+  protected abstract boolean isJavaHLTest(); 
+  protected abstract boolean isSVNKitTest(); 
+  
     public void testCheckout() throws SVNClientException {
         executeTarget("testCheckout");
 
-		assertEquals(1,svnClient.getSingleStatus(new File("test/svn/coHEAD/checkoutTest/readme.txt")).getLastChangedRevision().getNumber());
+    assertEquals(1,svnClient.getSingleStatus(new File("test/svn/coHEAD/checkoutTest/readme.txt")).getLastChangedRevision().getNumber());
     }
-    
 
-	public void testList() throws SVNClientException,MalformedURLException {
+    public void testListCommand() {
+        
+        executeTarget("testListCommand");
+        
+        String   url        = String.format( "%s/listCommandTest", getProject().getProperty("urlRepos") );
+        String[] immediate  = getSplittedLine("IMMEDIATE: ");
+        String[] recursive  = getSplittedLine("RECURSIVE: ");
+        
+        // compare the results for the normal listing
+        String[] expectedimmediate = new String[] {
+          "subdir1", "subdir2", "readme.txt"  
+        };
+        Assert.assertEquals(expectedimmediate.length, immediate.length);
+        for(int i = 0; i < expectedimmediate.length; i++) {
+          Assert.assertEquals(String.format("%s/%s", url, expectedimmediate[i]), immediate[i]);
+        }
+        
+        // compare the results for the recursive listing
+        String[] expectedrecursive = new String[] {
+            "subdir1", "subdir1/f1.txt", "subdir2", "readme.txt"  
+        };
+        Assert.assertEquals(expectedrecursive.length, recursive.length);
+        for(int i = 0; i < expectedrecursive.length; i++) {
+          Assert.assertEquals(String.format("%s/%s", url, expectedrecursive[i]), recursive[i]);
+        }
+        
+    }
+
+    private String[] getSplittedLine(String token) {
+      String line = getSelectedLogLineByPrefix(token);
+      Assert.assertNotNull(String.format("the log is expected to contain a line beginning with the token '%s'", token), line);
+      line        = line.substring(token.length());
+      return line.split(",");
+    }
+
+  public void testList() throws SVNClientException,MalformedURLException {
        executeTarget("testList");
-	   
+     
        // first using a SVNUrl
        String urlRepos = getProject().getProperty("urlRepos");
-	   ISVNDirEntry[] list = svnClient.getList(new SVNUrl(urlRepos+"/listTest"),SVNRevision.HEAD,false);
-	   assertTrue(list.length > 0);
-	   
-	   // using a File
-	   list = svnClient.getList(new File(WORKINGCOPY_DIR+"/listTest"),SVNRevision.BASE,false);
-	   assertTrue(list.length > 0);
-	   
-	   // there is no BASE for listTest because it was added and committed but
-	   // it needs to be updated before there is a BASE for it
-	   // this is not what I expected ...
-	   list = svnClient.getList(new File(WORKINGCOPY_DIR),SVNRevision.BASE,false);
-	   assertTrue(list.length == 0);
-	}
+     ISVNDirEntry[] list = svnClient.getList(new SVNUrl(urlRepos+"/listTest"),SVNRevision.HEAD,false);
+     assertTrue(list.length > 0);
+     
+     // using a File
+     list = svnClient.getList(new File(WORKINGCOPY_DIR+"/listTest"),SVNRevision.BASE,false);
+     assertTrue(list.length > 0);
+     
+     // there is no BASE for listTest because it was added and committed but
+     // it needs to be updated before there is a BASE for it
+     // this is not what I expected ...
+     list = svnClient.getList(new File(WORKINGCOPY_DIR),SVNRevision.BASE,false);
+     assertTrue(list.length == 0);
+  }
 
 
     public void testLog() throws SVNClientException {
         executeTarget("testLog");
-//		String urlRepos = getProject().getProperty("urlRepos");
-		ISVNLogMessage[] messages = svnClient.getLogMessages(new File(WORKINGCOPY_DIR+"/logTest/file1.txt"),new SVNRevision.Number(0),SVNRevision.HEAD);
+//    String urlRepos = getProject().getProperty("urlRepos");
+    ISVNLogMessage[] messages = svnClient.getLogMessages(new File(WORKINGCOPY_DIR+"/logTest/file1.txt"),new SVNRevision.Number(0),SVNRevision.HEAD);
         assertTrue(messages.length > 0);
-		assertEquals("logTest directory added to repository",messages[0].getMessage());
+    assertEquals("logTest directory added to repository",messages[0].getMessage());
         assertEquals(5,messages[0].getChangedPaths().length);
         assertEquals('A',messages[0].getChangedPaths()[0].getAction());
     }
@@ -107,44 +143,44 @@ public abstract class SvnTest extends BuildFileTest {
 
     public void testAddCommit() throws SVNClientException {
        executeTarget("testAddCommit");
-	   assertTrue(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/addCommitTest/file0.add")).getLastChangedRevision().getNumber() > 0);
+     assertTrue(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/addCommitTest/file0.add")).getLastChangedRevision().getNumber() > 0);
     }
     
-    public void testCleanup() throws SVNClientException {
+    public void testCleanup() {
        executeTarget("testCleanup");
        assertTrue(!new File(WORKINGCOPY_DIR+"/.svn/lock").exists());
-	}
+  }
      
 
     public void testCopy() throws SVNClientException {
-    	executeTarget("testCopy");
-		assertTrue(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/copyTest/copy1")).getLastChangedRevision().getNumber() > 0);
+      executeTarget("testCopy");
+    assertTrue(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/copyTest/copy1")).getLastChangedRevision().getNumber() > 0);
     } 
 
-	public void testDelete() {
-		executeTarget("testDelete");
-		assertFalse(new File(WORKINGCOPY_DIR+"/deleteTest/deleteFromWorkingCopy/file0.del").exists());
-		assertTrue(new File(WORKINGCOPY_DIR+"/deleteTest/deleteFromWorkingCopy/donotdel.txt").exists());
-	}
+  public void testDelete() {
+    executeTarget("testDelete");
+    assertFalse(new File(WORKINGCOPY_DIR+"/deleteTest/deleteFromWorkingCopy/file0.del").exists());
+    assertTrue(new File(WORKINGCOPY_DIR+"/deleteTest/deleteFromWorkingCopy/donotdel.txt").exists());
+  }
 
-	public void testExport() {
-		executeTarget("testExport");
-	}
-	
-	public void testImport() {
-		executeTarget("testImport");
-	} 
+  public void testExport() {
+    executeTarget("testExport");
+  }
+  
+  public void testImport() {
+    executeTarget("testImport");
+  } 
 
-	
-	public void testMkdir() throws SVNClientException {
-		executeTarget("testMkdir");
-		assertTrue(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/mkdirTest/testMkdir2")).getLastChangedRevision().getNumber() > 0);
+  
+  public void testMkdir() throws SVNClientException {
+    executeTarget("testMkdir");
+    assertTrue(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/mkdirTest/testMkdir2")).getLastChangedRevision().getNumber() > 0);
     } 
-	
-	public void testMove() throws SVNClientException {
-		executeTarget("testMove");
-		assertTrue(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/moveTest/dir1Renamed")).getLastChangedRevision().getNumber() > 0);
-	}
+  
+  public void testMove() throws SVNClientException {
+    executeTarget("testMove");
+    assertTrue(svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/moveTest/dir1Renamed")).getLastChangedRevision().getNumber() > 0);
+  }
    
     public void testProp() throws SVNClientException {
         executeTarget("testProp");
@@ -161,20 +197,20 @@ public abstract class SvnTest extends BuildFileTest {
         propData = svnClient.propertyGet(new File(WORKINGCOPY_DIR+"/propTest/file.png"),"myProperty");
         assertTrue(propData == null);
 
-		ISVNProperty[] properties = svnClient.getProperties(file);
-		assertTrue(properties.length == 2);
-		
-		properties = svnClient.getProperties(new File(WORKINGCOPY_DIR+"/propTest"));
-		assertEquals(0,properties.length);
+    ISVNProperty[] properties = svnClient.getProperties(file);
+    assertTrue(properties.length == 2);
+    
+    properties = svnClient.getProperties(new File(WORKINGCOPY_DIR+"/propTest"));
+    assertEquals(0,properties.length);
         
         assertEquals("image/png",getProject().getProperty("propTest.mimeType"));
         assertNull(getProject().getProperty("propTestUrlBeforeCommit.mimeType"));
         assertEquals("image/png",getProject().getProperty("propTestUrlAfterCommit.mimeType"));
-		file = new File(WORKINGCOPY_DIR+"/propTest/icon2.gif");
+    file = new File(WORKINGCOPY_DIR+"/propTest/icon2.gif");
         assertTrue(file.exists());
     }
 
-    public void testPropgetInvalidProp() throws SVNClientException {
+    public void testPropgetInvalidProp() {
         executeTarget("testPropgetInvalidProp");
         
         String prop = project.getProperty("propgetInvalidProp.mime");
@@ -217,9 +253,9 @@ public abstract class SvnTest extends BuildFileTest {
     }
 
     public void testListener() throws Exception {
-        final Set addSet = new HashSet();
-        final Set commitSet = new HashSet();
-        final Set[] currentSet = new Set[] { null };
+        final Set<File> addSet = new HashSet<File>();
+        final Set<File> commitSet = new HashSet<File>();
+        final Set<File>[] currentSet = new Set[] { null };
 
         ISVNNotifyListener listener = new ISVNNotifyListener() {
             public void setCommand(int command) {
@@ -335,11 +371,11 @@ public abstract class SvnTest extends BuildFileTest {
     
     public void testStatus() throws Exception {  
       
-		executeTarget("testStatus");
-		
+    executeTarget("testStatus");
+    
         File file = new File(WORKINGCOPY_DIR+"/statusTest/added.txt");
-		ISVNInfo info = svnClient.getInfo(file);
-		assertEquals(SVNNodeKind.FILE,info.getNodeKind());
+    ISVNInfo info = svnClient.getInfo(file);
+    assertEquals(SVNNodeKind.FILE,info.getNodeKind());
         assertNull(info.getLastChangedRevision());
         assertEquals(SVNScheduleKind.ADD,info.getSchedule());
         assertEquals(file.getCanonicalFile(),info.getFile().getCanonicalFile());
@@ -417,7 +453,7 @@ public abstract class SvnTest extends BuildFileTest {
 
     public void testWcVersion() throws Exception {  
         
-		executeTarget("testStatus");
+    executeTarget("testStatus");
 
         ISVNStatus status = svnClient.getSingleStatus(new File(WORKINGCOPY_DIR+"/statusTest"));
 
@@ -432,28 +468,28 @@ public abstract class SvnTest extends BuildFileTest {
     }
 
     public void testStatusUnmanaged() throws Exception {  
-		executeTarget("testStatusUnmanaged");
-		
-		assertEquals(project.getProperty("unmanaged1.textStatus"), "unversioned");
-		assertEquals(project.getProperty("unmanaged1.propStatus"), "non-svn");
-		assertEquals(project.getProperty("unmanaged1.lastCommitRevision"), "");
-		assertEquals(project.getProperty("unmanaged1.revision"), "-1");
-		assertEquals(project.getProperty("unmanaged1.lastCommitAuthor"), "");
-		assertEquals(project.getProperty("unmanaged1.url"), "");
+    executeTarget("testStatusUnmanaged");
+    
+    assertEquals(project.getProperty("unmanaged1.textStatus"), "unversioned");
+    assertEquals(project.getProperty("unmanaged1.propStatus"), "non-svn");
+    assertEquals(project.getProperty("unmanaged1.lastCommitRevision"), "");
+    assertEquals(project.getProperty("unmanaged1.revision"), "-1");
+    assertEquals(project.getProperty("unmanaged1.lastCommitAuthor"), "");
+    assertEquals(project.getProperty("unmanaged1.url"), "");
 
-		assertEquals(project.getProperty("unmanagedDir.textStatus"), "unversioned");
-		assertEquals(project.getProperty("unmanagedDir.propStatus"), "non-svn");
-		assertEquals(project.getProperty("unmanagedDir.lastCommitRevision"), "");
-		assertEquals(project.getProperty("unmanagedDir.revision"), "-1");
-		assertEquals(project.getProperty("unmanagedDir.lastCommitAuthor"), "");
-		assertEquals(project.getProperty("unmanagedDir.url"), "");
+    assertEquals(project.getProperty("unmanagedDir.textStatus"), "unversioned");
+    assertEquals(project.getProperty("unmanagedDir.propStatus"), "non-svn");
+    assertEquals(project.getProperty("unmanagedDir.lastCommitRevision"), "");
+    assertEquals(project.getProperty("unmanagedDir.revision"), "-1");
+    assertEquals(project.getProperty("unmanagedDir.lastCommitAuthor"), "");
+    assertEquals(project.getProperty("unmanagedDir.url"), "");
 
-		assertEquals(project.getProperty("unmanaged2.textStatus"), "unversioned");
-		assertEquals(project.getProperty("unmanaged2.propStatus"), "non-svn");
-		assertEquals(project.getProperty("unmanaged2.lastCommitRevision"), "");
-		assertEquals(project.getProperty("unmanaged2.revision"), "-1");
-		assertEquals(project.getProperty("unmanaged2.lastCommitAuthor"), "");
-		assertEquals(project.getProperty("unmanaged2.url"), "");
+    assertEquals(project.getProperty("unmanaged2.textStatus"), "unversioned");
+    assertEquals(project.getProperty("unmanaged2.propStatus"), "non-svn");
+    assertEquals(project.getProperty("unmanaged2.lastCommitRevision"), "");
+    assertEquals(project.getProperty("unmanaged2.revision"), "-1");
+    assertEquals(project.getProperty("unmanaged2.lastCommitAuthor"), "");
+    assertEquals(project.getProperty("unmanaged2.url"), "");
     }
     
     /**
@@ -494,7 +530,7 @@ public abstract class SvnTest extends BuildFileTest {
         for (int i = 0; i < propNames.length; i++) {
             assertPropertyUnset(propNames[i]);
         }
-			
+      
         executeTarget("testInfoFile");
         
         propNames = new String[] {
@@ -516,82 +552,82 @@ public abstract class SvnTest extends BuildFileTest {
         for (int i = 0; i < propNames.length; i++) {
             assertPropertySet(propNames[i], true);
         }
-			
+      
         executeTarget("testInfoCustomPrefix");
         assertPropertySet("wc.info.path", true);
         
         executeTarget("testInfoURL");
 
         propNames = new String[] {
-        		"svn.info.url",
-        		"svn.info.repouuid",
-        		"svn.info.rev",
-        		"svn.info.nodekind",
-        		"svn.info.author",
-        		"svn.info.lastRev",
-        		"svn.info.lastDate"
+            "svn.info.url",
+            "svn.info.repouuid",
+            "svn.info.rev",
+            "svn.info.nodekind",
+            "svn.info.author",
+            "svn.info.lastRev",
+            "svn.info.lastDate"
         };
 
         for (int i = 0; i < propNames.length; i++) {
-        	assertPropertySet(propNames[i], true);
+          assertPropertySet(propNames[i], true);
         }
     }
 
-	public void testEntry() throws Exception {
-		executeTarget("testEntry");
-		
-		// first using a SVNUrl
-		String urlRepos = getProject().getProperty("urlRepos");
-		ISVNDirEntry dirEntry = svnClient.getDirEntry(new SVNUrl(urlRepos+"/entryTest/"),SVNRevision.HEAD);
-		assertNotNull(dirEntry);
-		assertEquals(SVNNodeKind.DIR,dirEntry.getNodeKind());
-		assertEquals("entryTest",dirEntry.getPath());
-		
-		// using a File
-		dirEntry = svnClient.getDirEntry(new File(WORKINGCOPY_DIR+"/entryTest/dir1"),SVNRevision.BASE);
-		assertNotNull(dirEntry);
-		assertEquals(SVNNodeKind.DIR,dirEntry.getNodeKind());
-		
-		// this does not work for now because working copy dir needs to be updated
-		// before
-//		TODO some test are disabled ?       
-//		dirEntry = svnClient.getDirEntry(new File(WORKINGCOPY_DIR+"/entryTest/"),SVNRevision.BASE);
-//		assertNotNull(dirEntry);
-//		assertEquals(SVNNodeKind.DIR,dirEntry.getNodeKind());
-//		assertEquals("entryTest",dirEntry.getPath());		
-	}
-
-	public void testResolve() throws Exception {
-		executeTarget("testResolve");
-		File file = new File(WORKINGCOPY_DIR+"/resolveTest/file.txt");
-		ISVNStatus status = svnClient.getSingleStatus(file);
-		assertTrue(status.getTextStatus() == SVNStatusKind.CONFLICTED);
-		svnClient.resolved(file);
-		status = svnClient.getSingleStatus(file);
-		assertTrue(status.getTextStatus() == SVNStatusKind.MODIFIED);
-	}
-
-	public void testAnnotate() throws Exception {
-		executeTarget("testAnnotate");
-		File file = new File(WORKINGCOPY_DIR+"/annotateTest/file.txt");
-		ISVNAnnotations annotations = svnClient.annotate(file,new SVNRevision.Number(2),new SVNRevision.Number(3));
-		assertEquals(3,annotations.numberOfLines());
-		assertEquals(0,annotations.getRevision(0));
-		assertEquals("user1",annotations.getAuthor(1));
-		assertEquals(2,annotations.getRevision(1));
-		assertEquals("line 2",annotations.getLine(1));
-		assertEquals("user2",annotations.getAuthor(2));
-		assertEquals(3,annotations.getRevision(2));
-		assertEquals("line 3",annotations.getLine(2));
-		
-		InputStream is = annotations.getInputStream();
-		byte[] bytes = new byte[is.available()];
-		is.read(bytes);
-		assertEquals("line 1\nline 2\nline 3", new String(bytes));
-		
-	}
+  public void testEntry() throws Exception {
+    executeTarget("testEntry");
     
-	
+    // first using a SVNUrl
+    String urlRepos = getProject().getProperty("urlRepos");
+    ISVNDirEntry dirEntry = svnClient.getDirEntry(new SVNUrl(urlRepos+"/entryTest/"),SVNRevision.HEAD);
+    assertNotNull(dirEntry);
+    assertEquals(SVNNodeKind.DIR,dirEntry.getNodeKind());
+    assertEquals("entryTest",dirEntry.getPath());
+    
+    // using a File
+    dirEntry = svnClient.getDirEntry(new File(WORKINGCOPY_DIR+"/entryTest/dir1"),SVNRevision.BASE);
+    assertNotNull(dirEntry);
+    assertEquals(SVNNodeKind.DIR,dirEntry.getNodeKind());
+    
+    // this does not work for now because working copy dir needs to be updated
+    // before
+//    TODO some test are disabled ?       
+//    dirEntry = svnClient.getDirEntry(new File(WORKINGCOPY_DIR+"/entryTest/"),SVNRevision.BASE);
+//    assertNotNull(dirEntry);
+//    assertEquals(SVNNodeKind.DIR,dirEntry.getNodeKind());
+//    assertEquals("entryTest",dirEntry.getPath());   
+  }
+
+  public void testResolve() throws Exception {
+    executeTarget("testResolve");
+    File file = new File(WORKINGCOPY_DIR+"/resolveTest/file.txt");
+    ISVNStatus status = svnClient.getSingleStatus(file);
+    assertTrue(status.getTextStatus() == SVNStatusKind.CONFLICTED);
+    svnClient.resolved(file);
+    status = svnClient.getSingleStatus(file);
+    assertTrue(status.getTextStatus() == SVNStatusKind.MODIFIED);
+  }
+
+  public void testAnnotate() throws Exception {
+    executeTarget("testAnnotate");
+    File file = new File(WORKINGCOPY_DIR+"/annotateTest/file.txt");
+    ISVNAnnotations annotations = svnClient.annotate(file,new SVNRevision.Number(2),new SVNRevision.Number(3));
+    assertEquals(3,annotations.numberOfLines());
+    assertEquals(0,annotations.getRevision(0));
+    assertEquals("user1",annotations.getAuthor(1));
+    assertEquals(2,annotations.getRevision(1));
+    assertEquals("line 2",annotations.getLine(1));
+    assertEquals("user2",annotations.getAuthor(2));
+    assertEquals(3,annotations.getRevision(2));
+    assertEquals("line 3",annotations.getLine(2));
+    
+    InputStream is = annotations.getInputStream();
+    byte[] bytes = new byte[is.available()];
+    is.read(bytes);
+    assertEquals("line 1\nline 2\nline 3", new String(bytes));
+    
+  }
+    
+  
 //    public void testRepositoryRoot() throws Exception {
 //        executeTarget("testRepositoryRoot");
 //        String urlRepos = getProject().getProperty("urlRepos");
@@ -602,350 +638,350 @@ public abstract class SvnTest extends BuildFileTest {
 
     
     public void testSwitch() throws Exception {
-    	executeTarget("testSwitch");
+      executeTarget("testSwitch");
     }
 
     public void testNormalSelector() throws Exception {
-    	executeTarget("testNormalSelector");
-    	
-    	// Count number of files in test directory
-		File dir2 = new File(TEST_DIR);
-		assertTrue( dir2.exists() );
-		assertTrue( dir2.isDirectory() );
-		assertEquals(2, dir2.listFiles().length);
-		
-		// Verify that the expected files are present
-		assertTrue( (new File(dir2, "normal1.txt")).exists() );
-		assertTrue( (new File(dir2, "normal2.txt")).exists() );
+      executeTarget("testNormalSelector");
+      
+      // Count number of files in test directory
+    File dir2 = new File(TEST_DIR);
+    assertTrue( dir2.exists() );
+    assertTrue( dir2.isDirectory() );
+    assertEquals(2, dir2.listFiles().length);
+    
+    // Verify that the expected files are present
+    assertTrue( (new File(dir2, "normal1.txt")).exists() );
+    assertTrue( (new File(dir2, "normal2.txt")).exists() );
     }
 
     public void testAddedSelector() throws Exception {
-    	executeTarget("testAddedSelector");
-    	
-    	// Count number of files in test directory
-		File dir2 = new File(TEST_DIR);
-		assertTrue( dir2.exists() );
-		assertTrue( dir2.isDirectory() );
-		assertEquals(2, dir2.listFiles().length);
-		
-		// Verify that the expected files are present
-		assertTrue( (new File(dir2, "added1.txt")).exists() );
-		assertTrue( (new File(dir2, "added2.txt")).exists() );
+      executeTarget("testAddedSelector");
+      
+      // Count number of files in test directory
+    File dir2 = new File(TEST_DIR);
+    assertTrue( dir2.exists() );
+    assertTrue( dir2.isDirectory() );
+    assertEquals(2, dir2.listFiles().length);
+    
+    // Verify that the expected files are present
+    assertTrue( (new File(dir2, "added1.txt")).exists() );
+    assertTrue( (new File(dir2, "added2.txt")).exists() );
     }
 
     public void testUnversionedSelector() throws Exception {
-    	executeTarget("testUnversionedSelector");
-    	
-    	// Count number of files in test directory
-		File dir2 = new File(TEST_DIR);
-		assertTrue( dir2.exists() );
-		assertTrue( dir2.isDirectory() );
-		assertEquals(2, dir2.listFiles().length);
-		
-		// Verify that the expected files are present
-		assertTrue( (new File(dir2, "unversioned1.txt")).exists() );
-		assertTrue( (new File(dir2, "unversioned2.txt")).exists() );
+      executeTarget("testUnversionedSelector");
+      
+      // Count number of files in test directory
+    File dir2 = new File(TEST_DIR);
+    assertTrue( dir2.exists() );
+    assertTrue( dir2.isDirectory() );
+    assertEquals(2, dir2.listFiles().length);
+    
+    // Verify that the expected files are present
+    assertTrue( (new File(dir2, "unversioned1.txt")).exists() );
+    assertTrue( (new File(dir2, "unversioned2.txt")).exists() );
     }
 
     public void testModifiedSelector() throws Exception {
-    	executeTarget("testModifiedSelector");
-    	
-    	// Count number of files in test directory
-		File dir2 = new File(TEST_DIR);
-		assertTrue( dir2.exists() );
-		assertTrue( dir2.isDirectory() );
-		assertEquals(4, dir2.listFiles().length);
-		
-		// Verify that the expected files are present
-		assertTrue( (new File(dir2, "modified1.txt")).exists() );
-		assertTrue( (new File(dir2, "modified2.txt")).exists() );
-		assertTrue( (new File(dir2, "conflicted1.txt")).exists() );
-		assertTrue( (new File(dir2, "conflicted2.txt")).exists() );
+      executeTarget("testModifiedSelector");
+      
+      // Count number of files in test directory
+    File dir2 = new File(TEST_DIR);
+    assertTrue( dir2.exists() );
+    assertTrue( dir2.isDirectory() );
+    assertEquals(4, dir2.listFiles().length);
+    
+    // Verify that the expected files are present
+    assertTrue( (new File(dir2, "modified1.txt")).exists() );
+    assertTrue( (new File(dir2, "modified2.txt")).exists() );
+    assertTrue( (new File(dir2, "conflicted1.txt")).exists() );
+    assertTrue( (new File(dir2, "conflicted2.txt")).exists() );
     }
 
     public void testIgnoredSelector() throws Exception {
-    	executeTarget("testIgnoredSelector");
-    	
-    	// Count number of files in test directory
-		File dir2 = new File(TEST_DIR);
-		assertTrue( dir2.exists() );
-		assertTrue( dir2.isDirectory() );
-		assertEquals(2, dir2.listFiles().length);
-		
-		// Verify that the expected files are present
-		assertTrue( (new File(dir2, "ignored1.txt")).exists() );
-		assertTrue( (new File(dir2, "ignored2.txt")).exists() );
+      executeTarget("testIgnoredSelector");
+      
+      // Count number of files in test directory
+    File dir2 = new File(TEST_DIR);
+    assertTrue( dir2.exists() );
+    assertTrue( dir2.isDirectory() );
+    assertEquals(2, dir2.listFiles().length);
+    
+    // Verify that the expected files are present
+    assertTrue( (new File(dir2, "ignored1.txt")).exists() );
+    assertTrue( (new File(dir2, "ignored2.txt")).exists() );
     }
 
     public void testConflictedSelector() throws Exception {
-    	executeTarget("testConflictedSelector");
-    	
-    	// Count number of files in test directory
-		File dir2 = new File(TEST_DIR);
-		assertTrue( dir2.exists() );
-		assertTrue( dir2.isDirectory() );
-		assertEquals(2, dir2.listFiles().length);
-		
-		// Verify that the expected files are present
-		assertTrue( (new File(dir2, "conflicted1.txt")).exists() );
-		assertTrue( (new File(dir2, "conflicted2.txt")).exists() );
+      executeTarget("testConflictedSelector");
+      
+      // Count number of files in test directory
+    File dir2 = new File(TEST_DIR);
+    assertTrue( dir2.exists() );
+    assertTrue( dir2.isDirectory() );
+    assertEquals(2, dir2.listFiles().length);
+    
+    // Verify that the expected files are present
+    assertTrue( (new File(dir2, "conflicted1.txt")).exists() );
+    assertTrue( (new File(dir2, "conflicted2.txt")).exists() );
     }
 
     public void testReplacedSelector() throws Exception {
-    	executeTarget("testReplacedSelector");
-    	
-    	// Count number of files in test directory
-		File dir2 = new File(TEST_DIR);
-		assertTrue( dir2.exists() );
-		assertTrue( dir2.isDirectory() );
-		assertEquals(2, dir2.listFiles().length);
-		
-		// Verify that the expected files are present
-		assertTrue( (new File(dir2, "replaced1.txt")).exists() );
-		assertTrue( (new File(dir2, "replaced2.txt")).exists() );
+      executeTarget("testReplacedSelector");
+      
+      // Count number of files in test directory
+    File dir2 = new File(TEST_DIR);
+    assertTrue( dir2.exists() );
+    assertTrue( dir2.isDirectory() );
+    assertEquals(2, dir2.listFiles().length);
+    
+    // Verify that the expected files are present
+    assertTrue( (new File(dir2, "replaced1.txt")).exists() );
+    assertTrue( (new File(dir2, "replaced2.txt")).exists() );
     }
 
     public void testEmbeddedSelector() throws Exception {
-    	executeTarget("testEmbeddedSelector");
-    	
-    	// Count number of files in test directory
-		File dir2 = new File(TEST_DIR);
-		assertTrue( dir2.exists() );
-		assertTrue( dir2.isDirectory() );
-		assertEquals(0, dir2.listFiles().length);
-		
+      executeTarget("testEmbeddedSelector");
+      
+      // Count number of files in test directory
+    File dir2 = new File(TEST_DIR);
+    assertTrue( dir2.exists() );
+    assertTrue( dir2.isDirectory() );
+    assertEquals(0, dir2.listFiles().length);
+    
     }
 
     public void testAddSvnFileSet() throws Exception {
-    	executeTarget("testAddSvnFileSet");
-    	
-    	// Count number of files in test directory
-		File dir2 = new File(TEST_DIR);
-		assertTrue( dir2.exists() );
-		assertTrue( dir2.isDirectory() );
-		assertEquals(2, dir2.listFiles().length);
-		
-		// Verify that the expected files are present
-		assertTrue( (new File(dir2, "added1.txt")).exists() );
-		assertTrue( (new File(dir2, "added2.txt")).exists() );
+      executeTarget("testAddSvnFileSet");
+      
+      // Count number of files in test directory
+    File dir2 = new File(TEST_DIR);
+    assertTrue( dir2.exists() );
+    assertTrue( dir2.isDirectory() );
+    assertEquals(2, dir2.listFiles().length);
+    
+    // Verify that the expected files are present
+    assertTrue( (new File(dir2, "added1.txt")).exists() );
+    assertTrue( (new File(dir2, "added2.txt")).exists() );
     }
 
     public void testCommitSvnFileSet() throws Exception {
-    	executeTarget("testCommitSvnFileSet");
-    	
-    	// Count number of files in test directory
-		File dir = new File(TEST_DIR);
-		assertTrue( dir.exists() );
-		assertTrue( dir.isDirectory() );
-		assertEquals(2, dir.listFiles().length);
-		
-		// Verify that the expected files are present
-		assertTrue( (new File(dir, "file2.txt")).exists() );
-		assertTrue( (new File(dir, "dir1")).exists() );
+      executeTarget("testCommitSvnFileSet");
+      
+      // Count number of files in test directory
+    File dir = new File(TEST_DIR);
+    assertTrue( dir.exists() );
+    assertTrue( dir.isDirectory() );
+    assertEquals(2, dir.listFiles().length);
+    
+    // Verify that the expected files are present
+    assertTrue( (new File(dir, "file2.txt")).exists() );
+    assertTrue( (new File(dir, "dir1")).exists() );
 
-		File dir2 = new File(TEST_DIR, "dir1");
-		assertTrue( dir2.exists() );
-		assertTrue( dir2.isDirectory() );
-		assertEquals(1, dir2.listFiles().length);
-		assertTrue( (new File(dir2, "file1.txt")).exists() );
+    File dir2 = new File(TEST_DIR, "dir1");
+    assertTrue( dir2.exists() );
+    assertTrue( dir2.isDirectory() );
+    assertEquals(1, dir2.listFiles().length);
+    assertTrue( (new File(dir2, "file1.txt")).exists() );
     }
 
     public void testDeleteSvnFileSet() throws Exception {
-    	executeTarget("testDeleteSvnFileSet");
-    	
-    	// Count number of files in test directory
-		File dir = new File(WORKINGCOPY2_DIR);
-		assertTrue( dir.exists() );
-		assertTrue( dir.isDirectory() );
-		File[] files = dir.listFiles();
-		assertEquals(3, files.length);
-		
-		// Verify that the expected files are present
-		assertTrue( (new File(dir, "normal1.txt")).exists() );
-		assertTrue( (new File(dir, ".svn")).exists() );
-		assertTrue( (new File(dir, "dir1")).exists() );
+      executeTarget("testDeleteSvnFileSet");
+      
+      // Count number of files in test directory
+    File dir = new File(WORKINGCOPY2_DIR);
+    assertTrue( dir.exists() );
+    assertTrue( dir.isDirectory() );
+    File[] files = dir.listFiles();
+    assertEquals(3, files.length);
+    
+    // Verify that the expected files are present
+    assertTrue( (new File(dir, "normal1.txt")).exists() );
+    assertTrue( (new File(dir, ".svn")).exists() );
+    assertTrue( (new File(dir, "dir1")).exists() );
 
-		File dir2 = new File(WORKINGCOPY2_DIR, "dir1");
-		assertTrue( dir2.exists() );
-		assertTrue( dir2.isDirectory() );
-		assertEquals(2, dir2.listFiles().length);
-		assertTrue( (new File(dir2, "normal2.txt")).exists() );
-		assertTrue( (new File(dir2, ".svn")).exists() );
+    File dir2 = new File(WORKINGCOPY2_DIR, "dir1");
+    assertTrue( dir2.exists() );
+    assertTrue( dir2.isDirectory() );
+    assertEquals(2, dir2.listFiles().length);
+    assertTrue( (new File(dir2, "normal2.txt")).exists() );
+    assertTrue( (new File(dir2, ".svn")).exists() );
     }
 
     public void testKeywordsSvnFileSet() throws Exception {
-    	executeTarget("testKeywordsSvnFileSet");
-    	
-    	// Test file1.txt
-		File dir = new File(WORKINGCOPY_DIR);
-		File file1 = new File(dir, "file1.txt");
-		BufferedReader br1 = 
-			new BufferedReader(
-					new InputStreamReader(
-							new FileInputStream(file1)
-							)
-					);
-		String content1 = br1.readLine();
-		br1.close();
-		assertTrue( content1.matches(".*[0-9]+.*") );
+      executeTarget("testKeywordsSvnFileSet");
+      
+      // Test file1.txt
+    File dir = new File(WORKINGCOPY_DIR);
+    File file1 = new File(dir, "file1.txt");
+    BufferedReader br1 = 
+      new BufferedReader(
+          new InputStreamReader(
+              new FileInputStream(file1)
+              )
+          );
+    String content1 = br1.readLine();
+    br1.close();
+    assertTrue( content1.matches(".*[0-9]+.*") );
 
-    	// Test file2.txt
-		File dir2 = new File(WORKINGCOPY_DIR, "dir1");
-		File file2 = new File(dir2, "file2.txt");
-		BufferedReader br2 = 
-			new BufferedReader(
-					new InputStreamReader(
-							new FileInputStream(file2)
-							)
-					);
-		String content2 = br2.readLine();
-		br2.close();
-		assertTrue( content2.matches(".*[0-9]+.*") );
+      // Test file2.txt
+    File dir2 = new File(WORKINGCOPY_DIR, "dir1");
+    File file2 = new File(dir2, "file2.txt");
+    BufferedReader br2 = 
+      new BufferedReader(
+          new InputStreamReader(
+              new FileInputStream(file2)
+              )
+          );
+    String content2 = br2.readLine();
+    br2.close();
+    assertTrue( content2.matches(".*[0-9]+.*") );
     }
 
     public void testRevertSvnFileSet() throws Exception {
-    	executeTarget("testRevertSvnFileSet");
-    	
-    	// Test deleted1.txt
-		File dir = new File(WORKINGCOPY_DIR);
-		File deleted1 = new File(dir, "deleted1.txt");
-		assertTrue( deleted1.exists() );
+      executeTarget("testRevertSvnFileSet");
+      
+      // Test deleted1.txt
+    File dir = new File(WORKINGCOPY_DIR);
+    File deleted1 = new File(dir, "deleted1.txt");
+    assertTrue( deleted1.exists() );
 
-    	// Test deleted2.txt
-		File dir2 = new File(WORKINGCOPY_DIR, "dir1");
-		File deleted2 = new File(dir2, "deleted2.txt");
-		assertTrue( deleted2.exists() );
+      // Test deleted2.txt
+    File dir2 = new File(WORKINGCOPY_DIR, "dir1");
+    File deleted2 = new File(dir2, "deleted2.txt");
+    assertTrue( deleted2.exists() );
     }
 
     public void testUpdateSvnFileSet() throws Exception {
-    	executeTarget("testUpdateSvnFileSet");
-    	
-    	// Test missing1.txt
-		File dir = new File(WORKINGCOPY_DIR);
-		File missing1 = new File(dir, "missing1.txt");
-		assertTrue( missing1.exists() );
+      executeTarget("testUpdateSvnFileSet");
+      
+      // Test missing1.txt
+    File dir = new File(WORKINGCOPY_DIR);
+    File missing1 = new File(dir, "missing1.txt");
+    assertTrue( missing1.exists() );
 
-    	// Test missing2.txt
-		File dir2 = new File(WORKINGCOPY_DIR, "dir1");
-		File missing2 = new File(dir2, "missing2.txt");
-		assertTrue( missing2.exists() );
+      // Test missing2.txt
+    File dir2 = new File(WORKINGCOPY_DIR, "dir1");
+    File missing2 = new File(dir2, "missing2.txt");
+    assertTrue( missing2.exists() );
     }
 
     public void testSvnFileSetAsRefId() throws Exception {
-    	executeTarget("testSvnFileSetAsRefId");
-    	
-    	// Count number of files in test directory
-		File dir = new File(TEST_DIR);
-		assertTrue( dir.exists() );
-		assertTrue( dir.isDirectory() );
-		assertEquals(2, dir.listFiles().length);
-		
-		// Verify that the expected files are present
-		assertTrue( (new File(dir, "added1.txt")).exists() );
-		assertTrue( (new File(dir, "added2.txt")).exists() );
+      executeTarget("testSvnFileSetAsRefId");
+      
+      // Count number of files in test directory
+    File dir = new File(TEST_DIR);
+    assertTrue( dir.exists() );
+    assertTrue( dir.isDirectory() );
+    assertEquals(2, dir.listFiles().length);
+    
+    // Verify that the expected files are present
+    assertTrue( (new File(dir, "added1.txt")).exists() );
+    assertTrue( (new File(dir, "added2.txt")).exists() );
     }
 
     public void testSvnFileSetIncludes() throws Exception {
-    	executeTarget("testSvnFileSetIncludes");
-    	
-    	// Count number of files in test directory
-		File dir = new File(TEST_DIR);
-		assertTrue( dir.exists() );
-		assertTrue( dir.isDirectory() );
-		assertEquals(2, dir.listFiles().length);
-		
-		// Verify that the expected files are present
-		assertTrue( (new File(dir, "file11.txt")).exists() );
-		assertTrue( (new File(dir, "dir")).exists() );
-		
-		dir = new File(dir, "dir");
-		assertEquals(1, dir.listFiles().length);
-		assertTrue( (new File(dir, "file21.txt")).exists() );
+      executeTarget("testSvnFileSetIncludes");
+      
+      // Count number of files in test directory
+    File dir = new File(TEST_DIR);
+    assertTrue( dir.exists() );
+    assertTrue( dir.isDirectory() );
+    assertEquals(2, dir.listFiles().length);
+    
+    // Verify that the expected files are present
+    assertTrue( (new File(dir, "file11.txt")).exists() );
+    assertTrue( (new File(dir, "dir")).exists() );
+    
+    dir = new File(dir, "dir");
+    assertEquals(1, dir.listFiles().length);
+    assertTrue( (new File(dir, "file21.txt")).exists() );
     }
 
     public void testSvnFileSetExcludes() throws Exception {
-    	executeTarget("testSvnFileSetExcludes");
-    	
-    	// Count number of files in test directory
-		File dir = new File(TEST_DIR);
-		assertTrue( dir.exists() );
-		assertTrue( dir.isDirectory() );
-		assertEquals(2, dir.listFiles().length);
-		
-		// Verify that the expected files are present
-		assertTrue( (new File(dir, "file12.txt")).exists() );
-		assertTrue( (new File(dir, "dir")).exists() );
-		
-		dir = new File(dir, "dir");
-		assertEquals(1, dir.listFiles().length);
-		assertTrue( (new File(dir, "file22.txt")).exists() );
+      executeTarget("testSvnFileSetExcludes");
+      
+      // Count number of files in test directory
+    File dir = new File(TEST_DIR);
+    assertTrue( dir.exists() );
+    assertTrue( dir.isDirectory() );
+    assertEquals(2, dir.listFiles().length);
+    
+    // Verify that the expected files are present
+    assertTrue( (new File(dir, "file12.txt")).exists() );
+    assertTrue( (new File(dir, "dir")).exists() );
+    
+    dir = new File(dir, "dir");
+    assertEquals(1, dir.listFiles().length);
+    assertTrue( (new File(dir, "file22.txt")).exists() );
     }
 
     public void testSvnFileSetNestedInclude() throws Exception {
-    	executeTarget("testSvnFileSetNestedInclude");
-    	
-    	// Count number of files in test directory
-		File dir = new File(TEST_DIR);
-		assertTrue( dir.exists() );
-		assertTrue( dir.isDirectory() );
-		assertEquals(2, dir.listFiles().length);
-		
-		// Verify that the expected files are present
-		assertTrue( (new File(dir, "file11.txt")).exists() );
-		assertTrue( (new File(dir, "dir")).exists() );
-		
-		dir = new File(dir, "dir");
-		assertEquals(1, dir.listFiles().length);
-		assertTrue( (new File(dir, "file21.txt")).exists() );
+      executeTarget("testSvnFileSetNestedInclude");
+      
+      // Count number of files in test directory
+    File dir = new File(TEST_DIR);
+    assertTrue( dir.exists() );
+    assertTrue( dir.isDirectory() );
+    assertEquals(2, dir.listFiles().length);
+    
+    // Verify that the expected files are present
+    assertTrue( (new File(dir, "file11.txt")).exists() );
+    assertTrue( (new File(dir, "dir")).exists() );
+    
+    dir = new File(dir, "dir");
+    assertEquals(1, dir.listFiles().length);
+    assertTrue( (new File(dir, "file21.txt")).exists() );
     }
 
     public void testSvnFileSetNestedExclude() throws Exception {
-    	executeTarget("testSvnFileSetNestedExclude");
-    	
-    	// Count number of files in test directory
-		File dir = new File(TEST_DIR);
-		assertTrue( dir.exists() );
-		assertTrue( dir.isDirectory() );
-		assertEquals(2, dir.listFiles().length);
-		
-		// Verify that the expected files are present
-		assertTrue( (new File(dir, "file12.txt")).exists() );
-		assertTrue( (new File(dir, "dir")).exists() );
-		
-		dir = new File(dir, "dir");
-		assertEquals(1, dir.listFiles().length);
-		assertTrue( (new File(dir, "file22.txt")).exists() );
+      executeTarget("testSvnFileSetNestedExclude");
+      
+      // Count number of files in test directory
+    File dir = new File(TEST_DIR);
+    assertTrue( dir.exists() );
+    assertTrue( dir.isDirectory() );
+    assertEquals(2, dir.listFiles().length);
+    
+    // Verify that the expected files are present
+    assertTrue( (new File(dir, "file12.txt")).exists() );
+    assertTrue( (new File(dir, "dir")).exists() );
+    
+    dir = new File(dir, "dir");
+    assertEquals(1, dir.listFiles().length);
+    assertTrue( (new File(dir, "file22.txt")).exists() );
     }
 
     public void testSvnFileSetPatternSet() throws Exception {
-    	executeTarget("testSvnFileSetPatternSet");
-    	
-    	// Count number of files in test directory
-		File dir = new File(TEST_DIR);
-		assertTrue( dir.exists() );
-		assertTrue( dir.isDirectory() );
-		assertEquals(2, dir.listFiles().length);
-		
-		// Verify that the expected files are present
-		assertTrue( (new File(dir, "file1.xml")).exists() );
-		assertTrue( (new File(dir, "dir1")).exists() );
-		
-		dir = new File(dir, "dir1");
-		assertEquals(1, dir.listFiles().length);
-		assertTrue( (new File(dir, "file3.xml")).exists() );
+      executeTarget("testSvnFileSetPatternSet");
+      
+      // Count number of files in test directory
+    File dir = new File(TEST_DIR);
+    assertTrue( dir.exists() );
+    assertTrue( dir.isDirectory() );
+    assertEquals(2, dir.listFiles().length);
+    
+    // Verify that the expected files are present
+    assertTrue( (new File(dir, "file1.xml")).exists() );
+    assertTrue( (new File(dir, "dir1")).exists() );
+    
+    dir = new File(dir, "dir1");
+    assertEquals(1, dir.listFiles().length);
+    assertTrue( (new File(dir, "file3.xml")).exists() );
     }
     
     public void testSvnExists() throws Exception {
-    	executeTarget("testSvnExists");
-    	
-    	// Test for expected results
-		assertEquals("true", project.getProperty("svnExists.local.checkedin"));
-		assertEquals("true", project.getProperty("svnExists.local.added"));
-		assertEquals(null, project.getProperty("svnExists.local.private"));
-		assertEquals(null, project.getProperty("svnExists.local.inexistant"));
-		assertEquals("true", project.getProperty("svnExists.server.checkedin"));
-		assertEquals(null, project.getProperty("svnExists.server.added"));
-		assertEquals(null, project.getProperty("svnExists.server.private"));
+      executeTarget("testSvnExists");
+      
+      // Test for expected results
+    assertEquals("true", project.getProperty("svnExists.local.checkedin"));
+    assertEquals("true", project.getProperty("svnExists.local.added"));
+    assertEquals(null, project.getProperty("svnExists.local.private"));
+    assertEquals(null, project.getProperty("svnExists.local.inexistant"));
+    assertEquals("true", project.getProperty("svnExists.server.checkedin"));
+    assertEquals(null, project.getProperty("svnExists.server.added"));
+    assertEquals(null, project.getProperty("svnExists.server.private"));
     }
     
     /**
@@ -969,13 +1005,13 @@ public abstract class SvnTest extends BuildFileTest {
      * after <i>each</i> test case, which would take longer).
      */
     public void testCleanupAfterTests() throws Exception {
-    	executeTarget("clean");
+      executeTarget("clean");
     }
 
     public static void main(String[] args) {
         String[] testCaseName = { SvnTest.class.getName()};
         junit.textui.TestRunner.main(testCaseName);
-        //		junit.ui.TestRunner.main(testCaseName);
+        //    junit.ui.TestRunner.main(testCaseName);
     }
 
 }

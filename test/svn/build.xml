@@ -214,6 +214,21 @@
     </svn>
   </target>
 
+  <target name="testListCommand" depends="init">
+    <copy todir="workingcopy/listCommandTest">
+      <fileset dir="model/listCommandTest"></fileset>
+    </copy>
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
+      <add dir="workingcopy/listCommandTest"/>
+      <commit dir="workingcopy/listCommandTest" message="listCommandTest directory added to repository"/>
+      <checkout url="${urlRepos}" revision="HEAD" destPath="coHEAD" />
+      <list url="${urlRepos}/listCommandTest" property="immediatecontent" recurse="false"/>
+      <list url="${urlRepos}/listCommandTest" property="recursivecontent" recurse="true"/>
+    </svn>
+    <echo>IMMEDIATE: ${immediatecontent}</echo>
+    <echo>RECURSIVE: ${recursivecontent}</echo>
+  </target>
+
   <target name="testAddCommit" depends="init">
     <copy todir="workingcopy/addCommitTest">
       <fileset dir="model/addCommitTest"></fileset>
