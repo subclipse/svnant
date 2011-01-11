@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -82,11 +83,14 @@ public abstract class SvnTest extends BuildFileTest {
         String   url        = String.format( "%s/listCommandTest", getProject().getProperty("urlRepos") );
         String[] immediate  = getSplittedLine("IMMEDIATE: ");
         String[] recursive  = getSplittedLine("RECURSIVE: ");
+        Arrays.sort( immediate );
+        Arrays.sort( recursive );
         
         // compare the results for the normal listing
         String[] expectedimmediate = new String[] {
           "subdir1", "subdir2", "readme.txt"  
         };
+        Arrays.sort( expectedimmediate );
         Assert.assertEquals(expectedimmediate.length, immediate.length);
         for(int i = 0; i < expectedimmediate.length; i++) {
           Assert.assertEquals(String.format("%s/%s", url, expectedimmediate[i]), immediate[i]);
@@ -96,6 +100,7 @@ public abstract class SvnTest extends BuildFileTest {
         String[] expectedrecursive = new String[] {
             "subdir1", "subdir1/f1.txt", "subdir2", "readme.txt"  
         };
+        Arrays.sort( expectedrecursive );
         Assert.assertEquals(expectedrecursive.length, recursive.length);
         for(int i = 0; i < expectedrecursive.length; i++) {
           Assert.assertEquals(String.format("%s/%s", url, expectedrecursive[i]), recursive[i]);
