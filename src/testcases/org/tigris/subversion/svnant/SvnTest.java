@@ -511,6 +511,7 @@ public abstract class SvnTest extends BuildFileTest {
         String[] propNames = new String[] {
             "svn.info.path",
             "svn.info.url",
+            "svn.info.repourl",
             "svn.info.repouuid",
             "svn.info.rev",
             "svn.info.nodekind",
@@ -542,6 +543,7 @@ public abstract class SvnTest extends BuildFileTest {
             "svn.info.path",
             "svn.info.name",
             "svn.info.url",
+            "svn.info.repourl",
             "svn.info.repouuid",
             "svn.info.rev",
             "svn.info.nodekind",
@@ -566,6 +568,7 @@ public abstract class SvnTest extends BuildFileTest {
         propNames = new String[] {
             "svn.info.url",
             "svn.info.repouuid",
+            "svn.info.repourl",
             "svn.info.rev",
             "svn.info.nodekind",
             "svn.info.author",
