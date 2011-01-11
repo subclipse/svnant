@@ -54,20 +54,6 @@
  */ 
 package org.tigris.subversion.svnant.commands;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.text.SimpleDateFormat;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
 import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnant.SvnAntValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
@@ -77,6 +63,22 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
 
 /**
  * svn log. 
@@ -129,14 +131,13 @@ public class Log extends SvnCommand {
     }
 
     private void writeLogMessages(ISVNLogMessage[] logMessages) throws SvnAntException {
-        BufferedWriter writer = null;
-        try {
-            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(destFile)));
-            if (asXml) {
+        if (asXml) {
+            OutputStream outstream = null;
+            try {
+                outstream = new BufferedOutputStream(new FileOutputStream(destFile));
                 // Use an actual XML Document to generate the log file to
                 // produce valid XML output.
-                Document doc = DocumentBuilderFactory.newInstance().
-                    newDocumentBuilder().newDocument();
+                Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
                 doc.setXmlStandalone(true);
                 Element log = doc.createElement("log");
                 doc.appendChild(log);
@@ -146,23 +147,35 @@ public class Log extends SvnCommand {
                 
                 Transformer transformer = TransformerFactory.newInstance().newTransformer();
                 transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-                transformer.transform(new DOMSource(doc), new StreamResult(writer));
-             } else {
+                transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+                transformer.transform(new DOMSource(doc), new StreamResult(outstream));
+            } catch (Exception ex) {
+                throw new SvnAntException("Can't get the content of the specified file", ex);
+            } finally {
+                try {
+                    outstream.close();
+                } catch (IOException ex) {
+                    // Just ignore, it's exception during stream closing }
+                }
+            }
+        } else {
+            BufferedWriter writer = null;
+            try {
+                writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(destFile)));
                 for (int i = 0; i < logMessages.length; i++) {
                     writeLogEntryAsPlaintext(logMessages[i], writer);
                 }
-             }
-        } catch (Exception e) {
-            throw new SvnAntException("Can't get the content of the specified file", e);
-        } finally {
-            if (writer != null) {
+            } catch (Exception ex) {
+                throw new SvnAntException("Can't get the content of the specified file", ex);
+            } finally {
                 try {
                     writer.close();
-                } catch (IOException e) { 
-                    //Just ignore, it's exception during stream closing }
+                } catch (IOException ex) {
+                    // Just ignore, it's exception during stream closing }
                 }
             }
         }
+      
     }
   
     /**
