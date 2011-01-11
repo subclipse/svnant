@@ -228,9 +228,64 @@ With the help of the underlying svnClientAdapter, &lt;svn&gt; task uses JavaHL (
 <td><a href="#cleanup">cleanup</a></td>
 <td><a href="#list">list</a></td>
 <td><a href="#singleinfo">singleinfo</a></td>
-<td>&nbsp;</td>
+<td><a href="#log">log</a></td>
 <td>&nbsp;</td>
 </tr>
+</table>
+</div>
+<![CDATA[=========================================================]]>
+<div class="h3" id="log" title="log">
+<H3><a name="log">log</a></H3>
+<p>Display commit log messages.</p>
+<table border="1" width="80%"> <tr>
+   <td>Attribute</td>
+   <td>Description</td>
+   <td>Required</td>
+ </tr>
+ <tr>
+   <td>path</td>
+   <td>path to create</td>
+   <td rowspan="2">One of the two</td>
+ </tr>
+ <tr>
+   <td>url</td>
+   <td>url to create</td>
+ </tr>
+ <tr>
+   <td>startRevision</td>
+   <td>start revision</td>
+   <td>Yes</td>
+ </tr>
+ <tr>
+   <td>stopRevision</td>
+   <td>stop revision</td>
+   <td>Yes</td>
+ </tr>
+ <tr>
+   <td>destFile</td>
+   <td>destination file.<BR>Default is the name of the file on the url placed in the ant project's basedir</td>
+   <td>No</td>
+ </tr>
+ <tr>
+   <td>asXml</td>
+   <td>Output log as xml. Default is true</td>
+   <td>No</td>
+ </tr>
+ <tr>
+   <td>verbose</td>
+   <td>Include changed paths in the log. Default is false</td>
+   <td>No</td>
+ </tr>
+ <tr>
+   <td>stopOnCopy</td>
+   <td>Useful for determining branch points. Default is true</td>
+   <td>No</td>
+ </tr>
+ <tr>
+   <td>limit</td>
+   <td>Restricts output to the first <i>n</i> log messages. Default is all in the range</td>
+   <td>No</td>
+ </tr>
 </table>
 </div>
 <![CDATA[=========================================================]]>
