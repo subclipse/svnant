@@ -573,6 +573,15 @@ public abstract class SvnTest extends BuildFileTest {
         }
     }
 
+    /**
+     * Test the singleinfo command.
+     */
+    public void testSingleInfo() throws Exception {
+        executeTarget("testSingleInfo");
+        Assert.assertEquals("1", getProject().getProperty("val_revision"));
+        Assert.assertEquals("file1.txt", getProject().getProperty("val_name"));
+    }
+
   public void testEntry() throws Exception {
     executeTarget("testEntry");
     

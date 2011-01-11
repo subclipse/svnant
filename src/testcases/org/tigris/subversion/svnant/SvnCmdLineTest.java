@@ -46,4 +46,18 @@ public class SvnCmdLineTest extends SvnTest {
     	super.executeTarget(targetName);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public void testListCommand() {
+        super.testListCommand();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void testSingleInfo() throws Exception {
+        super.testSingleInfo();
+    }
+
 }

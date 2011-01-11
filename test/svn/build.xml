@@ -1086,6 +1086,20 @@
     </svn>
   </target>
 
+  <target name="testSingleInfo" depends="init">
+    <copy todir="workingcopy/singleInfoTest">
+      <fileset dir="model/singleInfoTest"></fileset>
+    </copy>
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
+      <add dir="workingcopy/singleInfoTest"/>
+      <commit dir="workingcopy/singleInfoTest" message="singleInfoTest directory added to repository"/> 
+    </svn>
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
+      <singleinfo target="${basedir}/workingcopy/singleInfoTest/file1.txt" property="val_revision" request="revision"/>
+      <singleinfo target="${basedir}/workingcopy/singleInfoTest/file1.txt" property="val_name"     request="name"/>
+    </svn>
+  </target>
+
   <target name="testInfoBadFile" depends="init">
     <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <info target="${basedir}/fakefile.txt"/>

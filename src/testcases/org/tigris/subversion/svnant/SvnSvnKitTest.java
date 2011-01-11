@@ -54,4 +54,10 @@ public class SvnSvnKitTest extends SvnTest {
         super.testListCommand();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public void testSingleInfo() throws Exception {
+        super.testSingleInfo();
+    }
 }
