@@ -99,6 +99,8 @@ public class WcVersion extends SvnCommand {
         
         if (prefix == null) {
             prefix = "";
+        } else if (!prefix.endsWith(".")) {
+            prefix = prefix + ".";
         }
         
         p.setNewProperty(prefix + "repository.url", wcVersionSummary.reposURL);
