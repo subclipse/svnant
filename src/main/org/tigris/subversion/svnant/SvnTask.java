@@ -66,6 +66,7 @@ import org.tigris.subversion.svnant.commands.Copy;
 import org.tigris.subversion.svnant.commands.CreateRepository;
 import org.tigris.subversion.svnant.commands.Delete;
 import org.tigris.subversion.svnant.commands.Diff;
+import org.tigris.subversion.svnant.commands.DiffSummarize;
 import org.tigris.subversion.svnant.commands.Export;
 import org.tigris.subversion.svnant.commands.Feedback;
 import org.tigris.subversion.svnant.commands.Ignore;
@@ -278,6 +279,10 @@ public class SvnTask extends Task {
     }
     
     public void addDiff(Diff a) {
+        addCommand(a);
+    }
+
+    public void addDiffSummarize(DiffSummarize a) {
         addCommand(a);
     }
 

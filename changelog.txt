@@ -7,6 +7,7 @@
 - #916: the 'copy' command now supports the option 'makeParents' to enforce the creation of parental structures
 - #1092: if 'failonerror' is set to false the 'svn' task will quit normally if there's no client adapter available
 - #1209: the 'wcVersion' command now adds a '.' to the prefix if it's missing
+- #1213: added the 'diffSummarize' command
 
 * 1.2.1
 - Built against svnClientAdapter r4107, Subversion 1.5.x, SVNKit 1.2.x
