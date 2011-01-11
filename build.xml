@@ -6,6 +6,9 @@
   <!-- import the default properties -->
   <property file="svnant.properties" />
 
+  <!-- load the environment. -->
+  <property environment="env"/>
+
   <!-- ======================================================================================= -->
   <!-- path declarations                                                                       -->
   <!-- ======================================================================================= -->
