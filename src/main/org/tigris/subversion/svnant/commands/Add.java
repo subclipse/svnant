@@ -131,7 +131,7 @@ public class Add extends SvnCommand {
     private void svnAddFile(File aFile) throws SvnAntException {
         if (aFile.exists()) {
             if (aFile.isDirectory()) {
-                logWarning(
+                warning(
                     "Directory "
                         + aFile.getAbsolutePath()
                         + " cannot be added using the file attribute.  "
@@ -153,7 +153,7 @@ public class Add extends SvnCommand {
                     + aFile.getAbsolutePath()
                     + " to add to the repository.";
             if (!failonerror) {
-              logWarning(message);
+                warning(message);
             } else {
                 throw new SvnAntException(message);
             }
@@ -171,7 +171,7 @@ public class Add extends SvnCommand {
     private void svnAddDir(File aDir, boolean recursive, boolean force) throws SvnAntException {
         if (aDir.exists()) {
             if (!aDir.isDirectory()) {
-                logWarning(
+                warning(
                     "File "
                         + aDir.getAbsolutePath()
                         + " cannot be added using the dir attribute.  "
@@ -194,7 +194,7 @@ public class Add extends SvnCommand {
                     + aDir.getAbsolutePath()
                     + " to add to the repository.";
             if (!failonerror) {
-                logWarning(message);
+                warning(message);
             } else {
                 throw new SvnAntException(message);
             }

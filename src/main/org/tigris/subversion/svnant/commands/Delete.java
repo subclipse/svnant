@@ -181,7 +181,7 @@ public class Delete extends SvnCommand {
         try {
             svnClient.remove(filesAndDirs,force);
         } catch (SVNClientException e) {
-            logError("Cannot delete file " + file.getAbsolutePath());
+            error("Cannot delete file " + file.getAbsolutePath());
         }
     }
   

@@ -120,9 +120,9 @@ public class SingleInfo extends SvnCommand {
             String value = getValue( info, request.getValue() );
             project.setProperty( property, value );
             if ( verbose ) {
-                logInfo( property + " : " + value );
+                info( property + " : " + value );
             } else {
-                logVerbose( property + " : " + value );
+                verbose( property + " : " + value );
             }
         } catch ( Exception ex ) {
             throw new SvnAntException( "Failed to access subversion 'info' properties", ex );
@@ -211,9 +211,9 @@ public class SingleInfo extends SvnCommand {
             log( "    " + "Property '" + key + "' not implemented", Project.MSG_WARN );
         } else {
             if ( verbose ) {
-                logInfo( "    " + "Property '" + key + "' not recognized" );
+                info( "    " + "Property '" + key + "' not recognized" );
             } else {
-                logVerbose( "    " + "Property '" + key + "' not recognized" );
+                verbose( "    " + "Property '" + key + "' not recognized" );
             }
         }
         if ( value == null ) {

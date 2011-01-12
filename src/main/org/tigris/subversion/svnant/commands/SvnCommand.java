@@ -76,145 +76,151 @@ import org.tigris.subversion.svnclientadapter.utils.StringUtils;
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  */
 public abstract class SvnCommand extends ProjectComponent {
-	
-	protected SvnTask task;
-	protected ISVNClientAdapter svnClient;
+    
+    protected SvnTask task;
+    protected ISVNClientAdapter svnClient;
 
-	protected abstract void validateAttributes() throws SvnAntValidationException;
-	
-	/**
-	 * Execute the command.
-	 * @throws SvnAntException in case an error was encountered during execution
-	 */
-	public abstract void execute() throws SvnAntException;
+    protected abstract void validateAttributes() throws SvnAntValidationException;
+    
+    /**
+     * Execute the command.
+     * @throws SvnAntException in case an error was encountered during execution
+     */
+    public abstract void execute() throws SvnAntException;
 
-	/**
-	 * Execute the receiver (a svn command) using the supplied clientAdapter
-	 * @param svnClientAdapter
-	 * @throws BuildException
-	 */
-	public final void executeCommand(ISVNClientAdapter svnClientAdapter) throws BuildException
-	{
-		this.svnClient = svnClientAdapter;
-		String[] nameSegments = StringUtils.split(getClass().getName(), ".");
-		String className = "<" + nameSegments[nameSegments.length -1] + ">"; 
-			
-		logInfo(className + " started ...");
-		try {
-			validateAttributes();
-			execute();
-		} catch (SvnAntException ex) {
-			if (this.task.isFailonerror()) {
-				logInfo(className + " failed !");
-				throw new BuildException(ex.getMessage(), ex.getCause());
-			} else {
-				logError(className + " failed :" + ex.getLocalizedMessage());				
-			}
-		} catch (SvnAntValidationException e) {
-			if (this.task.isFailonerror()) {
-				logInfo(className + " failed !");
-				throw new BuildException(e.getMessage());
-			} else {
-				logError(className + " failed :" + e.getLocalizedMessage());								
-			}
-		}
-		logInfo(className + " finished.");
-	}
+    /**
+     * Execute the receiver (a svn command) using the supplied clientAdapter
+     * @param svnClientAdapter
+     * @throws BuildException
+     */
+    public final void executeCommand(ISVNClientAdapter svnClientAdapter) throws BuildException
+    {
+        this.svnClient = svnClientAdapter;
+        String[] nameSegments = StringUtils.split(getClass().getName(), ".");
+        String className = "<" + nameSegments[nameSegments.length -1] + ">"; 
+            
+        info(className + " started ...");
+        try {
+            validateAttributes();
+            execute();
+        } catch (SvnAntException ex) {
+            if (this.task.isFailonerror()) {
+                info(className + " failed !");
+                throw new BuildException(ex.getMessage(), ex.getCause());
+            } else {
+                error(className + " failed :" + ex.getLocalizedMessage());
+            }
+        } catch (SvnAntValidationException e) {
+            if (this.task.isFailonerror()) {
+                info(className + " failed !");
+                throw new BuildException(e.getMessage());
+            } else {
+                error(className + " failed :" + e.getLocalizedMessage());
+            }
+        }
+        info(className + " finished.");
+    }
 
-	/**
-	 * @return the task
-	 */
-	public SvnTask getTask() {
-		return task;
-	}
+    /**
+     * @return the task
+     */
+    public SvnTask getTask() {
+        return task;
+    }
 
-	/**
-	 * @param task the task to set
-	 */
-	public void setTask(SvnTask task) {
-		this.task = task;
-	}
+    /**
+     * @param task the task to set
+     */
+    public void setTask(SvnTask task) {
+        this.task = task;
+    }
 
-	/**
-	 * Convert the revision string to SVNRevision.
-	 * In case the date was supplied as revision, use proper dateFormatter
-	 * @param revision
-	 * @return SVNRevision constructed from given string or null if unable to do so 
-	 */
-	public SVNRevision getRevisionFrom(String revision)
-	{
-		try {
-			return SVNRevision.getRevision(revision, getDateFormatter());
-		} catch (ParseException e) {
-			logWarning("Unable to parse revision string");
-			return null;
-		}
-	}
-	
-	/**
-	 * Answer a given date as string formatted according to current formatter
-	 * @param aDate
-	 * @return a String representation of the date
-	 */
-	public String getDateStringFor(Date aDate)
-	{
-		return getDateFormatter().format(aDate);
-	}
-	
-	private SimpleDateFormat getDateFormatter()
-	{
-		final SimpleDateFormat formatter = new SimpleDateFormat(task.getDateFormatter());
-		final TimeZone timezone = task.getDateTimezone();
-		if (timezone != null) {
-			formatter.setTimeZone(timezone);
-		}
-		return formatter;
-	}
+    /**
+     * Convert the revision string to SVNRevision.
+     * In case the date was supplied as revision, use proper dateFormatter
+     * @param revision
+     * @return SVNRevision constructed from given string or null if unable to do so 
+     */
+    public SVNRevision getRevisionFrom(String revision)
+    {
+        try {
+            return SVNRevision.getRevision(revision, getDateFormatter());
+        } catch (ParseException e) {
+            warning("Unable to parse revision string");
+            return null;
+        }
+    }
+    
+    /**
+     * Answer a given date as string formatted according to current formatter
+     * @param aDate
+     * @return a String representation of the date
+     */
+    public String getDateStringFor(Date aDate)
+    {
+        return getDateFormatter().format(aDate);
+    }
+    
+    private SimpleDateFormat getDateFormatter()
+    {
+        final SimpleDateFormat formatter = new SimpleDateFormat(task.getDateFormatter());
+        final TimeZone timezone = task.getDateTimezone();
+        if (timezone != null) {
+            formatter.setTimeZone(timezone);
+        }
+        return formatter;
+    }
 
-	/**
-	 * Log the message with VERBOSE level
-	 * @param message
-	 */
-	public void logVerbose(String message)
-	{
-		getProject().log(this.task, message, Project.MSG_VERBOSE);
-	}
+    /**
+     * @see SvnTask#verbose(String, Object...)
+     */
+    public void verbose( String fmt, Object ... args ) {
+        task.verbose( fmt, args );
+    }
 
-	/**
-	 * Log the message with WARNING level
-	 * @param message
-	 */
-	public void logWarning(String message)
-	{
-		getProject().log(this.task, message, Project.MSG_WARN);
-	}
+    /**
+     * @see SvnTask#debug(String, Object...)
+     */
+    public void debug( String fmt, Object ... args ) {
+        task.debug( fmt, args );
+    }
+    
+    /**
+     * @see SvnTask#warning(String, Object...)
+     */
+    public void warning( String fmt, Object ... args ) {
+        task.warning( fmt, args );
+    }
 
-	/**
-	 * Log the message with ERROR level
-	 * @param message
-	 */
-	public void logError(String message)
-	{
-		getProject().log(this.task, message, Project.MSG_ERR);
-	}
+    /**
+     * @see SvnTask#info(boolean, String, Object...)
+     */
+    public void info( boolean verbose, String fmt, Object ... args ) {
+        task.info( verbose, fmt, args );
+    }
 
-	/**
-	 * Log the message with INFO level
-	 * @param message
-	 */
-	public void logInfo(String message)
-	{
-		getProject().log(this.task, message, Project.MSG_INFO);
-	}
+    /**
+     * @see SvnTask#info(String, Object...)
+     */
+    public void info( String fmt, Object ... args ) {
+        task.info( fmt, args );
+    }
 
-	public void log(String message)
-	{
-		getProject().log(this.task, message, Project.MSG_INFO);
-	}
+    /**
+     * @see SvnTask#error(String, Object...)
+     */
+    public void error( String fmt, Object ... args ) {
+        task.error( fmt, args );
+    }
 
-	public void log(String message, int level)
-	{
-		getProject().log(this.task, message, level);
-	}
+    public void log(String message)
+    {
+        getProject().log(this.task, message, Project.MSG_INFO);
+    }
+
+    public void log(String message, int level)
+    {
+        getProject().log(this.task, message, level);
+    }
 
 }

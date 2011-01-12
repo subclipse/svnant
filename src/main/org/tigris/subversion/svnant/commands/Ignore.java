@@ -136,7 +136,7 @@ public class Ignore extends SvnCommand {
             String message = "Warning: Could not find file "
                     + aFile.getAbsolutePath();
             if (!failonerror) {
-            	logWarning(message);
+                warning(message);
             } else {
                 throw new SvnAntException(message);
             }
@@ -170,7 +170,7 @@ public class Ignore extends SvnCommand {
     private void svnIgnorePattern(File aDir, String aPattern) throws SvnAntException {
         if (aDir.exists()) {
             if (!aDir.isDirectory()) {
-                logWarning(
+                warning(
                     "Can't add a pattern to svn:ignore for a file. It needs to be a directory");
             } else {
 
@@ -184,7 +184,7 @@ public class Ignore extends SvnCommand {
         } else {
             String message = "Warning: Could not find directory "+aDir.getAbsolutePath();
             if (!failonerror) {
-            	logWarning(message);
+                warning(message);
             } else {
                 throw new SvnAntException(message);
             }

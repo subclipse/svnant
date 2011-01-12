@@ -145,7 +145,7 @@ public class Commit extends SvnCommand {
     private void svnCommitFile(File aFile) throws SvnAntException {
         if (aFile.exists()) {
             if (aFile.isDirectory()) {
-                logWarning(
+                warning(
                     "Directory "
                         + aFile.getAbsolutePath()
                         + " cannot be commited using the file attribute.  "
@@ -176,7 +176,7 @@ public class Commit extends SvnCommand {
     private void svnCommitDir(File aDir, boolean recursive) throws SvnAntException {
         if (aDir.exists()) {
             if (!aDir.isDirectory()) {
-                logWarning(
+                warning(
                     "File "
                         + aDir.getAbsolutePath()
                         + " cannot be commited using the dir attribute.  "

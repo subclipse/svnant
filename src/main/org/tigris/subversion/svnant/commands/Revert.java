@@ -163,7 +163,7 @@ public class Revert extends SvnCommand {
                 svnClient.revert(filesAndDirs[i],false);
             }
         } catch (SVNClientException e) {
-            logError("Cannot revert file " + file.getAbsolutePath());
+            error("Cannot revert file " + file.getAbsolutePath());
         }
     }
 

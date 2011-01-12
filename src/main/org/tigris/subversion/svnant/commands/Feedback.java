@@ -51,7 +51,7 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant.commands;
 
 import java.io.File;
@@ -65,42 +65,42 @@ import org.tigris.subversion.svnclientadapter.SVNNodeKind;
  *
  */
 public class Feedback implements ISVNNotifyListener {
-	private SvnCommand svnCommand;
-	
-	/**
-	 * Constructor
-	 * @param command
-	 */
-	public Feedback(SvnCommand command)
-	{
-		this.svnCommand = command;
-	}
-    
-    public void setCommand(int cmd) {
+
+    private SvnCommand svnCommand;
+
+    /**
+     * Constructor
+     * @param command
+     */
+    public Feedback( SvnCommand command ) {
+        this.svnCommand = command;
+    }
+
+    public void setCommand( int cmd ) {
         //Do nothing
     }
 
-    public void logMessage(String message) {
-		svnCommand.logVerbose(message);
-	}
-
-    public void logRevision(long revision, String path) {
-    	//Do nothing
+    public void logMessage( String message ) {
+        svnCommand.verbose( message );
     }
 
-    public void logCommandLine(String message) {
-        svnCommand.logVerbose(message);
+    public void logRevision( long revision, String path ) {
+        //Do nothing
     }
 
-    public void logError(String message) {
-        svnCommand.logError(message);
-    }
-    
-    public void logCompleted(String message) {
-        svnCommand.logVerbose(message);
+    public void logCommandLine( String message ) {
+        svnCommand.verbose( message );
     }
 
-    public void onNotify(File path, SVNNodeKind nodeKind) {
+    public void logError( String message ) {
+        svnCommand.error( message );
+    }
+
+    public void logCompleted( String message ) {
+        svnCommand.verbose( message );
+    }
+
+    public void onNotify( File path, SVNNodeKind nodeKind ) {
         //Do nothing
     }
 

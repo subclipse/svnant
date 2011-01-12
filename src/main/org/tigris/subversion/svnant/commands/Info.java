@@ -88,9 +88,9 @@ public class Info extends SvnCommand {
                 String value = getValue(propNames[i]);
                 theProject.setProperty(propPrefix + propNames[i], value);
                 if (verbose) {
-                    logInfo(propPrefix + propNames[i] + ": " + value);
+                    info(propPrefix + propNames[i] + ": " + value);
                 } else {
-                    logVerbose(propPrefix + propNames[i] + ": " + value);
+                    verbose(propPrefix + propNames[i] + ": " + value);
                 }
             }
         } catch (Exception e) {
@@ -183,9 +183,9 @@ public class Info extends SvnCommand {
             log("    " + "Property '" + propName + "' not implemented", Project.MSG_WARN);
         } else {
             if (verbose) {
-                logInfo("    " + "Property '" + propName + "' not recognized");
+                info("    " + "Property '" + propName + "' not recognized");
             } else {
-                logVerbose("    " + "Property '" + propName + "' not recognized");
+                verbose("    " + "Property '" + propName + "' not recognized");
             }
         }
 

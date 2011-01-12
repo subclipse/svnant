@@ -142,7 +142,7 @@ public class Update extends SvnCommand {
             try {
                 svnClient.update(aDir,revision,false);
             } catch (SVNClientException e) {
-                logError("Cannot update directory " + aDir.getAbsolutePath());
+                error("Cannot update directory " + aDir.getAbsolutePath());
             }
         }
   
@@ -152,7 +152,7 @@ public class Update extends SvnCommand {
             try {
                 svnClient.update(aFile,revision,false);
             } catch (SVNClientException e) {
-                logError("Cannot update file " + aFile.getAbsolutePath());
+                error("Cannot update file " + aFile.getAbsolutePath());
             }
         }
     }
