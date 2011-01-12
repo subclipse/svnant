@@ -1,11 +1,11 @@
-#Wed Jan 12 11:58:04 CET 2011
+#Wed Jan 12 12:23:46 CET 2011
 eclipse.preferences.version=1
 formatter_profile=_subversion
 formatter_settings_version=11
 org.eclipse.jdt.ui.exception.name=e
 org.eclipse.jdt.ui.gettersetter.use.is=false
 org.eclipse.jdt.ui.ignorelowercasenames=true
-org.eclipse.jdt.ui.importorder=com;org;javax;java;
+org.eclipse.jdt.ui.importorder=com;org.tigris.subversion.svnant.commands;org.tigris.subversion.svnclientadapter;org.tigris.subversion.svnant;org.apache.tools.ant;org;javax;java.util;java.io;java;
 org.eclipse.jdt.ui.keywordthis=false
 org.eclipse.jdt.ui.ondemandthreshold=99
 org.eclipse.jdt.ui.overrideannotation=false
