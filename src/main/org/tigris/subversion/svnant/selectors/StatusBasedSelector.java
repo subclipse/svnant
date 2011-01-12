@@ -51,7 +51,7 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant.selectors;
 
 import java.io.File;
@@ -72,23 +72,25 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
  */
 public abstract class StatusBasedSelector extends BaseSvnSelector {
 
-	final public boolean isSelected(ISVNClientAdapter svnClient_, File basedir_, String filename_, File file_) throws SvnAntException {
-		ISVNStatus status;
-		try {
-			status = svnClient_.getSingleStatus(file_);
-		} catch (SVNClientException e) {
-			throw new SvnAntException("Error occurred while obtaining status of " + file_.getAbsolutePath(), e);
-		}
-		
-		return isSelected(status);
-	}
-	
-	/**
-	 * This method must be reimplemented by all subclasses. A subclass must
-	 * decide the selection criteria based on the given status. 
-	 * @param status_ Status of the file being selected.
-	 * @return True if the file should be selected. Otherwise, false.
-	 */
-	abstract public boolean isSelected(ISVNStatus status_);
-	
+    /**
+     * {@inheritDoc}
+     */
+    public final boolean isSelected( ISVNClientAdapter svnClient, File basedir, String filename, File file ) throws SvnAntException {
+        ISVNStatus status;
+        try {
+            status = svnClient.getSingleStatus( file );
+        } catch( SVNClientException e ) {
+            throw new SvnAntException( "Error occurred while obtaining status of " + file.getAbsolutePath(), e );
+        }
+        return isSelected( status );
+    }
+
+    /**
+     * This method must be reimplemented by all subclasses. A subclass must
+     * decide the selection criteria based on the given status. 
+     * @param status_ Status of the file being selected.
+     * @return True if the file should be selected. Otherwise, false.
+     */
+    public abstract boolean isSelected( ISVNStatus status_ );
+
 }

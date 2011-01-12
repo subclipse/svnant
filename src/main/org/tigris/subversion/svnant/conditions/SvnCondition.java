@@ -1,12 +1,12 @@
 package org.tigris.subversion.svnant.conditions;
 
 
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.ProjectComponent;
-import org.apache.tools.ant.taskdefs.condition.Condition;
-import org.apache.tools.ant.taskdefs.condition.ConditionBase;
 import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnant.SvnFacade;
+
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.taskdefs.condition.Condition;
+import org.apache.tools.ant.taskdefs.condition.ConditionBase;
 
 /**
  * This is an abstract class that implements functions common to all subclasses.
@@ -19,13 +19,6 @@ import org.tigris.subversion.svnant.SvnFacade;
  *
  */
 public abstract class SvnCondition extends ConditionBase implements Condition {
-
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnant.ISvnAntProjectComponent#getProjectComponent()
-     */
-    public ProjectComponent getProjectComponent() {
-        return this;
-    }
 
     /**
      * @see org.tigris.subversion.svnant.ISvnAntProjectComponent#getJavahl()

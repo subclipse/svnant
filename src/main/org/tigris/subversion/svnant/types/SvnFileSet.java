@@ -51,16 +51,18 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant.types;
+
+import org.tigris.subversion.svnant.SvnFacade;
+
+import org.apache.tools.ant.types.FileSet;
+import org.apache.tools.ant.types.Reference;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectComponent;
-import org.apache.tools.ant.types.FileSet;
-import org.apache.tools.ant.types.Reference;
-import org.tigris.subversion.svnant.SvnFacade;
 
 import java.io.File;
 
@@ -97,91 +99,72 @@ public class SvnFileSet extends FileSet {
      * Constructor for FileSet, with FileSet to shallowly clone.
      * @param fileset the fileset to clone
      */
-    protected SvnFileSet(SvnFileSet fileset_) {
+    protected SvnFileSet( SvnFileSet fileset_ ) {
         SvnFacade.setJavahl( this, SvnFacade.getJavahl( fileset_ ) );
     }
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnant.ISvnAntProjectComponent#getProjectComponent()
-     */
-    public ProjectComponent getProjectComponent() {
-        return this;
-    }
-
     /**
-     * Creates a deep clone of this instance, except for the nested
-     * selectors (the list of selectors is a shallow clone of this
-     * instance's list).
-     * @return the cloned object
+     * {@inheritDoc}
      */
     public synchronized Object clone() {
         SvnFileSet fs = (SvnFileSet) super.clone();
         return fs;
     }
-    
+
     /**
-     * Accessor method to 'javahl' property. If reset (false),
-     * JavaHL is not used.
-     * @param javahl_ New value for javahl property.
+     * @see SvnFacade#setJavahl(ProjectComponent, boolean)
      */
-    public void setJavahl(boolean javahl_) {
+    public void setJavahl( boolean javahl_ ) {
         SvnFacade.setJavahl( this, javahl_ );
     }
 
     /**
-     * Accessor method to 'svnkit' property. If reset (false),
-     * SVNKit is not used.
-     * @param svnkit_ New value for svnkit property.
+     * @see SvnFacade#setSvnKit(ProjectComponent, boolean)
      */
-    public void setSvnkit(boolean svnkit_) {
+    public void setSvnkit( boolean svnkit_ ) {
         SvnFacade.setSvnKit( this, svnkit_ );
     }
-    	
+
     /**
      * Returns the directory scanner needed to access the files to process.
      * @return a <code>DirectoryScanner</code> instance.
      */
-    public DirectoryScanner getDirectoryScanner(Project p) {
-        if (isReference()) {
-            return getRef(p).getDirectoryScanner(p);
+    public DirectoryScanner getDirectoryScanner( Project p ) {
+        if( isReference() ) {
+            return getRef( p ).getDirectoryScanner( p );
         }
-        
-        File dir = getDir(p);
-        boolean followSymlinks =  false;
 
-        
-        if (dir == null) {
-            throw new BuildException("No directory specified for "
-                                     + getDataTypeName() + ".");
+        File dir = getDir( p );
+        boolean followSymlinks = false;
+
+        if( dir == null ) {
+            throw new BuildException( "No directory specified for " + getDataTypeName() + "." );
         }
-        if (!dir.exists()) {
-            throw new BuildException(dir.getAbsolutePath() + " not found.");
+        if( !dir.exists() ) {
+            throw new BuildException( dir.getAbsolutePath() + " not found." );
         }
-        if (!dir.isDirectory()) {
-            throw new BuildException(dir.getAbsolutePath()
-                                     + " is not a directory.");
+        if( !dir.isDirectory() ) {
+            throw new BuildException( dir.getAbsolutePath() + " is not a directory." );
         }
-        DirectoryScanner ds = new SvnDirScanner( SvnFacade.getClientAdapter(this) );
-        setupDirectoryScanner(ds, p);
-        ds.setFollowSymlinks(followSymlinks);
+        DirectoryScanner ds = new SvnDirScanner( SvnFacade.getClientAdapter( this ) );
+        setupDirectoryScanner( ds, p );
+        ds.setFollowSymlinks( followSymlinks );
         ds.scan();
         return ds;
     }
 
     /**
-     * This attribute is not supported by svnFileSet.
-     * @throws BuildException always
+     * {@inheritDoc}
      */
-    public void setRefid(Reference r) throws BuildException {
-    	throw (BuildException) notSupported("refid", true).fillInStackTrace();
+    public void setRefid( Reference r ) throws BuildException {
+        throw (BuildException) notSupported( "refid", true ).fillInStackTrace();
     }
 
     /**
-     * This attribute is not supported by svnFileSet.
-     * @throws BuildException always
+     * {@inheritDoc}
      */
-    public void setFollowSymlinks(boolean followSymlinks) {
-    	throw (BuildException) notSupported("followSymlinks", true).fillInStackTrace();
+    public void setFollowSymlinks( boolean followSymlinks ) {
+        throw (BuildException) notSupported( "followSymlinks", true ).fillInStackTrace();
     }
 
     /**
@@ -192,17 +175,15 @@ public class SvnFileSet extends FileSet {
      * @return An exception that can be thrown to report an invalid
      * usage of the receiver.
      */
-    private BuildException notSupported(String featureName_, boolean attribute_)
-    {
-       StringBuffer message = new StringBuffer();
-       message.append(getProject().getElementName(this))
-              .append(" doesn't support the ");
-
-       if (attribute_)
-          message.append(featureName_).append(" attribute.");
-       else
-          message.append("nested ").append(featureName_).append(" element.");
-
-       return new BuildException(message.toString());
+    private BuildException notSupported( String featureName_, boolean attribute_ ) {
+        StringBuffer message = new StringBuffer();
+        message.append( getProject().getElementName( this ) ).append( " doesn't support the " );
+        if( attribute_ ) {
+            message.append( featureName_ ).append( " attribute." );
+        } else {
+            message.append( "nested " ).append( featureName_ ).append( " element." );
+        }
+        return new BuildException( message.toString() );
     }
+    
 }

@@ -51,19 +51,22 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant.conditions;
 
-import org.apache.tools.ant.Project;
-import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnFacade;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNInfo;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnFacade;
+
+import org.apache.tools.ant.Project;
+
 import java.io.File;
+
 import java.net.MalformedURLException;
 
 /**
@@ -79,64 +82,67 @@ import java.net.MalformedURLException;
  *
  */
 public class Exists extends SvnCondition {
-	
-   /**
-     * The target to retrieve properties for.
-     */
+
+    /**
+      * The target to retrieve properties for.
+      */
     private String target = null;
-	
-	public boolean internalEval() throws SvnAntException {
-		// Obtain a svnClient according to javahl and svnkit properties
-		ISVNClientAdapter svnClient = SvnFacade.getClientAdapter(this);
 
-		// Retrieve info for the requested element
-		ISVNInfo info = null;
-		try {
-			File targetAsFile = new File(Project.translatePath(this.target));
-			if (targetAsFile.exists()) {
-				// Since the target exists locally, assume it's not a URL.
-				info = svnClient.getInfo(targetAsFile);
-			} else {
-				try {
-					SVNUrl url = new SVNUrl(this.target);
-					info = svnClient.getInfo(url);
-				} catch (MalformedURLException malformedURL) {
-					// Since we don't have a valid URL with which to
-					// contact the repository, assume the target is a
-					// local file, even though it doesn't exist locally.
-					info = svnClient.getInfo(targetAsFile);
-				}
-			}
-		} catch (SVNClientException e) {
-			// Assume that it is not existant
-			return false;
-		}
-		
-		// No info -> not in repository
-		if( null == info ) {
-			return false;
-		}
-		// No revision -> not in repository
-		if ((info.getRevision() == null) || (SVNRevision.INVALID_REVISION.equals(info.getRevision()))) {
-        	return false;
+    /**
+     * {@inheritDoc}
+     */
+    public boolean internalEval() throws SvnAntException {
+        // Obtain a svnClient according to javahl and svnkit properties
+        ISVNClientAdapter svnClient = SvnFacade.getClientAdapter( this );
+
+        // Retrieve info for the requested element
+        ISVNInfo info = null;
+        try {
+            File targetAsFile = new File( Project.translatePath( this.target ) );
+            if( targetAsFile.exists() ) {
+                // Since the target exists locally, assume it's not a URL.
+                info = svnClient.getInfo( targetAsFile );
+            } else {
+                try {
+                    SVNUrl url = new SVNUrl( this.target );
+                    info = svnClient.getInfo( url );
+                } catch( MalformedURLException malformedURL ) {
+                    // Since we don't have a valid URL with which to
+                    // contact the repository, assume the target is a
+                    // local file, even though it doesn't exist locally.
+                    info = svnClient.getInfo( targetAsFile );
+                }
+            }
+        } catch( SVNClientException e ) {
+            // Assume that it is not existant
+            return false;
         }
-		
-		// Assume it is...
-		return true;
-	}
 
-	/**
-	 * @return the target
-	 */
-	public String getTarget() {
-		return target;
-	}
+        // No info -> not in repository
+        if( null == info ) {
+            return false;
+        }
+        // No revision -> not in repository
+        if( (info.getRevision() == null) || (SVNRevision.INVALID_REVISION.equals( info.getRevision() )) ) {
+            return false;
+        }
 
-	/**
-	 * @param target the target to set
-	 */
-	public void setTarget(String target) {
-		this.target = target;
-	}
+        // Assume it is...
+        return true;
+    }
+
+    /**
+     * @return the target
+     */
+    public String getTarget() {
+        return target;
+    }
+
+    /**
+     * @param target the target to set
+     */
+    public void setTarget( String target ) {
+        this.target = target;
+    }
 
 }

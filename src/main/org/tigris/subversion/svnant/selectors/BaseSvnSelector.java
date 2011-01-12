@@ -51,17 +51,20 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant.selectors;
+
+import org.tigris.subversion.svnclientadapter.utils.StringUtils;
+
+import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
+
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnFacade;
+
+import org.apache.tools.ant.types.selectors.BaseExtendSelector;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.ProjectComponent;
-import org.apache.tools.ant.types.selectors.BaseExtendSelector;
-import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnFacade;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.utils.StringUtils;
 
 import java.io.File;
 
@@ -79,66 +82,56 @@ import java.io.File;
  */
 public abstract class BaseSvnSelector extends BaseExtendSelector {
 
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnant.ISvnAntProjectComponent#getProjectComponent()
-	 */
-	public ProjectComponent getProjectComponent() {
-		return this;
-	}
-
     /**
-     * Accessor method to 'javahl' property. If reset (false),
-     * JavaHL is not used.
-     * @param javahl_ New value for javahl property.
+     * @see SvnFacade#setJavahl(org.apache.tools.ant.ProjectComponent, boolean)
      */
-    public void setJavahl(boolean javahl_) {
+    public void setJavahl( boolean javahl_ ) {
         SvnFacade.setJavahl( this, javahl_ );
     }
 
     /**
-     * Accessor method to 'svnkit' property. If reset (false),
-     * SVNKit is not used.
-     * @param svnkit_ New value for svnkit property.
+     * @see SvnFacade#setSvnKit(org.apache.tools.ant.ProjectComponent, boolean)
      */
-    public void setSvnkit(boolean svnkit_) {
+    public void setSvnkit( boolean svnkit_ ) {
         SvnFacade.setSvnKit( this, svnkit_ );
     }
-    
+
     /**
-     * @param failonerror the failonerror to set
+     * @see SvnFacade#setFailonerror(org.apache.tools.ant.ProjectComponent, boolean)
      */
-    public void setFailonerror(boolean failonerror) {
+    public void setFailonerror( boolean failonerror ) {
         SvnFacade.setFailonerror( this, failonerror );
     }
 
-	final public boolean isSelected(File basedir_, String filename_, File file_) throws BuildException {
-		
-		String[] nameSegments = StringUtils.split(getClass().getName(), ".");
-		String className = nameSegments[nameSegments.length -1]; 
+    /**
+     * {@inheritDoc}
+     */
+    public final boolean isSelected( File basedir_, String filename_, File file_ ) throws BuildException {
+        String[] nameSegments = StringUtils.split( getClass().getName(), "." );
+        String className = nameSegments[nameSegments.length - 1];
+        try {
+            return isSelected( SvnFacade.getClientAdapter( this ), basedir_, filename_, file_ );
+        } catch( SvnAntException ex ) {
+            if( SvnFacade.getFailonerror( this ) ) {
+                log( "selector " + className + " failed !", Project.MSG_INFO );
+                throw new BuildException( ex.getMessage(), ex.getCause() );
+            } else {
+                log( "selector " + className + " failed :" + ex.getLocalizedMessage(), Project.MSG_ERR );
+                return false;
+            }
+        }
+    }
 
-		try {
-			return isSelected(SvnFacade.getClientAdapter(this), basedir_, filename_, file_);
-		} catch (SvnAntException ex) {
-			if ( SvnFacade.getFailonerror( this ) ) {
-				log("selector " + className + " failed !", Project.MSG_INFO);
-				throw new BuildException(ex.getMessage(), ex.getCause());
-			} else {
-				log("selector " + className + " failed :" + ex.getLocalizedMessage(), Project.MSG_ERR);
-				return false;
-			}
-		}
-	}
-	
-	/**
-	 * Method that needs to be reimplemented by each subclass. It is equivalent to 'isSelected',
-	 * inherited from BaseExtendSelector, with the exception that a SVN client adaptor is provided. 
-	 * @param svnClient_ The SVN client that should be used to perform repository access
-	 * @param basedir_ A java.io.File object for the base directory
-	 * @param filename_ The name of the file to check
-	 * @param file_ A File object for this filename
-	 * @exception SvnAntException if an error occurs
-	 * @return Returns true if the file should be selected. Otherwise, false. 
-	 */
-	abstract public boolean isSelected(ISVNClientAdapter svnClient_, File basedir_, String filename_, File file_) throws SvnAntException;
-	
+    /**
+     * Method that needs to be reimplemented by each subclass. It is equivalent to 'isSelected',
+     * inherited from BaseExtendSelector, with the exception that a SVN client adaptor is provided. 
+     * @param svnClient_ The SVN client that should be used to perform repository access
+     * @param basedir_ A java.io.File object for the base directory
+     * @param filename_ The name of the file to check
+     * @param file_ A File object for this filename
+     * @exception SvnAntException if an error occurs
+     * @return Returns true if the file should be selected. Otherwise, false. 
+     */
+    public abstract boolean isSelected( ISVNClientAdapter svnClient_, File basedir_, String filename_, File file_ ) throws SvnAntException;
+
 }

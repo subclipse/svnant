@@ -51,23 +51,27 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant.conditions;
 
-import java.io.File;
-import java.net.MalformedURLException;
-
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.types.EnumeratedAttribute;
-import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnFacade;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNInfo;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
+
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnFacade;
+
+import org.apache.tools.ant.types.EnumeratedAttribute;
+
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
+
+import java.io.File;
+
+import java.net.MalformedURLException;
 
 /**
  * This condition works similar to the generally known <code>available</code> task shipped
@@ -77,14 +81,15 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  */
 public class Available extends SvnCondition {
 
-    private String  target  = null;
-    private FileDir type    = null; 
+    private String  target = null;
+
+    private FileDir type   = null;
 
     /**
      * {@inheritDoc}
      */
     protected void preconditions() throws BuildException {
-        if ( target == null ) {
+        if( target == null ) {
             throw new BuildException( "Missing attribute 'target'." );
         }
     }
@@ -93,47 +98,47 @@ public class Available extends SvnCondition {
      * {@inheritDoc}
      */
     protected boolean internalEval() throws SvnAntException {
-        
-        ISVNClientAdapter client = SvnFacade.getClientAdapter(this);
+
+        ISVNClientAdapter client = SvnFacade.getClientAdapter( this );
 
         // Retrieve info for the requested element
         ISVNInfo info = null;
         try {
             File asfile = new File( Project.translatePath( target ) );
-            if ( asfile.exists() ) {
+            if( asfile.exists() ) {
                 // Since the target exists locally, assume it's not a URL.
                 info = client.getInfo( asfile );
             } else {
                 try {
                     SVNUrl url = new SVNUrl( target );
-                    info       = client.getInfo(url);
-                } catch ( MalformedURLException ex ) {
+                    info = client.getInfo( url );
+                } catch( MalformedURLException ex ) {
                     throw new SvnAntException( "The url '" + target + "' is not valid.", ex );
                 }
             }
-        } catch ( SVNClientException ex ) {
+        } catch( SVNClientException ex ) {
             // assume that it is not existant
             return false;
         }
-        
+
         // No info -> not in repository
         if( null == info ) {
             return false;
         }
-        
+
         // No revision -> not in repository
-        if ( ( info.getRevision() == null ) || ( SVNRevision.INVALID_REVISION.equals( info.getRevision() ) ) ) {
+        if( (info.getRevision() == null) || (SVNRevision.INVALID_REVISION.equals( info.getRevision() )) ) {
             return false;
         }
-        
-        if ( type != null ) {
-            if ( type.isDir() ) {
+
+        if( type != null ) {
+            if( type.isDir() ) {
                 return info.getNodeKind() == SVNNodeKind.DIR;
-            } else /* if ( type.isFile() ) */ {
+            } else /* if ( type.isFile() ) */{
                 return info.getNodeKind() == SVNNodeKind.FILE;
             }
         }
-        
+
         // Assume it is...
         return true;
     }
@@ -145,7 +150,7 @@ public class Available extends SvnCondition {
      */
     public void setTarget( String newtarget ) {
         target = newtarget;
-        if ( ( target != null ) && ( target.length() == 0 ) ) {
+        if( (target != null) && (target.length() == 0) ) {
             target = null;
         }
     }
@@ -158,7 +163,7 @@ public class Available extends SvnCondition {
     public void setType( FileDir newtype ) {
         type = newtype;
     }
-    
+
     /**
      * EnumeratedAttribute covering the file types to be checked for, either
      * file or dir.

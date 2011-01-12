@@ -51,11 +51,12 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant.types;
 
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.DataType;
+
+import org.apache.tools.ant.Project;
 
 /**
  * Settings to be used
@@ -64,20 +65,20 @@ import org.apache.tools.ant.types.DataType;
  */
 public class SvnSetting extends DataType {
 
-    private Project     project;
-    private Boolean     javahl;
-    private Boolean     svnkit;
-    private String      username;
-    private String      password;
-    private String      dateformatter;
-    private String      timezone;
-    private Boolean     failonerror;
-    private String      id;
+    private Project project;
+    private Boolean javahl;
+    private Boolean svnkit;
+    private String  username;
+    private String  password;
+    private String  dateformatter;
+    private String  timezone;
+    private Boolean failonerror;
+    private String  id;
 
     /**
      * Initialises this instance.
      * 
-     * @param antproject    The Ant project this instance is related to. Not <code>null</code>.
+     * @param antproject   The Ant project this instance is related to. Not <code>null</code>.
      */
     public SvnSetting( Project antproject ) {
         project         = antproject;
@@ -97,19 +98,19 @@ public class SvnSetting extends DataType {
      * @param newid   The new id for this settings.
      */
     public void setId( String newid ) {
-        id  = newid;
+        id = newid;
         project.addReference( id, this );
     }
-    
+
     /**
      * Enables/disables the use of the command line client interface.
      *
-     * @param enable  <code>true</code> <=> Enables the command line client interface.
+     * @param enable   <code>true</code> <=> Enables the command line client interface.
      */
     public void setJavahl( boolean enable ) {
         javahl = enable ? Boolean.TRUE : Boolean.FALSE;
     }
-    
+
     /**
      * Returns <code>true</code> if the java jni javahl client has to be used.
      *
@@ -119,11 +120,11 @@ public class SvnSetting extends DataType {
     public Boolean getJavahl() {
         return javahl;
     }
-    
+
     /**
      * Enables/disables the use of the svnkit client interface.
      *
-     * @param enable    <code>true</code> <=> Enables the svnkit client interface.
+     * @param enable   <code>true</code> <=> Enables the svnkit client interface.
      */
     public void setSvnKit( boolean enable ) {
         svnkit = enable ? Boolean.TRUE : Boolean.FALSE;
@@ -148,7 +149,7 @@ public class SvnSetting extends DataType {
     public void setUsername( String newusername ) {
         username = newusername;
     }
-    
+
     /**
      * Returns the currently configured username.
      *
@@ -170,12 +171,12 @@ public class SvnSetting extends DataType {
          * @todo [27-Apr-2009:KASI]   Base upon code within SvnTask but really doesn't look good.
          *                            Such things should be handle before calling this method. 
          */
-        if ( "\"\"".equals ( newpassword ) ) {
+        if( "\"\"".equals( newpassword ) ) {
             newpassword = "";
         }
         password = newpassword;
     }
-    
+
     /**
      * Returns the currently configured password.
      *
@@ -194,7 +195,7 @@ public class SvnSetting extends DataType {
     public void setDateFormatter( String newdateformatter ) {
         dateformatter = newdateformatter;
     }
-    
+
     /**
      * Returns the formatting pattern to parse/format revision dates.
      *
@@ -231,7 +232,7 @@ public class SvnSetting extends DataType {
     public void setFailonerror( boolean enable ) {
         failonerror = enable ? Boolean.TRUE : Boolean.FALSE;
     }
-    
+
     /**
      * Returns <code>true</code> if a failure shall abort the build process.
      *

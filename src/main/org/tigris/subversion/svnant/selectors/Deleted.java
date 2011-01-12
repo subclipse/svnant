@@ -51,7 +51,7 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant.selectors;
 
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
@@ -67,8 +67,11 @@ import org.tigris.subversion.svnclientadapter.SVNStatusKind;
  */
 public class Deleted extends StatusBasedSelector {
 
-	public boolean isSelected(ISVNStatus status_) {
-		return status_.getTextStatus().equals(SVNStatusKind.DELETED);
-	}
-	
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isSelected( ISVNStatus status ) {
+        return SVNStatusKind.DELETED.equals( status.getTextStatus() );
+    }
+
 }

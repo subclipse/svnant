@@ -51,11 +51,23 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant.types;
 
-import java.io.File;
-import java.io.IOException;
+import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.ISVNStatus;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
+import org.tigris.subversion.svnclientadapter.SVNNodeKind;
+
+import org.apache.tools.ant.types.Resource;
+import org.apache.tools.ant.types.selectors.FileSelector;
+import org.apache.tools.ant.types.selectors.SelectorUtils;
+
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.DirectoryScanner;
+import org.apache.tools.ant.taskdefs.condition.Os;
+import org.apache.tools.ant.util.FileUtils;
+
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -65,17 +77,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.taskdefs.condition.Os;
-import org.apache.tools.ant.types.Resource;
-import org.apache.tools.ant.types.selectors.FileSelector;
-import org.apache.tools.ant.types.selectors.SelectorUtils;
-import org.apache.tools.ant.util.FileUtils;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.ISVNStatus;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
-import org.tigris.subversion.svnclientadapter.SVNNodeKind;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * This class supports a custom FileSet for ANT. It returns a set of files
@@ -99,61 +102,10 @@ import org.tigris.subversion.svnclientadapter.SVNNodeKind;
  */
 public class SvnDirScanner extends DirectoryScanner {
 
-    private ISVNClientAdapter svnClient;
-
-    /**
-     * Sole constructor.
-     * @param clientAdapter
-     */
-    public SvnDirScanner( ISVNClientAdapter clientAdapter ) {
-    	svnClient = clientAdapter;
-    }
-    
-    /**
-     * Return a cached result of list performed on file, if
-     * available.  Invokes the method and caches the result otherwise.
-     *
-     * @param file File (dir) to list.
-     * @since Ant 1.6
-     */
-    private ISVNStatus[] list(File file) {
-    	ISVNStatus[] files = (ISVNStatus[]) fileListMap.get(file);
-        if (files == null) {
-            // Obtain the entries from the client adapter
-           	try {
-           		files = svnClient.getStatus(file,false,true); // descend=false, getAll=true
-    		} catch (SVNClientException e) {
-    			throw new RuntimeException("Error scanning: " + e, e);
-    		}
-    		
-    		// Count children entries
-    		int count = 0;
-    		for(int loop=0; loop<files.length; ++loop) {
-    			if( false == files[loop].getFile().equals( file ) ) {
-    				++count;
-    			}
-    		}
-    		
-    		// Copy children entries
-    		ISVNStatus[] copy = new ISVNStatus[count];
-    		int index = 0;
-    		for(int loop=0; loop<files.length; ++loop) {
-    			if( false == files[loop].getFile().equals( file ) ) {
-    				copy[index] = files[loop];
-    				++index;
-    			}
-    		}
-    		files = copy;
-
-    		// Cache
-            fileListMap.put(file, files);
-        }
-        return files;
-    }
-	
-	
     /** Is OpenVMS the operating system we're running on? */
-    private static final boolean ON_VMS = Os.isFamily("openvms");
+    private static final boolean    ON_VMS             = Os.isFamily( "openvms" );
+
+    private ISVNClientAdapter svnClient;
 
     /**
      * Patterns which should be excluded by default.
@@ -166,115 +118,157 @@ public class SvnDirScanner extends DirectoryScanner {
      * @deprecated use the {@link #getDefaultExcludes
      * getDefaultExcludes} method instead.
      */
-    protected static final String[] DEFAULTEXCLUDES = {
-        // Miscellaneous typical temporary files
-        "**/*~",
-        "**/#*#",
-        "**/.#*",
-        "**/%*%",
-        "**/._*",
+    protected static final String[] DEFAULTEXCLUDES    = {
+                                                       // Miscellaneous typical temporary files
+                    "**/*~", "**/#*#", "**/.#*", "**/%*%", "**/._*",
 
-        // CVS
-        "**/CVS",
-        "**/CVS/**",
-        "**/.cvsignore",
+                    // CVS
+                    "**/CVS", "**/CVS/**", "**/.cvsignore",
 
-        // SCCS
-        "**/SCCS",
-        "**/SCCS/**",
+                    // SCCS
+                    "**/SCCS", "**/SCCS/**",
 
-        // Visual SourceSafe
-        "**/vssver.scc",
+                    // Visual SourceSafe
+                    "**/vssver.scc",
 
-        // Subversion
-        "**/.svn",
-        "**/.svn/**",
+                    // Subversion
+                    "**/.svn", "**/.svn/**",
 
-        // Mac
-        "**/.DS_Store"
-    };
+                    // Mac
+                    "**/.DS_Store"                    };
 
     /**
      * Patterns which should be excluded by default.
      *
      * @see #addDefaultExcludes()
      */
-    private static Vector defaultExcludes = new Vector();
+    private static Vector           defaultExcludes    = new Vector();
     static {
         resetDefaultExcludes();
     }
 
     /** The base directory to be scanned. */
-    protected File basedir;
+    protected File                  basedir;
 
     /** The patterns for the files to be included. */
-    protected String[] includes;
+    protected String[]              includes;
 
     /** The patterns for the files to be excluded. */
-    protected String[] excludes;
+    protected String[]              excludes;
 
     /** Selectors that will filter which files are in our candidate list. */
-    protected FileSelector[] selectors = null;
+    protected FileSelector[]        selectors          = null;
 
     /** The files which matched at least one include and no excludes
      *  and were selected.
      */
-    protected Vector filesIncluded;
+    protected Vector                filesIncluded;
 
     /** The files which did not match any includes or selectors. */
-    protected Vector filesNotIncluded;
+    protected Vector                filesNotIncluded;
 
     /**
      * The files which matched at least one include and at least
      * one exclude.
      */
-    protected Vector filesExcluded;
+    protected Vector                filesExcluded;
 
     /** The directories which matched at least one include and no excludes
      *  and were selected.
      */
-    protected Vector dirsIncluded;
+    protected Vector                dirsIncluded;
 
     /** The directories which were found and did not match any includes. */
-    protected Vector dirsNotIncluded;
+    protected Vector                dirsNotIncluded;
 
     /**
      * The directories which matched at least one include and at least one
      * exclude.
      */
-    protected Vector dirsExcluded;
+    protected Vector                dirsExcluded;
 
     /** The files which matched at least one include and no excludes and
      *  which a selector discarded.
      */
-    protected Vector filesDeselected;
+    protected Vector                filesDeselected;
 
     /** The directories which matched at least one include and no excludes
      *  but which a selector discarded.
      */
-    protected Vector dirsDeselected;
+    protected Vector                dirsDeselected;
 
     /** Whether or not our results were built by a slow scan. */
-    protected boolean haveSlowResults = false;
+    protected boolean               haveSlowResults    = false;
 
     /**
      * Whether or not the file system should be treated as a case sensitive
      * one.
      */
-    protected boolean isCaseSensitive = true;
+    protected boolean               isCaseSensitive    = true;
 
     /**
      * Whether or not symbolic links should be followed.
      *
      * @since Ant 1.5
      */
-    private boolean followSymlinks = true;
+    private boolean                 followSymlinks     = true;
 
     /** Helper. */
-    private static final FileUtils fileUtils = FileUtils.newFileUtils();
+    private static final FileUtils  fileUtils          = FileUtils.newFileUtils();
 
     /** Whether or not everything tested so far has been included. */
-    protected boolean everythingIncluded = true;
+    protected boolean               everythingIncluded = true;
+
+    /**
+     * Sole constructor.
+     * @param clientAdapter
+     */
+    public SvnDirScanner( ISVNClientAdapter clientAdapter ) {
+        svnClient = clientAdapter;
+    }
+
+    /**
+     * Return a cached result of list performed on file, if
+     * available.  Invokes the method and caches the result otherwise.
+     *
+     * @param file File (dir) to list.
+     * @since Ant 1.6
+     */
+    private ISVNStatus[] list( File file ) {
+        ISVNStatus[] files = (ISVNStatus[]) fileListMap.get( file );
+        if( files == null ) {
+            // Obtain the entries from the client adapter
+            try {
+                files = svnClient.getStatus( file, false, true ); // descend=false, getAll=true
+            } catch( SVNClientException e ) {
+                throw new RuntimeException( "Error scanning: " + e, e );
+            }
+
+            // Count children entries
+            int count = 0;
+            for( int loop = 0; loop < files.length; ++loop ) {
+                if( false == files[loop].getFile().equals( file ) ) {
+                    count++;
+                }
+            }
+
+            // Copy children entries
+            ISVNStatus[] copy = new ISVNStatus[count];
+            int index = 0;
+            for( int loop = 0; loop < files.length; ++loop ) {
+                if( false == files[loop].getFile().equals( file ) ) {
+                    copy[index] = files[loop];
+                    ++index;
+                }
+            }
+            files = copy;
+
+            // Cache
+            fileListMap.put( file, files );
+        }
+        return files;
+    }
+
 
     /**
      * Tests whether or not a given path matches the start of a given
@@ -292,9 +286,10 @@ public class SvnDirScanner extends DirectoryScanner {
      * @return whether or not a given path matches the start of a given
      * pattern up to the first "**".
      */
-    protected static boolean matchPatternStart(String pattern, String str) {
-        return SelectorUtils.matchPatternStart(pattern, str);
+    protected static boolean matchPatternStart( String pattern, String str ) {
+        return SelectorUtils.matchPatternStart( pattern, str );
     }
+
     /**
      * Tests whether or not a given path matches the start of a given
      * pattern up to the first "**".
@@ -313,9 +308,8 @@ public class SvnDirScanner extends DirectoryScanner {
      * @return whether or not a given path matches the start of a given
      * pattern up to the first "**".
      */
-    protected static boolean matchPatternStart(String pattern, String str,
-                                               boolean isCaseSensitive) {
-        return SelectorUtils.matchPatternStart(pattern, str, isCaseSensitive);
+    protected static boolean matchPatternStart( String pattern, String str, boolean isCaseSensitive ) {
+        return SelectorUtils.matchPatternStart( pattern, str, isCaseSensitive );
     }
 
     /**
@@ -329,8 +323,8 @@ public class SvnDirScanner extends DirectoryScanner {
      * @return <code>true</code> if the pattern matches against the string,
      *         or <code>false</code> otherwise.
      */
-    protected static boolean matchPath(String pattern, String str) {
-        return SelectorUtils.matchPath(pattern, str);
+    protected static boolean matchPath( String pattern, String str ) {
+        return SelectorUtils.matchPath( pattern, str );
     }
 
     /**
@@ -346,9 +340,8 @@ public class SvnDirScanner extends DirectoryScanner {
      * @return <code>true</code> if the pattern matches against the string,
      *         or <code>false</code> otherwise.
      */
-    protected static boolean matchPath(String pattern, String str,
-                                       boolean isCaseSensitive) {
-        return SelectorUtils.matchPath(pattern, str, isCaseSensitive);
+    protected static boolean matchPath( String pattern, String str, boolean isCaseSensitive ) {
+        return SelectorUtils.matchPath( pattern, str, isCaseSensitive );
     }
 
     /**
@@ -365,8 +358,8 @@ public class SvnDirScanner extends DirectoryScanner {
      * @return <code>true</code> if the string matches against the pattern,
      *         or <code>false</code> otherwise.
      */
-    public static boolean match(String pattern, String str) {
-        return SelectorUtils.match(pattern, str);
+    public static boolean match( String pattern, String str ) {
+        return SelectorUtils.match( pattern, str );
     }
 
     /**
@@ -386,11 +379,9 @@ public class SvnDirScanner extends DirectoryScanner {
      * @return <code>true</code> if the string matches against the pattern,
      *         or <code>false</code> otherwise.
      */
-    protected static boolean match(String pattern, String str,
-                                   boolean isCaseSensitive) {
-        return SelectorUtils.match(pattern, str, isCaseSensitive);
+    protected static boolean match( String pattern, String str, boolean isCaseSensitive ) {
+        return SelectorUtils.match( pattern, str, isCaseSensitive );
     }
-
 
     /**
      * Get the list of patterns that should be excluded by default.
@@ -402,8 +393,7 @@ public class SvnDirScanner extends DirectoryScanner {
      * @since Ant 1.6
      */
     public static String[] getDefaultExcludes() {
-        return (String[]) defaultExcludes.toArray(new String[defaultExcludes
-                                                             .size()]);
+        return (String[]) defaultExcludes.toArray( new String[defaultExcludes.size()] );
     }
 
     /**
@@ -417,9 +407,9 @@ public class SvnDirScanner extends DirectoryScanner {
      *
      * @since Ant 1.6
      */
-    public static boolean addDefaultExclude(String s) {
-        if (defaultExcludes.indexOf(s) == -1) {
-            defaultExcludes.add(s);
+    public static boolean addDefaultExclude( String s ) {
+        if( defaultExcludes.indexOf( s ) == -1 ) {
+            defaultExcludes.add( s );
             return true;
         }
         return false;
@@ -436,8 +426,8 @@ public class SvnDirScanner extends DirectoryScanner {
      *
      * @since Ant 1.6
      */
-    public static boolean removeDefaultExclude(String s) {
-        return defaultExcludes.remove(s);
+    public static boolean removeDefaultExclude( String s ) {
+        return defaultExcludes.remove( s );
     }
 
     /**
@@ -446,10 +436,10 @@ public class SvnDirScanner extends DirectoryScanner {
      * @since Ant 1.6
      */
     public static void resetDefaultExcludes() {
-    defaultExcludes = new Vector();
+        defaultExcludes = new Vector();
 
-        for (int i = 0; i < DEFAULTEXCLUDES.length; i++) {
-            defaultExcludes.add(DEFAULTEXCLUDES[i]);
+        for( int i = 0; i < DEFAULTEXCLUDES.length; i++ ) {
+            defaultExcludes.add( DEFAULTEXCLUDES[i] );
         }
     }
 
@@ -462,9 +452,8 @@ public class SvnDirScanner extends DirectoryScanner {
      * @param basedir The base directory to scan.
      *                Must not be <code>null</code>.
      */
-    public void setBasedir(String basedir) {
-        setBasedir(new File(basedir.replace('/', File.separatorChar).replace(
-                '\\', File.separatorChar)));
+    public void setBasedir( String basedir ) {
+        setBasedir( new File( basedir.replace( '/', File.separatorChar ).replace( '\\', File.separatorChar ) ) );
     }
 
     /**
@@ -474,7 +463,7 @@ public class SvnDirScanner extends DirectoryScanner {
      * @param basedir The base directory for scanning.
      *                Should not be <code>null</code>.
      */
-    public void setBasedir(File basedir) {
+    public void setBasedir( File basedir ) {
         this.basedir = basedir;
     }
 
@@ -497,6 +486,7 @@ public class SvnDirScanner extends DirectoryScanner {
     public boolean isCaseSensitive() {
         return isCaseSensitive;
     }
+
     /**
      * Sets whether or not include and exclude patterns are matched
      * in a case sensitive way
@@ -504,7 +494,7 @@ public class SvnDirScanner extends DirectoryScanner {
      * @param isCaseSensitive whether or not the file system should be
      *                        regarded as a case sensitive one
      */
-    public void setCaseSensitive(boolean isCaseSensitive) {
+    public void setCaseSensitive( boolean isCaseSensitive ) {
         this.isCaseSensitive = isCaseSensitive;
     }
 
@@ -524,7 +514,7 @@ public class SvnDirScanner extends DirectoryScanner {
      *
      * @param followSymlinks whether or not symbolic links should be followed
      */
-    public void setFollowSymlinks(boolean followSymlinks) {
+    public void setFollowSymlinks( boolean followSymlinks ) {
         this.followSymlinks = followSymlinks;
     }
 
@@ -541,23 +531,21 @@ public class SvnDirScanner extends DirectoryScanner {
      *                 list is given, all elements must be
      * non-<code>null</code>.
      */
-    public void setIncludes(String[] includes) {
-        if (includes == null) {
+    public void setIncludes( String[] includes ) {
+        if( includes == null ) {
             this.includes = null;
         } else {
             this.includes = new String[includes.length];
-            for (int i = 0; i < includes.length; i++) {
+            for( int i = 0; i < includes.length; i++ ) {
                 String pattern;
-                pattern = includes[i].replace('/', File.separatorChar).replace(
-                        '\\', File.separatorChar);
-                if (pattern.endsWith(File.separator)) {
+                pattern = includes[i].replace( '/', File.separatorChar ).replace( '\\', File.separatorChar );
+                if( pattern.endsWith( File.separator ) ) {
                     pattern += "**";
                 }
                 this.includes[i] = pattern;
             }
         }
     }
-
 
     /**
      * Sets the list of exclude patterns to use. All '/' and '\' characters
@@ -571,16 +559,15 @@ public class SvnDirScanner extends DirectoryScanner {
      *                 should be excluded. If a non-<code>null</code> list is
      *                 given, all elements must be non-<code>null</code>.
      */
-    public void setExcludes(String[] excludes) {
-        if (excludes == null) {
+    public void setExcludes( String[] excludes ) {
+        if( excludes == null ) {
             this.excludes = null;
         } else {
             this.excludes = new String[excludes.length];
-            for (int i = 0; i < excludes.length; i++) {
+            for( int i = 0; i < excludes.length; i++ ) {
                 String pattern;
-                pattern = excludes[i].replace('/', File.separatorChar).replace(
-                        '\\', File.separatorChar);
-                if (pattern.endsWith(File.separator)) {
+                pattern = excludes[i].replace( '/', File.separatorChar ).replace( '\\', File.separatorChar );
+                if( pattern.endsWith( File.separator ) ) {
                     pattern += "**";
                 }
                 this.excludes[i] = pattern;
@@ -588,16 +575,14 @@ public class SvnDirScanner extends DirectoryScanner {
         }
     }
 
-
     /**
      * Sets the selectors that will select the filelist.
      *
      * @param selectors specifies the selectors to be invoked on a scan
      */
-    public void setSelectors(FileSelector[] selectors) {
+    public void setSelectors( FileSelector[] selectors ) {
         this.selectors = selectors;
     }
-
 
     /**
      * Returns whether or not the scanner has included all the files or
@@ -620,48 +605,46 @@ public class SvnDirScanner extends DirectoryScanner {
      *            or isn't a directory).
      */
     public void scan() throws IllegalStateException {
-        if (basedir == null) {
-            throw new IllegalStateException("No basedir set");
+        if( basedir == null ) {
+            throw new IllegalStateException( "No basedir set" );
         }
-        if (!basedir.exists()) {
-            throw new IllegalStateException("basedir " + basedir
-                                            + " does not exist");
+        if( !basedir.exists() ) {
+            throw new IllegalStateException( "basedir " + basedir + " does not exist" );
         }
-        if (!basedir.isDirectory()) {
-            throw new IllegalStateException("basedir " + basedir
-                                            + " is not a directory");
+        if( !basedir.isDirectory() ) {
+            throw new IllegalStateException( "basedir " + basedir + " is not a directory" );
         }
 
-        if (includes == null) {
+        if( includes == null ) {
             // No includes supplied, so set it to 'matches all'
             includes = new String[1];
             includes[0] = "**";
         }
-        if (excludes == null) {
+        if( excludes == null ) {
             excludes = new String[0];
         }
 
-        filesIncluded    = new Vector();
+        filesIncluded = new Vector();
         filesNotIncluded = new Vector();
-        filesExcluded    = new Vector();
-        filesDeselected  = new Vector();
-        dirsIncluded     = new Vector();
-        dirsNotIncluded  = new Vector();
-        dirsExcluded     = new Vector();
-        dirsDeselected   = new Vector();
+        filesExcluded = new Vector();
+        filesDeselected = new Vector();
+        dirsIncluded = new Vector();
+        dirsNotIncluded = new Vector();
+        dirsExcluded = new Vector();
+        dirsDeselected = new Vector();
 
-        if (isIncluded("")) {
-            if (!isExcluded("")) {
-                if (isSelected("", basedir)) {
-                    dirsIncluded.addElement("");
+        if( isIncluded( "" ) ) {
+            if( !isExcluded( "" ) ) {
+                if( isSelected( "", basedir ) ) {
+                    dirsIncluded.addElement( "" );
                 } else {
-                    dirsDeselected.addElement("");
+                    dirsDeselected.addElement( "" );
                 }
             } else {
-                dirsExcluded.addElement("");
+                dirsExcluded.addElement( "" );
             }
         } else {
-            dirsNotIncluded.addElement("");
+            dirsNotIncluded.addElement( "" );
         }
         checkIncludePatterns();
         clearCaches();
@@ -676,15 +659,14 @@ public class SvnDirScanner extends DirectoryScanner {
         Hashtable newroots = new Hashtable();
         // put in the newroots vector the include patterns without
         // wildcard tokens
-        for (int icounter = 0; icounter < includes.length; icounter++) {
-            String newpattern =
-                SelectorUtils.rtrimWildcardTokens(includes[icounter]);
-            newroots.put(newpattern, includes[icounter]);
+        for( int icounter = 0; icounter < includes.length; icounter++ ) {
+            String newpattern = SelectorUtils.rtrimWildcardTokens( includes[icounter] );
+            newroots.put( newpattern, includes[icounter] );
         }
 
-        if (newroots.containsKey("")) {
+        if( newroots.containsKey( "" ) ) {
             // we are going to scan everything anyway
-            scandir(basedir, "", true);
+            scandir( basedir, "", true );
         } else {
             // only scan directories that can include matched files or
             // directories
@@ -693,76 +675,64 @@ public class SvnDirScanner extends DirectoryScanner {
             File canonBase = null;
             try {
                 canonBase = basedir.getCanonicalFile();
-            } catch (IOException ex) {
-                throw new BuildException(ex);
+            } catch( IOException ex ) {
+                throw new BuildException( ex );
             }
 
-            while (enum2.hasMoreElements()) {
+            while( enum2.hasMoreElements() ) {
                 String currentelement = (String) enum2.nextElement();
-                String originalpattern = (String) newroots.get(currentelement);
-                File myfile = new File(basedir, currentelement);
+                String originalpattern = (String) newroots.get( currentelement );
+                File myfile = new File( basedir, currentelement );
 
-                if (myfile.exists()) {
+                if( myfile.exists() ) {
                     // may be on a case insensitive file system.  We want
                     // the results to show what's really on the disk, so
                     // we need to double check.
                     try {
                         File canonFile = myfile.getCanonicalFile();
-                        String path = fileUtils.removeLeadingPath(canonBase,
-                                                                  canonFile);
-                        if (!path.equals(currentelement) || ON_VMS) {
-                            myfile = findFile(basedir, currentelement);
-                            if (myfile != null) {
-                                currentelement =
-                                    fileUtils.removeLeadingPath(basedir,
-                                                                myfile);
+                        String path = fileUtils.removeLeadingPath( canonBase, canonFile );
+                        if( !path.equals( currentelement ) || ON_VMS ) {
+                            myfile = findFile( basedir, currentelement );
+                            if( myfile != null ) {
+                                currentelement = fileUtils.removeLeadingPath( basedir, myfile );
                             }
                         }
-                    } catch (IOException ex) {
-                        throw new BuildException(ex);
+                    } catch( IOException ex ) {
+                        throw new BuildException( ex );
                     }
                 }
 
-                if ((myfile == null || !myfile.exists()) && !isCaseSensitive) {
-                    File f = findFileCaseInsensitive(basedir, currentelement);
-                    if (f.exists()) {
+                if( (myfile == null || !myfile.exists()) && !isCaseSensitive ) {
+                    File f = findFileCaseInsensitive( basedir, currentelement );
+                    if( f.exists() ) {
                         // adapt currentelement to the case we've
                         // actually found
-                        currentelement = fileUtils.removeLeadingPath(basedir,
-                                                                     f);
+                        currentelement = fileUtils.removeLeadingPath( basedir, f );
                         myfile = f;
                     }
                 }
 
-                if (myfile != null && myfile.exists()) {
-                    if (!followSymlinks
-                        && isSymlink(basedir, currentelement)) {
+                if( myfile != null && myfile.exists() ) {
+                    if( !followSymlinks && isSymlink( basedir, currentelement ) ) {
                         continue;
                     }
 
-                    if (myfile.isDirectory()) {
-                        if (isIncluded(currentelement)
-                            && currentelement.length() > 0) {
-                            accountForIncludedDir(currentelement, myfile, true);
-                        }  else {
-                            if (currentelement.length() > 0) {
-                                if (currentelement.charAt(currentelement
-                                                          .length() - 1)
-                                    != File.separatorChar) {
-                                    currentelement =
-                                        currentelement + File.separatorChar;
+                    if( myfile.isDirectory() ) {
+                        if( isIncluded( currentelement ) && currentelement.length() > 0 ) {
+                            accountForIncludedDir( currentelement, myfile, true );
+                        } else {
+                            if( currentelement.length() > 0 ) {
+                                if( currentelement.charAt( currentelement.length() - 1 ) != File.separatorChar ) {
+                                    currentelement = currentelement + File.separatorChar;
                                 }
                             }
-                            scandir(myfile, currentelement, true);
+                            scandir( myfile, currentelement, true );
                         }
                     } else {
-                        if (isCaseSensitive
-                            && originalpattern.equals(currentelement)) {
-                            accountForIncludedFile(currentelement, myfile);
-                        } else if (!isCaseSensitive
-                                   && originalpattern
-                                   .equalsIgnoreCase(currentelement)) {
-                            accountForIncludedFile(currentelement, myfile);
+                        if( isCaseSensitive && originalpattern.equals( currentelement ) ) {
+                            accountForIncludedFile( currentelement, myfile );
+                        } else if( !isCaseSensitive && originalpattern.equalsIgnoreCase( currentelement ) ) {
+                            accountForIncludedFile( currentelement, myfile );
                         }
                     }
                 }
@@ -779,31 +749,29 @@ public class SvnDirScanner extends DirectoryScanner {
      * Returns immediately if a slow scan has already been completed.
      */
     protected void slowScan() {
-        if (haveSlowResults) {
+        if( haveSlowResults ) {
             return;
         }
 
         String[] excl = new String[dirsExcluded.size()];
-        dirsExcluded.copyInto(excl);
+        dirsExcluded.copyInto( excl );
 
         String[] notIncl = new String[dirsNotIncluded.size()];
-        dirsNotIncluded.copyInto(notIncl);
+        dirsNotIncluded.copyInto( notIncl );
 
-        for (int i = 0; i < excl.length; i++) {
-            if (!couldHoldIncluded(excl[i])) {
-                scandir(new File(basedir, excl[i]),
-                        excl[i] + File.separator, false);
+        for( int i = 0; i < excl.length; i++ ) {
+            if( !couldHoldIncluded( excl[i] ) ) {
+                scandir( new File( basedir, excl[i] ), excl[i] + File.separator, false );
             }
         }
 
-        for (int i = 0; i < notIncl.length; i++) {
-            if (!couldHoldIncluded(notIncl[i])) {
-                scandir(new File(basedir, notIncl[i]),
-                        notIncl[i] + File.separator, false);
+        for( int i = 0; i < notIncl.length; i++ ) {
+            if( !couldHoldIncluded( notIncl[i] ) ) {
+                scandir( new File( basedir, notIncl[i] ), notIncl[i] + File.separator, false );
             }
         }
 
-        haveSlowResults  = true;
+        haveSlowResults = true;
     }
 
     /**
@@ -826,14 +794,14 @@ public class SvnDirScanner extends DirectoryScanner {
      * @see #dirsExcluded
      * @see #slowScan
      */
-    protected void scandir(File dir, String vpath, boolean fast) {
+    protected void scandir( File dir, String vpath, boolean fast ) {
         // avoid double scanning of directories, can only happen in fast mode
-        if (fast && hasBeenScanned(vpath)) {
+        if( fast && hasBeenScanned( vpath ) ) {
             return;
         }
-        ISVNStatus[] newfiles = list(dir);
+        ISVNStatus[] newfiles = list( dir );
 
-        if (newfiles == null) {
+        if( newfiles == null ) {
             /*
              * two reasons are mentioned in the API docs for File.list
              * (1) dir is not a directory. This is impossible as
@@ -841,58 +809,56 @@ public class SvnDirScanner extends DirectoryScanner {
              * (2) an IO error occurred (why doesn't it throw an exception
              *     then???)
              */
-            throw new BuildException("IO error scanning directory "
-                                     + dir.getAbsolutePath());
+            throw new BuildException( "IO error scanning directory " + dir.getAbsolutePath() );
         }
 
-        for (int i = 0; i < newfiles.length; i++) {
+        for( int i = 0; i < newfiles.length; i++ ) {
             String name = vpath + newfiles[i].getFile().getName();
-            File file = new File(dir, newfiles[i].getFile().getName());
-            if( SVNNodeKind.DIR == newfiles[i].getNodeKind() 
-             || (SVNNodeKind.UNKNOWN == newfiles[i].getNodeKind() && newfiles[i].getFile().isDirectory()) ) {
-                if (isIncluded(name)) {
-                    accountForIncludedDir(name, file, fast);
+            File file = new File( dir, newfiles[i].getFile().getName() );
+            if( SVNNodeKind.DIR == newfiles[i].getNodeKind()
+                            || (SVNNodeKind.UNKNOWN == newfiles[i].getNodeKind() && newfiles[i].getFile().isDirectory()) ) {
+                if( isIncluded( name ) ) {
+                    accountForIncludedDir( name, file, fast );
                 } else {
                     everythingIncluded = false;
-                    dirsNotIncluded.addElement(name);
-                    if (fast && couldHoldIncluded(name)) {
-                        scandir(file, name + File.separator, fast);
+                    dirsNotIncluded.addElement( name );
+                    if( fast && couldHoldIncluded( name ) ) {
+                        scandir( file, name + File.separator, fast );
                     }
                 }
-                if (!fast) {
-                    scandir(file, name + File.separator, fast);
+                if( !fast ) {
+                    scandir( file, name + File.separator, fast );
                 }
-            } else if( SVNNodeKind.FILE == newfiles[i].getNodeKind()  
-                    || (SVNNodeKind.UNKNOWN == newfiles[i].getNodeKind() && newfiles[i].getFile().isFile()) ) {
-                if (isIncluded(name)) {
-                    accountForIncludedFile(name, file);
+            } else if( SVNNodeKind.FILE == newfiles[i].getNodeKind()
+                            || (SVNNodeKind.UNKNOWN == newfiles[i].getNodeKind() && newfiles[i].getFile().isFile()) ) {
+                if( isIncluded( name ) ) {
+                    accountForIncludedFile( name, file );
                 } else {
                     everythingIncluded = false;
-                    filesNotIncluded.addElement(name);
+                    filesNotIncluded.addElement( name );
                 }
             }
         }
     }
+
     /**
      * process included file
      * @param name  path of the file relative to the directory of the fileset
      * @param file  included file
      */
-    private void accountForIncludedFile(String name, File file) {
-        if (!filesIncluded.contains(name)
-            && !filesExcluded.contains(name)
-            && !filesDeselected.contains(name)) {
+    private void accountForIncludedFile( String name, File file ) {
+        if( !filesIncluded.contains( name ) && !filesExcluded.contains( name ) && !filesDeselected.contains( name ) ) {
 
-            if (!isExcluded(name)) {
-                if (isSelected(name, file)) {
-                    filesIncluded.addElement(name);
+            if( !isExcluded( name ) ) {
+                if( isSelected( name, file ) ) {
+                    filesIncluded.addElement( name );
                 } else {
                     everythingIncluded = false;
-                    filesDeselected.addElement(name);
+                    filesDeselected.addElement( name );
                 }
             } else {
                 everythingIncluded = false;
-                filesExcluded.addElement(name);
+                filesExcluded.addElement( name );
             }
         }
     }
@@ -904,34 +870,33 @@ public class SvnDirScanner extends DirectoryScanner {
      * @param file directory as file
      * @param fast
      */
-    private void accountForIncludedDir(String name, File file, boolean fast) {
-        if (!dirsIncluded.contains(name)
-            && !dirsExcluded.contains(name)
-            && !dirsDeselected.contains(name)) {
+    private void accountForIncludedDir( String name, File file, boolean fast ) {
+        if( !dirsIncluded.contains( name ) && !dirsExcluded.contains( name ) && !dirsDeselected.contains( name ) ) {
 
-            if (!isExcluded(name)) {
-                if (isSelected(name, file)) {
-                    dirsIncluded.addElement(name);
-                    if (fast) {
-                        scandir(file, name + File.separator, fast);
+            if( !isExcluded( name ) ) {
+                if( isSelected( name, file ) ) {
+                    dirsIncluded.addElement( name );
+                    if( fast ) {
+                        scandir( file, name + File.separator, fast );
                     }
                 } else {
                     everythingIncluded = false;
-                    dirsDeselected.addElement(name);
-                    if (fast && couldHoldIncluded(name)) {
-                        scandir(file, name + File.separator, fast);
+                    dirsDeselected.addElement( name );
+                    if( fast && couldHoldIncluded( name ) ) {
+                        scandir( file, name + File.separator, fast );
                     }
                 }
 
             } else {
                 everythingIncluded = false;
-                dirsExcluded.addElement(name);
-                if (fast && couldHoldIncluded(name)) {
-                    scandir(file, name + File.separator, fast);
+                dirsExcluded.addElement( name );
+                if( fast && couldHoldIncluded( name ) ) {
+                    scandir( file, name + File.separator, fast );
                 }
             }
         }
     }
+
     /**
      * Tests whether or not a name matches against at least one include
      * pattern.
@@ -940,9 +905,9 @@ public class SvnDirScanner extends DirectoryScanner {
      * @return <code>true</code> when the name matches against at least one
      *         include pattern, or <code>false</code> otherwise.
      */
-    protected boolean isIncluded(String name) {
-        for (int i = 0; i < includes.length; i++) {
-            if (matchPath(includes[i], name, isCaseSensitive)) {
+    protected boolean isIncluded( String name ) {
+        for( int i = 0; i < includes.length; i++ ) {
+            if( matchPath( includes[i], name, isCaseSensitive ) ) {
                 return true;
             }
         }
@@ -957,10 +922,10 @@ public class SvnDirScanner extends DirectoryScanner {
      * @return <code>true</code> when the name matches against the start of at
      *         least one include pattern, or <code>false</code> otherwise.
      */
-    protected boolean couldHoldIncluded(String name) {
-        for (int i = 0; i < includes.length; i++) {
-            if (matchPatternStart(includes[i], name, isCaseSensitive)) {
-                if (isMorePowerfulThanExcludes(name, includes[i])) {
+    protected boolean couldHoldIncluded( String name ) {
+        for( int i = 0; i < includes.length; i++ ) {
+            if( matchPatternStart( includes[i], name, isCaseSensitive ) ) {
+                if( isMorePowerfulThanExcludes( name, includes[i] ) ) {
                     return true;
                 }
             }
@@ -984,15 +949,16 @@ public class SvnDirScanner extends DirectoryScanner {
      *  @return true if there is no exclude pattern more powerful than this include pattern
      *  @since ant1.6
      */
-    private boolean isMorePowerfulThanExcludes(String name, String includepattern) {
+    private boolean isMorePowerfulThanExcludes( String name, String includepattern ) {
         String soughtexclude = name + File.separator + "**";
-        for (int counter = 0; counter < excludes.length; counter++) {
-            if (excludes[counter].equals(soughtexclude))  {
+        for( int counter = 0; counter < excludes.length; counter++ ) {
+            if( excludes[counter].equals( soughtexclude ) ) {
                 return false;
             }
         }
         return true;
     }
+
     /**
      * Tests whether or not a name matches against at least one exclude
      * pattern.
@@ -1001,9 +967,9 @@ public class SvnDirScanner extends DirectoryScanner {
      * @return <code>true</code> when the name matches against at least one
      *         exclude pattern, or <code>false</code> otherwise.
      */
-    protected boolean isExcluded(String name) {
-        for (int i = 0; i < excludes.length; i++) {
-            if (matchPath(excludes[i], name, isCaseSensitive)) {
+    protected boolean isExcluded( String name ) {
+        for( int i = 0; i < excludes.length; i++ ) {
+            if( matchPath( excludes[i], name, isCaseSensitive ) ) {
                 return true;
             }
         }
@@ -1018,10 +984,10 @@ public class SvnDirScanner extends DirectoryScanner {
      * @return <code>false</code> when the selectors says that the file
      *         should not be selected, <code>true</code> otherwise.
      */
-    protected boolean isSelected(String name, File file) {
-        if (selectors != null) {
-            for (int i = 0; i < selectors.length; i++) {
-                if (!selectors[i].isSelected(basedir, name, file)) {
+    protected boolean isSelected( String name, File file ) {
+        if( selectors != null ) {
+            for( int i = 0; i < selectors.length; i++ ) {
+                if( !selectors[i].isSelected( basedir, name, file ) ) {
                     return false;
                 }
             }
@@ -1039,8 +1005,8 @@ public class SvnDirScanner extends DirectoryScanner {
      */
     public String[] getIncludedFiles() {
         String[] files = new String[filesIncluded.size()];
-        filesIncluded.copyInto(files);
-        Arrays.sort(files);
+        filesIncluded.copyInto( files );
+        Arrays.sort( files );
         return files;
     }
 
@@ -1057,7 +1023,7 @@ public class SvnDirScanner extends DirectoryScanner {
     public String[] getNotIncludedFiles() {
         slowScan();
         String[] files = new String[filesNotIncluded.size()];
-        filesNotIncluded.copyInto(files);
+        filesNotIncluded.copyInto( files );
         return files;
     }
 
@@ -1075,7 +1041,7 @@ public class SvnDirScanner extends DirectoryScanner {
     public String[] getExcludedFiles() {
         slowScan();
         String[] files = new String[filesExcluded.size()];
-        filesExcluded.copyInto(files);
+        filesExcluded.copyInto( files );
         return files;
     }
 
@@ -1093,7 +1059,7 @@ public class SvnDirScanner extends DirectoryScanner {
     public String[] getDeselectedFiles() {
         slowScan();
         String[] files = new String[filesDeselected.size()];
-        filesDeselected.copyInto(files);
+        filesDeselected.copyInto( files );
         return files;
     }
 
@@ -1107,8 +1073,8 @@ public class SvnDirScanner extends DirectoryScanner {
      */
     public String[] getIncludedDirectories() {
         String[] directories = new String[dirsIncluded.size()];
-        dirsIncluded.copyInto(directories);
-        Arrays.sort(directories);
+        dirsIncluded.copyInto( directories );
+        Arrays.sort( directories );
         return directories;
     }
 
@@ -1125,7 +1091,7 @@ public class SvnDirScanner extends DirectoryScanner {
     public String[] getNotIncludedDirectories() {
         slowScan();
         String[] directories = new String[dirsNotIncluded.size()];
-        dirsNotIncluded.copyInto(directories);
+        dirsNotIncluded.copyInto( directories );
         return directories;
     }
 
@@ -1143,7 +1109,7 @@ public class SvnDirScanner extends DirectoryScanner {
     public String[] getExcludedDirectories() {
         slowScan();
         String[] directories = new String[dirsExcluded.size()];
-        dirsExcluded.copyInto(directories);
+        dirsExcluded.copyInto( directories );
         return directories;
     }
 
@@ -1161,7 +1127,7 @@ public class SvnDirScanner extends DirectoryScanner {
     public String[] getDeselectedDirectories() {
         slowScan();
         String[] directories = new String[dirsDeselected.size()];
-        dirsDeselected.copyInto(directories);
+        dirsDeselected.copyInto( directories );
         return directories;
     }
 
@@ -1172,14 +1138,13 @@ public class SvnDirScanner extends DirectoryScanner {
         int excludesLength = excludes == null ? 0 : excludes.length;
         String[] newExcludes;
         newExcludes = new String[excludesLength + defaultExcludes.size()];
-        if (excludesLength > 0) {
-            System.arraycopy(excludes, 0, newExcludes, 0, excludesLength);
+        if( excludesLength > 0 ) {
+            System.arraycopy( excludes, 0, newExcludes, 0, excludesLength );
         }
         String[] defaultExcludesTemp = getDefaultExcludes();
-        for (int i = 0; i < defaultExcludesTemp.length; i++) {
-            newExcludes[i + excludesLength] =
-                defaultExcludesTemp[i].replace('/', File.separatorChar)
-                .replace('\\', File.separatorChar);
+        for( int i = 0; i < defaultExcludesTemp.length; i++ ) {
+            newExcludes[i + excludesLength] = defaultExcludesTemp[i].replace( '/', File.separatorChar ).replace( '\\',
+                            File.separatorChar );
         }
         excludes = newExcludes;
     }
@@ -1191,10 +1156,9 @@ public class SvnDirScanner extends DirectoryScanner {
      * @return the resource with the given name.
      * @since Ant 1.5.2
      */
-    public Resource getResource(String name) {
-        File f = fileUtils.resolveFile(basedir, name);
-        return new Resource(name, f.exists(), f.lastModified(),
-                            f.isDirectory());
+    public Resource getResource( String name ) {
+        File f = fileUtils.resolveFile( basedir, name );
+        return new Resource( name, f.exists(), f.lastModified(), f.isDirectory() );
     }
 
     /**
@@ -1215,10 +1179,9 @@ public class SvnDirScanner extends DirectoryScanner {
      *
      * @since Ant 1.6
      */
-    private File findFileCaseInsensitive(File base, String path) {
-        File f = findFileCaseInsensitive(base,
-                                         SelectorUtils.tokenizePath(path));
-        return  f == null ? new File(base, path) : f;
+    private File findFileCaseInsensitive( File base, String path ) {
+        File f = findFileCaseInsensitive( base, SelectorUtils.tokenizePath( path ) );
+        return f == null ? new File( base, path ) : f;
     }
 
     /**
@@ -1230,29 +1193,28 @@ public class SvnDirScanner extends DirectoryScanner {
      *
      * @since Ant 1.6
      */
-    private File findFileCaseInsensitive(File base, Vector pathElements) {
-        if (pathElements.size() == 0) {
+    private File findFileCaseInsensitive( File base, Vector pathElements ) {
+        if( pathElements.size() == 0 ) {
             return base;
         } else {
-            if (!base.isDirectory()) {
+            if( !base.isDirectory() ) {
                 return null;
             }
-            ISVNStatus[] files = list(base);
-            if (files == null) {
-                throw new BuildException("IO error scanning directory "
-                                         + base.getAbsolutePath());
+            ISVNStatus[] files = list( base );
+            if( files == null ) {
+                throw new BuildException( "IO error scanning directory " + base.getAbsolutePath() );
             }
-            String current = (String) pathElements.remove(0);
-            for (int i = 0; i < files.length; i++) {
-            	String name = files[i].getFile().getName();
-                if( name.equals(current) ) {
-                    return findFileCaseInsensitive(new File(base, name), pathElements);
+            String current = (String) pathElements.remove( 0 );
+            for( int i = 0; i < files.length; i++ ) {
+                String name = files[i].getFile().getName();
+                if( name.equals( current ) ) {
+                    return findFileCaseInsensitive( new File( base, name ), pathElements );
                 }
             }
-            for (int i = 0; i < files.length; i++) {
-            	String name = files[i].getFile().getName();
-                if( name.equalsIgnoreCase(current) ) {
-                    return findFileCaseInsensitive(new File(base, name), pathElements);
+            for( int i = 0; i < files.length; i++ ) {
+                String name = files[i].getFile().getName();
+                if( name.equalsIgnoreCase( current ) ) {
+                    return findFileCaseInsensitive( new File( base, name ), pathElements );
                 }
             }
         }
@@ -1267,8 +1229,8 @@ public class SvnDirScanner extends DirectoryScanner {
      *
      * @since Ant 1.6
      */
-    private File findFile(File base, String path) {
-        return findFile(base, SelectorUtils.tokenizePath(path));
+    private File findFile( File base, String path ) {
+        return findFile( base, SelectorUtils.tokenizePath( path ) );
     }
 
     /**
@@ -1279,23 +1241,22 @@ public class SvnDirScanner extends DirectoryScanner {
      *
      * @since Ant 1.6
      */
-    private File findFile(File base, Vector pathElements) {
-        if (pathElements.size() == 0) {
+    private File findFile( File base, Vector pathElements ) {
+        if( pathElements.size() == 0 ) {
             return base;
         } else {
-            if (!base.isDirectory()) {
+            if( !base.isDirectory() ) {
                 return null;
             }
-            ISVNStatus[] files = list(base);
-            if (files == null) {
-                throw new BuildException("IO error scanning directory "
-                                         + base.getAbsolutePath());
+            ISVNStatus[] files = list( base );
+            if( files == null ) {
+                throw new BuildException( "IO error scanning directory " + base.getAbsolutePath() );
             }
-            String current = (String) pathElements.remove(0);
-            for (int i = 0; i < files.length; i++) {
-            	String name = files[i].getFile().getName();
-                if( name.equals(current) ) {
-                    return findFile(new File(base, name), pathElements);
+            String current = (String) pathElements.remove( 0 );
+            for( int i = 0; i < files.length; i++ ) {
+                String name = files[i].getFile().getName();
+                if( name.equals( current ) ) {
+                    return findFile( new File( base, name ), pathElements );
                 }
             }
         }
@@ -1307,8 +1268,8 @@ public class SvnDirScanner extends DirectoryScanner {
      * basedir?
      * @since Ant 1.6
      */
-    private boolean isSymlink(File base, String path) {
-        return isSymlink(base, SelectorUtils.tokenizePath(path));
+    private boolean isSymlink( File base, String path ) {
+        return isSymlink( base, SelectorUtils.tokenizePath( path ) );
     }
 
     /**
@@ -1316,20 +1277,19 @@ public class SvnDirScanner extends DirectoryScanner {
      * basedir?
      * @since Ant 1.6
      */
-    private boolean isSymlink(File base, Vector pathElements) {
-        if (pathElements.size() > 0) {
-            String current = (String) pathElements.remove(0);
+    private boolean isSymlink( File base, Vector pathElements ) {
+        if( pathElements.size() > 0 ) {
+            String current = (String) pathElements.remove( 0 );
             try {
-                if (fileUtils.isSymbolicLink(base, current)) {
+                if( fileUtils.isSymbolicLink( base, current ) ) {
                     return true;
                 } else {
-                    return isSymlink(new File(base, current), pathElements);
+                    return isSymlink( new File( base, current ), pathElements );
                 }
-            } catch (IOException ioe) {
-                String msg = "IOException caught while checking "
-                    + "for links, couldn't get canonical path!";
+            } catch( IOException ioe ) {
+                String msg = "IOException caught while checking " + "for links, couldn't get canonical path!";
                 // will be caught and redirected to Ant's logging system
-                System.err.println(msg);
+                System.err.println( msg );
                 return false;
             }
         }
@@ -1351,8 +1311,8 @@ public class SvnDirScanner extends DirectoryScanner {
      *
      * @since Ant 1.6
      */
-    private boolean hasBeenScanned(String vpath) {
-        return !scannedDirs.add(vpath);
+    private boolean hasBeenScanned( String vpath ) {
+        return !scannedDirs.add( vpath );
     }
 
     /**

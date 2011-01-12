@@ -51,7 +51,7 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant.selectors;
 
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
@@ -66,8 +66,11 @@ import org.tigris.subversion.svnclientadapter.ISVNStatus;
  */
 public class Locked extends StatusBasedSelector {
 
-	public boolean isSelected(ISVNStatus status_) {
-		return ( null != status_.getLockOwner() );
-	}
-	
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isSelected( ISVNStatus status ) {
+        return status.getLockOwner() != null;
+    }
+
 }
