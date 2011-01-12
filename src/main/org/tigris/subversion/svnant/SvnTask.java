@@ -563,6 +563,17 @@ public class SvnTask extends Task {
     /**
      * Dumps some info messages.
      * 
+     * @param verbose   <code>true</code> <=> Consider this message to be a verbose one.
+     * @param fmt       A formatting String. Not <code>null</code>.
+     * @param args      The arguments for the formatting String. Maybe <code>null</code>.
+     */
+    public void info( boolean verbose, String fmt, Object ... args ) {
+        log( String.format( fmt, alter( args ) ), verbose ? Project.MSG_VERBOSE : Project.MSG_INFO );
+    }
+
+    /**
+     * Dumps some info messages.
+     * 
      * @param fmt    A formatting String. Not <code>null</code>.
      * @param args   The arguments for the formatting String. Maybe <code>null</code>.
      */
