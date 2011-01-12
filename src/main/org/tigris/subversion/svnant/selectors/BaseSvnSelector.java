@@ -83,6 +83,27 @@ import java.io.File;
 public abstract class BaseSvnSelector extends BaseExtendSelector {
 
     /**
+     * @param username the username to set
+     */
+    public void setUsername(String username) {
+        SvnFacade.setUsername( this, username );
+    }
+
+    /**
+     * @param password the password to set
+     */
+    public void setPassword(String password) {
+        SvnFacade.setPassword( this, password );
+    }
+
+    /**
+     * @see SvnFacade#setRefid(org.apache.tools.ant.ProjectComponent, String)
+     */
+    public void setRefid(String refid) {
+        SvnFacade.setRefid( this, refid );
+    }
+
+    /**
      * @see SvnFacade#setJavahl(org.apache.tools.ant.ProjectComponent, boolean)
      */
     public void setJavahl( boolean javahl_ ) {
