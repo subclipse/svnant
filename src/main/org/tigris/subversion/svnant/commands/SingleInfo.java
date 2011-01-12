@@ -119,11 +119,7 @@ public class SingleInfo extends SvnCommand {
             }
             String value = getValue( info, request.getValue() );
             project.setProperty( property, value );
-            if ( verbose ) {
-                info( property + " : " + value );
-            } else {
-                verbose( property + " : " + value );
-            }
+            info( verbose, property + " : " + value );
         } catch ( Exception ex ) {
             throw new SvnAntException( "Failed to access subversion 'info' properties", ex );
         }
@@ -210,11 +206,7 @@ public class SingleInfo extends SvnCommand {
             // ### FIXME: Implement checksum in svnClientAdapter.
             log( "    " + "Property '" + key + "' not implemented", Project.MSG_WARN );
         } else {
-            if ( verbose ) {
-                info( "    " + "Property '" + key + "' not recognized" );
-            } else {
-                verbose( "    " + "Property '" + key + "' not recognized" );
-            }
+            info( verbose, "    " + "Property '" + key + "' not recognized" );
         }
         if ( value == null ) {
             value = "";

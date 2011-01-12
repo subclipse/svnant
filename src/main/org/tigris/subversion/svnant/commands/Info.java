@@ -87,11 +87,7 @@ public class Info extends SvnCommand {
             for (int i = 0; i < propNames.length; i++) {
                 String value = getValue(propNames[i]);
                 theProject.setProperty(propPrefix + propNames[i], value);
-                if (verbose) {
-                    info(propPrefix + propNames[i] + ": " + value);
-                } else {
-                    verbose(propPrefix + propNames[i] + ": " + value);
-                }
+                info(verbose, propPrefix + propNames[i] + ": " + value);
             }
         } catch (Exception e) {
             throw new SvnAntException("Failed to set 'info' properties", e);
@@ -182,11 +178,7 @@ public class Info extends SvnCommand {
             // ### FIXME: Implement checksum in svnClientAdapter.
             log("    " + "Property '" + propName + "' not implemented", Project.MSG_WARN);
         } else {
-            if (verbose) {
-                info("    " + "Property '" + propName + "' not recognized");
-            } else {
-                verbose("    " + "Property '" + propName + "' not recognized");
-            }
+            info(verbose, "    " + "Property '" + propName + "' not recognized");
         }
 
         return (value == null ? "" : value.toString());
