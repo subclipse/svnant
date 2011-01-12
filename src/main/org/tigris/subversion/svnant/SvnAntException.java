@@ -51,7 +51,7 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant;
 
 /**
@@ -61,40 +61,38 @@ package org.tigris.subversion.svnant;
  * 
  * @author Martin Letenay
  */
-public class SvnAntException extends Exception
-{
-	private static final long serialVersionUID = 1L;
+public class SvnAntException extends Exception {
 
-	/**
-	 * Constructor
-	 */
-	public SvnAntException() {
-		super();
-	}
+    /**
+     * Constructor
+     */
+    public SvnAntException() {
+        super();
+    }
 
-	/**
-	 * Constructor
-	 * @param arg0
-	 * @param arg1
-	 */
-	public SvnAntException(String arg0, Throwable arg1) {
-		super(arg0, arg1);
-	}
+    /**
+     * Constructor
+     * @param arg0
+     * @param arg1
+     */
+    public SvnAntException( String arg0, Throwable arg1 ) {
+        super( arg0, arg1 );
+    }
 
-	/**
-	 * Constructor
-	 * @param arg0
-	 */
-	public SvnAntException(String arg0) {
-		super(arg0);
-	}
+    /**
+     * Constructor
+     * @param arg0
+     */
+    public SvnAntException( String arg0 ) {
+        super( arg0 );
+    }
 
-	/**
-	 * Constructor
-	 * @param arg0
-	 */
-	public SvnAntException(Throwable arg0) {
-		super(arg0);
-	}
-	
+    /**
+     * Constructor
+     * @param arg0
+     */
+    public SvnAntException( Throwable arg0 ) {
+        super( arg0 );
+    }
+
 }

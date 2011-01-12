@@ -51,12 +51,9 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant;
 
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.ProjectComponent;
-import org.apache.tools.ant.Task;
 import org.tigris.subversion.svnant.commands.Add;
 import org.tigris.subversion.svnant.commands.Cat;
 import org.tigris.subversion.svnant.commands.Checkout;
@@ -88,12 +85,21 @@ import org.tigris.subversion.svnant.commands.SvnCommand;
 import org.tigris.subversion.svnant.commands.Switch;
 import org.tigris.subversion.svnant.commands.Update;
 import org.tigris.subversion.svnant.commands.WcVersion;
+
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNNotifyListener;
+
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.ProjectComponent;
+import org.apache.tools.ant.Task;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
+
+import java.io.CharArrayWriter;
+import java.io.PrintWriter;
 
 /**
  * Svn Task
@@ -103,26 +109,27 @@ import java.util.TimeZone;
  */
 public class SvnTask extends Task {
 
-    private List<SvnCommand>          commands        = new ArrayList<SvnCommand>();
-    private List<ISVNNotifyListener>  notifyListeners = new ArrayList<ISVNNotifyListener>();
-    
+    private List<SvnCommand>         commands        = new ArrayList<SvnCommand>();
+    private List<ISVNNotifyListener> notifyListeners = new ArrayList<ISVNNotifyListener>();
+    private CharArrayWriter          writer          = new CharArrayWriter();
+    private PrintWriter              printer         = new PrintWriter( writer );
+
     /**
      * {@inheritDoc}
      */
     public ProjectComponent getProjectComponent() {
         return this;
     }
-    
 
     /**
-     * @see org.tigris.subversion.svnant.ISvnAntProjectComponent#getJavahl()
+     * @see SvnFacade#getJavahl(ProjectComponent)
      */
     public boolean getJavahl() {
         return SvnFacade.getJavahl( this );
     }
 
     /**
-     * @see org.tigris.subversion.svnant.ISvnAntProjectComponent#getSvnKit()
+     * @see SvnFacade#getSvnKit(ProjectComponent)
      */
     public boolean getSvnKit() {
         return SvnFacade.getSvnKit( this );
@@ -133,21 +140,21 @@ public class SvnTask extends Task {
      *
      * @param refid   The id of the configuration to be used for the svn task.
      */
-    public void setRefid(String refid) {
+    public void setRefid( String refid ) {
         SvnFacade.setRefid( this, refid );
     }
 
     /**
      * @param username the username to set
      */
-    public void setUsername(String username) {
+    public void setUsername( String username ) {
         SvnFacade.setUsername( this, username );
     }
 
     /**
      * @param password the password to set
      */
-    public void setPassword(String password) {
+    public void setPassword( String password ) {
         SvnFacade.setPassword( this, password );
     }
 
@@ -155,7 +162,7 @@ public class SvnTask extends Task {
      * set javahl to false to use command line interface
      * @param javahl
      */
-    public void setJavahl(boolean javahl) {
+    public void setJavahl( boolean javahl ) {
         SvnFacade.setJavahl( this, javahl );
     }
 
@@ -163,7 +170,7 @@ public class SvnTask extends Task {
      * set svnkit to false to use command line interface
      * @param svnkit
      */
-    public void setSvnkit(boolean svnkit) {
+    public void setSvnkit( boolean svnkit ) {
         SvnFacade.setSvnKit( this, svnkit );
     }
 
@@ -173,12 +180,12 @@ public class SvnTask extends Task {
     public String getDateFormatter() {
         return SvnFacade.getDateFormatter( this );
     }
-    
+
     /**
      * set dateFormatter used to parse/format revision dates
      * @param dateFormatter
      */
-    public void setDateFormatter(String dateFormatter) {
+    public void setDateFormatter( String dateFormatter ) {
         SvnFacade.setDateFormatter( this, dateFormatter );
     }
 
@@ -188,12 +195,12 @@ public class SvnTask extends Task {
     public TimeZone getDateTimezone() {
         return SvnFacade.getDateTimezone( this );
     }
-    
+
     /**
      * set dateTimezone used to parse/format revision dates
      * @param dateTimezone
      */
-    public void setDateTimezone(String dateTimeZone) {
+    public void setDateTimezone( String dateTimeZone ) {
         SvnFacade.setDateTimezone( this, dateTimeZone );
     }
 
@@ -207,175 +214,417 @@ public class SvnTask extends Task {
     /**
      * @param failonerror the failonerror to set
      */
-    public void setFailonerror(boolean failonerror) {
+    public void setFailonerror( boolean failonerror ) {
         SvnFacade.setFailonerror( this, failonerror );
     }
 
-    public void addCheckout(Checkout a) {
-        addCommand(a);
-    }
-
-    public void addSingleinfo(SingleInfo a) {
-        addCommand(a);
-    }
-
-    public void addList(org.tigris.subversion.svnant.commands.List a) {
-        addCommand(a);
-    }
-
-    public void addAdd(Add a) {
-        addCommand(a);
-    }
-
-    public void addCleanup(Cleanup a) {
-        addCommand(a);
-    }
-    
-    public void addCommit(Commit a) {
-        addCommand(a);
-    }
-
-    public void addCopy(Copy a) {
-        addCommand(a);
-    }
-
-    public void addDelete(Delete a) {
-        addCommand(a);
-    }
-
-    public void addExport(Export a) {
-        addCommand(a);
+    /**
+     * Adds the <code>checkout</code> command to this task.
+     * 
+     * @param a   The <code>checkout</code> command. Not <code>null</code>.
+     */
+    public void addCheckout( Checkout a ) {
+        addCommand( a );
     }
 
     /**
-     * Add the info command to the list of commands to execute.
+     * Adds the <code>singleinfo</code> command to this task.
+     * 
+     * @param a   The <code>singleinfo</code> command. Not <code>null</code>.
      */
-    public void addInfo(Info a) {
-        addCommand(a);
+    public void addSingleinfo( SingleInfo a ) {
+        addCommand( a );
     }
 
-    public void addImport(Import a) {
-        addCommand(a);
-    }
-    
-    public void addLog(Log a) {
-        addCommand(a);
-    }
-
-    public void addMkdir(Mkdir a) {
-        addCommand(a);
+    /**
+     * Adds the <code>list</code> command to this task.
+     * 
+     * @param a   The <code>list</code> command. Not <code>null</code>.
+     */
+    public void addList( org.tigris.subversion.svnant.commands.List a ) {
+        addCommand( a );
     }
 
-    public void addMove(Move a) {
-        addCommand(a);
+    /**
+     * Adds the <code>add</code> command to this task.
+     * 
+     * @param a   The <code>add</code> command. Not <code>null</code>.
+     */
+    public void addAdd( Add a ) {
+        addCommand( a );
     }
 
-    public void addUpdate(Update a) {
-        addCommand(a);
-    }
-    
-    public void addPropset(Propset a) {
-        addCommand(a);
-    }
-    
-    public void addDiff(Diff a) {
-        addCommand(a);
+    /**
+     * Adds the <code>cleanup</code> command to this task.
+     * 
+     * @param a   The <code>cleanup</code> command. Not <code>null</code>.
+     */
+    public void addCleanup( Cleanup a ) {
+        addCommand( a );
     }
 
-    public void addDiffSummarize(DiffSummarize a) {
-        addCommand(a);
+    /**
+     * Adds the <code>commit</code> command to this task.
+     * 
+     * @param a   The <code>commit</code> command. Not <code>null</code>.
+     */
+    public void addCommit( Commit a ) {
+        addCommand( a );
     }
 
-    public void addKeywordsSet(Keywordsset a) {
-        addCommand(a);
-    }
-    
-    public void addKeywordsAdd(Keywordsadd a) {
-        addCommand(a);
-    }
-    
-    public void addKeywordsRemove(Keywordsremove a) {
-        addCommand(a);
-    }    
-
-    public void addRevert(Revert a) {
-        addCommand(a);
+    /**
+     * Adds the <code>copy</code> command to this task.
+     * 
+     * @param a   The <code>copy</code> command. Not <code>null</code>.
+     */
+    public void addCopy( Copy a ) {
+        addCommand( a );
     }
 
-    public void addCat(Cat a) {
-        addCommand(a);
+    /**
+     * Adds the <code>delete</code> command to this task.
+     * 
+     * @param a   The <code>delete</code> command. Not <code>null</code>.
+     */
+    public void addDelete( Delete a ) {
+        addCommand( a );
     }
 
-    public void addPropdel(Propdel a) {
-        addCommand(a);
-    }
-    
-    public void addIgnore(Ignore a) {
-        addCommand(a);
-    }
-    
-    public void addCreateRepository(CreateRepository a) {
-        addCommand(a);
-    }
-    
-    public void addWcVersion(WcVersion a) {
-        addCommand(a);
+    /**
+     * Adds the <code>export</code> command to this task.
+     * 
+     * @param a   The <code>export</code> command. Not <code>null</code>.
+     */
+    public void addExport( Export a ) {
+        addCommand( a );
     }
 
-    public void addStatus(Status a) {
-        addCommand(a);
-    }
-    
-    public void addSwitch(Switch a) {
-        addCommand(a);
-    }
-    
-    public void addPropget(Propget a) {
-        addCommand(a);
-    }
-    
-
-    private void addCommand(SvnCommand cmd) {
-        cmd.setTask(this);
-        commands.add(cmd);
-    }
-    
-    public void addNotifyListener(ISVNNotifyListener notifyListener) {
-        notifyListeners.add(notifyListener);
+    /**
+     * Adds the <code>info</code> command to this task.
+     * 
+     * @param a   The <code>info</code> command. Not <code>null</code>.
+     */
+    public void addInfo( Info a ) {
+        addCommand( a );
     }
 
-    public void maybeConfigure() throws BuildException {
-        super.maybeConfigure();
+    /**
+     * Adds the <code>import</code> command to this task.
+     * 
+     * @param a   The <code>import</code> command. Not <code>null</code>.
+     */
+    public void addImport( Import a ) {
+        addCommand( a );
+    }
+
+    /**
+     * Adds the <code>log</code> command to this task.
+     * 
+     * @param a   The <code>log</code> command. Not <code>null</code>.
+     */
+    public void addLog( Log a ) {
+        addCommand( a );
+    }
+
+    /**
+     * Adds the <code>mkdir</code> command to this task.
+     * 
+     * @param a   The <code>mkdir</code> command. Not <code>null</code>.
+     */
+    public void addMkdir( Mkdir a ) {
+        addCommand( a );
+    }
+
+    /**
+     * Adds the <code>move</code> command to this task.
+     * 
+     * @param a   The <code>move</code> command. Not <code>null</code>.
+     */
+    public void addMove( Move a ) {
+        addCommand( a );
+    }
+
+    /**
+     * Adds the <code>update</code> command to this task.
+     * 
+     * @param a   The <code>update</code> command. Not <code>null</code>.
+     */
+    public void addUpdate( Update a ) {
+        addCommand( a );
+    }
+
+    /**
+     * Adds the <code>propset</code> command to this task.
+     * 
+     * @param a   The <code>propset</code> command. Not <code>null</code>.
+     */
+    public void addPropset( Propset a ) {
+        addCommand( a );
+    }
+
+    /**
+     * Adds the <code>diff</code> command to this task.
+     * 
+     * @param a   The <code>diff</code> command. Not <code>null</code>.
+     */
+    public void addDiff( Diff a ) {
+        addCommand( a );
+    }
+
+    /**
+     * Adds the <code>diffSummarize</code> command to this task.
+     * 
+     * @param a   The <code>diffSummarize</code> command. Not <code>null</code>.
+     */
+    public void addDiffSummarize( DiffSummarize a ) {
+        addCommand( a );
+    }
+
+    /**
+     * Adds the <code>keywordsSet</code> command to this task.
+     * 
+     * @param a   The <code>keywordsSet</code> command. Not <code>null</code>.
+     */
+    public void addKeywordsSet( Keywordsset a ) {
+        addCommand( a );
+    }
+
+    /**
+     * Adds the <code>keywordsAdd</code> command to this task.
+     * 
+     * @param a   The <code>keywordsAdd</code> command. Not <code>null</code>.
+     */
+    public void addKeywordsAdd( Keywordsadd a ) {
+        addCommand( a );
+    }
+
+    /**
+     * Adds the <code>keywordsRemove</code> command to this task.
+     * 
+     * @param a   The <code>keywordsRemove</code> command. Not <code>null</code>.
+     */
+    public void addKeywordsRemove( Keywordsremove a ) {
+        addCommand( a );
+    }
+
+    /**
+     * Adds the <code>revert</code> command to this task.
+     * 
+     * @param a   The <code>revert</code> command. Not <code>null</code>.
+     */
+    public void addRevert( Revert a ) {
+        addCommand( a );
+    }
+
+    /**
+     * Adds the <code>cat</code> command to this task.
+     * 
+     * @param a   The <code>cat</code> command. Not <code>null</code>.
+     */
+    public void addCat( Cat a ) {
+        addCommand( a );
+    }
+
+    /**
+     * Adds the <code>propdel</code> command to this task.
+     * 
+     * @param a   The <code>propdel</code> command. Not <code>null</code>.
+     */
+    public void addPropdel( Propdel a ) {
+        addCommand( a );
+    }
+
+    /**
+     * Adds the <code>ignore</code> command to this task.
+     * 
+     * @param a   The <code>ignore</code> command. Not <code>null</code>.
+     */
+    public void addIgnore( Ignore a ) {
+        addCommand( a );
+    }
+
+    /**
+     * Adds the <code>createRepository</code> command to this task.
+     * 
+     * @param a   The <code>createRepository</code> command. Not <code>null</code>.
+     */
+    public void addCreateRepository( CreateRepository a ) {
+        addCommand( a );
+    }
+
+    /**
+     * Adds the <code>wcVersion</code> command to this task.
+     * 
+     * @param a   The <code>wcVersion</code> command. Not <code>null</code>.
+     */
+    public void addWcVersion( WcVersion a ) {
+        addCommand( a );
+    }
+
+    /**
+     * Adds the <code>status</code> command to this task.
+     * 
+     * @param a   The <code>status</code> command. Not <code>null</code>.
+     */
+    public void addStatus( Status a ) {
+        addCommand( a );
+    }
+
+    /**
+     * Adds the <code>switch</code> command to this task.
+     * 
+     * @param a   The <code>switch</code> command. Not <code>null</code>.
+     */
+    public void addSwitch( Switch a ) {
+        addCommand( a );
+    }
+
+    /**
+     * Adds the <code>propget</code> command to this task.
+     * 
+     * @param a   The <code>propget</code> command. Not <code>null</code>.
+     */
+    public void addPropget( Propget a ) {
+        addCommand( a );
+    }
+
+    /**
+     * Adds the supplied command to this task.
+     * 
+     * @param cmd   The command which has to be added. Not <code>null</code>.
+     */
+    private void addCommand( SvnCommand cmd ) {
+        cmd.setTask( this );
+        commands.add( cmd );
+    }
+
+    /**
+     * Registers the supplied listener.
+     * 
+     * @param notifyListener   The listener used to be registered to receive notifications. 
+     *                         Not <code>null</code>.
+     */
+    public void addNotifyListener( ISVNNotifyListener notifyListener ) {
+        notifyListeners.add( notifyListener );
+    }
+
+    /**
+     * Modifies the supplied arguments so a Throwable instance is converted into a textual 
+     * representation.
+     * 
+     * @param args   The arguments that are supposed to be altered. Maybe <code>null</code>.
+     * 
+     * @return   The supplied potentially changed arguments. Maybe <code>null</code>.
+     */
+    private Object[] alter( Object[] args ) {
+        if( args != null ) {
+            for( int i = 0; i < args.length; i++ ) {
+                if( args[i] instanceof Throwable ) {
+                    writer.reset();
+                    Throwable t = (Throwable) args[i];
+                    t.printStackTrace( printer );
+                    args[i]     = String.valueOf( writer.toCharArray() );
+                }
+            }
+        }
+        return args;
+    }
+
+    /**
+     * Dumps some verbose messages.
+     * 
+     * @param fmt    A formatting String. Not <code>null</code>.
+     * @param args   The arguments for the formatting String. Maybe <code>null</code>.
+     */
+    public void verbose( String fmt, Object ... args ) {
+        log( String.format( fmt, alter( args ) ), Project.MSG_VERBOSE );
+    }
+
+    /**
+     * Dumps some debug messages.
+     * 
+     * @param fmt    A formatting String. Not <code>null</code>.
+     * @param args   The arguments for the formatting String. Maybe <code>null</code>.
+     */
+    public void debug( String fmt, Object ... args ) {
+        log( String.format( fmt, alter( args ) ), Project.MSG_DEBUG );
     }
     
+    /**
+     * Dumps some warning messages.
+     * 
+     * @param fmt    A formatting String. Not <code>null</code>.
+     * @param args   The arguments for the formatting String. Maybe <code>null</code>.
+     */
+    public void warning( String fmt, Object ... args ) {
+        log( String.format( fmt, alter( args ) ), Project.MSG_WARN );
+    }
+
+    /**
+     * Dumps some info messages.
+     * 
+     * @param fmt    A formatting String. Not <code>null</code>.
+     * @param args   The arguments for the formatting String. Maybe <code>null</code>.
+     */
+    public void info( String fmt, Object ... args ) {
+        log( String.format( fmt, alter( args ) ), Project.MSG_INFO );
+    }
+
+    /**
+     * Dumps some error messages.
+     * 
+     * @param fmt    A formatting String. Not <code>null</code>.
+     * @param args   The arguments for the formatting String. Maybe <code>null</code>.
+     */
+    public void error( String fmt, Object ... args ) {
+        log( String.format( fmt, alter( args ) ), Project.MSG_ERR );
+    }
+
     /**
      * {@inheritDoc}
      */
     public void execute() throws BuildException {
 
-        ISVNClientAdapter svnClient = null;
         try {
-            svnClient = SvnFacade.getClientAdapter(this);
-        } catch (BuildException ex) {
-            if (isFailonerror()) {
-                throw ex; 
+            executeImpl();
+        } catch( Exception ex ) {
+
+            if( isFailonerror() ) {
+
+                if( ex instanceof BuildException ) {
+                    throw (BuildException) ex;
+                } else {
+                    throw new BuildException( ex );
+                }
+
             } else {
-                return;
+                // quit normally but we're dumping the exception so the user will notice it
+                error( "", ex );
             }
+
         }
 
-        for (int i = 0; i < notifyListeners.size();i++) {
-            svnClient.addNotifyListener(notifyListeners.get(i));
+    }
+
+    /**
+     * Implementation of this task.
+     */
+    private void executeImpl() {
+
+        ISVNClientAdapter svnClient = SvnFacade.getClientAdapter( this );
+
+        for( int i = 0; i < notifyListeners.size(); i++ ) {
+            svnClient.addNotifyListener( notifyListeners.get( i ) );
         }
 
-        for (int i = 0; i < commands.size(); i++) {
-            SvnCommand command = commands.get(i);
-            Feedback feedback = new Feedback(command);
-            svnClient.addNotifyListener(feedback);
-            command.executeCommand(svnClient);
-            svnClient.removeNotifyListener(feedback);
+        for( int i = 0; i < commands.size(); i++ ) {
+            SvnCommand command = commands.get( i );
+            Feedback feedback = new Feedback( command );
+            svnClient.addNotifyListener( feedback );
+            command.executeCommand( svnClient );
+            svnClient.removeNotifyListener( feedback );
         }
-        
+
     }
 
 }

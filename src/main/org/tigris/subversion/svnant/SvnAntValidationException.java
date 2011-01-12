@@ -51,7 +51,7 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant;
 
 /**
@@ -59,28 +59,26 @@ package org.tigris.subversion.svnant;
  * 
  * @author Martin Letenay
  */
-public class SvnAntValidationException extends Exception
-{
-	private static final long serialVersionUID = 1L;
+public class SvnAntValidationException extends Exception {
 
-	/**
-	 * Constructor
-	 *
-	 */
-	public SvnAntValidationException() {
-		super();
-	}
+    /**
+     * Constructor
+     *
+     */
+    public SvnAntValidationException() {
+        super();
+    }
 
-	/**
-	 * Constructor
-	 * @param message
-	 */
-	public SvnAntValidationException(String message) {
-		super(message);
-	}
-	
-	public static SvnAntValidationException createInvalidRevisionException()
-	{
-		return new SvnAntValidationException("Invalid revision. Revision should be a number, a date in the format as specified in dateFormatter attribute or HEAD, BASE, COMMITED or PREV");
-	}
+    /**
+     * Constructor
+     * @param message
+     */
+    public SvnAntValidationException( String message ) {
+        super( message );
+    }
+
+    public static SvnAntValidationException createInvalidRevisionException() {
+        return new SvnAntValidationException( "Invalid revision. Revision should be a number, a date in the format as specified in dateFormatter attribute or HEAD, BASE, COMMITED or PREV" );
+    }
+    
 }
