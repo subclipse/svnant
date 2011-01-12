@@ -537,7 +537,11 @@ public class SvnTask extends Task {
      * @param args   The arguments for the formatting String. Maybe <code>null</code>.
      */
     public void verbose( String fmt, Object ... args ) {
-        log( String.format( fmt, alter( args ) ), Project.MSG_VERBOSE );
+        if( (args == null) || (args.length == 0) ) {
+            log( fmt, Project.MSG_VERBOSE );
+        } else {
+            log( String.format( fmt, alter( args ) ), Project.MSG_VERBOSE );
+        }
     }
 
     /**
@@ -547,7 +551,11 @@ public class SvnTask extends Task {
      * @param args   The arguments for the formatting String. Maybe <code>null</code>.
      */
     public void debug( String fmt, Object ... args ) {
-        log( String.format( fmt, alter( args ) ), Project.MSG_DEBUG );
+        if( (args == null) || (args.length == 0) ) {
+            log( fmt, Project.MSG_DEBUG );
+        } else {
+            log( String.format( fmt, alter( args ) ), Project.MSG_DEBUG );
+        }
     }
     
     /**
@@ -557,7 +565,11 @@ public class SvnTask extends Task {
      * @param args   The arguments for the formatting String. Maybe <code>null</code>.
      */
     public void warning( String fmt, Object ... args ) {
-        log( String.format( fmt, alter( args ) ), Project.MSG_WARN );
+        if( (args == null) || (args.length == 0) ) {
+            log( fmt, Project.MSG_WARN );
+        } else {
+            log( String.format( fmt, alter( args ) ), Project.MSG_WARN );
+        }
     }
 
     /**
@@ -568,7 +580,11 @@ public class SvnTask extends Task {
      * @param args      The arguments for the formatting String. Maybe <code>null</code>.
      */
     public void info( boolean verbose, String fmt, Object ... args ) {
-        log( String.format( fmt, alter( args ) ), verbose ? Project.MSG_VERBOSE : Project.MSG_INFO );
+        if( (args == null) || (args.length == 0) ) {
+            log( fmt, verbose ? Project.MSG_VERBOSE : Project.MSG_INFO );
+        } else {
+            log( String.format( fmt, alter( args ) ), verbose ? Project.MSG_VERBOSE : Project.MSG_INFO );
+        }
     }
 
     /**
@@ -578,7 +594,11 @@ public class SvnTask extends Task {
      * @param args   The arguments for the formatting String. Maybe <code>null</code>.
      */
     public void info( String fmt, Object ... args ) {
-        log( String.format( fmt, alter( args ) ), Project.MSG_INFO );
+        if( (args == null) || (args.length == 0) ) {
+            log( fmt, Project.MSG_INFO );
+        } else {
+            log( String.format( fmt, alter( args ) ), Project.MSG_INFO );
+        }
     }
 
     /**
@@ -588,7 +608,11 @@ public class SvnTask extends Task {
      * @param args   The arguments for the formatting String. Maybe <code>null</code>.
      */
     public void error( String fmt, Object ... args ) {
-        log( String.format( fmt, alter( args ) ), Project.MSG_ERR );
+        if( (args == null) || (args.length == 0) ) {
+            log( fmt, Project.MSG_ERR );
+        } else {
+            log( String.format( fmt, alter( args ) ), Project.MSG_ERR );
+        }
     }
 
     /**
