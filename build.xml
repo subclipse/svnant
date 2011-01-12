@@ -70,6 +70,9 @@
   <target name="docs" depends="" description="generate documentation">
     <mkdir dir="${build.distrib.dir}/doc" />
     <style basedir="${src.doc.dir}" destdir="doc" extension=".html" style="${src.doc.dir}/ant-types.xsl" processor="trax" includes="*.xml" />
+    <copy todir="${build.distrib.dir}/doc">
+      <fileset dir="doc" includes="**/*.html"/>
+    </copy>
   </target>
 
   <!-- ======================================================================================= -->
@@ -114,24 +117,20 @@
   <target name="makeDistrib" depends="clean, svnant.jar, docs" description="make binary distribution">
     <mkdir dir="${build.distrib.dir}" />
     <mkdir dir="${build.distrib.dir}/lib" />
-    <mkdir dir="${build.distrib.dir}/doc" />
-    <copy file="readme.txt" todir="${build.distrib.dir}" />
-    <copy file="changelog.txt" todir="${build.distrib.dir}" />
-    <copy file="license.txt" todir="${build.distrib.dir}" />
-    <copy file="${svnClientAdapter.jar}" todir="${build.distrib.dir}/lib" />
-    <copy file="${lib.dir}/SVNCLIENTADAPTER-LICENSE" todir="${build.distrib.dir}/lib" />
-    <copy file="${svnjavahl.jar}" todir="${build.distrib.dir}/lib" />
-    <copy file="${lib.dir}/JAVAHL-LICENSE" todir="${build.distrib.dir}/lib" />
-    <copy file="${svnkit.jar}" todir="${build.distrib.dir}/lib" />
-    <copy file="${lib.dir}/SVNKit-LICENSE" todir="${build.distrib.dir}" />
-    <copy file="${ganymed.jar}" todir="${build.distrib.dir}/lib" />
-    <copy file="${lib.dir}/GANYMED-LICENSE" todir="${build.distrib.dir}" />
-    <copy file="${build.lib.dir}/svnant.jar" todir="${build.distrib.dir}/lib" />
-    <copy todir="${build.distrib.dir}/doc">
-      <fileset dir="doc" />
-    </copy>
-    <copy file="${distribfiles.dir}/build.xml" todir="${build.distrib.dir}" />
-    <copy file="${distribfiles.dir}/build.properties" todir="${build.distrib.dir}">
+    <copy file="readme.txt"                             todir="${build.distrib.dir}" />
+    <copy file="changelog.txt"                          todir="${build.distrib.dir}" />
+    <copy file="license.txt"                            todir="${build.distrib.dir}" />
+    <copy file="${svnClientAdapter.jar}"                todir="${build.distrib.dir}/lib" />
+    <copy file="${lib.dir}/SVNCLIENTADAPTER-LICENSE"    todir="${build.distrib.dir}/lib" />
+    <copy file="${svnjavahl.jar}"                       todir="${build.distrib.dir}/lib" />
+    <copy file="${lib.dir}/JAVAHL-LICENSE"              todir="${build.distrib.dir}/lib" />
+    <copy file="${svnkit.jar}"                          todir="${build.distrib.dir}/lib" />
+    <copy file="${lib.dir}/SVNKit-LICENSE"              todir="${build.distrib.dir}" />
+    <copy file="${ganymed.jar}"                         todir="${build.distrib.dir}/lib" />
+    <copy file="${lib.dir}/GANYMED-LICENSE"             todir="${build.distrib.dir}" />
+    <copy file="${build.lib.dir}/svnant.jar"            todir="${build.distrib.dir}/lib" />
+    <copy file="${distribfiles.dir}/build.xml"          todir="${build.distrib.dir}" />
+    <copy file="${distribfiles.dir}/svnant.properties"  todir="${build.distrib.dir}">
       <filterset>
         <filter token="SVNANTVERSION" value="${svnant.version}" />
       </filterset>
