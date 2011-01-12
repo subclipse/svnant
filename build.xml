@@ -1,5 +1,7 @@
 <project name="svnant" default="all" basedir=".">
 
+  <dirname file="${ant.file.svnant}" property="dir.project"/>
+  
   <!-- prefer the settings from the user if there are some. -->
   <property file="svnant-${user.name}.properties"/>
   
@@ -20,7 +22,17 @@
     <pathelement location="${ganymed.jar}" />
     <pathelement location="${junit.jar}" />
   </path>
+  
+  <path id="path.xinclude">
+    <fileset dir="${dir.project}/lib/xincluder" includes="**/*.jar"/>
+  </path>
 
+  <!-- ======================================================================================= -->
+  <!-- task declarations                                                                      -->
+  <!-- ======================================================================================= -->
+
+  <taskdef classpathref="path.xinclude" name="xinclude" classname="org.znerd.xincludetask.XIncludeTask" />
+  
   <!-- ======================================================================================= -->
   <!-- cleans everything                                                                       -->
   <!-- ======================================================================================= -->
@@ -75,6 +87,22 @@
     </copy>
   </target>
 
+  <target name="newdocs">
+    <mkdir dir="${build.distrib.dir}/newdocs"/>
+    <delete>
+      <fileset dir="${build.distrib.dir}/newdocs" includes="**/*"/>
+    </delete>
+    <xinclude in="newdoc/tasks/svntask.xml" out="newdoc/_temporary.xml"/>
+    <xslt in="newdoc/_temporary.xml" out="${build.distrib.dir}/newdocs/svnant.html" style="newdoc/antdoc.xsl" processor="trax">
+    </xslt>
+    <xinclude in="newdoc/conditions/conditions.xml" out="newdoc/_temporary.xml"/>
+    <xslt in="newdoc/_temporary.xml" out="${build.distrib.dir}/newdocs/conditions.html" style="newdoc/antdoc.xsl" processor="trax">
+    </xslt>
+    <xinclude in="newdoc/selectors/selectors.xml" out="newdoc/_temporary.xml"/>
+    <xslt in="newdoc/_temporary.xml" out="${build.distrib.dir}/newdocs/selectors.html" style="newdoc/antdoc.xsl" processor="trax">
+    </xslt>
+  </target>
+  
   <!-- ======================================================================================= -->
   <!-- compile junit test classes                                                              -->
   <!-- ======================================================================================= -->
@@ -130,7 +158,7 @@
     <copy file="${lib.dir}/GANYMED-LICENSE"             todir="${build.distrib.dir}" />
     <copy file="${build.lib.dir}/svnant.jar"            todir="${build.distrib.dir}/lib" />
     <copy file="${distribfiles.dir}/build.xml"          todir="${build.distrib.dir}" />
-    <copy file="${distribfiles.dir}/svnant.properties"  todir="${build.distrib.dir}">
+    <copy file="${distribfiles.dir}/build.properties"  todir="${build.distrib.dir}">
       <filterset>
         <filter token="SVNANTVERSION" value="${svnant.version}" />
       </filterset>
