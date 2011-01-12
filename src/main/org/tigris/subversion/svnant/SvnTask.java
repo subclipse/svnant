@@ -599,7 +599,7 @@ public class SvnTask extends Task {
 
             } else {
                 // quit normally but we're dumping the exception so the user will notice it
-                error( "", ex );
+                error( "the execution failed for some reason. cause: %s", ex );
             }
 
         }
