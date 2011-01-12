@@ -51,16 +51,19 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant.commands;
 
-import java.io.File;
-
-import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.types.FileSet;
-import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNKeywords;
+
+import org.tigris.subversion.svnant.SvnAntException;
+
+import org.apache.tools.ant.types.FileSet;
+
+import org.apache.tools.ant.DirectoryScanner;
+
+import java.io.File;
 
 /**
  * add keywords on files
@@ -69,34 +72,34 @@ import org.tigris.subversion.svnclientadapter.SVNKeywords;
  *
  */
 public class Keywordsadd extends Keywords {
-   
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
+
+    /**
+     * {@inheritDoc}
      */
     public void execute() throws SvnAntException {
-      
-        super.execute();        
 
-        if (file != null) {
-            try {            
-                svnClient.addKeywords(file,keywords);
-            } catch (SVNClientException e) {
-                throw new SvnAntException("Can't add keywords on file "+file.toString(), e);
+        super.execute();
+
+        if( file != null ) {
+            try {
+                svnClient.addKeywords( file, keywords );
+            } catch( SVNClientException e ) {
+                throw new SvnAntException( "Can't add keywords on file " + file.toString(), e );
             }
-        } else if (dir != null) {
-            try {            
-                svnClient.addKeywords(dir,keywords);
-            } catch (SVNClientException e) {
-                throw new SvnAntException("Can't add keywords on directory "+dir.toString(), e);
-            }            
-        } else if (filesets.size() > 0) {
+        } else if( dir != null ) {
+            try {
+                svnClient.addKeywords( dir, keywords );
+            } catch( SVNClientException e ) {
+                throw new SvnAntException( "Can't add keywords on directory " + dir.toString(), e );
+            }
+        } else if( filesets.size() > 0 ) {
             // deal with filesets
-            for (int i = 0; i < filesets.size(); i++) {
-                FileSet fs = filesets.elementAt(i);
-                keywordsAdd(fs,keywords);
+            for( int i = 0; i < filesets.size(); i++ ) {
+                FileSet fs = filesets.elementAt( i );
+                keywordsAdd( fs, keywords );
             }
         }
-  }
+    }
 
     /**
      * add keywords on a fileset 
@@ -104,19 +107,18 @@ public class Keywordsadd extends Keywords {
      * @param fs
      * @throws SvnAntException
      */
-    private void keywordsAdd(FileSet fs, SVNKeywords theKeywords) throws SvnAntException {
-        DirectoryScanner ds = fs.getDirectoryScanner(getProject());
-        File baseDir = fs.getDir(getProject()); // base dir
+    private void keywordsAdd( FileSet fs, SVNKeywords theKeywords ) throws SvnAntException {
+        DirectoryScanner ds = fs.getDirectoryScanner( getProject() );
+        File baseDir = fs.getDir( getProject() ); // base dir
         String[] files = ds.getIncludedFiles();
-        for (int i = 0; i < files.length; i++) {
-            File aFile = new File(baseDir, files[i]);
+        for( int i = 0; i < files.length; i++ ) {
+            File aFile = new File( baseDir, files[i] );
             try {
-                svnClient.addKeywords(aFile,theKeywords);
-            } catch (SVNClientException e) {
-                throw new SvnAntException("Can't set keywords on file "+aFile.toString(), e);
+                svnClient.addKeywords( aFile, theKeywords );
+            } catch( SVNClientException e ) {
+                throw new SvnAntException( "Can't set keywords on file " + aFile.toString(), e );
             }
         }
     }
-
 
 }

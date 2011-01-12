@@ -54,13 +54,14 @@
  */
 package org.tigris.subversion.svnant.commands;
 
-import java.io.File;
-
-import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnAntValidationException;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
+
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnAntValidationException;
+
+import java.io.File;
 
 /**
  * svn Switch.
@@ -73,55 +74,61 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  *
  */
 public class Switch extends SvnCommand {
-	private File path = null;
 
-    private SVNUrl url;
+    private File        path     = null;
+    private SVNUrl      url;
+    private SVNRevision revision = SVNRevision.HEAD;
+    private boolean     recurse  = true;
 
-	private SVNRevision revision = SVNRevision.HEAD;
+    /**
+     * {@inheritDoc}
+     */
+    public void execute() throws SvnAntException {
+        try {
+            svnClient.switchToUrl( path, url, revision, recurse );
+        } catch( SVNClientException e ) {
+            throw new SvnAntException( "Cannot switch to url : " + url.toString(), e );
+        }
+    }
 
-	private boolean recurse = true;
+    /**
+     * {@inheritDoc}
+     */
+    protected void validateAttributes() throws SvnAntValidationException {
+        if( (path == null) || (url == null) ) {
+            throw new SvnAntValidationException( "path and url must be set" );
+        }
+        if( revision == null ) {
+            throw SvnAntValidationException.createInvalidRevisionException();
+        }
+    }
 
-	public void execute() throws SvnAntException {
+    /**
+     * @param path The path to set.
+     */
+    public void setPath( File path ) {
+        this.path = path;
+    }
 
-		try {
-			svnClient.switchToUrl(path, url, revision, recurse);
-		} catch (SVNClientException e) {
-			throw new SvnAntException("Cannot switch to url : "+url.toString(),e);
-		}
-	}
+    /**
+     * @param recurse The recurse to set.
+     */
+    public void setRecurse( boolean recurse ) {
+        this.recurse = recurse;
+    }
 
-	/**
-	 * Ensure we have a consistent and legal set of attributes
-	 */
-	protected void validateAttributes() throws SvnAntValidationException {
-		if ((path == null) || (url == null))
-			throw new SvnAntValidationException("path and url must be set");        
-		if (revision == null)
-			throw SvnAntValidationException.createInvalidRevisionException();
-	}
+    /**
+     * @param revision The revision to set.
+     */
+    public void setRevision( String revision ) {
+        this.revision = getRevisionFrom( revision );
+    }
 
-	/**
-	 * @param path The path to set.
-	 */
-	public void setPath(File path) {
-		this.path = path;
-	}
-	/**
-	 * @param recurse The recurse to set.
-	 */
-	public void setRecurse(boolean recurse) {
-		this.recurse = recurse;
-	}
-	/**
-	 * @param revision The revision to set.
-	 */
-	public void setRevision(String revision) {
-		this.revision = getRevisionFrom(revision);
-	}
-	/**
-	 * @param url The url to set.
-	 */
-	public void setUrl(SVNUrl url) {
-		this.url = url;
-	}
+    /**
+     * @param url The url to set.
+     */
+    public void setUrl( SVNUrl url ) {
+        this.url = url;
+    }
+    
 }

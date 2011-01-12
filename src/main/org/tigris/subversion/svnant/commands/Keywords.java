@@ -51,17 +51,20 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 
 package org.tigris.subversion.svnant.commands;
 
-import java.io.File;
-import java.util.Vector;
+import org.tigris.subversion.svnclientadapter.SVNKeywords;
 
-import org.apache.tools.ant.types.FileSet;
 import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnant.SvnAntValidationException;
-import org.tigris.subversion.svnclientadapter.SVNKeywords;
+
+import org.apache.tools.ant.types.FileSet;
+
+import java.util.Vector;
+
+import java.io.File;
 
 /**
  * ancestor of KeywordSet ...
@@ -70,75 +73,79 @@ import org.tigris.subversion.svnclientadapter.SVNKeywords;
  *
  */
 public abstract class Keywords extends SvnCommand {
+
     // the keywords available for substitution
-    protected SVNKeywords keywords;
+    protected SVNKeywords     keywords;
 
     /** file concerned by keywords substitution */
-    protected File file = null;
+    protected File            file     = null;
 
     /** filesets concerned by keywords substitution */
     protected Vector<FileSet> filesets = new Vector<FileSet>();
 
     /** directory concerned by keywords substitution */
-    protected File dir = null;
+    protected File            dir      = null;
 
     /** set keywords substitution recursively ? (only for dir attribute) */
-    protected boolean recurse = true;
+    protected boolean         recurse  = true;
 
+    /**
+     * {@inheritDoc}
+     */
     public void execute() throws SvnAntException {
         // we do nothing there but this function is overloaded  
     }
 
     /**
-     * Ensure we have a consistent and legal set of attributes
+     * {@inheritDoc}
      */
     protected void validateAttributes() throws SvnAntValidationException {
-        if ((file == null) && (dir == null) && (filesets.size() == 0)) {
-            throw new SvnAntValidationException("file, url or fileset must be set");
+        if( (file == null) && (dir == null) && (filesets.size() == 0) ) {
+            throw new SvnAntValidationException( "file, url or fileset must be set" );
         }
     }
-    
-    public void setHeadURL(boolean b) {
-        keywords.setHeadUrl(b);
+
+    public void setHeadURL( boolean b ) {
+        keywords.setHeadUrl( b );
     }
 
-    public void setURL(boolean b) {
-        keywords.setHeadUrl(b);
+    public void setURL( boolean b ) {
+        keywords.setHeadUrl( b );
     }
 
-    public void setId(boolean b) {
-        keywords.setId(b);
+    public void setId( boolean b ) {
+        keywords.setId( b );
     }
 
-    public void setLastChangedBy(boolean b) {
-        keywords.setLastChangedBy(b);
+    public void setLastChangedBy( boolean b ) {
+        keywords.setLastChangedBy( b );
     }
 
-    public void setAuthor(boolean b) {
-        keywords.setLastChangedBy(b);
+    public void setAuthor( boolean b ) {
+        keywords.setLastChangedBy( b );
     }
 
-    public void setLastChangedDate(boolean b) {
-        keywords.setLastChangedDate(b);
+    public void setLastChangedDate( boolean b ) {
+        keywords.setLastChangedDate( b );
     }
 
-    public void setDate(boolean b) {
-        keywords.setLastChangedDate(b);
+    public void setDate( boolean b ) {
+        keywords.setLastChangedDate( b );
     }
 
-    public void setLastChangedRevision(boolean b) {
-        keywords.setLastChangedRevision(b);
+    public void setLastChangedRevision( boolean b ) {
+        keywords.setLastChangedRevision( b );
     }
-    
-    public void setRev(boolean b) {
-        keywords.setLastChangedRevision(b);
+
+    public void setRev( boolean b ) {
+        keywords.setLastChangedRevision( b );
     }
 
     /**
      * set file on which to set keywords substitution 
      * @param file
      */
-    public void setFile(File file) {
+    public void setFile( File file ) {
         this.file = file;
     }
 
@@ -146,7 +153,7 @@ public abstract class Keywords extends SvnCommand {
      * set directory on which to set keywords substitution 
      * @param dir
      */
-    public void setDir(File dir) {
+    public void setDir( File dir ) {
         this.dir = dir;
     }
 
@@ -154,7 +161,7 @@ public abstract class Keywords extends SvnCommand {
      * if set, keywords substitution will be set recursively
      * @param recurse
      */
-    public void setRecurse(boolean recurse) {
+    public void setRecurse( boolean recurse ) {
         this.recurse = recurse;
     }
 
@@ -162,23 +169,23 @@ public abstract class Keywords extends SvnCommand {
      * Adds a set of files on which to apply keywords substitution
      * @param set
      */
-    public void addFileset(FileSet set) {
-        filesets.addElement(set);
+    public void addFileset( FileSet set ) {
+        filesets.addElement( set );
     }
 
     /**
      * Adds a set of files on which to apply keywords substitution
      * @param set
      */
-    public void add(FileSet set) {
-        filesets.addElement(set);
+    public void add( FileSet set ) {
+        filesets.addElement( set );
     }
 
     /**
      * set the keywords
      * @param keywords
      */
-    public void setKeywords(SVNKeywords keywords) {
+    public void setKeywords( SVNKeywords keywords ) {
         this.keywords = keywords;
     }
 

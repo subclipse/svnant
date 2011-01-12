@@ -51,7 +51,7 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant.commands;
 
 import java.io.File;
@@ -67,71 +67,76 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  */
 public class Checkout extends SvnCommand {
-	
-	/** url to checkout from */
-	private SVNUrl url = null;
-	
-	/** checkout recursively ? */
-	private boolean recurse = true;
-	
-	/** destinaty directory. */ 
-	private File destPath = null;
-	
-	/** revision to checkout */
-	private SVNRevision revision = SVNRevision.HEAD;
 
-	public void execute() throws SvnAntException {
+    /** url to checkout from */
+    private SVNUrl      url      = null;
 
-		try {
-			svnClient.checkout(url, destPath, revision, recurse);
-		} catch (Exception e) {
-			throw new SvnAntException("Can't checkout", e);
-		}
-	}
+    /** checkout recursively ? */
+    private boolean     recurse  = true;
 
-	/**
-	 * Ensure we have a consistent and legal set of attributes
-	 */
-	protected void validateAttributes() throws SvnAntValidationException {
-		if (destPath == null)
-			destPath = getProject().getBaseDir();
-		if (url == null)
-			throw new SvnAntValidationException("url must be set");
-		if (revision == null)
-			throw SvnAntValidationException.createInvalidRevisionException();
-	}
+    /** destinaty directory. */
+    private File        destPath = null;
 
-	/**
-	 * if false, operate on single directory only 
-	 * @param recurse whether you want it to checkout files recursively.
-	 */
-	public void setRecurse(boolean recurse) {
-		this.recurse = recurse;
-	}
+    /** revision to checkout */
+    private SVNRevision revision = SVNRevision.HEAD;
 
-	/**
-	 * Sets the URL; required.
-	 * @param url The url to set
-	 */
-	public void setUrl(SVNUrl url) {
-		this.url = url;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void execute() throws SvnAntException {
+        try {
+            svnClient.checkout( url, destPath, revision, recurse );
+        } catch( Exception e ) {
+            throw new SvnAntException( "Can't checkout", e );
+        }
+    }
 
-	/**
-	 * Sets the destination directory; required 
-	 * @param destPath destination directory for checkout.
-	 */
-	public void setDestpath(File destPath) {
-		this.destPath = destPath;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    protected void validateAttributes() throws SvnAntValidationException {
+        if( destPath == null ) {
+            destPath = getProject().getBaseDir();
+        }
+        if( url == null ) {
+            throw new SvnAntValidationException( "url must be set" );
+        }
+        if( revision == null ) {
+            throw SvnAntValidationException.createInvalidRevisionException();
+        }
+    }
 
-	/**
-	 * Sets the revision
-	 * 
-	 * @param revision
-	 */
-	public void setRevision(String revision) {
-		this.revision = getRevisionFrom(revision);
-	}
+    /**
+     * if false, operate on single directory only 
+     * @param recurse whether you want it to checkout files recursively.
+     */
+    public void setRecurse( boolean recurse ) {
+        this.recurse = recurse;
+    }
+
+    /**
+     * Sets the URL; required.
+     * @param url The url to set
+     */
+    public void setUrl( SVNUrl url ) {
+        this.url = url;
+    }
+
+    /**
+     * Sets the destination directory; required 
+     * @param destPath destination directory for checkout.
+     */
+    public void setDestpath( File destPath ) {
+        this.destPath = destPath;
+    }
+
+    /**
+     * Sets the revision
+     * 
+     * @param revision
+     */
+    public void setRevision( String revision ) {
+        this.revision = getRevisionFrom( revision );
+    }
 
 }

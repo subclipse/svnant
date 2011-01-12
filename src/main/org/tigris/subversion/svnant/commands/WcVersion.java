@@ -51,19 +51,22 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant.commands;
 
-import java.io.File;
+import org.tigris.subversion.svnclientadapter.utils.SVNStatusUtils;
 
-import org.apache.tools.ant.Project;
-import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnAntValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNStatusKind;
-import org.tigris.subversion.svnclientadapter.utils.SVNStatusUtils;
+
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnAntValidationException;
+
+import org.apache.tools.ant.Project;
+
+import java.io.File;
 
 /**
  * Fetches a summary of working copy status, similar to svn's svnversion utility.
@@ -72,65 +75,65 @@ import org.tigris.subversion.svnclientadapter.utils.SVNStatusUtils;
  *          <a href="mailto:matt.doran@papercut.biz">matt.doran@papercut.biz</a> 
  */
 public class WcVersion extends SvnCommand {
-    
-    private File path;
-    private String prefix;
+
+    private File    path;
+    private String  prefix;
     private boolean processUnversioned = false;
 
-    /* (non-Javadoc)
-     * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
+    /**
+     * {@inheritDoc}
      */
     public void execute() throws SvnAntException {
-      
-        if (!getPath().exists() || !getPath().isDirectory()) {
-            throw new SvnAntException("Path does not exist: " + getPath().getAbsolutePath());
+
+        if( !getPath().exists() || !getPath().isDirectory() ) {
+            throw new SvnAntException( "Path does not exist: " + getPath().getAbsolutePath() );
         }
-        
+
         WCVersionSummary wcVersionSummary;
-        
+
         try {
-            wcVersionSummary = getWorkingCopySumary(getPath());
-        } catch (SVNClientException e) {
-            throw new SvnAntException("Can't get summary status for path " + getPath(), e);
+            wcVersionSummary = getWorkingCopySumary( getPath() );
+        } catch( SVNClientException e ) {
+            throw new SvnAntException( "Can't get summary status for path " + getPath(), e );
         }
 
         // Save the status to ant properties.
         Project p = getProject();
-        
-        if (prefix == null) {
+
+        if( prefix == null ) {
             prefix = "";
-        } else if (!prefix.endsWith(".")) {
+        } else if( !prefix.endsWith( "." ) ) {
             prefix = prefix + ".";
         }
-        
-        p.setNewProperty(prefix + "repository.url", wcVersionSummary.reposURL);
-        p.setNewProperty(prefix + "repository.path", wcVersionSummary.reposPath);
-        
-        p.setNewProperty(prefix + "revision.max", wcVersionSummary.getMaxRevision());
-        p.setNewProperty(prefix + "revision.max-with-flags", wcVersionSummary.getMaxRevisionWithFlags());
-        p.setNewProperty(prefix + "revision.range", wcVersionSummary.getRevisionRange());
-        
-        p.setNewProperty(prefix + "committed.max", wcVersionSummary.getMaxCommitted());
-        p.setNewProperty(prefix + "committed.max-with-flags", wcVersionSummary.getMaxCommittedWithFlags());
-        
-        if (wcVersionSummary.hasModified) {
-            p.setNewProperty(prefix + "modified", "true"); 
+
+        p.setNewProperty( prefix + "repository.url", wcVersionSummary.reposURL );
+        p.setNewProperty( prefix + "repository.path", wcVersionSummary.reposPath );
+
+        p.setNewProperty( prefix + "revision.max", wcVersionSummary.getMaxRevision() );
+        p.setNewProperty( prefix + "revision.max-with-flags", wcVersionSummary.getMaxRevisionWithFlags() );
+        p.setNewProperty( prefix + "revision.range", wcVersionSummary.getRevisionRange() );
+
+        p.setNewProperty( prefix + "committed.max", wcVersionSummary.getMaxCommitted() );
+        p.setNewProperty( prefix + "committed.max-with-flags", wcVersionSummary.getMaxCommittedWithFlags() );
+
+        if( wcVersionSummary.hasModified ) {
+            p.setNewProperty( prefix + "modified", "true" );
         }
-        
-        if (wcVersionSummary.hasMixed) {
-            p.setNewProperty(prefix + "mixed", "true"); 
+
+        if( wcVersionSummary.hasMixed ) {
+            p.setNewProperty( prefix + "mixed", "true" );
         }
     }
-    
+
     /**
-     * Ensure we have a consistent and legal set of attributes
+     * {@inheritDoc}
      */
     protected void validateAttributes() throws SvnAntValidationException {
-        if (path == null) {
-            throw new SvnAntValidationException("path attribute must be set");
+        if( path == null ) {
+            throw new SvnAntValidationException( "path attribute must be set" );
         }
-    }   
-    
+    }
+
     /**
      * Fetch the summary version information for the given working copy path.
      * @param svnClient The svn client used to fetch the status.
@@ -138,17 +141,17 @@ public class WcVersion extends SvnCommand {
      * @return The <code>WCVersionSummary</code> storing version information about the working copy.
      * @throws SVNClientException Raised if there is a problem fetching working copy status.
      */
-    private WCVersionSummary getWorkingCopySumary(File wcPathFile) throws SVNClientException {
-        ISVNStatus rootStatus = svnClient.getSingleStatus(wcPathFile);
+    private WCVersionSummary getWorkingCopySumary( File wcPathFile ) throws SVNClientException {
+        ISVNStatus rootStatus = svnClient.getSingleStatus( wcPathFile );
         String[] pathSegs = rootStatus.getUrl().getPathSegments();
         StringBuffer pathBuffer = new StringBuffer();
-        for (int i = 0; i < pathSegs.length; i++) {
-            pathBuffer.append('/').append(pathSegs[i]);
+        for( int i = 0; i < pathSegs.length; i++ ) {
+            pathBuffer.append( '/' ).append( pathSegs[i] );
         }
-        ISVNStatus[] statuses = svnClient.getStatus(wcPathFile, true, true);
+        ISVNStatus[] statuses = svnClient.getStatus( wcPathFile, true, true );
 
-        return new WCVersionSummary(rootStatus, statuses, wcPathFile, processUnversioned);
-    }    
+        return new WCVersionSummary( rootStatus, statuses, wcPathFile, processUnversioned );
+    }
 
     /**
      * @return Returns the path.
@@ -160,7 +163,7 @@ public class WcVersion extends SvnCommand {
     /**
      * @param path The path to set.
      */
-    public void setPath(File path) {
+    public void setPath( File path ) {
         this.path = path;
     }
 
@@ -174,10 +177,10 @@ public class WcVersion extends SvnCommand {
     /**
      * @param prefix The prefix to set.
      */
-    public void setPrefix(String prefix) {
+    public void setPrefix( String prefix ) {
         this.prefix = prefix;
     }
-    
+
     /**
      * @return Returns whether unversioned resources should be processed.
      */
@@ -189,23 +192,30 @@ public class WcVersion extends SvnCommand {
      * @param processUnversioned
      *            Whether unversioned resources should be processed.
      */
-    public void setProcessUnversioned(boolean processUnversioned) {
+    public void setProcessUnversioned( boolean processUnversioned ) {
         this.processUnversioned = processUnversioned;
     }
-    
+
     /**
-   * Holds summary status information about a working copy path.
-   * 
-   * @author Matt Doran (matt.doran@papercut.biz)
-   */
+    * Holds summary status information about a working copy path.
+    * 
+    * @author Matt Doran (matt.doran@papercut.biz)
+    */
     private static class WCVersionSummary {
-        protected long maxRevision = 0;
-        protected long maxCommitted = 0;
-        protected long minRevision = 0;
-        protected boolean hasModified = false;
-        protected boolean hasMixed = false;
-        protected String reposURL;
-        protected String reposPath;
+
+        protected long    maxRevision  = 0;
+
+        protected long    maxCommitted = 0;
+
+        protected long    minRevision  = 0;
+
+        protected boolean hasModified  = false;
+
+        protected boolean hasMixed     = false;
+
+        protected String  reposURL;
+
+        protected String  reposPath;
 
         /**
          * Fetch the summary status information for the given working copy path.
@@ -213,53 +223,50 @@ public class WcVersion extends SvnCommand {
          * @param wcPathFile The working copy path.
          * @throws SVNClientException Raised if there is a problem fetching working copy status.
          */
-        protected WCVersionSummary(ISVNStatus rootStatus, ISVNStatus[] statuses, File wcPathFile, boolean processUnversioned) {
+        protected WCVersionSummary( ISVNStatus rootStatus, ISVNStatus[] statuses, File wcPathFile,
+                        boolean processUnversioned ) {
             this.reposURL = rootStatus.getUrl().toString();
-            
+
             String[] pathSegs = rootStatus.getUrl().getPathSegments();
             StringBuffer pathBuffer = new StringBuffer();
-            for (int i = 0; i < pathSegs.length; i++) {
-                pathBuffer.append('/').append(pathSegs[i]);
+            for( int i = 0; i < pathSegs.length; i++ ) {
+                pathBuffer.append( '/' ).append( pathSegs[i] );
             }
             this.reposPath = pathBuffer.toString();
-            
-            for (int i = 0; i < statuses.length; i++) {
+
+            for( int i = 0; i < statuses.length; i++ ) {
                 ISVNStatus status = statuses[i];
-                
-                if (!SVNStatusUtils.isManaged(status) && !processUnversioned) {
-                  // Don't care about unversioned files
+
+                if( !SVNStatusUtils.isManaged( status ) && !processUnversioned ) {
+                    // Don't care about unversioned files
                     continue;
                 }
-                
-                if (!this.hasModified 
-                    && ((status.getTextStatus() != SVNStatusKind.NORMAL
-                        && status.getTextStatus() != SVNStatusKind.IGNORED)
-                      || (status.getPropStatus() != SVNStatusKind.NORMAL
-                        && status.getPropStatus() != SVNStatusKind.NONE))) {                  
-                  this.hasModified = true;
-                }
-                
-                if (SVNStatusUtils.isManaged(status)) {
-                  SVNRevision.Number rev = status.getLastChangedRevision();
-                  long revNum = (rev != null) ? rev.getNumber() : 0;
-                  if (revNum > this.maxRevision) {
-                    this.maxRevision = revNum;
-                  }
-                  
-                  if (revNum < this.minRevision) {
-                    this.minRevision = revNum;
-                  }
 
-                  SVNRevision.Number comRev = status.getLastChangedRevision();
-                  long committedRev = (comRev != null) ? comRev.getNumber() : 0;
-                  if (committedRev > this.maxCommitted) {
-                    this.maxCommitted = committedRev;
-                  }
-                }                
+                if( !this.hasModified && ((status.getTextStatus() != SVNStatusKind.NORMAL && status.getTextStatus() != SVNStatusKind.IGNORED) || (status.getPropStatus() != SVNStatusKind.NORMAL && status.getPropStatus() != SVNStatusKind.NONE)) ) {
+                    this.hasModified = true;
+                }
+
+                if( SVNStatusUtils.isManaged( status ) ) {
+                    SVNRevision.Number rev = status.getLastChangedRevision();
+                    long revNum = (rev != null) ? rev.getNumber() : 0;
+                    if( revNum > this.maxRevision ) {
+                        this.maxRevision = revNum;
+                    }
+
+                    if( revNum < this.minRevision ) {
+                        this.minRevision = revNum;
+                    }
+
+                    SVNRevision.Number comRev = status.getLastChangedRevision();
+                    long committedRev = (comRev != null) ? comRev.getNumber() : 0;
+                    if( committedRev > this.maxCommitted ) {
+                        this.maxCommitted = committedRev;
+                    }
+                }
             }
-            
-            if ((this.minRevision > 0) && (this.minRevision != this.maxRevision)) {
-              this.hasMixed = true;
+
+            if( (this.minRevision > 0) && (this.minRevision != this.maxRevision) ) {
+                this.hasMixed = true;
             }
         }
 
@@ -268,7 +275,7 @@ public class WcVersion extends SvnCommand {
          * @return The max revision
          */
         protected String getMaxRevision() {
-            return String.valueOf(maxRevision);
+            return String.valueOf( maxRevision );
         }
 
         /**
@@ -280,13 +287,13 @@ public class WcVersion extends SvnCommand {
         }
 
         protected String getMaxCommitted() {
-            return String.valueOf(maxCommitted);
+            return String.valueOf( maxCommitted );
         }
 
         protected String getMaxCommittedWithFlags() {
             return getMaxCommitted() + getFlags();
         }
-        
+
         /**
          * Gets the revision range including flags.  If there is a mixed working copy the format of the
          * range is <min>:<max><flags>.
@@ -296,13 +303,13 @@ public class WcVersion extends SvnCommand {
          * @return The revision range string.
          */
         protected String getRevisionRange() {
-            if (hasMixed) {
-                return String.valueOf(minRevision) + ":" + getMaxRevisionWithFlags();
+            if( hasMixed ) {
+                return String.valueOf( minRevision ) + ":" + getMaxRevisionWithFlags();
             } else {
                 return getMaxRevisionWithFlags();
             }
         }
-        
+
         /**
          * Returns status flags string. (M - modified, X - mixed).
          * @return The status flags.

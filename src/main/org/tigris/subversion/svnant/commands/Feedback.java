@@ -54,10 +54,10 @@
  */
 package org.tigris.subversion.svnant.commands;
 
-import java.io.File;
-
 import org.tigris.subversion.svnclientadapter.ISVNNotifyListener;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
+
+import java.io.File;
 
 /**
  * @author Cédric Chabanois 

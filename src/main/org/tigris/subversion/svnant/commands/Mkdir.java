@@ -51,15 +51,16 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant.commands;
 
-import java.io.File;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnant.SvnAntValidationException;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
+
+import java.io.File;
 
 /**
  * @author cedric
@@ -68,67 +69,74 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  * directory on disk and schedules it for addition 
  */
 public class Mkdir extends SvnCommand {
+
     /** the url of dir to create */
-    private SVNUrl url = null;
+    private SVNUrl url     = null;
 
     /** the path to create */
-    private File path = null;
+    private File   path    = null;
 
     /** message (when url is used) */
     private String message = null;
 
+    /**
+     * {@inheritDoc}
+     */
     public void execute() throws SvnAntException {
 
-        if (url != null) {
+        if( url != null ) {
             try {
-                svnClient.mkdir(url, message);
-            } catch (SVNClientException e) {
-                throw new SvnAntException("Can't make dir "+url, e);
+                svnClient.mkdir( url, message );
+            } catch( SVNClientException e ) {
+                throw new SvnAntException( "Can't make dir " + url, e );
             }
         } else {
             try {
-                svnClient.mkdir(path);
-            } catch (SVNClientException e) {
-                throw new SvnAntException("Can't make dir "+path, e);
+                svnClient.mkdir( path );
+            } catch( SVNClientException e ) {
+                throw new SvnAntException( "Can't make dir " + path, e );
             }
         }
 
     }
 
     /**
-     * Ensure we have a consistent and legal set of attributes
+     * {@inheritDoc}
      */
     protected void validateAttributes() throws SvnAntValidationException {
-        if ((url == null) && (path == null))
-            throw new SvnAntValidationException("url or path attributes must be set");
-        if ((url != null) && (path != null))
-            throw new SvnAntValidationException("Either url or path attributes must be set");
-        if ((url != null) && (message == null))
-            throw new SvnAntValidationException("Message attribute must be set when url is used");
+        if( (url == null) && (path == null) ) {
+            throw new SvnAntValidationException( "url or path attributes must be set" );
+        }
+        if( (url != null) && (path != null) ) {
+            throw new SvnAntValidationException( "Either url or path attributes must be set" );
+        }
+        if( (url != null) && (message == null) ) {
+            throw new SvnAntValidationException( "Message attribute must be set when url is used" );
+        }
 
     }
 
-	/**
-	 * set the url of the new directory
-	 * @param url
-	 */
-    public void setUrl(SVNUrl url) {
+    /**
+     * set the url of the new directory
+     * @param url
+     */
+    public void setUrl( SVNUrl url ) {
         this.url = url;
     }
 
-	/**
-	 * set the path of the new directory
-	 * @param path
-	 */
-    public void setPath(File path) {
+    /**
+     * set the path of the new directory
+     * @param path
+     */
+    public void setPath( File path ) {
         this.path = path;
     }
 
-	/**
-	 * set the message for commit (only when using url)
-	 * @param message
-	 */
-    public void setMessage(String message) {
+    /**
+     * set the message for commit (only when using url)
+     * @param message
+     */
+    public void setMessage( String message ) {
         this.message = message;
     }
 

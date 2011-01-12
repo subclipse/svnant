@@ -51,18 +51,22 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant.commands;
 
-import java.io.File;
-import java.util.Vector;
-
-import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.types.FileSet;
-import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnAntValidationException;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
+
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnAntValidationException;
+
+import org.apache.tools.ant.types.FileSet;
+
+import org.apache.tools.ant.DirectoryScanner;
+
+import java.util.Vector;
+
+import java.io.File;
 
 /**
  * svn Update. Bring changes from the repository into the working copy.
@@ -71,139 +75,142 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
  *
  */
 public class Update extends SvnCommand {
-  
+
     /** file to update */
-    private File file = null;
-    
+    private File            file     = null;
+
     /** dir to update */
-    private File dir = null;
-    
+    private File            dir      = null;
+
     /** filesets to update */
-    private Vector<FileSet> filesets = new Vector<FileSet>(); 
-    
-    private SVNRevision revision = SVNRevision.HEAD;
-    
-    private boolean recurse = true;
-  
-    public void execute() throws SvnAntException {
-      
-      if (file != null) {
-          try {
-              svnClient.update(file, revision, false);
-          } catch (SVNClientException e) {
-              throw new SvnAntException("Cannot update file "+file.getAbsolutePath(),e);
-          }
-      }
-        
-      if (dir != null) {
-          try {
-              svnClient.update(dir, revision, recurse);
-          } catch (SVNClientException e) {
-              throw new SvnAntException("Cannot update dir "+dir.getAbsolutePath(),e);
-          }     
-      }
-      
-      // deal with filesets
-      if (filesets.size() > 0) {
-          for (int i = 0; i < filesets.size(); i++) {
-              FileSet fs = filesets.elementAt(i);
-              updateFileSet(fs);
-          }
-      }
-    }
-  
+    private Vector<FileSet> filesets = new Vector<FileSet>();
+
+    private SVNRevision     revision = SVNRevision.HEAD;
+
+    private boolean         recurse  = true;
+
     /**
-     * Ensure we have a consistent and legal set of attributes
+     * {@inheritDoc}
+     */
+    public void execute() throws SvnAntException {
+
+        if( file != null ) {
+            try {
+                svnClient.update( file, revision, false );
+            } catch( SVNClientException e ) {
+                throw new SvnAntException( "Cannot update file " + file.getAbsolutePath(), e );
+            }
+        }
+
+        if( dir != null ) {
+            try {
+                svnClient.update( dir, revision, recurse );
+            } catch( SVNClientException e ) {
+                throw new SvnAntException( "Cannot update dir " + dir.getAbsolutePath(), e );
+            }
+        }
+
+        // deal with filesets
+        if( filesets.size() > 0 ) {
+            for( int i = 0; i < filesets.size(); i++ ) {
+                FileSet fs = filesets.elementAt( i );
+                updateFileSet( fs );
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
      */
     protected void validateAttributes() throws SvnAntValidationException {
-        if ((file == null) && (dir == null) && (filesets.size() == 0)) {
-            throw new SvnAntValidationException("file, url or fileset must be set");
+        if( (file == null) && (dir == null) && (filesets.size() == 0) ) {
+            throw new SvnAntValidationException( "file, url or fileset must be set" );
         }
-        if (revision == null) {
+        if( revision == null ) {
             throw SvnAntValidationException.createInvalidRevisionException();
         }
     }
-  
+
     /**
      * updates a fileset (both dirs and files)
      * @param svnClient
      * @param fs
      * @throws SvnAntException
      */
-    private void updateFileSet(FileSet fs) throws SvnAntException {
-        DirectoryScanner ds = fs.getDirectoryScanner(getProject());
-        File baseDir = fs.getDir(getProject()); // base dir
+    private void updateFileSet( FileSet fs ) throws SvnAntException {
+        DirectoryScanner ds = fs.getDirectoryScanner( getProject() );
+        File baseDir = fs.getDir( getProject() ); // base dir
         String[] files = ds.getIncludedFiles();
         String[] dirs = ds.getIncludedDirectories();
-  
+
         // first : we update directories
-        for (int i = 0; i < dirs.length; i++) {
-            File aDir = new File(baseDir, dirs[i]);
+        for( int i = 0; i < dirs.length; i++ ) {
+            File aDir = new File( baseDir, dirs[i] );
             try {
-                svnClient.update(aDir,revision,false);
-            } catch (SVNClientException e) {
-                error("Cannot update directory " + aDir.getAbsolutePath());
+                svnClient.update( aDir, revision, false );
+            } catch( SVNClientException e ) {
+                error( "Cannot update directory " + aDir.getAbsolutePath() );
             }
         }
-  
+
         // then we update files
-        for (int i = 0; i < files.length; i++) {
-            File aFile = new File(baseDir, files[i]);
+        for( int i = 0; i < files.length; i++ ) {
+            File aFile = new File( baseDir, files[i] );
             try {
-                svnClient.update(aFile,revision,false);
-            } catch (SVNClientException e) {
-                error("Cannot update file " + aFile.getAbsolutePath());
+                svnClient.update( aFile, revision, false );
+            } catch( SVNClientException e ) {
+                error( "Cannot update file " + aFile.getAbsolutePath() );
             }
         }
     }
-  
+
     /**
      * set the file to update
      * @param file
      */
-    public void setFile(File file) {
+    public void setFile( File file ) {
         this.file = file;
     }
-  
+
     /**
      * set the directory to update
      * @param dir
      */
-    public void setDir(File dir) {
+    public void setDir( File dir ) {
         this.dir = dir;
     }
-    
+
     /**
      * if set, directory will be updated recursively 
      * @param recurse
      */
-    public void setRecurse(boolean recurse) {
+    public void setRecurse( boolean recurse ) {
         this.recurse = recurse;
     }
-    
+
     /**
      * Sets the revision
      * 
      * @param revision
      */
-    public void setRevision(String revision) {
-        this.revision = getRevisionFrom(revision);
+    public void setRevision( String revision ) {
+        this.revision = getRevisionFrom( revision );
     }
-  
+
     /**
      * Adds a set of files to update
      * @param set
      */
-    public void addFileset(FileSet set) {
-        filesets.addElement(set);
-    } 
-    
+    public void addFileset( FileSet set ) {
+        filesets.addElement( set );
+    }
+
     /**
      * Adds a set of files to update
      * @param set
      */
-    public void add(FileSet set) {
-        filesets.addElement(set);
-    } 
+    public void add( FileSet set ) {
+        filesets.addElement( set );
+    }
 
 }

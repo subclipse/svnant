@@ -51,60 +51,65 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant.commands;
 
-import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnAntValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNDirEntry;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnAntValidationException;
+
 /**
  * svn list. List resources from a repository.
+ * 
  * @author Daniel Kasmeroglu
  *         <a href="mailto:daniel.kasmeroglu@qvitech.com">daniel.kasmeroglu@qvitech.com</a>
  */
 public class List extends SvnCommand {
-  
+
     /** url to fetch the list from */
-    private SVNUrl url = null;
-  
+    private SVNUrl      url       = null;
+
     /** list recursively (complete tree) ? */
-    private boolean recurse = false;
+    private boolean     recurse   = false;
 
     /** revision to list */
-    private SVNRevision revision = SVNRevision.HEAD;
+    private SVNRevision revision  = SVNRevision.HEAD;
 
     /** list only the names (not the complete url) ? */
-    private boolean onlynames = false;
+    private boolean     onlynames = false;
 
     /** the delimiter to separate each item */
-    private String delimiter = ",";
-    
+    private String      delimiter = ",";
+
     /** list file resources. */
-    private boolean listFiles = true;
-    
+    private boolean     listFiles = true;
+
     /** list directory resources. */
-    private boolean listDirs = true;
+    private boolean     listDirs  = true;
 
-    /** the ant property we want to set with the listed content. */ 
-    private String property;
+    /** the ant property we want to set with the listed content. */
+    private String      property;
 
+    /**
+     * {@inheritDoc}
+     */
     public void execute() throws SvnAntException {
 
         try {
-            ISVNDirEntry[] content = svnClient.getList(url, revision, recurse);
+            ISVNDirEntry[] content = svnClient.getList( url, revision, recurse );
             int ignored = 0;
-            for (int i = 0; i < content.length; i++) {
-                if (content[i].getNodeKind() == SVNNodeKind.DIR) {
-                    if (!listDirs) {
+            for( int i = 0; i < content.length; i++ ) {
+                if( content[i].getNodeKind() == SVNNodeKind.DIR ) {
+                    if( !listDirs ) {
                         content[i] = null;
                         ignored++;
                     }
-                } else if (content[i].getNodeKind() == SVNNodeKind.FILE) {
-                    if (!listFiles) {
+                } else if( content[i].getNodeKind() == SVNNodeKind.FILE ) {
+                    if( !listFiles ) {
                         content[i] = null;
                         ignored++;
                     }
@@ -114,43 +119,43 @@ public class List extends SvnCommand {
                 }
             }
             StringBuffer value = new StringBuffer();
-            if (ignored < content.length) {
+            if( ignored < content.length ) {
                 int pos = 0;
-                for (int i = 0; i < content.length; i++) {
-                    if (content[i] != null) {
-                        if (pos > 0) {
-                            value.append(delimiter);
+                for( int i = 0; i < content.length; i++ ) {
+                    if( content[i] != null ) {
+                        if( pos > 0 ) {
+                            value.append( delimiter );
                         }
                         String path = content[i].getPath();
-                        if (!onlynames) {
-                            path = url.appendPath(path).toString();
+                        if( !onlynames ) {
+                            path = url.appendPath( path ).toString();
                         }
-                        value.append(path);
+                        value.append( path );
                         pos++;
                     }
                 }
             }
-            getProject().setProperty(property, value.toString());
-        } catch (Exception e) {
-            throw new SvnAntException("Can't list", e);
+            getProject().setProperty( property, value.toString() );
+        } catch( Exception e ) {
+            throw new SvnAntException( "Can't list", e );
         }
     }
 
     /**
-     * Ensure we have a consistent and legal set of attributes
+     * {@inheritDoc}
      */
     protected void validateAttributes() throws SvnAntValidationException {
-        if (url == null) {
-            throw new SvnAntValidationException("url must be set");
+        if( url == null ) {
+            throw new SvnAntValidationException( "url must be set" );
         }
-        if (revision == null) {
+        if( revision == null ) {
             throw SvnAntValidationException.createInvalidRevisionException();
         }
-        if ((delimiter == null) || (delimiter.length() == 0)) {
-            throw new SvnAntValidationException("delimiter is not allowed to be empty");
+        if( (delimiter == null) || (delimiter.length() == 0) ) {
+            throw new SvnAntValidationException( "delimiter is not allowed to be empty" );
         }
-        if ((property == null) || (property.length() == 0)) {
-            throw new SvnAntValidationException("property is not allowed to be empty");
+        if( (property == null) || (property.length() == 0) ) {
+            throw new SvnAntValidationException( "property is not allowed to be empty" );
         }
     }
 
@@ -158,7 +163,7 @@ public class List extends SvnCommand {
      * Enables/disables the listing of file entries.
      * @param enable   <code>true</code> <=> List only file resources.
      */
-    public void setListFiles(boolean enable) {
+    public void setListFiles( boolean enable ) {
         this.listFiles = enable;
     }
 
@@ -166,23 +171,23 @@ public class List extends SvnCommand {
      * Enables/disables the listing of directory entries.
      * @param enable   <code>true</code> <=> List only directory resources.
      */
-    public void setListDirs(boolean enable) {
+    public void setListDirs( boolean enable ) {
         this.listDirs = enable;
     }
-    
+
     /**
      * Enables/disables the listing of names only.
      * @param enable   <code>true</code> <=> List only the names.
      */
-    public void setOnlyNames(boolean enable) {
+    public void setOnlyNames( boolean enable ) {
         this.onlynames = enable;
     }
-    
+
     /**
      * Changes the delimiter to be used for the list.
      * @param newdelimiter   The new delimiter to be used for the list.
      */
-    public void setDelimiter(String newdelimiter) {
+    public void setDelimiter( String newdelimiter ) {
         this.delimiter = newdelimiter;
     }
 
@@ -190,7 +195,7 @@ public class List extends SvnCommand {
      * Sets the URL; required.
      * @param url The url to set
      */
-    public void setUrl(SVNUrl url) {
+    public void setUrl( SVNUrl url ) {
         this.url = url;
     }
 
@@ -199,22 +204,22 @@ public class List extends SvnCommand {
      * 
      * @param revision
      */
-    public void setRevision(String revision) {
-        this.revision = getRevisionFrom(revision);
+    public void setRevision( String revision ) {
+        this.revision = getRevisionFrom( revision );
     }
 
     /**
      * @param property The property to set.
      */
-    public void setProperty(String property) {
+    public void setProperty( String property ) {
         this.property = property;
     }
-    
+
     /**
      * Enables recurse creation of the listing.
      * @param recurse   <code>true</code> <=> Recurse traversal of the listing.
      */
-    public void setRecurse(boolean recurse) {
+    public void setRecurse( boolean recurse ) {
         this.recurse = recurse;
     }
 

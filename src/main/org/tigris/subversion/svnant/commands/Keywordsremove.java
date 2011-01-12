@@ -51,16 +51,19 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant.commands;
 
-import java.io.File;
-
-import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.types.FileSet;
-import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNKeywords;
+
+import org.tigris.subversion.svnant.SvnAntException;
+
+import org.apache.tools.ant.types.FileSet;
+
+import org.apache.tools.ant.DirectoryScanner;
+
+import java.io.File;
 
 /**
  * remove some keywords on given files
@@ -69,37 +72,32 @@ import org.tigris.subversion.svnclientadapter.SVNKeywords;
  *
  */
 public class Keywordsremove extends Keywords {
-   
-  /* (non-Javadoc)
-   * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
-   */
-  public void execute() throws SvnAntException {
-        super.execute();        
 
-        if (file != null) {
-            try {            
-                svnClient.removeKeywords(file,keywords);
-            } catch (SVNClientException e) {
-                throw new SvnAntException("Can't remove keywords on file "+file.toString(), e);
+    /**
+     * {@inheritDoc}
+     */
+    public void execute() throws SvnAntException {
+        super.execute();
+        if( file != null ) {
+            try {
+                svnClient.removeKeywords( file, keywords );
+            } catch( SVNClientException e ) {
+                throw new SvnAntException( "Can't remove keywords on file " + file.toString(), e );
+            }
+        } else if( dir != null ) {
+            try {
+                svnClient.removeKeywords( dir, keywords );
+            } catch( SVNClientException e ) {
+                throw new SvnAntException( "Can't remove keywords on directory " + dir.toString(), e );
+            }
+        } else if( filesets.size() > 0 ) {
+            // deal with filesets
+            for( int i = 0; i < filesets.size(); i++ ) {
+                FileSet fs = filesets.elementAt( i );
+                keywordsRemove( fs, keywords );
             }
         }
-        else
-        if (dir != null) {
-            try {            
-                svnClient.removeKeywords(dir,keywords);
-            } catch (SVNClientException e) {
-                throw new SvnAntException("Can't remove keywords on directory "+dir.toString(), e);
-            }            
-        }
-        else
-        // deal with filesets
-        if (filesets.size() > 0) {
-            for (int i = 0; i < filesets.size(); i++) {
-                FileSet fs = filesets.elementAt(i);
-                keywordsRemove(fs,keywords);
-            }
-        }
-  }
+    }
 
     /**
      * add keywords on a fileset 
@@ -107,17 +105,16 @@ public class Keywordsremove extends Keywords {
      * @param fs
      * @throws SvnAntException
      */
-    private void keywordsRemove(FileSet fs, SVNKeywords theKeywords) throws SvnAntException {
-        DirectoryScanner ds = fs.getDirectoryScanner(getProject());
-        File baseDir = fs.getDir(getProject()); // base dir
+    private void keywordsRemove( FileSet fs, SVNKeywords theKeywords ) throws SvnAntException {
+        DirectoryScanner ds = fs.getDirectoryScanner( getProject() );
+        File baseDir = fs.getDir( getProject() ); // base dir
         String[] files = ds.getIncludedFiles();
-
-        for (int i = 0; i < files.length; i++) {
-            File aFile = new File(baseDir, files[i]);
+        for( int i = 0; i < files.length; i++ ) {
+            File aFile = new File( baseDir, files[i] );
             try {
-                svnClient.removeKeywords(aFile,theKeywords);
-            } catch (SVNClientException e) {
-                throw new SvnAntException("Can't set keywords on file "+aFile.toString(), e);
+                svnClient.removeKeywords( aFile, theKeywords );
+            } catch( SVNClientException e ) {
+                throw new SvnAntException( "Can't set keywords on file " + aFile.toString(), e );
             }
         }
     }

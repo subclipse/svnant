@@ -51,15 +51,16 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant.commands;
 
-import java.io.File;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnant.SvnAntValidationException;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
+
+import java.io.File;
 
 /**
  * @author cedric
@@ -68,68 +69,70 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  */
 public class Import extends SvnCommand {
 
-	/** the url */
-    private SVNUrl url = null;
+    /** the url */
+    private SVNUrl  url     = null;
 
     /** the path to import */
-    private File path = null;
-    
-	/** message */
-	private String message = null;	
+    private File    path    = null;
 
-	private boolean recurse = true;
+    /** message */
+    private String  message = null;
 
+    private boolean recurse = true;
+
+    /**
+     * {@inheritDoc}
+     */
     public void execute() throws SvnAntException {
-
         try {
-        	svnClient.doImport(path, url, message, recurse);
-        } catch (SVNClientException e) {
-            throw new SvnAntException("Can't import", e);
+            svnClient.doImport( path, url, message, recurse );
+        } catch( SVNClientException e ) {
+            throw new SvnAntException( "Can't import", e );
         }
-
     }
 
     /**
-     * Ensure we have a consistent and legal set of attributes
+     * {@inheritDoc}
      */
     protected void validateAttributes() throws SvnAntValidationException {
-    	if ((url == null) || (path == null))
-    		throw new SvnAntValidationException("url and path attributes must be set");
-    	if (message == null)
-    		throw new SvnAntValidationException("message attribute must be set");
+        if( (url == null) || (path == null) ) {
+            throw new SvnAntValidationException( "url and path attributes must be set" );
+        }
+        if( message == null ) {
+            throw new SvnAntValidationException( "message attribute must be set" );
+        }
     }
-    
+
     /**
      * set the url to import to
      * @param url
      */
-    public void setUrl(SVNUrl url) {
-    	this.url = url;
+    public void setUrl( SVNUrl url ) {
+        this.url = url;
     }
-    
+
     /**
      * set the path to import from
      * @param path
      */
-    public void setPath(File path) {
-    	this.path = path;
+    public void setPath( File path ) {
+        this.path = path;
     }
-    
-    
+
     /**
      * set the message for immediate commit
      * @param message
      */
-    public void setMessage(String message) {
-    	this.message = message;
+    public void setMessage( String message ) {
+        this.message = message;
     }
 
-	/**
-	 * if not set, import will operate on single directory only  
-	 * @param recurse
-	 */
-	public void setRecurse(boolean recurse) {
-		this.recurse = recurse;    
-	}
-    
+    /**
+     * if not set, import will operate on single directory only  
+     * @param recurse
+     */
+    public void setRecurse( boolean recurse ) {
+        this.recurse = recurse;
+    }
+
 }

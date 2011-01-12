@@ -51,17 +51,21 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant.commands;
 
-import java.io.File;
-import java.util.Vector;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
 
-import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.types.FileSet;
 import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnant.SvnAntValidationException;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
+
+import org.apache.tools.ant.types.FileSet;
+
+import org.apache.tools.ant.DirectoryScanner;
+
+import java.util.Vector;
+
+import java.io.File;
 
 /**
  * svn Revert. Restore pristine working copy file (undo most local edits)
@@ -70,52 +74,55 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
  *
  */
 public class Revert extends SvnCommand {
-  
+
     /** file to revert */
-    private File file = null;
-    
+    private File            file     = null;
+
     /** dir to revert */
-    private File dir = null;
-      
+    private File            dir      = null;
+
     /** descend recursively */
-    private boolean recurse = false;
-    
+    private boolean         recurse  = false;
+
     /** filesets to revert */
-    private Vector<FileSet> filesets = new Vector<FileSet>(); 
-    
+    private Vector<FileSet> filesets = new Vector<FileSet>();
+
+    /**
+     * {@inheritDoc}
+     */
     public void execute() throws SvnAntException {
-      
-      if (file != null) {
-          revertFile(file,false);
-      }
-      
-      if (dir != null) {
-          revertFile(dir,recurse);
-      }
-      
-      // deal with filesets
-      if (filesets.size() > 0) {
-          for (int i = 0; i < filesets.size(); i++) {
-              FileSet fs = filesets.elementAt(i);
-              revertFileSet(fs);
-          }
-      }
+
+        if( file != null ) {
+            revertFile( file, false );
+        }
+
+        if( dir != null ) {
+            revertFile( dir, recurse );
+        }
+
+        // deal with filesets
+        if( filesets.size() > 0 ) {
+            for( int i = 0; i < filesets.size(); i++ ) {
+                FileSet fs = filesets.elementAt( i );
+                revertFileSet( fs );
+            }
+        }
     }
 
     /**
-     * Ensure we have a consistent and legal set of attributes
+     * {@inheritDoc}
      */
     protected void validateAttributes() throws SvnAntValidationException {
-        if (file != null) {
-            if (dir != null) {
-                throw new SvnAntValidationException("Don't use both file and dir attribute");
+        if( file != null ) {
+            if( dir != null ) {
+                throw new SvnAntValidationException( "Don't use both file and dir attribute" );
             }
-            if (filesets.size() > 0) {
-                throw new SvnAntValidationException("Don't use both file attribute and filesets");
+            if( filesets.size() > 0 ) {
+                throw new SvnAntValidationException( "Don't use both file attribute and filesets" );
             }
-        } else if (dir != null) {
-            if (filesets.size() > 0) {
-                throw new SvnAntValidationException("Don't use both file attribute and filesets");
+        } else if( dir != null ) {
+            if( filesets.size() > 0 ) {
+                throw new SvnAntValidationException( "Don't use both file attribute and filesets" );
             }
         }
     }
@@ -127,11 +134,11 @@ public class Revert extends SvnCommand {
      * @param force
      * @throws SvnAntException
      */
-    private void revertFile(File aFile, boolean doRecurse) throws SvnAntException {
+    private void revertFile( File aFile, boolean doRecurse ) throws SvnAntException {
         try {
-            svnClient.revert(aFile, doRecurse);
-        } catch (SVNClientException e) {
-          throw new SvnAntException("Cannot revert file or directory "+aFile.getAbsolutePath(),e);
+            svnClient.revert( aFile, doRecurse );
+        } catch( SVNClientException e ) {
+            throw new SvnAntException( "Cannot revert file or directory " + aFile.getAbsolutePath(), e );
         }
     }
 
@@ -141,29 +148,29 @@ public class Revert extends SvnCommand {
      * @param fs
      * @throws SvnAntException
      */
-    private void revertFileSet(FileSet fs) throws SvnAntException {
-        DirectoryScanner ds = fs.getDirectoryScanner(getProject());
-        File baseDir = fs.getDir(getProject()); // base dir
+    private void revertFileSet( FileSet fs ) throws SvnAntException {
+        DirectoryScanner ds = fs.getDirectoryScanner( getProject() );
+        File baseDir = fs.getDir( getProject() ); // base dir
         String[] files = ds.getIncludedFiles();
         String[] dirs = ds.getIncludedDirectories();
-        File[] filesAndDirs = new File[files.length+dirs.length];
+        File[] filesAndDirs = new File[files.length + dirs.length];
         int j = 0;
 
-        for (int i = 0; i < dirs.length; i++) {
-            filesAndDirs[j] = new File(baseDir, dirs[i]);
+        for( int i = 0; i < dirs.length; i++ ) {
+            filesAndDirs[j] = new File( baseDir, dirs[i] );
             j++;
         }
-        for (int i = 0; i < files.length; i++) {
-            filesAndDirs[j] = new File(baseDir, files[i]);
+        for( int i = 0; i < files.length; i++ ) {
+            filesAndDirs[j] = new File( baseDir, files[i] );
             j++;
         }
-        
+
         try {
-            for (int i = 0; i < filesAndDirs.length;i++) {
-                svnClient.revert(filesAndDirs[i],false);
+            for( int i = 0; i < filesAndDirs.length; i++ ) {
+                svnClient.revert( filesAndDirs[i], false );
             }
-        } catch (SVNClientException e) {
-            error("Cannot revert file " + file.getAbsolutePath());
+        } catch( SVNClientException e ) {
+            error( "Cannot revert file " + file.getAbsolutePath() );
         }
     }
 
@@ -171,7 +178,7 @@ public class Revert extends SvnCommand {
      * set file to revert
      * @param file
      */
-    public void setFile(File file) {
+    public void setFile( File file ) {
         this.file = file;
     }
 
@@ -179,15 +186,15 @@ public class Revert extends SvnCommand {
      * set directory to revert
      * @param dir
      */
-    public void setDir(File dir) {
+    public void setDir( File dir ) {
         this.dir = dir;
     }
-  
+
     /**
      * Set the recurse flag
      * @param recurse
      */
-    public void setRecurse(boolean recurse) {
+    public void setRecurse( boolean recurse ) {
         this.recurse = recurse;
     }
 
@@ -195,16 +202,16 @@ public class Revert extends SvnCommand {
      * Adds a set of files to add
      * @param set
      */
-    public void addFileset(FileSet set) {
-        filesets.addElement(set);
-    } 
-  
+    public void addFileset( FileSet set ) {
+        filesets.addElement( set );
+    }
+
     /**
      * Adds a set of files to add
      * @param set
      */
-    public void add(FileSet set) {
-        filesets.addElement(set);
-    } 
-  
+    public void add( FileSet set ) {
+        filesets.addElement( set );
+    }
+
 }

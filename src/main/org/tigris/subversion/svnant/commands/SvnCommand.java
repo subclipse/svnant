@@ -51,24 +51,27 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant.commands;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
+import org.tigris.subversion.svnclientadapter.utils.StringUtils;
+
+import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.SVNRevision;
+
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnAntValidationException;
+import org.tigris.subversion.svnant.SvnTask;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectComponent;
-import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnAntValidationException;
-import org.tigris.subversion.svnant.SvnTask;
-import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
-import org.tigris.subversion.svnclientadapter.SVNRevision;
-import org.tigris.subversion.svnclientadapter.utils.StringUtils;
 
+import java.util.Date;
+import java.util.TimeZone;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 /**
  * All ant svn commands inherits from this abstract class
@@ -76,12 +79,13 @@ import org.tigris.subversion.svnclientadapter.utils.StringUtils;
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  */
 public abstract class SvnCommand extends ProjectComponent {
-    
-    protected SvnTask task;
+
+    protected SvnTask           task;
+
     protected ISVNClientAdapter svnClient;
 
     protected abstract void validateAttributes() throws SvnAntValidationException;
-    
+
     /**
      * Execute the command.
      * @throws SvnAntException in case an error was encountered during execution
@@ -93,32 +97,31 @@ public abstract class SvnCommand extends ProjectComponent {
      * @param svnClientAdapter
      * @throws BuildException
      */
-    public final void executeCommand(ISVNClientAdapter svnClientAdapter) throws BuildException
-    {
+    public final void executeCommand( ISVNClientAdapter svnClientAdapter ) throws BuildException {
         this.svnClient = svnClientAdapter;
-        String[] nameSegments = StringUtils.split(getClass().getName(), ".");
-        String className = "<" + nameSegments[nameSegments.length -1] + ">"; 
-            
-        info(className + " started ...");
+        String[] nameSegments = StringUtils.split( getClass().getName(), "." );
+        String className = "<" + nameSegments[nameSegments.length - 1] + ">";
+
+        info( className + " started ..." );
         try {
             validateAttributes();
             execute();
-        } catch (SvnAntException ex) {
-            if (this.task.isFailonerror()) {
-                info(className + " failed !");
-                throw new BuildException(ex.getMessage(), ex.getCause());
+        } catch( SvnAntException ex ) {
+            if( this.task.isFailonerror() ) {
+                info( className + " failed !" );
+                throw new BuildException( ex.getMessage(), ex.getCause() );
             } else {
-                error(className + " failed :" + ex.getLocalizedMessage());
+                error( className + " failed :" + ex.getLocalizedMessage() );
             }
-        } catch (SvnAntValidationException e) {
-            if (this.task.isFailonerror()) {
-                info(className + " failed !");
-                throw new BuildException(e.getMessage());
+        } catch( SvnAntValidationException e ) {
+            if( this.task.isFailonerror() ) {
+                info( className + " failed !" );
+                throw new BuildException( e.getMessage() );
             } else {
-                error(className + " failed :" + e.getLocalizedMessage());
+                error( className + " failed :" + e.getLocalizedMessage() );
             }
         }
-        info(className + " finished.");
+        info( className + " finished." );
     }
 
     /**
@@ -131,7 +134,7 @@ public abstract class SvnCommand extends ProjectComponent {
     /**
      * @param task the task to set
      */
-    public void setTask(SvnTask task) {
+    public void setTask( SvnTask task ) {
         this.task = task;
     }
 
@@ -141,32 +144,29 @@ public abstract class SvnCommand extends ProjectComponent {
      * @param revision
      * @return SVNRevision constructed from given string or null if unable to do so 
      */
-    public SVNRevision getRevisionFrom(String revision)
-    {
+    public SVNRevision getRevisionFrom( String revision ) {
         try {
-            return SVNRevision.getRevision(revision, getDateFormatter());
-        } catch (ParseException e) {
-            warning("Unable to parse revision string");
+            return SVNRevision.getRevision( revision, getDateFormatter() );
+        } catch( ParseException e ) {
+            warning( "Unable to parse revision string" );
             return null;
         }
     }
-    
+
     /**
      * Answer a given date as string formatted according to current formatter
      * @param aDate
      * @return a String representation of the date
      */
-    public String getDateStringFor(Date aDate)
-    {
-        return getDateFormatter().format(aDate);
+    public String getDateStringFor( Date aDate ) {
+        return getDateFormatter().format( aDate );
     }
-    
-    private SimpleDateFormat getDateFormatter()
-    {
-        final SimpleDateFormat formatter = new SimpleDateFormat(task.getDateFormatter());
+
+    private SimpleDateFormat getDateFormatter() {
+        final SimpleDateFormat formatter = new SimpleDateFormat( task.getDateFormatter() );
         final TimeZone timezone = task.getDateTimezone();
-        if (timezone != null) {
-            formatter.setTimeZone(timezone);
+        if( timezone != null ) {
+            formatter.setTimeZone( timezone );
         }
         return formatter;
     }
@@ -174,53 +174,63 @@ public abstract class SvnCommand extends ProjectComponent {
     /**
      * @see SvnTask#verbose(String, Object...)
      */
-    public void verbose( String fmt, Object ... args ) {
+    public void verbose( String fmt, Object... args ) {
         task.verbose( fmt, args );
     }
 
     /**
      * @see SvnTask#debug(String, Object...)
      */
-    public void debug( String fmt, Object ... args ) {
+    public void debug( String fmt, Object... args ) {
         task.debug( fmt, args );
     }
-    
+
     /**
      * @see SvnTask#warning(String, Object...)
      */
-    public void warning( String fmt, Object ... args ) {
+    public void warning( String fmt, Object... args ) {
         task.warning( fmt, args );
     }
 
     /**
      * @see SvnTask#info(boolean, String, Object...)
      */
-    public void info( boolean verbose, String fmt, Object ... args ) {
+    public void info( boolean verbose, String fmt, Object... args ) {
         task.info( verbose, fmt, args );
     }
 
     /**
      * @see SvnTask#info(String, Object...)
      */
-    public void info( String fmt, Object ... args ) {
+    public void info( String fmt, Object... args ) {
         task.info( fmt, args );
     }
 
     /**
      * @see SvnTask#error(String, Object...)
      */
-    public void error( String fmt, Object ... args ) {
+    public void error( String fmt, Object... args ) {
         task.error( fmt, args );
     }
 
-    public void log(String message)
-    {
-        getProject().log(this.task, message, Project.MSG_INFO);
+    /**
+     * {@inheritDoc}
+     */
+    public void log( String message ) {
+        info( message );
     }
 
-    public void log(String message, int level)
-    {
-        getProject().log(this.task, message, level);
+    /**
+     * {@inheritDoc}
+     */
+    public void log( String message, int level ) {
+        switch( level ) {
+        case Project.MSG_DEBUG      : debug( message ); break;
+        case Project.MSG_ERR        : error( message ); break;
+        case Project.MSG_INFO       : info( message ); break;
+        case Project.MSG_VERBOSE    : verbose( message ); break;
+        case Project.MSG_WARN       : warning( message ); break;
+        }
     }
 
 }

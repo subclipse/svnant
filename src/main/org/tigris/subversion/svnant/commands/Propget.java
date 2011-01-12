@@ -51,18 +51,19 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant.commands;
+
+import org.tigris.subversion.svnclientadapter.ISVNProperty;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
+
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnAntValidationException;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
-import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnAntValidationException;
-import org.tigris.subversion.svnclientadapter.ISVNProperty;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 /**
  * svn propget. Get a property
@@ -71,104 +72,111 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  *
  */
 public class Propget extends SvnCommand {
-    
+
     // path of the resource from which we want to get the property
-    private File path;
+    private File   path;
 
     // url of the resource from which we want to get the property
     private SVNUrl url;
 
     // the name of the svn property we want to get
     private String name;
-    
+
     // the ant property we want to set with the value of the svn property 
     private String property;
-    
-    // file to which we want to write the property to
-    private File file;
-    
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
-	 */
-	public void execute() throws SvnAntException {
 
+    // file to which we want to write the property to
+    private File   file;
+
+    /**
+     * {@inheritDoc}
+     */
+    public void execute() throws SvnAntException {
+        
         ISVNProperty svnProperty;
         try {
-        	if (path != null) {
-        		svnProperty = svnClient.propertyGet(path,name);
-        	} else {
-        		svnProperty = svnClient.propertyGet(url,name);
-        	}
-        } catch (SVNClientException e) {
-            throw new SvnAntException("Can't get property "+name, e);
+            if( path != null ) {
+                svnProperty = svnClient.propertyGet( path, name );
+            } else {
+                svnProperty = svnClient.propertyGet( url, name );
+            }
+        } catch( SVNClientException e ) {
+            throw new SvnAntException( "Can't get property " + name, e );
         }
-        
-        if (property != null && svnProperty != null) {
-            getProject().setProperty(property, svnProperty.getValue());
+
+        if( property != null && svnProperty != null ) {
+            getProject().setProperty( property, svnProperty.getValue() );
         }
-        
-        if (file != null) {
+
+        if( file != null ) {
             FileOutputStream os = null;
             try {
-            	os = new FileOutputStream(file);
-            	if (svnProperty != null) {
-            		os.write(svnProperty.getData());
-            	}            	
-            } catch (IOException e) {
-                throw new SvnAntException("Can't write property value to file "+file.toString(), e);
+                os = new FileOutputStream( file );
+                if( svnProperty != null ) {
+                    os.write( svnProperty.getData() );
+                }
+            } catch( IOException e ) {
+                throw new SvnAntException( "Can't write property value to file " + file.toString(), e );
             } finally {
-                if (os != null) {
-                	try {
-                		os.close();
-                    } catch (IOException e) {
-                    	//An exception during close. Just ignore.
+                if( os != null ) {
+                    try {
+                        os.close();
+                    } catch( IOException e ) {
+                        //An exception during close. Just ignore.
                     }
                 }
             }
-        }   
-	}
+        }
+    }
 
     /**
-     * Ensure we have a consistent and legal set of attributes
+     * {@inheritDoc}
      */
     protected void validateAttributes() throws SvnAntValidationException {
-        if (((path == null) && (url == null))
-                || ((path != null) && (url != null)))
-            throw new SvnAntValidationException("path attribute or url attribute must be set");
-        if (name == null)
-            throw new SvnAntValidationException("svnPropertyName attribute must be set");
-        if ((property == null) && (file == null))
-            throw new SvnAntValidationException("property or file attribute must be set");
+        if( ((path == null) && (url == null)) || ((path != null) && (url != null)) ) {
+            throw new SvnAntValidationException( "path attribute or url attribute must be set" );
+        }
+        if( name == null ) {
+            throw new SvnAntValidationException( "svnPropertyName attribute must be set" );
+        }
+        if( (property == null) && (file == null) ) {
+            throw new SvnAntValidationException( "property or file attribute must be set" );
+        }
+    }
+
+    /**
+     * @param file The file to set.
+     */
+    public void setFile( File file ) {
+        this.file = file;
+    }
+
+    /**
+     * @param path The path to set.
+     */
+    public void setPath( File path ) {
+        this.path = path;
+    }
+
+    /**
+     * @param url The url to set.
+     */
+    public void setUrl( SVNUrl url ) {
+        this.url = url;
+    }
+
+    /**
+     * @param property The property to set.
+     */
+    public void setProperty( String property ) {
+        this.property = property;
+    }
+
+    /**
+     * @param name The name to set.
+     */
+    public void setName( String name ) {
+        this.name = name;
     }
     
-	/**
-	 * @param file The file to set.
-	 */
-	public void setFile(File file) {
-		this.file = file;
-	}
-	/**
-	 * @param path The path to set.
-	 */
-	public void setPath(File path) {
-		this.path = path;
-	}
-	/**
-	 * @param url The url to set.
-	 */
-	public void setUrl(SVNUrl url) {
-		this.url = url;
-	}
-	/**
-	 * @param property The property to set.
-	 */
-	public void setProperty(String property) {
-		this.property = property;
-	}
-	/**
-	 * @param name The name to set.
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
 }

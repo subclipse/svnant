@@ -51,16 +51,17 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant.commands;
 
-import java.io.File;
-
-import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnAntValidationException;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
+
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnAntValidationException;
+
+import java.io.File;
 
 /**
  * svn Copy. Duplicate something in working copy or repos, remembering history.
@@ -69,58 +70,59 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  *
  */
 public class Copy extends SvnCommand {
-  
-    private File srcPath = null;
-    private File destPath = null;
-    private SVNUrl srcUrl = null;
-    private SVNUrl destUrl = null;
-    private boolean makeparents = false;
-    
+
+    private File        srcPath     = null;
+    private File        destPath    = null;
+    private SVNUrl      srcUrl      = null;
+    private SVNUrl      destUrl     = null;
+    private boolean     makeparents = false;
+
     /** revision to copy from (head by default) */
-    private SVNRevision revision = SVNRevision.HEAD; 
-    
+    private SVNRevision revision    = SVNRevision.HEAD;
+
     /** message for commit (only when target is an url) */
-    private String message = null; 
+    private String      message     = null;
 
+    /**
+     * {@inheritDoc}
+     */
     public void execute() throws SvnAntException {
-
         try {
-            if (srcPath != null) {
-                if (destPath != null) {
-                    svnClient.copy(srcPath, destPath);
+            if( srcPath != null ) {
+                if( destPath != null ) {
+                    svnClient.copy( srcPath, destPath );
                 } else {
-                    svnClient.copy(srcPath, destUrl, message);
+                    svnClient.copy( srcPath, destUrl, message );
                 }
             } else {
-              if (destPath != null) {
-                  svnClient.copy(srcUrl,destPath,revision);
-              } else {
-                  svnClient.copy(srcUrl,destUrl,message, revision, makeparents);
-              }
+                if( destPath != null ) {
+                    svnClient.copy( srcUrl, destPath, revision );
+                } else {
+                    svnClient.copy( srcUrl, destUrl, message, revision, makeparents );
+                }
             }
-        } catch (SVNClientException e) {
-            throw new SvnAntException("Can't copy", e);
+        } catch( SVNClientException e ) {
+            throw new SvnAntException( "Can't copy", e );
         }
-
     }
 
     /**
-     * Ensure we have a consistent and legal set of attributes
+     * {@inheritDoc}
      */
     protected void validateAttributes() throws SvnAntValidationException {
-        if (((srcPath == null) && (srcUrl == null)) || ((srcPath != null) && (srcUrl != null))) {
-            throw new SvnAntValidationException("srcPath attribute or srcUrl attribute must be set");
+        if( ((srcPath == null) && (srcUrl == null)) || ((srcPath != null) && (srcUrl != null)) ) {
+            throw new SvnAntValidationException( "srcPath attribute or srcUrl attribute must be set" );
         }
-        if (((destPath == null) && (destUrl == null)) || ((destPath != null) && (destUrl != null))) {
-            throw new SvnAntValidationException("destPath attribute or destUrl attribute must be set");
+        if( ((destPath == null) && (destUrl == null)) || ((destPath != null) && (destUrl != null)) ) {
+            throw new SvnAntValidationException( "destPath attribute or destUrl attribute must be set" );
         }
-        if ((destUrl != null) && (message == null)) {
-            throw new SvnAntValidationException("message attribute needed when destUrl is set");
+        if( (destUrl != null) && (message == null) ) {
+            throw new SvnAntValidationException( "message attribute needed when destUrl is set" );
         }
-        if ((destUrl == null) && (message != null)) {
-            throw new SvnAntValidationException("message attribute cannot be used when destUrl is not set");
+        if( (destUrl == null) && (message != null) ) {
+            throw new SvnAntValidationException( "message attribute cannot be used when destUrl is not set" );
         }
-        if (revision == null) {
+        if( revision == null ) {
             throw SvnAntValidationException.createInvalidRevisionException();
         }
     }
@@ -129,7 +131,7 @@ public class Copy extends SvnCommand {
      * set the path to copy from
      * @param srcPath
      */
-    public void setSrcPath(File srcPath) {
+    public void setSrcPath( File srcPath ) {
         this.srcPath = srcPath;
     }
 
@@ -137,7 +139,7 @@ public class Copy extends SvnCommand {
      * set the path to copy to
      * @param destPath
      */
-    public void setDestPath(File destPath) {
+    public void setDestPath( File destPath ) {
         this.destPath = destPath;
     }
 
@@ -145,7 +147,7 @@ public class Copy extends SvnCommand {
      * set the url to copy from
      * @param srcUrl
      */
-    public void setSrcUrl(SVNUrl srcUrl) {
+    public void setSrcUrl( SVNUrl srcUrl ) {
         this.srcUrl = srcUrl;
     }
 
@@ -153,7 +155,7 @@ public class Copy extends SvnCommand {
      * set the url to copy to
      * @param destUrl
      */
-    public void setDestUrl(SVNUrl destUrl) {
+    public void setDestUrl( SVNUrl destUrl ) {
         this.destUrl = destUrl;
     }
 
@@ -162,7 +164,7 @@ public class Copy extends SvnCommand {
      * using an url)
      * @param message
      */
-    public void setMessage(String message) {
+    public void setMessage( String message ) {
         this.message = message;
     }
 
@@ -171,8 +173,8 @@ public class Copy extends SvnCommand {
      * 
      * @param revision
      */
-    public void setRevision(String revision) {
-        this.revision = getRevisionFrom(revision);
+    public void setRevision( String revision ) {
+        this.revision = getRevisionFrom( revision );
     }
 
     /**
@@ -181,7 +183,7 @@ public class Copy extends SvnCommand {
      * 
      * @param newmakeparents   <code>true</code> <=> Create parents first.
      */
-    public void setMakeParents(boolean newmakeparents) {
+    public void setMakeParents( boolean newmakeparents ) {
         this.makeparents = newmakeparents;
     }
 

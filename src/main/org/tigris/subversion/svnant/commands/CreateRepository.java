@@ -51,14 +51,15 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant.commands;
 
-import java.io.File;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnant.SvnAntValidationException;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
+
+import java.io.File;
 
 /**
  * Create a new, empty repository at path.
@@ -66,46 +67,47 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
  * @author Cédric Chabanois (cchabanois at no-log.org)
  */
 public class CreateRepository extends SvnCommand {
-	/** path of the repository to create */
-	private File path = null;
-	
-	/** the type of the repository to create */
-	private String repositoryType = null;
+
+    /** path of the repository to create */
+    private File   path           = null;
+
+    /** the type of the repository to create */
+    private String repositoryType = null;
+
+    /**
+     * {@inheritDoc}
+     */
+    public void execute() throws SvnAntException {
+        try {
+            svnClient.createRepository( path, repositoryType );
+        } catch( SVNClientException e ) {
+            throw new SvnAntException( "Cannot create repository at " + path.getAbsolutePath(), e );
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected void validateAttributes() throws SvnAntValidationException {
+        if( path == null ) {
+            throw new SvnAntValidationException( "Path attribute must be set" );
+        }
+    }
+
+    /**
+     * @param path The path to set.
+     */
+    public void setPath( File path ) {
+        this.path = path;
+    }
+
+    /**
+     * set the repository type : either fsfs or bdb
+     * 
+     * @param repositoryType The repositoryType to set.
+     */
+    public void setRepositoryType( String repositoryType ) {
+        this.repositoryType = repositoryType;
+    }
     
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
-	 */
-	public void execute() throws SvnAntException {
-
-		try {
-			svnClient.createRepository(path,repositoryType);
-		} catch (SVNClientException e) {
-			throw new SvnAntException("Cannot create repository at "+path.getAbsolutePath(),e);
-		}		
-	}
-
-	/**
-	 * Ensure we have a consistent and legal set of attributes
-	 */
-	protected void validateAttributes() throws SvnAntValidationException {
-		if (path == null)
-			throw new SvnAntValidationException("Path attribute must be set"); 
-	}	
-	
-	/**
-	 * @param path The path to set.
-	 */
-	public void setPath(File path) {
-		this.path = path;
-	}
-	
-	
-	/**
-	 * set the repository type : either fsfs or bdb
-	 * 
-	 * @param repositoryType The repositoryType to set.
-	 */
-	public void setRepositoryType(String repositoryType) {
-		this.repositoryType = repositoryType;
-	}
 }

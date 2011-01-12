@@ -51,16 +51,17 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant.commands;
 
-import java.io.File;
-
-import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnAntValidationException;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
+
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnAntValidationException;
+
+import java.io.File;
 
 /**
  * svn Export.   
@@ -69,90 +70,94 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  * @author Cédric Chabanois 
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  *
- */public class Export extends SvnCommand {
+ */
+public class Export extends SvnCommand {
 
-	 private boolean force = false;
-    
+    private boolean     force    = false;
+
     /** the source url */
-    private SVNUrl srcUrl = null;
-    
+    private SVNUrl      srcUrl   = null;
+
     /** the source path */
-    private File srcPath = null;
-    
+    private File        srcPath  = null;
+
     /** the destination path */
-    private File destPath = null;
-	
-	/** revision to checkout (only useful when exporting directly from repository) */
-	private SVNRevision revision = SVNRevision.HEAD;    
+    private File        destPath = null;
 
+    /** revision to checkout (only useful when exporting directly from repository) */
+    private SVNRevision revision = SVNRevision.HEAD;
+
+    /**
+     * {@inheritDoc}
+     */
     public void execute() throws SvnAntException {
-
         try {
-			if (srcUrl != null)
-				svnClient.doExport(srcUrl,destPath,revision,force);
-			else
-				svnClient.doExport(srcPath,destPath,force);
-        } catch (SVNClientException e) {
-        	throw new SvnAntException("Can't export",e);
+            if( srcUrl != null ) {
+                svnClient.doExport( srcUrl, destPath, revision, force );
+            } else {
+                svnClient.doExport( srcPath, destPath, force );
+            }
+        } catch( SVNClientException e ) {
+            throw new SvnAntException( "Can't export", e );
         }
-
     }
 
     /**
-     * Ensure we have a consistent and legal set of attributes
+     * {@inheritDoc}
      */
     protected void validateAttributes() throws SvnAntValidationException {
-        if (destPath == null)
-            throw new SvnAntValidationException("destPath attribute must be set");
-
-        if ((srcUrl == null) && (srcPath == null))
-            throw new SvnAntValidationException("Either srcUrl or srcPath must be set");
-
-        if ((srcUrl != null) && (srcPath != null))
-            throw new SvnAntValidationException("Either srcUrl or srcPath must be set");
-        
-		if (revision == null)
-			throw SvnAntValidationException.createInvalidRevisionException();
+        if( destPath == null ) {
+            throw new SvnAntValidationException( "destPath attribute must be set" );
+        }
+        if( (srcUrl == null) && (srcPath == null) ) {
+            throw new SvnAntValidationException( "Either srcUrl or srcPath must be set" );
+        }
+        if( (srcUrl != null) && (srcPath != null) ) {
+            throw new SvnAntValidationException( "Either srcUrl or srcPath must be set" );
+        }
+        if( revision == null ) {
+            throw SvnAntValidationException.createInvalidRevisionException();
+        }
     }
 
-	/**
-	 * Sets the revision
-	 * 
-	 * @param revision
-	 */
-	public void setRevision(String revision) {
-		this.revision = getRevisionFrom(revision);
-	}
+    /**
+     * Sets the revision
+     * 
+     * @param revision
+     */
+    public void setRevision( String revision ) {
+        this.revision = getRevisionFrom( revision );
+    }
 
-	/**
-	 * set the url to export from
-	 * @param srcUrl
-	 */
-	public void setSrcUrl(SVNUrl srcUrl) {
-		this.srcUrl = srcUrl;
-	}
+    /**
+     * set the url to export from
+     * @param srcUrl
+     */
+    public void setSrcUrl( SVNUrl srcUrl ) {
+        this.srcUrl = srcUrl;
+    }
 
-	/**
-	 * set the path to export from
-	 * @param srcPath
-	 */
-	public void setSrcPath(File srcPath) {
-		this.srcPath = srcPath;
-	}
+    /**
+     * set the path to export from
+     * @param srcPath
+     */
+    public void setSrcPath( File srcPath ) {
+        this.srcPath = srcPath;
+    }
 
-	/**
-	 * set the destination path; required
-	 * @param destPath
-	 */
-	public void setDestPath(File destPath) {
-		this.destPath = destPath;
-	}
+    /**
+     * set the destination path; required
+     * @param destPath
+     */
+    public void setDestPath( File destPath ) {
+        this.destPath = destPath;
+    }
 
-	/**
-	 * @param force the force to set
-	 */
-	public void setForce(boolean force) {
-		this.force = force;
-	}
+    /**
+     * @param force the force to set
+     */
+    public void setForce( boolean force ) {
+        this.force = force;
+    }
 
 }

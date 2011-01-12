@@ -51,62 +51,71 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant.commands;
 
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.types.EnumeratedAttribute;
-import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnAntValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNInfo;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnAntValidationException;
+
+import org.apache.tools.ant.types.EnumeratedAttribute;
+
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
+
 import java.io.File;
+
 import java.net.MalformedURLException;
 
 /**
  * Similar command to <code>info</info> with the difference that this one selectively
  * fetches an information.
  * 
- * @author Jeremy Whitlock
- * <a href="mailto:jwhitlock@collab.net">jwhitlock@collab.net</a>
- * @author Daniel Rall
  * @author Daniel Kasmeroglu <a href="mailto:daniel.kasmeroglu@kasisoft.net">daniel.kasmeroglu@kasisoft.net</a>.
  */
 public class SingleInfo extends SvnCommand {
 
-    
-    private static final String PROP_PATH           = "path";
-    private static final String PROP_URL            = "url";
-    private static final String PROP_REPOURL        = "repourl";
-    private static final String PROP_REPOUUID       = "repouuid";
-    private static final String PROP_REV            = "revision";
-    private static final String PROP_NODEKIND       = "nodekind";
-    private static final String PROP_SCHEDULE       = "schedule";
-    private static final String PROP_AUTHOR         = "author";
-    private static final String PROP_LASTREV        = "lastRevision";
-    private static final String PROP_LASTDATE       = "lastDate";
-    private static final String PROP_NAME           = "name";
-    private static final String PROP_LASTTEXTUPDATE = "lastTextUpdate"; 
-    private static final String PROP_LASTPROPUPDATE = "lastPropUpdate"; 
-    private static final String PROP_CHECKSUM       = "checksum";
-    
-    private static final String[] PROP_ALL = new String[] {
-        PROP_PATH       , PROP_URL              , PROP_REPOUUID         ,
-        PROP_REV        , PROP_NODEKIND         , PROP_SCHEDULE         ,
-        PROP_AUTHOR     , PROP_LASTREV          , PROP_LASTDATE         ,
-        PROP_NAME       , PROP_LASTTEXTUPDATE   , PROP_LASTPROPUPDATE   ,
-        PROP_CHECKSUM   , PROP_REPOURL
+    private static final String   PROP_PATH           = "path";
+    private static final String   PROP_URL            = "url";
+    private static final String   PROP_REPOURL        = "repourl";
+    private static final String   PROP_REPOUUID       = "repouuid";
+    private static final String   PROP_REV            = "revision";
+    private static final String   PROP_NODEKIND       = "nodekind";
+    private static final String   PROP_SCHEDULE       = "schedule";
+    private static final String   PROP_AUTHOR         = "author";
+    private static final String   PROP_LASTREV        = "lastRevision";
+    private static final String   PROP_LASTDATE       = "lastDate";
+    private static final String   PROP_NAME           = "name";
+    private static final String   PROP_LASTTEXTUPDATE = "lastTextUpdate";
+    private static final String   PROP_LASTPROPUPDATE = "lastPropUpdate";
+    private static final String   PROP_CHECKSUM       = "checksum";
+
+    private static final String[] PROP_ALL            = new String[] { 
+        PROP_PATH, 
+        PROP_URL, 
+        PROP_REPOUUID, 
+        PROP_REV,
+        PROP_NODEKIND, 
+        PROP_SCHEDULE, 
+        PROP_AUTHOR, 
+        PROP_LASTREV, 
+        PROP_LASTDATE, 
+        PROP_NAME,
+        PROP_LASTTEXTUPDATE, 
+        PROP_LASTPROPUPDATE, 
+        PROP_CHECKSUM, 
+        PROP_REPOURL 
     };
-    
-    private String      target      = null;
-    private boolean     verbose     = false;
-    private String      property    = null;
-    private PropRequest request     = null;
-    
+
+    private String                target              = null;
+    private boolean               verbose             = false;
+    private String                property            = null;
+    private PropRequest           request             = null;
+
     /**
      * {@inheritDoc}
      */
@@ -114,13 +123,13 @@ public class SingleInfo extends SvnCommand {
         Project project = getProject();
         try {
             ISVNInfo info = acquireInfo();
-            if ( ( info.getRevision() == null ) || ( SVNRevision.INVALID_REVISION.equals( info.getRevision() ) ) ) {
+            if( (info.getRevision() == null) || (SVNRevision.INVALID_REVISION.equals( info.getRevision() )) ) {
                 throw new SvnAntException( target + " - Not a versioned resource" );
             }
             String value = getValue( info, request.getValue() );
             project.setProperty( property, value );
             info( verbose, property + " : " + value );
-        } catch ( Exception ex ) {
+        } catch( Exception ex ) {
             throw new SvnAntException( "Failed to access subversion 'info' properties", ex );
         }
     }
@@ -133,15 +142,15 @@ public class SingleInfo extends SvnCommand {
      * @exception SVNClientException If ISVNInfo.getInfo(target) fails.
      */
     private ISVNInfo acquireInfo() throws SVNClientException {
-        File asfile = new File(Project.translatePath( target ) );
-        if ( asfile.exists() ) {
+        File asfile = new File( Project.translatePath( target ) );
+        if( asfile.exists() ) {
             // Since the target exists locally, assume it's not a URL.
             return svnClient.getInfo( asfile );
         } else {
             try {
                 SVNUrl url = new SVNUrl( target );
                 return svnClient.getInfo( url );
-            } catch ( MalformedURLException ex ) {
+            } catch( MalformedURLException ex ) {
                 // Since we don't have a valid URL with which to
                 // contact the repository, assume the target is a
                 // local file, even though it doesn't exist locally.
@@ -164,67 +173,67 @@ public class SingleInfo extends SvnCommand {
      */
     private String getValue( ISVNInfo info, String key ) {
         Object value = null;
-        if ( PROP_PATH.equals( key ) ) {
+        if( PROP_PATH.equals( key ) ) {
             File file = info.getFile();
-            if ( file != null ) {
+            if( file != null ) {
                 value = file.getAbsolutePath();
             } else {
                 // assume it's a remote info request; return last part of URL
                 value = info.getUrl().getLastPathSegment();
             }
-        } else if ( PROP_NAME.equals( key ) ) {
+        } else if( PROP_NAME.equals( key ) ) {
             File file = info.getFile();
-            if ( file != null ) {
+            if( file != null ) {
                 value = file.getName();
             } else {
                 // as above
                 value = info.getUrl().getLastPathSegment();
             }
-        } else if ( PROP_REPOURL.equals( key ) ) {
+        } else if( PROP_REPOURL.equals( key ) ) {
             value = info.getRepository();
-        } else if ( PROP_URL.equals( key ) ) {
+        } else if( PROP_URL.equals( key ) ) {
             value = info.getUrl();
-        } else if ( PROP_REPOUUID.equals( key ) ) {
+        } else if( PROP_REPOUUID.equals( key ) ) {
             value = info.getUuid();
-        } else if ( PROP_REV.equals( key ) ) {
+        } else if( PROP_REV.equals( key ) ) {
             value = info.getRevision();
-        } else if ( PROP_NODEKIND.equals( key ) ) {
+        } else if( PROP_NODEKIND.equals( key ) ) {
             value = info.getNodeKind();
-        } else if ( PROP_SCHEDULE.equals( key ) ) {
+        } else if( PROP_SCHEDULE.equals( key ) ) {
             value = info.getSchedule();
-        } else if ( PROP_AUTHOR.equals( key ) ) {
+        } else if( PROP_AUTHOR.equals( key ) ) {
             value = info.getLastCommitAuthor();
-        } else if ( PROP_LASTREV.equals( key ) ) {
+        } else if( PROP_LASTREV.equals( key ) ) {
             value = info.getLastChangedRevision();
-        } else if ( PROP_LASTDATE.equals( key ) ) {
+        } else if( PROP_LASTDATE.equals( key ) ) {
             value = info.getLastChangedDate();
-        } else if ( PROP_LASTTEXTUPDATE.equals( key ) ) {
+        } else if( PROP_LASTTEXTUPDATE.equals( key ) ) {
             value = info.getLastDateTextUpdate();
-        } else if ( PROP_LASTPROPUPDATE.equals( key ) ) {
+        } else if( PROP_LASTPROPUPDATE.equals( key ) ) {
             value = info.getLastDatePropsUpdate();
-        } else if ( PROP_CHECKSUM.equals( key ) ) { 
+        } else if( PROP_CHECKSUM.equals( key ) ) {
             // ### FIXME: Implement checksum in svnClientAdapter.
             log( "    " + "Property '" + key + "' not implemented", Project.MSG_WARN );
         } else {
             info( verbose, "    " + "Property '" + key + "' not recognized" );
         }
-        if ( value == null ) {
+        if( value == null ) {
             value = "";
         }
         return String.valueOf( value );
     }
 
     /**
-     * Validates the call to svn info
+     * {@inheritDoc}
      */
     protected void validateAttributes() throws SvnAntValidationException {
-        if ( target == null ) {
+        if( target == null ) {
             throw new BuildException( "the attribute 'target' must be set." );
         }
-        if ( property == null ) {
+        if( property == null ) {
             throw new BuildException( "the attribute 'property' must be set." );
         }
-        if ( request == null ) {
+        if( request == null ) {
             throw new BuildException( "the attribute 'request' must be set." );
         }
     }
@@ -236,7 +245,7 @@ public class SingleInfo extends SvnCommand {
      */
     public void setTarget( String newtarget ) {
         target = newtarget;
-        if ( ( target != null ) && ( target.length() == 0 ) ) {
+        if( (target != null) && (target.length() == 0) ) {
             target = null;
         }
     }
@@ -246,7 +255,7 @@ public class SingleInfo extends SvnCommand {
      * 
      * @param enable    <code>true</code> <=> Enables verbose output.
      */
-    public void setVerbose(boolean enable) {
+    public void setVerbose( boolean enable ) {
         verbose = enable;
     }
 
@@ -258,7 +267,7 @@ public class SingleInfo extends SvnCommand {
     public void setRequest( PropRequest newrequest ) {
         request = newrequest;
     }
-    
+
     /**
      * Changes the ant property which will receive the value.
      * 
@@ -266,11 +275,11 @@ public class SingleInfo extends SvnCommand {
      */
     public void setProperty( String newproperty ) {
         property = newproperty;
-        if ( ( property != null ) && ( property.length() == 0 ) ) {
+        if( (property != null) && (property.length() == 0) ) {
             property = null;
         }
     }
-    
+
     /**
      * EnumeratedAttribute covering the properties which may be requested.
      */

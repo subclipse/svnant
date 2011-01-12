@@ -51,16 +51,17 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant.commands;
 
-import java.io.File;
-
-import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnAntValidationException;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
+
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnAntValidationException;
+
+import java.io.File;
 
 /**
  * svn Diff.   
@@ -71,47 +72,42 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  *
  */
 public class Diff extends SvnCommand {
-  
-    private SVNUrl        oldUrl = null;
-    private SVNUrl        newUrl = null;
-    private File          oldPath = null;
-    private File          newPath = null;
-    private SVNRevision   oldTargetRevision = null;
-    private SVNRevision   newTargetRevision = null;
-    private File          outFile = new File("patch");
-    private boolean       recurse = true; 
+
+    private SVNUrl      oldUrl            = null;
+    private SVNUrl      newUrl            = null;
+    private File        oldPath           = null;
+    private File        newPath           = null;
+    private SVNRevision oldTargetRevision = null;
+    private SVNRevision newTargetRevision = null;
+    private File        outFile           = new File( "patch" );
+    private boolean     recurse           = true;
 
     /**
      * {@inheritDoc}
      */
     public void execute() throws SvnAntException {
-
         try {
-            if (oldUrl != null) {
-                svnClient.diff(oldUrl, oldTargetRevision,
-                               newUrl, newTargetRevision,
-                               outFile, recurse);
+            if( oldUrl != null ) {
+                svnClient.diff( oldUrl, oldTargetRevision, newUrl, newTargetRevision, outFile, recurse );
             } else {
-                svnClient.diff(oldPath, oldTargetRevision,
-                               newPath, newTargetRevision,
-                               outFile, recurse);
+                svnClient.diff( oldPath, oldTargetRevision, newPath, newTargetRevision, outFile, recurse );
             }
-        } catch (SVNClientException e) {
-            throw new SvnAntException("Can't get the differences",e);
+        } catch( SVNClientException e ) {
+            throw new SvnAntException( "Can't get the differences", e );
         }
     }
 
     /**
-     * Ensure we have a consistent and legal set of attributes
+     * {@inheritDoc}
      */
     protected void validateAttributes() throws SvnAntValidationException {
-        if (oldUrl != null) {
-            if ((oldPath != null) || (newPath != null)) {
-                throw new SvnAntValidationException("paths cannot be with urls when diffing");
+        if( oldUrl != null ) {
+            if( (oldPath != null) || (newPath != null) ) {
+                throw new SvnAntValidationException( "paths cannot be with urls when diffing" );
             }
         } else {
-            if ((oldUrl != null) || (newUrl != null)) {
-                throw new SvnAntValidationException("paths cannot be with urls when diffing");
+            if( (oldUrl != null) || (newUrl != null) ) {
+                throw new SvnAntValidationException( "paths cannot be with urls when diffing" );
             }
         }
     }
@@ -119,28 +115,28 @@ public class Diff extends SvnCommand {
     /**
      * @param file
      */
-    public void setNewPath(File file) {
+    public void setNewPath( File file ) {
         newPath = file;
     }
 
     /**
      * @param revision
      */
-    public void setNewTargetRevision(String revision) {
-        this.newTargetRevision = getRevisionFrom(revision);
+    public void setNewTargetRevision( String revision ) {
+        this.newTargetRevision = getRevisionFrom( revision );
     }
 
     protected SVNRevision getNewTargetRevision() {
         return newTargetRevision;
     }
-    
+
     /**
      * @param url
      */
-    public void setNewUrl(SVNUrl url) {
+    public void setNewUrl( SVNUrl url ) {
         newUrl = url;
     }
-    
+
     protected SVNUrl getNewUrl() {
         return newUrl;
     }
@@ -148,28 +144,28 @@ public class Diff extends SvnCommand {
     /**
      * @param file
      */
-    public void setOldPath(File file) {
+    public void setOldPath( File file ) {
         oldPath = file;
     }
 
     /**
      * @param revision
      */
-    public void setOldTargetRevision(String revision) {
-        this.oldTargetRevision = getRevisionFrom(revision);
+    public void setOldTargetRevision( String revision ) {
+        this.oldTargetRevision = getRevisionFrom( revision );
     }
 
     protected SVNRevision getOldTargetRevision() {
         return oldTargetRevision;
     }
-    
+
     /**
      * @param url
      */
-    public void setOldUrl(SVNUrl url) {
+    public void setOldUrl( SVNUrl url ) {
         oldUrl = url;
     }
-    
+
     protected SVNUrl getOldUrl() {
         return oldUrl;
     }
@@ -177,35 +173,35 @@ public class Diff extends SvnCommand {
     /**
      * @param file
      */
-    public void setOutFile(File file) {
+    public void setOutFile( File file ) {
         outFile = file;
     }
 
     protected File getOutFile() {
         return outFile;
     }
-    
+
     /**
      * @param b
      */
-    public void setRecurse(boolean b) {
+    public void setRecurse( boolean b ) {
         recurse = b;
     }
 
-    protected void logAction(boolean gotUrl) {
-        StringBuilder sb = new StringBuilder("# diff ");
-        sb.append(gotUrl ? oldUrl : oldPath);
-        sb.append(" ");
-        sb.append(oldTargetRevision);
-        log(sb.toString());
-        sb.setLength(0);
-        sb.append("#      ");
-        sb.append(gotUrl ? newUrl : newPath);
-        sb.append(" ");
-        sb.append(newTargetRevision);
-        log(sb.toString());
-        if (null != outFile) {
-            log("# to outfile: " + outFile.getAbsolutePath());
+    protected void logAction( boolean gotUrl ) {
+        StringBuilder sb = new StringBuilder( "# diff " );
+        sb.append( gotUrl ? oldUrl : oldPath );
+        sb.append( " " );
+        sb.append( oldTargetRevision );
+        log( sb.toString() );
+        sb.setLength( 0 );
+        sb.append( "#      " );
+        sb.append( gotUrl ? newUrl : newPath );
+        sb.append( " " );
+        sb.append( newTargetRevision );
+        log( sb.toString() );
+        if( outFile != null) {
+            log( "# to outfile: " + outFile.getAbsolutePath() );
         }
     }
 

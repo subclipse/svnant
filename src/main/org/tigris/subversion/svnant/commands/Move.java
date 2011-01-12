@@ -51,16 +51,17 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant.commands;
 
-import java.io.File;
-
-import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnAntValidationException;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
+
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnAntValidationException;
+
+import java.io.File;
 
 /**
  * svn Move. Moves or renames a file
@@ -69,101 +70,108 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  *
  */
 public class Move extends SvnCommand {
-    private File srcPath = null;
-    private File destPath = null;
-    private SVNUrl srcUrl = null;
-    private SVNUrl destUrl = null;
-	private String message = null;
-    private boolean force = false;
 
+    private File    srcPath  = null;
+    private File    destPath = null;
+    private SVNUrl  srcUrl   = null;
+    private SVNUrl  destUrl  = null;
+    private String  message  = null;
+    private boolean force    = false;
+
+    /**
+     * {@inheritDoc}
+     */
     public void execute() throws SvnAntException {
 
-        if (srcPath != null) {
+        if( srcPath != null ) {
             try {
-                svnClient.move(srcPath, destPath, force);
-            } catch (SVNClientException e) {
-                throw new SvnAntException("Can't copy", e);
+                svnClient.move( srcPath, destPath, force );
+            } catch( SVNClientException e ) {
+                throw new SvnAntException( "Can't copy", e );
             }
         } else {
             try {
-                svnClient.move(srcUrl, destUrl, message, SVNRevision.HEAD);
-            } catch (SVNClientException e) {
-                throw new SvnAntException("Can't copy", e);
+                svnClient.move( srcUrl, destUrl, message, SVNRevision.HEAD );
+            } catch( SVNClientException e ) {
+                throw new SvnAntException( "Can't copy", e );
             }
         }
 
     }
 
     /**
-     * Ensure we have a consistent and legal set of attributes
+     * {@inheritDoc}
      */
     protected void validateAttributes() throws SvnAntValidationException {
-        if (((srcPath == null) && (srcUrl == null))
-            || ((srcPath != null) && (srcUrl != null)))
-            throw new SvnAntValidationException("Either srcPath attribute or srcUrl attribute must be set");
-
-        if (srcPath != null) {
-            if (destPath == null)
-                throw new SvnAntValidationException("destPath attribute must be set when srcPath is set");
-            if (destUrl != null)
-                throw new SvnAntValidationException("destUrl attribute cannot be used when srcPath is set");
+        if( ((srcPath == null) && (srcUrl == null)) || ((srcPath != null) && (srcUrl != null)) ) {
+            throw new SvnAntValidationException( "Either srcPath attribute or srcUrl attribute must be set" );
         }
-
-        if (srcUrl != null) {
-            if (destUrl == null)
-                throw new SvnAntValidationException("destUrl attribute must be set when srcUrl is set");
-            if (destPath != null)
-                throw new SvnAntValidationException("destPath attribute cannot be used when srcUrl is set");
-            if (message == null)
-            	throw new SvnAntValidationException("message attribute must be set when srcUrl is set");
+        if( srcPath != null ) {
+            if( destPath == null ) {
+                throw new SvnAntValidationException( "destPath attribute must be set when srcPath is set" );
+            }
+            if( destUrl != null ) {
+                throw new SvnAntValidationException( "destUrl attribute cannot be used when srcPath is set" );
+            }
+        }
+        if( srcUrl != null ) {
+            if( destUrl == null ) {
+                throw new SvnAntValidationException( "destUrl attribute must be set when srcUrl is set" );
+            }
+            if( destPath != null ) {
+                throw new SvnAntValidationException( "destPath attribute cannot be used when srcUrl is set" );
+            }
+            if( message == null ) {
+                throw new SvnAntValidationException( "message attribute must be set when srcUrl is set" );
+            }
         }
     }
 
-	/**
-	 * set the path to move from
-	 * @param srcPath
-	 */
-    public void setSrcPath(File srcPath) {
+    /**
+     * set the path to move from
+     * @param srcPath
+     */
+    public void setSrcPath( File srcPath ) {
         this.srcPath = srcPath;
     }
 
-	/**
-	 * set the path to move to
-	 * @param destPath
-	 */
-    public void setDestPath(File destPath) {
+    /**
+     * set the path to move to
+     * @param destPath
+     */
+    public void setDestPath( File destPath ) {
         this.destPath = destPath;
     }
 
-	/**
-	 * set the url to move from
-	 * @param srcUrl
-	 */
-    public void setSrcUrl(SVNUrl srcUrl) {
+    /**
+     * set the url to move from
+     * @param srcUrl
+     */
+    public void setSrcUrl( SVNUrl srcUrl ) {
         this.srcUrl = srcUrl;
     }
 
-	/**
-	 * set the url to move to
-	 * @param destUrl
-	 */
-    public void setDestUrl(SVNUrl destUrl) {
+    /**
+     * set the url to move to
+     * @param destUrl
+     */
+    public void setDestUrl( SVNUrl destUrl ) {
         this.destUrl = destUrl;
     }
-    
+
     /**
      * set the message for commit when using destUrl
      * @param message
      */
-    public void setMessage(String message) {
-    	this.message = message;
+    public void setMessage( String message ) {
+        this.message = message;
     }
 
     /**
      * set the force parameter
      * @param force
      */
-    public void setForce(boolean force) {
+    public void setForce( boolean force ) {
         this.force = force;
     }
 

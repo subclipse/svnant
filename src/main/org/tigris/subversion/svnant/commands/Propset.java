@@ -51,15 +51,16 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant.commands;
 
-import java.io.File;
-import java.io.IOException;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnant.SvnAntValidationException;
-import org.tigris.subversion.svnclientadapter.SVNClientException;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * svn propset. Set a property
@@ -68,50 +69,53 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
  *
  */
 public class Propset extends SvnCommand {
+
     /** the path of the file or dir on which to set the property */
-    private File path = null;
+    private File    path      = null;
+    private File    file;
+    private String  propName  = null;
+    private String  propValue = null;
+    private boolean recurse   = false;
 
-    private File file;    
-    private String propName = null;
-    private String propValue = null;
-    private boolean recurse = false;
-
+    /**
+     * {@inheritDoc}
+     */
     public void execute() throws SvnAntException {
-
         try {
-            if (propValue != null)
-                svnClient.propertySet(path,propName,propValue,recurse);
+            if( propValue != null )
+                svnClient.propertySet( path, propName, propValue, recurse );
             else
-                svnClient.propertySet(path,propName,file,recurse);
-        } catch (SVNClientException e) {
-            throw new SvnAntException("Can't set property "+propName, e);
-        } catch (IOException e) {
-            throw new SvnAntException("Can't set property "+propName, e);
+                svnClient.propertySet( path, propName, file, recurse );
+        } catch( SVNClientException e ) {
+            throw new SvnAntException( "Can't set property " + propName, e );
+        } catch( IOException e ) {
+            throw new SvnAntException( "Can't set property " + propName, e );
         }
     }
 
     /**
-     * Ensure we have a consistent and legal set of attributes
+     * {@inheritDoc}
      */
     protected void validateAttributes() throws SvnAntValidationException {
-        if (path == null)
-            throw new SvnAntValidationException("path attribute must be set");
-        if (propName == null)
-            throw new SvnAntValidationException("name attribute must be set");
-        if ((propValue == null) && (file == null))
-            throw new SvnAntValidationException("value or file attribute must be set");
-            
-        if ((propValue != null) && (file != null))
-            throw new SvnAntValidationException("file attribute must not be set when value attribute is set");
-            
-
+        if( path == null ) {
+            throw new SvnAntValidationException( "path attribute must be set" );
+        }
+        if( propName == null ) {
+            throw new SvnAntValidationException( "name attribute must be set" );
+        }
+        if( (propValue == null) && (file == null) ) {
+            throw new SvnAntValidationException( "value or file attribute must be set" );
+        }
+        if( (propValue != null) && (file != null) ) {
+            throw new SvnAntValidationException( "file attribute must not be set when value attribute is set" );
+        }
     }
 
     /**
      * set the path of the file or directory on which to set the property
      * @param path
      */
-    public void setPath(File path) {
+    public void setPath( File path ) {
         this.path = path;
     }
 
@@ -119,31 +123,31 @@ public class Propset extends SvnCommand {
      * set the name of the property
      * @param propName 
      */
-    public void setName(String propName) {
+    public void setName( String propName ) {
         this.propName = propName;
     }
-    
+
     /**
      * set the value of the property
      * @param propValue 
      */
-    public void setValue(String propValue) {
+    public void setValue( String propValue ) {
         this.propValue = propValue;
     }
-  
+
     /**
      * set the file that will be used as a value
      * @param file
      */
-    public void setFile(File file) {
+    public void setFile( File file ) {
         this.file = file;
     }
-    
+
     /**
      * if set, property will be set recursively
      * @param recurse
      */
-    public void setRecurse(boolean recurse) {
+    public void setRecurse( boolean recurse ) {
         this.recurse = recurse;
     }
 

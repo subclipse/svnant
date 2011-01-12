@@ -51,18 +51,22 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant.commands;
 
-import java.io.File;
-import java.util.Vector;
-
-import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.types.FileSet;
-import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnAntValidationException;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
+
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnAntValidationException;
+
+import org.apache.tools.ant.types.FileSet;
+
+import org.apache.tools.ant.DirectoryScanner;
+
+import java.util.Vector;
+
+import java.io.File;
 
 /**
  * svn Delete. Remove files and directories from version control.
@@ -71,73 +75,76 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
  *
  */
 public class Delete extends SvnCommand {
-  
+
     /** message for commit (only when target is an url) */
-    private String message = null;
-    
+    private String          message  = null;
+
     /** url of the target to delete */
-    private SVNUrl url = null;
-    
+    private SVNUrl          url      = null;
+
     /** file to delete */
-    private File file = null;
-    
+    private File            file     = null;
+
     /** dir to delete */
-    private File dir = null;
-    
+    private File            dir      = null;
+
     /** delete will not remove TARGETs that are, or contain, unversioned 
      * or modified items; use the force option to override this behaviour 
      */
-    private boolean force = false;
-    
+    private boolean         force    = false;
+
     /** filesets to delete */
-    private Vector<FileSet> filesets = new Vector<FileSet>(); 
-    
+    private Vector<FileSet> filesets = new Vector<FileSet>();
+
+    /**
+     * {@inheritDoc}
+     */
     public void execute() throws SvnAntException {
-      
-        if (url != null) {
-            deleteUrl(url,message);
+
+        if( url != null ) {
+            deleteUrl( url, message );
         }
-        
-        if (file != null) {
-            deleteFile(file,force);
+
+        if( file != null ) {
+            deleteFile( file, force );
         }
-        
-        if (dir != null) {
-            deleteFile(dir,force);
+
+        if( dir != null ) {
+            deleteFile( dir, force );
         }
-      
+
         // deal with filesets
-        if (filesets.size() > 0) {
-            for (int i = 0; i < filesets.size(); i++) {
-                FileSet fs = filesets.elementAt(i);
-                deleteFileSet(fs);
+        if( filesets.size() > 0 ) {
+            for( int i = 0; i < filesets.size(); i++ ) {
+                FileSet fs = filesets.elementAt( i );
+                deleteFileSet( fs );
             }
         }
     }
-  
+
     /**
-     * Ensure we have a consistent and legal set of attributes
+     * {@inheritDoc}
      */
     protected void validateAttributes() throws SvnAntValidationException {
-        if ((url != null) && (message == null)) {
-            throw new SvnAntValidationException("Message attribute must be set when using url attribute");
+        if( (url != null) && (message == null) ) {
+            throw new SvnAntValidationException( "Message attribute must be set when using url attribute" );
         }
     }
-  
+
     /**
      * delete directly on repository
      * @param anUrl
      * @param aMessage
      * @throws SvnAntException
      */
-    private void deleteUrl(SVNUrl anUrl, String aMessage) throws SvnAntException {
+    private void deleteUrl( SVNUrl anUrl, String aMessage ) throws SvnAntException {
         try {
-            svnClient.remove(new SVNUrl[] { anUrl },aMessage);
-        } catch (SVNClientException e) {
-            throw new SvnAntException("Cannot delete url "+anUrl.toString(),e);
+            svnClient.remove( new SVNUrl[] { anUrl }, aMessage );
+        } catch( SVNClientException e ) {
+            throw new SvnAntException( "Cannot delete url " + anUrl.toString(), e );
         }
     }
-    
+
     /**
      * Delete file or directory
      * When file is a directory, all subdirectories/files are deleted too
@@ -145,101 +152,101 @@ public class Delete extends SvnCommand {
      * @param appyForce
      * @throws SvnAntException
      */
-    private void deleteFile(File aFile, boolean appyForce) throws SvnAntException {
+    private void deleteFile( File aFile, boolean appyForce ) throws SvnAntException {
         try {
-            svnClient.remove(new File[] { aFile },appyForce);
-        } catch (SVNClientException e) {
-            throw new SvnAntException("Cannot delete file or directory "+aFile.getAbsolutePath(),e);
+            svnClient.remove( new File[] { aFile }, appyForce );
+        } catch( SVNClientException e ) {
+            throw new SvnAntException( "Cannot delete file or directory " + aFile.getAbsolutePath(), e );
         }
     }
-  
+
     /**
      * add a fileset (both dirs and files) to the repository
      * @param svnClient
      * @param fs
      * @throws SvnAntException
      */
-    private void deleteFileSet(FileSet fs) throws SvnAntException {
-        DirectoryScanner ds = fs.getDirectoryScanner(getProject());
-        File baseDir = fs.getDir(getProject()); // base dir
+    private void deleteFileSet( FileSet fs ) throws SvnAntException {
+        DirectoryScanner ds = fs.getDirectoryScanner( getProject() );
+        File baseDir = fs.getDir( getProject() ); // base dir
         String[] files = ds.getIncludedFiles();
         String[] dirs = ds.getIncludedDirectories();
-        File[] filesAndDirs = new File[files.length+dirs.length];
+        File[] filesAndDirs = new File[files.length + dirs.length];
         int j = 0;
-  
-        for (int i = 0; i < dirs.length; i++) {
-            filesAndDirs[j] = new File(baseDir, dirs[i]);
+
+        for( int i = 0; i < dirs.length; i++ ) {
+            filesAndDirs[j] = new File( baseDir, dirs[i] );
             j++;
         }
-        for (int i = 0; i < files.length; i++) {
-            filesAndDirs[j] = new File(baseDir, files[i]);
+        for( int i = 0; i < files.length; i++ ) {
+            filesAndDirs[j] = new File( baseDir, files[i] );
             j++;
         }
-          
+
         // note : when we delete dirs, this also delete subdirectories and files 
         // contained in this directory        
         try {
-            svnClient.remove(filesAndDirs,force);
-        } catch (SVNClientException e) {
-            error("Cannot delete file " + file.getAbsolutePath());
+            svnClient.remove( filesAndDirs, force );
+        } catch( SVNClientException e ) {
+            error( "Cannot delete file " + file.getAbsolutePath() );
         }
     }
-  
+
     /**
      * set the message for the commit (only when deleting directly from repository
      * using an url)
      * @param message
      */
-    public void setMessage(String message) {
+    public void setMessage( String message ) {
         this.message = message;
     }
-  
+
     /**
      * set url to delete
      * @param url
      */
-    public void setUrl(SVNUrl url) {
+    public void setUrl( SVNUrl url ) {
         this.url = url;
     }
-  
+
     /**
      * set file to delete
      * @param file
      */
-    public void setFile(File file) {
+    public void setFile( File file ) {
         this.file = file;
     }
-  
+
     /**
      * set directory to delete
      * @param dir
      */
-    public void setDir(File dir) {
+    public void setDir( File dir ) {
         this.dir = dir;
     }
-    
+
     /**
      * Set the force flag
      * @param force
      */
-    public void setForce(boolean force) {
+    public void setForce( boolean force ) {
         this.force = force;
     }
-  
+
     /**
      * Adds a set of files to add
      * @param set
      */
-    public void addFileset(FileSet set) {
-        filesets.addElement(set);
-    } 
-    
+    public void addFileset( FileSet set ) {
+        filesets.addElement( set );
+    }
+
     /**
      * Adds a set of files to add
      * @param set
      */
-    public void add(FileSet set) {
-        filesets.addElement(set);
-    } 
-    
+    public void add( FileSet set ) {
+        filesets.addElement( set );
+    }
+
 }

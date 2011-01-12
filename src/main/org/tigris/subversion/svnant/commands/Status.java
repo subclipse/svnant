@@ -51,159 +51,161 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.tigris.subversion.svnant.commands;
 
-import java.io.File;
-import java.util.Date;
-
-import org.apache.tools.ant.Project;
-import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnAntValidationException;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
+
+import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnant.SvnAntValidationException;
+
+import org.apache.tools.ant.Project;
+
+import java.util.Date;
+
+import java.io.File;
 
 /**
  * get the status of a file or a directory
  */
 public class Status extends SvnCommand {
 
-	private File path = null;
-	private String textStatusProperty = null;
-	private String propStatusProperty = null;
-	private String revisionProperty = null;
-	private String lastChangedRevisionProperty = null;
-	private String lastChangedDateProperty = null;
-	private String lastCommitAuthorProperty = null;
-	private String urlProperty = null;
-	
-	/* (non-Javadoc)
-	 * @see org.tigris.subversion.svnant.SvnCommand#execute(org.tigris.subversion.svnclientadapter.ISVNClientAdapter)
-	 */
-	public void execute() throws SvnAntException {
-		
-		Project aProject = getProject();
-		try {
-			ISVNStatus status = svnClient.getSingleStatus(path);
-			
-			if (textStatusProperty != null) {
-				aProject.setProperty(textStatusProperty, status.getTextStatus().toString());
-			}
-			
-			if (propStatusProperty != null) {
-				aProject.setProperty(propStatusProperty, status.getPropStatus().toString());
-			}
-			
-			if (revisionProperty != null) {
-				String revision;
-				if( null == status.getRevision() ) {
-					revision = "-1";
-				} else {
-					revision = status.getRevision().toString();
-				}
-				aProject.setProperty(revisionProperty, revision);
-			}
-			if (lastChangedRevisionProperty != null) {
-				String lastChangedRevision;
-				if (status.getLastChangedRevision() == null) {
-					lastChangedRevision = "";
-				} else {
-					lastChangedRevision = status.getLastChangedRevision().toString();
-				}
-				aProject.setProperty(lastChangedRevisionProperty, lastChangedRevision);
-			}
-			if (lastCommitAuthorProperty != null) {
-				String lastCommitAuthor = status.getLastCommitAuthor();
-				if (lastCommitAuthor == null) {
-					lastCommitAuthor = "";
-				}
-				aProject.setProperty(lastCommitAuthorProperty,lastCommitAuthor);
-			}
-			if (lastChangedDateProperty != null) {
-				Date lastChangedDate = status.getLastChangedDate();
-				if (lastChangedDate == null) {
-					aProject.setProperty(lastChangedDateProperty, "");
-				} else {
-					aProject.setProperty(lastChangedDateProperty, getDateStringFor(lastChangedDate));
-				}
-				
-			}
-			if (urlProperty != null) {
-				SVNUrl statusUrl = status.getUrl();
-				aProject.setProperty(urlProperty, (statusUrl != null) ? statusUrl.toString() : "");
-			}
-			
-		} catch (SVNClientException e) {
-			throw new SvnAntException("Can't get status of "+path, e);
-		}
+    private File   path                        = null;
+    private String textStatusProperty          = null;
+    private String propStatusProperty          = null;
+    private String revisionProperty            = null;
+    private String lastChangedRevisionProperty = null;
+    private String lastChangedDateProperty     = null;
+    private String lastCommitAuthorProperty    = null;
+    private String urlProperty                 = null;
 
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void execute() throws SvnAntException {
 
-	/**
-	 * Ensure we have a consistent and legal set of attributes
-	 */
-	protected void validateAttributes() throws SvnAntValidationException {
-        if (path == null) {
-        	throw new SvnAntValidationException("path attribute must be set");
+        Project aProject = getProject();
+        try {
+            ISVNStatus status = svnClient.getSingleStatus( path );
+
+            if( textStatusProperty != null ) {
+                aProject.setProperty( textStatusProperty, status.getTextStatus().toString() );
+            }
+
+            if( propStatusProperty != null ) {
+                aProject.setProperty( propStatusProperty, status.getPropStatus().toString() );
+            }
+
+            if( revisionProperty != null ) {
+                String revision;
+                if( null == status.getRevision() ) {
+                    revision = "-1";
+                } else {
+                    revision = status.getRevision().toString();
+                }
+                aProject.setProperty( revisionProperty, revision );
+            }
+            if( lastChangedRevisionProperty != null ) {
+                String lastChangedRevision;
+                if( status.getLastChangedRevision() == null ) {
+                    lastChangedRevision = "";
+                } else {
+                    lastChangedRevision = status.getLastChangedRevision().toString();
+                }
+                aProject.setProperty( lastChangedRevisionProperty, lastChangedRevision );
+            }
+            if( lastCommitAuthorProperty != null ) {
+                String lastCommitAuthor = status.getLastCommitAuthor();
+                if( lastCommitAuthor == null ) {
+                    lastCommitAuthor = "";
+                }
+                aProject.setProperty( lastCommitAuthorProperty, lastCommitAuthor );
+            }
+            if( lastChangedDateProperty != null ) {
+                Date lastChangedDate = status.getLastChangedDate();
+                if( lastChangedDate == null ) {
+                    aProject.setProperty( lastChangedDateProperty, "" );
+                } else {
+                    aProject.setProperty( lastChangedDateProperty, getDateStringFor( lastChangedDate ) );
+                }
+
+            }
+            if( urlProperty != null ) {
+                SVNUrl statusUrl = status.getUrl();
+                aProject.setProperty( urlProperty, (statusUrl != null) ? statusUrl.toString() : "" );
+            }
+
+        } catch( SVNClientException e ) {
+            throw new SvnAntException( "Can't get status of " + path, e );
         }
-	}	
-	
-	/**
-	 * @param path The path to set.
-	 */
-	public void setPath(File path) {
-		this.path = path;
-	}
 
-	/**
-	 * @param textStatusProperty The textStatusProperty to set.
-	 */
-	public void setTextStatusProperty(String textStatusProperty) {
-		this.textStatusProperty = textStatusProperty;
-	}
-	
-	/**
-	 * @param propStatusProperty The propStatusProperty to set.
-	 */
-	public void setPropStatusProperty(String propStatusProperty) {
-		this.propStatusProperty = propStatusProperty;
-	}
-	
-	/**
-	 * @param revisionProperty The revisionProperty to set.
-	 */
-	public void setRevisionProperty(String revisionProperty) {
-		this.revisionProperty = revisionProperty;
-	}
-	
-	/**
-	 * @param lastChangedRevisionProperty The lastChangedRevisionProperty to set.
-	 */
-	public void setLastChangedRevisionProperty(
-			String lastChangedRevisionProperty) {
-		this.lastChangedRevisionProperty = lastChangedRevisionProperty;
-	}
-	
-	/**
-	 * @param lastCommitAuthorProperty The lastCommitAuthor to set.
-	 */
-	public void setLastCommitAuthorProperty(String lastCommitAuthorProperty) {
-		this.lastCommitAuthorProperty = lastCommitAuthorProperty;
-	}
+    }
 
-	/**
-	 * @param lastChangedDateProperty The lastChangedDateProperty to set.
-	 */
-	public void setLastChangedDateProperty(String lastChangedDateProperty) {
-		this.lastChangedDateProperty = lastChangedDateProperty;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    protected void validateAttributes() throws SvnAntValidationException {
+        if( path == null ) {
+            throw new SvnAntValidationException( "path attribute must be set" );
+        }
+    }
 
-	/**
-	 * @param urlProperty The url to set.
-	 */
-	public void setUrlProperty(String urlProperty) {
-		this.urlProperty = urlProperty;
-	}
+    /**
+     * @param path The path to set.
+     */
+    public void setPath( File path ) {
+        this.path = path;
+    }
+
+    /**
+     * @param textStatusProperty The textStatusProperty to set.
+     */
+    public void setTextStatusProperty( String textStatusProperty ) {
+        this.textStatusProperty = textStatusProperty;
+    }
+
+    /**
+     * @param propStatusProperty The propStatusProperty to set.
+     */
+    public void setPropStatusProperty( String propStatusProperty ) {
+        this.propStatusProperty = propStatusProperty;
+    }
+
+    /**
+     * @param revisionProperty The revisionProperty to set.
+     */
+    public void setRevisionProperty( String revisionProperty ) {
+        this.revisionProperty = revisionProperty;
+    }
+
+    /**
+     * @param lastChangedRevisionProperty The lastChangedRevisionProperty to set.
+     */
+    public void setLastChangedRevisionProperty( String lastChangedRevisionProperty ) {
+        this.lastChangedRevisionProperty = lastChangedRevisionProperty;
+    }
+
+    /**
+     * @param lastCommitAuthorProperty The lastCommitAuthor to set.
+     */
+    public void setLastCommitAuthorProperty( String lastCommitAuthorProperty ) {
+        this.lastCommitAuthorProperty = lastCommitAuthorProperty;
+    }
+
+    /**
+     * @param lastChangedDateProperty The lastChangedDateProperty to set.
+     */
+    public void setLastChangedDateProperty( String lastChangedDateProperty ) {
+        this.lastChangedDateProperty = lastChangedDateProperty;
+    }
+
+    /**
+     * @param urlProperty The url to set.
+     */
+    public void setUrlProperty( String urlProperty ) {
+        this.urlProperty = urlProperty;
+    }
 
 }
