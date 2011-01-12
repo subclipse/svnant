@@ -1,0 +1,156 @@
+<project name="Elliotte Rusty Harold's XInclude" default="usage" basedir=".">
+    <description>
+        Build the XIncluder
+    </description>
+
+  <path id="libs.class.path">
+     <pathelement path="./lib/jdom-1.0b9rc.jar"/>
+     <pathelement path="./lib/xercesImpl-2.0.2.jar"/>
+     <pathelement path="./lib/xmlParserAPIs-2.0.2.jar"/>
+   </path>
+
+  <!-- =================================================================== -->
+  <!-- Initialization                                                      -->
+  <!-- =================================================================== -->
+  <target name="init">
+    <tstamp/>
+    <property name="Name" value="XIncluder"/>
+    <property name="name" value="xincluder"/>
+    <property name="version" value="1.0d9"/>
+    <property name="year" value="2002"/>
+
+    <echo message="----------- ${Name} ${version} [${year}] ------------"/>
+    
+    <property name="src.dir" value="./src"/>
+    <property name="packages" value="com.elharo.xml.xinclude.*"/>
+
+    <property name="build.dir" value="./bin"/>
+    <property name="build.src" value="./bin/src"/>
+    <property name="build.dest" value="./bin/classes"/>
+    <property name="build.javadocs" value="./apidoc"/>
+
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Help on usage                                                       -->
+  <!-- =================================================================== -->
+  <target name="usage">
+    <echo message=""/>
+    <echo message="XInclude Build file"/>
+    <echo message="-------------------------------------------------------------"/>
+    <echo message=""/>
+    <echo message=" available targets are:"/>
+    <echo message=""/>
+    <echo message="   jar      --> generates the xinclude.jar file"/>
+    <echo message="   compile  --> compiles the source code"/>
+    <echo message="   javadoc  --> generates the API documentation"/>
+    <echo message="   clean    --> cleans up the directory"/>
+    <echo message=""/>
+    <echo message="-------------------------------------------------------------"/>
+    <echo message=""/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Prepare the build directory                                        -->
+  <!-- =================================================================== -->
+  <target name="prepare" depends="init">
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${build.javadocs}"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Prepare the source code                                            -->
+  <!-- =================================================================== -->
+  <target name="prepare-src" depends="prepare">
+    <!-- create directories -->
+    <mkdir dir="${build.src}"/>
+    <mkdir dir="${build.dest}"/>
+
+    <!-- copy src files -->
+    <copy todir="${build.src}"
+          filtering="yes">
+      <fileset dir="${src.dir}"/>
+    </copy>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Compile the source directory                                       -->
+  <!-- =================================================================== -->
+  <target name="compile" depends="prepare-src">
+    <javac srcdir="${build.src}"
+           destdir="${build.dest}">
+      <classpath refid="libs.class.path"/>
+    </javac>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Create the JAR file                                           -->
+  <!-- =================================================================== -->
+  <target name="jar" depends="compile">
+    <fixcrlf srcdir="." includes="**/*.bat" excludes="build*.*" eol="crlf"/>
+    <fixcrlf srcdir="." includes="**/*.sh" excludes="build*.*" eol="lf"/>
+
+    <!-- Filters defined specifically for updating the manifest -->
+    <filter token="version.spec" value="${version.spec}"/>
+    <filter token="version.impl" value="${version.impl}"/>
+    <jar jarfile="./${name}.jar"
+         basedir="${build.dest}"
+         excludes="META-INF/MANIFEST.MF"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Create the API documentation                                       -->
+  <!-- =================================================================== -->
+  <target name="javadoc" depends="prepare-src">
+    <mkdir dir="${build.javadocs}"/>
+    <javadoc packagenames="${packages}"
+             sourcepath="${build.src}"
+             destdir="${build.javadocs}"
+             author="true"
+             version="true"
+             use="true"
+             splitindex="true"
+             noindex="false"
+             windowtitle="${Name} API"
+             doctitle="${Name}"
+             bottom="Copyright ${year} Jason Hunter, Brett McLaughlin. All Rights Reserved."
+    />
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Creates the API documentation, with links to JDK 1.4 classes        -->
+  <!-- We can use linkoffline with a newer Ant and avoid this target       -->
+  <!-- =================================================================== -->
+  <target name="javadoc-link" depends="prepare-src">
+    <mkdir dir="${build.javadocs}"/>
+    <javadoc packagenames="${packages}"
+             excludepackagenames="com.elharo.xml.xinclude.test.*"
+             sourcepath="${build.src}"
+             destdir="${build.javadocs}"
+             author="true"
+             version="true"
+             use="true"
+             splitindex="true"
+             noindex="false"
+             windowtitle="${Name} API"
+             doctitle="${Name}"
+             link="http://java.sun.com/j2se/1.4/docs/api"
+             bottom="Copyright ${year} Elliotte Rusty Harold. All Rights Reserved."
+    />
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Clean targets                                                       -->
+  <!-- =================================================================== -->
+  <target name="clean" depends="init">
+    <delete dir="${build.dir}"/>
+  </target>
+
+  <target name="distclean" depends="clean">
+    <delete dir="${dist.root}"/>
+  </target>  
+  
+  
+</project>
+
