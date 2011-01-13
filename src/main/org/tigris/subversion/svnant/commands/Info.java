@@ -61,8 +61,8 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnAntValidationException;
 
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
 import java.io.File;
@@ -242,9 +242,9 @@ public class Info extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    protected void validateAttributes() throws SvnAntValidationException {
+    protected void validateAttributes() {
         if( target == null ) {
-            throw new SvnAntValidationException( "target must be set to a file or directory in your working copy, or to a URI" );
+            throw new BuildException( "target must be set to a file or directory in your working copy, or to a URI" );
         }
     }
 

@@ -59,7 +59,8 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnAntValidationException;
+
+import org.apache.tools.ant.BuildException;
 
 import java.io.File;
 
@@ -105,18 +106,18 @@ public class Export extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    protected void validateAttributes() throws SvnAntValidationException {
+    protected void validateAttributes() {
         if( destPath == null ) {
-            throw new SvnAntValidationException( "destPath attribute must be set" );
+            throw new BuildException( "destPath attribute must be set" );
         }
         if( (srcUrl == null) && (srcPath == null) ) {
-            throw new SvnAntValidationException( "Either srcUrl or srcPath must be set" );
+            throw new BuildException( "Either srcUrl or srcPath must be set" );
         }
         if( (srcUrl != null) && (srcPath != null) ) {
-            throw new SvnAntValidationException( "Either srcUrl or srcPath must be set" );
+            throw new BuildException( "Either srcUrl or srcPath must be set" );
         }
         if( revision == null ) {
-            throw SvnAntValidationException.createInvalidRevisionException();
+            throw new BuildException( "Invalid revision. Revision should be a number, a date in the format as specified in dateFormatter attribute or HEAD, BASE, COMMITED or PREV" );
         }
     }
 

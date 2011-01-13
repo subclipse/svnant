@@ -60,7 +60,8 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnAntValidationException;
+
+import org.apache.tools.ant.BuildException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -184,18 +185,18 @@ public class Log extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    protected void validateAttributes() throws SvnAntValidationException {
+    protected void validateAttributes() {
         if( (url == null) && (path == null) ) {
-            throw new SvnAntValidationException( "url or path attributes must be set" );
+            throw new BuildException( "url or path attributes must be set" );
         }
         if( destFile == null ) {
             destFile = new File( getProject().getBaseDir(), url.getLastPathSegment() );
         }
         if( startRevision == null ) {
-            throw SvnAntValidationException.createInvalidRevisionException();
+            throw new BuildException( "Invalid revision. Revision should be a number, a date in the format as specified in dateFormatter attribute or HEAD, BASE, COMMITED or PREV" );
         }
         if( stopRevision == null ) {
-            throw SvnAntValidationException.createInvalidRevisionException();
+            throw new BuildException( "Invalid revision. Revision should be a number, a date in the format as specified in dateFormatter attribute or HEAD, BASE, COMMITED or PREV" );
         }
     }
 

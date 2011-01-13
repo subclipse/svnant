@@ -61,10 +61,10 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 
 import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnAntValidationException;
 
 import org.apache.tools.ant.types.FileSet;
 
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 
 import java.util.Stack;
@@ -124,24 +124,24 @@ public class Commit extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    protected void validateAttributes() throws SvnAntValidationException {
+    protected void validateAttributes() {
 
         if( (file == null) && (dir == null) && (filesets.size() == 0) ) {
-            throw new SvnAntValidationException( "file, url or fileset must be set" );
+            throw new BuildException( "file, url or fileset must be set" );
         }
         if( file != null ) {
             if( (dir != null) || (filesets.size() != 0) ) {
-                throw new SvnAntValidationException( "dir and fileset must not be set when file attribute is present" );
+                throw new BuildException( "dir and fileset must not be set when file attribute is present" );
             }
         }
 
         if( dir != null ) {
             if( (file != null) || (filesets.size() != 0) ) {
-                throw new SvnAntValidationException( "file and fileset must not be set when dir attribute is present" );
+                throw new BuildException( "file and fileset must not be set when dir attribute is present" );
             }
         }
         if( message == null ) {
-            throw new SvnAntValidationException( "Message must be set" );
+            throw new BuildException( "Message must be set" );
         }
     }
 

@@ -60,7 +60,6 @@ import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnAntValidationException;
 import org.tigris.subversion.svnant.SvnTask;
 
 import org.apache.tools.ant.BuildException;
@@ -84,7 +83,7 @@ public abstract class SvnCommand extends ProjectComponent {
 
     protected ISVNClientAdapter svnClient;
 
-    protected abstract void validateAttributes() throws SvnAntValidationException;
+    protected abstract void validateAttributes();
 
     /**
      * Execute the command.
@@ -113,7 +112,7 @@ public abstract class SvnCommand extends ProjectComponent {
             } else {
                 error( className + " failed :" + ex.getLocalizedMessage() );
             }
-        } catch( SvnAntValidationException e ) {
+        } catch( BuildException e ) {
             if( this.task.isFailonerror() ) {
                 info( className + " failed !" );
                 throw new BuildException( e.getMessage() );

@@ -59,7 +59,8 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnAntValidationException;
+
+import org.apache.tools.ant.BuildException;
 
 import java.io.File;
 
@@ -100,14 +101,14 @@ public class Diff extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    protected void validateAttributes() throws SvnAntValidationException {
+    protected void validateAttributes() {
         if( oldUrl != null ) {
             if( (oldPath != null) || (newPath != null) ) {
-                throw new SvnAntValidationException( "paths cannot be with urls when diffing" );
+                throw new BuildException( "paths cannot be with urls when diffing" );
             }
         } else {
             if( (oldUrl != null) || (newUrl != null) ) {
-                throw new SvnAntValidationException( "paths cannot be with urls when diffing" );
+                throw new BuildException( "paths cannot be with urls when diffing" );
             }
         }
     }

@@ -57,7 +57,9 @@ package org.tigris.subversion.svnant.commands;
 import java.io.File;
 
 import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnAntValidationException;
+
+import org.apache.tools.ant.BuildException;
+
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
@@ -94,15 +96,15 @@ public class Checkout extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    protected void validateAttributes() throws SvnAntValidationException {
+    protected void validateAttributes() {
         if( destPath == null ) {
             destPath = getProject().getBaseDir();
         }
         if( url == null ) {
-            throw new SvnAntValidationException( "url must be set" );
+            throw new BuildException( "url must be set" );
         }
         if( revision == null ) {
-            throw SvnAntValidationException.createInvalidRevisionException();
+            throw new BuildException( "Invalid revision. Revision should be a number, a date in the format as specified in dateFormatter attribute or HEAD, BASE, COMMITED or PREV" );
         }
     }
 

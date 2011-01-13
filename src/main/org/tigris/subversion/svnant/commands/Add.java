@@ -59,10 +59,10 @@ import org.tigris.subversion.svnclientadapter.utils.SVNStatusUtils;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnAntValidationException;
 
 import org.apache.tools.ant.types.FileSet;
 
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 
 import java.util.Stack;
@@ -124,9 +124,9 @@ public class Add extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    protected void validateAttributes() throws SvnAntValidationException {
+    protected void validateAttributes() {
         if( (file == null) && (dir == null) && (filesets.size() == 0) ) {
-            throw new SvnAntValidationException( "file, url or fileset must be set" );
+            throw new BuildException( "file, url or fileset must be set" );
         }
     }
 

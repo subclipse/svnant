@@ -60,7 +60,8 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnAntValidationException;
+
+import org.apache.tools.ant.BuildException;
 
 /**
  * svn list. List resources from a repository.
@@ -144,18 +145,18 @@ public class List extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    protected void validateAttributes() throws SvnAntValidationException {
+    protected void validateAttributes() {
         if( url == null ) {
-            throw new SvnAntValidationException( "url must be set" );
+            throw new BuildException( "url must be set" );
         }
         if( revision == null ) {
-            throw SvnAntValidationException.createInvalidRevisionException();
+            throw new BuildException( "Invalid revision. Revision should be a number, a date in the format as specified in dateFormatter attribute or HEAD, BASE, COMMITED or PREV" );
         }
         if( (delimiter == null) || (delimiter.length() == 0) ) {
-            throw new SvnAntValidationException( "delimiter is not allowed to be empty" );
+            throw new BuildException( "delimiter is not allowed to be empty" );
         }
         if( (property == null) || (property.length() == 0) ) {
-            throw new SvnAntValidationException( "property is not allowed to be empty" );
+            throw new BuildException( "property is not allowed to be empty" );
         }
     }
 

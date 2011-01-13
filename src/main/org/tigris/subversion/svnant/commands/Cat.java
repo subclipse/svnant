@@ -58,7 +58,8 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnAntValidationException;
+
+import org.apache.tools.ant.BuildException;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -119,15 +120,15 @@ public class Cat extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    protected void validateAttributes() throws SvnAntValidationException {
+    protected void validateAttributes() {
         if( url == null ) {
-            throw new SvnAntValidationException( "you must set url attr" );
+            throw new BuildException( "you must set url attr" );
         }
         if( destFile == null ) {
             destFile = new File( getProject().getBaseDir(), url.getLastPathSegment() );
         }
         if( revision == null ) {
-            throw SvnAntValidationException.createInvalidRevisionException();
+            throw new BuildException( "Invalid revision. Revision should be a number, a date in the format as specified in dateFormatter attribute or HEAD, BASE, COMMITED or PREV" );
         }
     }
 

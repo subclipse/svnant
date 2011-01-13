@@ -59,7 +59,8 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnAntValidationException;
+
+import org.apache.tools.ant.BuildException;
 
 import java.io.File;
 
@@ -102,27 +103,27 @@ public class Move extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    protected void validateAttributes() throws SvnAntValidationException {
+    protected void validateAttributes() {
         if( ((srcPath == null) && (srcUrl == null)) || ((srcPath != null) && (srcUrl != null)) ) {
-            throw new SvnAntValidationException( "Either srcPath attribute or srcUrl attribute must be set" );
+            throw new BuildException( "Either srcPath attribute or srcUrl attribute must be set" );
         }
         if( srcPath != null ) {
             if( destPath == null ) {
-                throw new SvnAntValidationException( "destPath attribute must be set when srcPath is set" );
+                throw new BuildException( "destPath attribute must be set when srcPath is set" );
             }
             if( destUrl != null ) {
-                throw new SvnAntValidationException( "destUrl attribute cannot be used when srcPath is set" );
+                throw new BuildException( "destUrl attribute cannot be used when srcPath is set" );
             }
         }
         if( srcUrl != null ) {
             if( destUrl == null ) {
-                throw new SvnAntValidationException( "destUrl attribute must be set when srcUrl is set" );
+                throw new BuildException( "destUrl attribute must be set when srcUrl is set" );
             }
             if( destPath != null ) {
-                throw new SvnAntValidationException( "destPath attribute cannot be used when srcUrl is set" );
+                throw new BuildException( "destPath attribute cannot be used when srcUrl is set" );
             }
             if( message == null ) {
-                throw new SvnAntValidationException( "message attribute must be set when srcUrl is set" );
+                throw new BuildException( "message attribute must be set when srcUrl is set" );
             }
         }
     }

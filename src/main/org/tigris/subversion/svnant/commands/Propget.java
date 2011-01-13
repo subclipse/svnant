@@ -59,7 +59,8 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnAntValidationException;
+
+import org.apache.tools.ant.BuildException;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -132,15 +133,15 @@ public class Propget extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    protected void validateAttributes() throws SvnAntValidationException {
+    protected void validateAttributes() {
         if( ((path == null) && (url == null)) || ((path != null) && (url != null)) ) {
-            throw new SvnAntValidationException( "path attribute or url attribute must be set" );
+            throw new BuildException( "path attribute or url attribute must be set" );
         }
         if( name == null ) {
-            throw new SvnAntValidationException( "svnPropertyName attribute must be set" );
+            throw new BuildException( "svnPropertyName attribute must be set" );
         }
         if( (property == null) && (file == null) ) {
-            throw new SvnAntValidationException( "property or file attribute must be set" );
+            throw new BuildException( "property or file attribute must be set" );
         }
     }
 

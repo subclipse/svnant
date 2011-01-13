@@ -58,9 +58,10 @@ package org.tigris.subversion.svnant.commands;
 import org.tigris.subversion.svnclientadapter.SVNKeywords;
 
 import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnAntValidationException;
 
 import org.apache.tools.ant.types.FileSet;
+
+import org.apache.tools.ant.BuildException;
 
 import java.util.Vector;
 
@@ -99,9 +100,9 @@ public abstract class Keywords extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    protected void validateAttributes() throws SvnAntValidationException {
+    protected void validateAttributes() {
         if( (file == null) && (dir == null) && (filesets.size() == 0) ) {
-            throw new SvnAntValidationException( "file, url or fileset must be set" );
+            throw new BuildException( "file, url or fileset must be set" );
         }
     }
 

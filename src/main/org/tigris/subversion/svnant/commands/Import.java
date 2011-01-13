@@ -58,7 +58,8 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnAntValidationException;
+
+import org.apache.tools.ant.BuildException;
 
 import java.io.File;
 
@@ -94,12 +95,12 @@ public class Import extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    protected void validateAttributes() throws SvnAntValidationException {
+    protected void validateAttributes() {
         if( (url == null) || (path == null) ) {
-            throw new SvnAntValidationException( "url and path attributes must be set" );
+            throw new BuildException( "url and path attributes must be set" );
         }
         if( message == null ) {
-            throw new SvnAntValidationException( "message attribute must be set" );
+            throw new BuildException( "message attribute must be set" );
         }
     }
 

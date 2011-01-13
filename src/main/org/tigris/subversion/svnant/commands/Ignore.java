@@ -57,7 +57,8 @@ package org.tigris.subversion.svnant.commands;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnAntValidationException;
+
+import org.apache.tools.ant.BuildException;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -104,23 +105,23 @@ public class Ignore extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    protected void validateAttributes() throws SvnAntValidationException {
+    protected void validateAttributes() {
 
         if( (file == null) && (dir == null) ) {
-            throw new SvnAntValidationException( "file or dir must be set" );
+            throw new BuildException( "file or dir must be set" );
         }
         if( dir != null ) {
             if( file != null ) {
-                throw new SvnAntValidationException( "file must not be set when dir attribute is present" );
+                throw new BuildException( "file must not be set when dir attribute is present" );
             }
             if( pattern == null ) {
-                throw new SvnAntValidationException( "pattern must be set when dir attribute is present" );
+                throw new BuildException( "pattern must be set when dir attribute is present" );
             }
         }
 
         if( file != null ) {
             if( pattern != null ) {
-                throw new SvnAntValidationException( "pattern must not be set when file attribute is present" );
+                throw new BuildException( "pattern must not be set when file attribute is present" );
             }
         }
 

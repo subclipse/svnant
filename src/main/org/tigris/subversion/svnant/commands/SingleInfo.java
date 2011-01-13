@@ -60,7 +60,6 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 import org.tigris.subversion.svnant.SvnAntException;
-import org.tigris.subversion.svnant.SvnAntValidationException;
 
 import org.apache.tools.ant.types.EnumeratedAttribute;
 
@@ -226,7 +225,7 @@ public class SingleInfo extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    protected void validateAttributes() throws SvnAntValidationException {
+    protected void validateAttributes() {
         if( target == null ) {
             throw new BuildException( "the attribute 'target' must be set." );
         }
