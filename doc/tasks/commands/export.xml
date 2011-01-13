@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<msubsection id="export" title="export" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <ol>
+  
+    <li>Exports a clean directory tree from the repository specified by <code>srcurl</code>, 
+    at revision <code>revision</code> if it is given, otherwise at HEAD, into <code>destPath</code>.</li>
+    
+    <li>Exports a clean directory tree from the working copy specified by <code>srcPath</code> into 
+    <code>destPath</code>. all local changes will be preserved, but files not under revision control 
+    will not be copied.
+    </li>
+    
+  </ol>
+
+  <attributes>
+  
+    <grouped>
+    
+      <attribute name="srcUrl">
+        <doc>source url to export from</doc>
+      </attribute>
+    
+      <attribute name="srcPath">
+        <doc>source path to export from</doc>
+      </attribute>
+    
+    </grouped>
+  
+    <attribute name="destPath" required="true">
+      <doc>destination path</doc>
+    </attribute>
+    
+    <attribute name="force" required="false" default="false">
+      <doc>Allows to overwrite an already existing destination.</doc>
+    </attribute>
+    
+    <attribute name="revision" required="false" default="HEAD">
+      <doc>revision of the source url to export from.</doc>
+      <doc>Possible values are:
+        <ul>
+          <li>a date with the format as specified in dateFormatter attribute</li>
+          <li>a revision number</li>
+          <li>HEAD, BASE, COMMITED or PREV</li>
+        </ul>
+      </doc>
+    </attribute>
+  
+  </attributes>
+
+</msubsection>

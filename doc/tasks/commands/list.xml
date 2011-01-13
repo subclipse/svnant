@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<msubsection id="list" title="list" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <p>lists the content of a repository</p>
+
+  <attributes>
+  
+    <attribute name="delimiter" required="false" default=",">
+      <doc>The delimiter to be used for separation of the list.</doc>
+    </attribute>
+  
+    <attribute name="listDirs" required="false" default="true">
+      <doc>If enabled directory entries will be listed.</doc>
+    </attribute>
+    
+    <attribute name="listFiles" required="false" default="true">
+      <doc>If enabled file entries will be listed.</doc>
+    </attribute>
+  
+    <attribute name="onlyNames" required="false" default="false">
+      <doc>If enabled only the names will be listed otherwise the complete urls.</doc>
+    </attribute>
+    
+    <attribute name="property" required="true">
+      <doc>Property which will receive the resulting value.</doc>
+    </attribute>
+  
+    <attribute name="recurse" required="false" default="false">
+      <doc>Allows to list the complete subtree if true. Use it carefully.</doc>
+    </attribute>
+    
+    <attribute name="revision" required="false" default="HEAD">
+      <doc>The revision used to get the listing from.</doc>
+    </attribute>
+  
+    <attribute name="url" required="true">
+      <doc>The URL which content shall be listed.</doc>
+    </attribute>
+  
+  </attributes>
+
+</msubsection>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<msubsection id="propget" title="propget" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <p>Get a property from a file or a directory.</p>
+
+  <attributes>
+
+    <grouped>
+      
+      <attribute name="path">
+        <doc>path of the file or directory on which to get the property.</doc>
+      </attribute>
+      
+      <attribute name="url">
+        <doc>url of the file or directory in repository on which to get the property</doc>
+      </attribute>
+      
+    </grouped>
+  
+    <attribute name="name" required="true">
+      <doc>name of the property to get</doc>
+    </attribute>
+  
+    <grouped>
+    
+      <attribute name="property">
+        <doc>the name of the property to set with the value of the svn property</doc>
+      </attribute>
+      
+      <attribute name="file">
+        <doc>file that will contain the value of the property</doc>
+      </attribute>
+    
+    </grouped>
+  
+  </attributes>
+
+  <p>Example:</p>
+  <snippet type="xml">
+    &lt;propget 
+        path="workingcopy/propTest/file.png" 
+        name="svn:mime-type" 
+        property="propTest.mimeType"
+    /&gt;
+  </snippet>
+  
+</msubsection>

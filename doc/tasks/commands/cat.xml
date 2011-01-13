@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<msubsection id="cat" title="cat" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <p>Get the content of a file on repository.</p>
+
+  <attributes>
+
+    <attribute name="destFile" required="false" default="The name of the file on the url placed in the ant project's basedir">
+      <doc>Name of the destination file</doc>
+    </attribute>
+
+    <attribute name="url" required="true">
+      <doc>Url of the file in repository</doc>
+    </attribute>
+
+    <attribute name="revision" required="false" default="HEAD">
+      <doc>revision to get.</doc>
+      <doc>Possible values are:
+        <ul>
+          <li>a date with the format as specified in dateFormatter attribute</li>
+          <li>a revision number</li>
+          <li>HEAD, BASE, COMMITED or PREV</li>
+        </ul>
+      </doc>
+    </attribute>
+
+  </attributes>
+
+</msubsection>

@@ -79,30 +79,33 @@
   <!-- ======================================================================================= -->
   <!-- compile docs                                                                            -->
   <!-- ======================================================================================= -->
+  
   <target name="docs" depends="" description="generate documentation">
+    
     <mkdir dir="${build.distrib.dir}/doc" />
-    <style basedir="${src.doc.dir}" destdir="doc" extension=".html" style="${src.doc.dir}/ant-types.xsl" processor="trax" includes="*.xml" />
-    <copy todir="${build.distrib.dir}/doc">
-      <fileset dir="doc" includes="**/*.html"/>
+    
+    <tempfile property="file.temporary" deleteonexit="true"/>
+    
+    <xinclude in="${src.doc.dir}/tasks/svntask.xml" out="${file.temporary}"/>
+    <xslt in="${file.temporary}" out="${build.distrib.dir}/doc/svn.html" style="${src.doc.dir}/antdoc.xsl"/>
+    
+    <xinclude in="${src.doc.dir}/conditions/conditions.xml" out="${file.temporary}"/>
+    <xslt in="${file.temporary}" out="${build.distrib.dir}/doc/conditions.html" style="${src.doc.dir}/antdoc.xsl"/>
+      
+    <xinclude in="${src.doc.dir}/selectors/selectors.xml" out="${file.temporary}"/>
+    <xslt in="${file.temporary}" out="${build.distrib.dir}/doc/selectors.html" style="${src.doc.dir}/antdoc.xsl"/>
+    
+    <xinclude in="${src.doc.dir}/types/types.xml" out="${file.temporary}"/>
+    <xslt in="${file.temporary}" out="${build.distrib.dir}/doc/types.html" style="${src.doc.dir}/antdoc.xsl"/>
+      
+    <xinclude in="${src.doc.dir}/introduction.xml" out="${file.temporary}"/>
+    <xslt in="${file.temporary}" out="${build.distrib.dir}/doc/introduction.html" style="${src.doc.dir}/antdoc.xsl"/>
+      
+    <copy todir="${build.distrib.dir}/doc" overwrite="true">
+      <fileset dir="${src.doc.dir}" includes="*.html"/>
     </copy>
   </target>
 
-  <target name="newdocs">
-    <mkdir dir="${build.distrib.dir}/newdocs"/>
-    <delete>
-      <fileset dir="${build.distrib.dir}/newdocs" includes="**/*"/>
-    </delete>
-    <xinclude in="newdoc/tasks/svntask.xml" out="newdoc/_temporary.xml"/>
-    <xslt in="newdoc/_temporary.xml" out="${build.distrib.dir}/newdocs/svnant.html" style="newdoc/antdoc.xsl" processor="trax">
-    </xslt>
-    <xinclude in="newdoc/conditions/conditions.xml" out="newdoc/_temporary.xml"/>
-    <xslt in="newdoc/_temporary.xml" out="${build.distrib.dir}/newdocs/conditions.html" style="newdoc/antdoc.xsl" processor="trax">
-    </xslt>
-    <xinclude in="newdoc/selectors/selectors.xml" out="newdoc/_temporary.xml"/>
-    <xslt in="newdoc/_temporary.xml" out="${build.distrib.dir}/newdocs/selectors.html" style="newdoc/antdoc.xsl" processor="trax">
-    </xslt>
-  </target>
-  
   <!-- ======================================================================================= -->
   <!-- compile junit test classes                                                              -->
   <!-- ======================================================================================= -->

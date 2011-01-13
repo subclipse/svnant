@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<msubsection id="commit" title="commit" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <p>Send changes from your working copy to the repository.</p>
+
+  <attributes>
+  
+    <attribute name="file" required="false">
+      <doc>file to commit</doc>
+    </attribute>
+
+    <attribute name="recurse" required="false" default="true">
+      <doc>Set to "false" to operate on single directory only. Apply only when <code>dir</code> attribute is set.</doc>
+    </attribute>
+    
+    <attribute name="dir" required="false">
+      <doc>directory to commit</doc>
+    </attribute>
+    
+    <attribute name="message" required="true">
+      <doc>commit message</doc>
+    </attribute>
+  
+  </attributes>
+
+  <p>Parameters specified as nested elements :</p>
+  <ul>
+    <li>fileset<br/>
+    Filesets are used to select sets of files to commit.</li>
+  </ul>
+
+</msubsection>

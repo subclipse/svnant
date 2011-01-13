@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<msubsection id="wcversion" title="wcversion" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <p>Retrieves a state of the working copy. Similar to the svn's utility svnversion, 
+  just providing more. Crawls the working copy and retrieves the maximum revision number, 
+  revision range if workingCopy is mixed etc.</p>
+
+  <attributes>
+  
+    <attribute name="path" required="true">
+      <doc>a path to the working copy</doc>
+    </attribute>
+    
+    <attribute name="prefix" required="false">
+      <doc>a string which will be prefixed to output properties set/filled by this command</doc>
+    </attribute>
+    
+    <attribute name="processUnversioned" required="false" default="false">
+      <doc>flag whether presence of unversioned resoures should be treated as changes</doc> 
+    </attribute>
+  
+  </attributes>
+
+  <p>The command fill set the following properties: (with optional prefix applied)</p>
+  
+  <table>
+    <tr>
+      <td>Property</td>
+      <td>Description</td>
+    </tr>
+    <tr>
+      <td>repository.url</td>
+      <td>URL of the repository of the working copy root</td>
+    </tr>
+    <tr> 
+      <td>repository.path</td>
+      <td>path in the repository</td>
+    </tr>
+    <tr> 
+      <td>revision.max</td> 
+      <td>the highest revision number in the working copy</td>
+    </tr>
+    <tr> 
+      <td>revision.max-with-flags</td> 
+      <td>the highest revision number in the working copy plus flags (M - modified, X - mixed)</td>
+    </tr> 
+    <tr> 
+      <td>revision.range</td>
+      <td>the revision range (in mixed wc), similar to svnversion format. (e.g. 1000:1010MX)</td> 
+    </tr> 
+    <tr> 
+      <td>committed.max</td> 
+      <td>the highest 'last committed revision'</td> 
+    </tr> 
+    <tr> 
+      <td>committed.max-with-flags</td>
+      <td>the highest 'last committed revision' plus flags (M, X)</td> 
+    </tr> 
+    <tr> 
+      <td>modified</td>
+      <td>set to "true" if working copy is modified, property not set otherwise</td> 
+    </tr> 
+    <tr> 
+      <td>mixed</td>
+      <td>set to "true" if working copy is mixed, property not set otherwise</td> 
+    </tr> 
+  </table>
+  
+  <p>An example of the properties that would be set in a sample working copy (with modifications, 
+  with prefix="svn."):</p>
+
+  <code>svn.repository.url -> https://server/repos/branches/1.2.x</code><br/>
+  <code>svn.repository.path -> /repos/branches/1.2.x</code><br/>
+  <code>svn.revision.max -> 676</code><br/>
+  <code>svn.revision.max-with-flags -> 676M</code><br/>
+  <code>svn.revision.range -> 676M</code><br/>
+  <code>svn.committed.max -> 651</code><br/>
+  <code>svn.committed.max-with-flags -> 651M</code><br/>
+  <code>svn.modified -> true</code><br/>
+  
+</msubsection>

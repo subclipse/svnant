@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<msubsection id="keywordsremove" title="keywordsremove" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <p>Keywordsadd remove some keywords to be substituted on the given files. Other present keywords are not modified.</p>
+  <p>The attributes are the same than for keywordsset command.</p>
+
+</msubsection>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<msubsection id="switch" title="switch" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <p>Update the working copy to mirror a new URL within the repository. This behaviour is 
+  similar to 'svn update', and is the way to move a working copy to a branch or tag within the 
+  same repository.</p>
+
+  <attributes>
+  
+    <attribute name="path" required="true">
+      <doc>The working copy to switch to the given url.</doc>
+    </attribute>
+    
+    <attribute name="url" required="true">
+      <doc>The url to switch to.</doc>
+    </attribute>
+    
+    <attribute name="recurse" required="false" default="false">
+      <doc>Set to "false" to operate on a single directory only.</doc>
+    </attribute>
+  
+    <attribute name="revision" required="false" default="HEAD">
+      <doc>revision.</doc>
+      <doc>Possible values are:
+        <ul>
+          <li>a date with the format as specified in dateFormatter attribute</li>
+          <li>a revision number</li>
+          <li>HEAD, BASE, COMMITED or PREV</li>
+        </ul>
+      </doc>
+    </attribute>
+  
+  </attributes>
+  
+  <p>Example:</p>
+  <snippet type="xml">
+    &lt;switch path="workingcopy/switchTest" url="${urlRepos}/switchTestBranch"/&gt; 
+  </snippet>
+  
+</msubsection>

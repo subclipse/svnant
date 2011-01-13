@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdoc name="svn Types" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <msection id="description" title="Description">
+    
+    <p>This document describes the types offered in svnAnt.</p>
+    
+  </msection>
+    
+  <msection id="svntype" title="Support svn types" indexing="true">
+
+    <xi:include href="svnfileset.xml"/>
+    <xi:include href="svnsetting.xml"/>
+
+  </msection>
+
+</mdoc>

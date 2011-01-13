@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<msubsection id="svnconflicted" title="svnConflicted" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <p>This file selector is used to discriminate files within a fileset based on a Subversion 
+  status. In particular, this selector keeps files that are recognized as 'conflicted'.</p>
+  
+  <p>When updating a subversion item (file or directory), it is possible to have two sets of 
+  changes merged into the working item. This happens when the item was modified locally as 
+  well as remotely during the period since the last update. If the two sets of changes conflict 
+  (same lines of a file changes, same directory entries modified), then the item is marked as 
+  'conflicted'. In general, <b>svn status</b> displays 'conflicted' items with the letter C preceeding 
+  the name. Note that 'conflicted' items are also considered 'modified'.</p>
+  
+  <p>Example:</p>
+  <p>to copy a number of files with the status 'conflicted' from their location in <b>workingcopy</b> 
+  to a new directory called <b>test</b>, the following ant task can be used:</p>
+  
+  <snippet type="xml">
+    &lt;copy todir="test"&gt;
+        &lt;fileset dir="workingcopy"&gt;
+            &lt;svnConflicted/&gt;
+        &lt;/fileset&gt;
+    &lt;/copy&gt;
+  </snippet>
+
+</msubsection>

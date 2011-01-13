@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<msubsection id="update" title="update" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <p>Bring changes from the repository into the working copy. If no revision given, bring 
+  working copy up-to-date with HEAD rev. Else synchronize working copy to revision.</p>
+
+  <attributes>
+  
+    <attribute name="file" required="false">
+      <doc>file to update</doc>
+    </attribute>
+
+    <attribute name="dir" required="false">
+      <doc>directory to update</doc>
+    </attribute>
+  
+    <attribute name="recurse" required="false" default="false">
+      <doc>Set to "false" to operate on a single directory only (applies only if
+      <code>dir</code> has been set).</doc>
+    </attribute>
+  
+    <attribute name="revision" required="false" default="HEAD">
+      <doc>revision.</doc>
+      <doc>Possible values are:
+        <ul>
+          <li>a date with the format as specified in dateFormatter attribute</li>
+          <li>a revision number</li>
+          <li>HEAD, BASE, COMMITED or PREV</li>
+        </ul>
+      </doc>
+    </attribute>
+  
+  </attributes>
+
+  <p>Parameters specified as nested elements :</p>
+  <ul>
+    <li>fileset<br/>
+    Filesets are used to select sets of files to update. 
+    </li>
+  </ul>
+
+</msubsection>

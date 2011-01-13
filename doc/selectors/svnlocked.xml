@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<msubsection id="svnlocked" title="svnLocked" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <p>This file selector is used to discriminate files within a <b>fileset</b> based on a 
+  Subversion status. In particular, this selector keeps files that are recognized as 'locked'.</p>
+
+  <p>A 'locked' file or directory is one where the repository has been informed of the intent 
+  of a user to prevent others from modifying the file. For a working copy to be aware of 
+  this fact, it must have been 'updated' since the lock status was changed. In general, 
+  <b>svn status</b> displays those items with one of the letters <code>K</code>, <code>O</code> or 
+  <code>B</code> in the sixth column. The 'lock' status is independent of most other conditions 
+  such as 'modified', 'conflicted', etc.</p>
+
+  <p>Example:</p>
+  <p>to copy a number of files with the status 'locked' from their location in <b>workingcopy</b> 
+  to a new directory called <b>test</b>, the following ant task can be used:</p>
+
+  <snippet type="xml">
+    &lt;copy todir="test"&gt;
+        &lt;fileset dir="workingcopy"&gt;
+            &lt;svnLocked/&gt;
+        &lt;/fileset&gt;
+    &lt;/copy&gt;
+  </snippet>
+  
+</msubsection>

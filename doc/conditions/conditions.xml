@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdoc name="conditions" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <msection title="Description">
+      
+    <p>The <i>svnant</i> implementation provides some conditions which allow to check for
+    some repository states so actions can be selectively performed.</p>
+
+  </msection>
+
+  <msection id="parameters" title="Parameters">
+  
+    <p>The following list of attributes is shared among all condition implementations:</p>
+  
+    <attributes>
+
+      <attribute name="username" required="false">
+        <doc>username that will be used for all nested svn commands.</doc>
+      </attribute>
+  
+      <attribute name="password" required="false">
+        <doc>password that will be used for all nested svn commands.</doc>
+      </attribute>
+
+      <attribute name="javahl" required="false" default="true">
+        <doc>Set to "false" to use command line client interface instead of JNI JavaHL binding.</doc>
+      </attribute>
+
+      <attribute name="svnkit" required="false" default="false">
+        <doc>Set to "false" to use command line client interface instead of SVNKit binding.</doc>
+      </attribute>
+
+      <attribute name="failonerror" required="false" default="true">
+        <doc>Controls whether an error stops the build or is merely reported to the screen.</doc>
+      </attribute>
+    
+      <attribute name="refid" required="false">
+        <doc>If set the configuration for this task is taken from a <ref id="svnsetting">svnSetting</ref> object. Such a settings instance simply provides default values, so they will be overridden in case the corresponding attribute on this task has been set.</doc>
+      </attribute>
+
+    </attributes>
+      
+  </msection>
+    
+  <msection title="Supported condition types" indexing="true">
+
+    <xi:include href="svnavailable.xml"/>
+    <xi:include href="svnexists.xml"/>
+  
+  </msection>
+  
+</mdoc>

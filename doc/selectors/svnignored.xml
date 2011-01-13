@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<msubsection id="svnignored" title="svnIgnored" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <p>This file selector is used to discriminate files within a fileset based on a 
+  Subversion status. In particular, this selector keeps files that are recognized as 'ignored'.</p>
+
+  <p>An 'ignored' file or directory is one which name match the patterns found in the parent 
+  directory's <b>svn:ignore</b> property. In general, <b>svn status --no-ignore</b> display 
+  those items with the letter I preceeding the name.</p>
+
+  <p>Example:</p>
+  <p>to copy a number of files with the status 'ignored' from their location in <b>workingcopy</b>
+  to a new directory called <b>test</b>, the following ant task can be used:</p>
+
+  <snippet type="xml">
+    &lt;copy todir="test"&gt;
+        &lt;fileset dir="workingcopy"&gt;
+            &lt;svnIgnored/&gt;
+        &lt;/fileset&gt;
+    &lt;/copy&gt;
+  </snippet>
+
+</msubsection>

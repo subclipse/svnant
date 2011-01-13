@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<msubsection id="revert" title="revert" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <p>Restore pristine working copy file (undo most local edits).</p>
+
+  <attributes>
+  
+    <attribute name="file" required="false">
+      <doc>file to revert</doc>
+    </attribute>
+  
+    <attribute name="dir" required="false">
+      <doc>directory to revert</doc>
+    </attribute>
+    
+    <attribute name="recurse" required="false" default="false">
+      <doc>Set to "false" to operate on a single directory only (applies only when dir attribute 
+      is set).</doc>
+    </attribute>
+    
+    <attribute name="revision" required="false" default="HEAD">
+      <doc>revision.</doc>
+      <doc>Possible values are:
+        <ul>
+          <li>a date with the format as specified in dateFormatter attribute</li>
+          <li>a revision number</li>
+          <li>HEAD, BASE, COMMITED or PREV</li>
+        </ul>
+      </doc>
+    </attribute>
+  
+  </attributes>
+
+  <p>Parameters specified as nested elements:</p>
+  <ul>
+    <li>fileset<br/>
+    Filesets are used to select sets of files to revert.</li>
+  </ul>
+
+</msubsection>

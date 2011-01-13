@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdoc title="Introduction" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <msection id="introduction" title="Introduction">
+  
+    <p>The <i>svnant</i> project provides a set of <a href="http://ant.apache.org">Ant</a> extensions
+    which can be used to interact with <a href="http://subversion.apache.org">Subversion</a> 
+    repositories.</p>
+  
+  </msection>
+  
+  <msection id="setup" title="Setup">
+  
+    <p>As with most Ant extensions, SvnAnt's task and type names must be 
+    <a href="http://ant.apache.org/manual/CoreTasks/typedef.html">mapped to their 
+    implementing classes</a> before being used in an Ant build file. An example of how to use 
+    the <em>antlib</em> bundled in SvnAnt's JAR file to perform that registration follows:</p>
+    
+    <snippet type="xml" id="snippetbasicdeclaration">
+    
+      &lt;path id="path.svnant"&gt;
+          &lt;pathelement location="${basedir}/svnant.jar"/&gt;
+          &lt;pathelement location="${basedir}/svnClientAdapter.jar"/&gt;
+          &lt;!-- ... --&gt;
+      &lt;/path&gt;
+    
+      &lt;typedef 
+          resource="org/tigris/subversion/svnant/svnantlib.xml" 
+          classpathref="path.svnant"
+      /&gt;
+      
+    </snippet>
+  
+    <remark>Please be aware that the previously used declaration mechanism using the file
+    <code>svnant.properties</code> is no longer supported so it's necessary to update
+    your declaration if necessary.</remark>
+  
+    <msubsection id="binding" title="Binding">
+
+      <p>The path declaration shown <a href="#snippetbasicdeclaration">above</a> only contains the
+      necessary jar files used to realise subversion access.</p>
+      
+      <p>If you don't extend the above mentioned path declaration the only possibility to access
+      a subversion repository is the so called <code>commandline</code> binding.</p>
+      
+      <p>In general you want to extend this path with additional libraries in order to use a
+      specific binding to the subversion repository.</p>
+  
+      <p>The following list shows the requirements and the meaning of the available bindings
+      (the order specifies the precedence):</p>
+      
+      <msubsubsection title="javahl">
+      
+        <p>This type of binding makes use of a Java native bridge in order to realise the subversion
+        commands. These share libraries must be on your library path. You can launch the Ant
+        script using the following option (of course you need to adjust the path):</p>
+        
+        <snippet>
+          -Djava.library.path=${basedir}/javahl
+        </snippet>
+        
+        <p>You also need to add the Jar equivalent of the binding which is typically named
+        <code>svnjavahl.jar</code>.</p>
+        
+        <remark>If this binding doesn't seem to work, you should check whether the library 
+        path is correct or not. You can use the <a href="http://ant.apache.org/manual/Tasks/echoproperties.html">echoproperties</a>
+        to get this information.</remark>
+        
+      </msubsubsection>
+      
+      <msubsubsection title="svnkit">
+        
+        <p>The <a href="http://svnkit.com">svnkit</a> binding is purely java based. Using this
+        binding requires the jar <code>svnkit.jar</code> to be used for the <i>svnant</i>
+        declaration. You also need the <code>ganymed.jar</code> which provides the necessary
+        functionality for SSH based communication.</p>
+      
+      </msubsubsection>
+
+      <msubsubsection title="commandline">
+      
+        <p>This binding is the simpliest one and is considered to be a fallback solution. It
+        just looks for the <i>svn</i> executable itself, so it must be locatable using the
+        path specified within the propert <code>java.library.path</code>.</p>
+        
+      </msubsubsection>
+  
+    </msubsection>
+  
+  </msection>
+  
+  <msection id="changelog" title="Changelog">
+  
+    <snippet id="changelog" type="text">
+      <xi:include parse="text" href="../changelog.txt"/>
+    </snippet>
+    
+  </msection>
+  
+  <msection id="knownissues" title="Known issues">
+  
+    <p>This chapter provides some known issues which might be of interest when you're experiencing
+    <i>weird</i> behaviour:</p>
+    
+    <ul>
+      <li><b>Mutable Ant properties</b><br/>
+      <p>Basically Ant properties aren't supposed to be changed. This means that their value
+      stays the same once they have been set. <i>svnant</i> doesn't take care of this so if
+      you're <i>reusing</i> property names you should be aware that they can be overwritten.</p>
+      <p>We won't change that behaviour since this is a historical result and modifying the
+      behaviour might cause issues on current build scripts.</p> 
+      </li>
+    </ul>
+  
+  </msection>
+
+  <msection id="authors" title="Authors">
+  
+    <ul>
+      <li><a href="mailto:users@subclipse.tigris.org">C&#233;dric Chabanois</a></li>
+    </ul>
+  
+  </msection>
+
+</mdoc>

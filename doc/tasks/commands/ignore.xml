@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<msubsection id="ignore" title="ignore" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <p>Add a given file or a pattern to the ignored files list (modifies svn:ignore property)</p>
+
+  <attributes>
+  
+    <grouped>
+      
+      <attribute name="file">
+        <doc>file to ignore</doc>
+      </attribute>
+
+      <attribute name="dir">
+        <doc>directory to ignore</doc>
+      </attribute>
+      
+    </grouped>
+    
+    <attribute name="pattern" required="true">
+      <doc>pattern to add to svn:ignore on the directory. Only when dir is set.</doc>
+    </attribute>
+  
+    <attribute name="recurse" required="false" default="false">
+      <doc>Set to "true" to add the pattern recursively to directories (only when dir is set).</doc>
+    </attribute>
+  
+  </attributes>
+  
+  <p>Examples:</p>
+  <snippet type="xml">
+    &lt;ignore 
+        dir="workingcopy/ignoreTest/dir1" 
+        pattern="*.ignore" 
+        recurse="true"
+    /&gt;
+  </snippet>
+
+</msubsection>

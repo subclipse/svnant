@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<msubsection id="status" title="status" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <p>Get the status of working copy files and directories.</p>
+
+  <attributes>
+  
+    <attribute name="path" required="true">
+      <doc>path of the file or directory</doc>
+    </attribute>
+
+    <attribute name="textStatusProperty" required="false">
+      <doc>Name of the property to set to the status of the item.</doc>
+      <doc>Allowed values:
+      <ul>
+        <li>non-svn</li> 
+        <li>normal : no modifications</li> 
+        <li>added</li>
+        <li>missing : item is missing (removed by non-svn command)</li> 
+        <li>incomplete</li> 
+        <li>deleted</li> 
+        <li>replaced</li> 
+        <li>modified</li> 
+        <li>merged</li> 
+        <li>conflicted</li> 
+        <li>obstructed</li> 
+        <li>ignored</li> 
+        <li>external</li> 
+        <li>unversioned</li> 
+      </ul>
+      </doc>
+    </attribute>
+
+    <attribute name="propStatusProperty" required="false">
+      <doc>Name of the property to set to the status of the item properties</doc>
+      <doc>Allowed values:
+        <li>normal : no modifications</li> 
+        <li>conflicted</li> 
+        <li>modified</li> 
+      </doc>
+    </attribute>
+    
+    <attribute name="revisionProperty" required="false">
+      <doc>Name of the property to set to the revision of the item (or "" if unversioned)</doc>
+    </attribute>
+    
+    <attribute name="lastChangedRevisionProperty" required="false">
+      <doc>Name of the property to set to the last changed revision of the item (or "" if unversioned)</doc>
+    </attribute>
+
+    <attribute name="lastChangedDateProperty" required="false">
+      <doc>Name of the property to set to the last changed date of the item (or "" if unversioned). 
+      The date is formatted according to task's "dateFormatter"</doc>
+    </attribute>
+
+    <attribute name="lastCommitAuthorProperty" required="false">
+      <doc>Name of the property to set to the last commit author (or "" if unversioned).</doc>
+    </attribute>
+
+    <attribute name="urlProperty" required="false">
+      <doc>Name of the property to set to the url of the item.</doc>
+    </attribute>
+  
+  </attributes>
+  
+  <p>Example:</p>
+  <snippet type="xml">
+    &lt;status 
+        path="workingcopy/statusTest/added.txt" 
+        textStatusProperty="testStatus.textStatus" 
+        propStatusProperty="testStatus.propStatus" 
+        lastChangedRevisionProperty="testStatus.lastCommitRevision" 
+        revisionProperty="testStatus.revision" 
+        lastCommitAuthorProperty="testStatus.lastCommitAuthor"
+    /&gt;
+  </snippet>
+
+</msubsection>

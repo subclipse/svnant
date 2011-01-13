@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<msubsection id="log" title="log" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <p>Display commit log messages.</p>
+
+  <attributes>
+
+    <grouped>
+      
+      <attribute name="path">
+        <doc>path to create</doc>
+      </attribute>
+
+      <attribute name="url">
+        <doc>url to create</doc>
+      </attribute>
+      
+    </grouped>
+
+    <attribute name="startRevision" required="true">
+      <doc>start revision</doc>
+    </attribute>
+
+    <attribute name="stopRevision" required="true">
+      <doc>stop revision</doc>
+    </attribute>
+
+    <attribute name="destFile" required="false" default="The name of the file on the url placed in the ant project's basedir.">
+      <doc>destination file</doc>
+    </attribute>
+    
+    <attribute name="asXml" required="false" default="true">
+      <doc>Output log as xml.</doc>
+    </attribute>
+    
+    <attribute name="verbose" required="false" default="false">
+      <doc>Include changed paths in the log.</doc>
+    </attribute>
+
+    <attribute name="stopOnCopy" required="false" default="true">
+      <doc>Useful for determining branch points.</doc>
+    </attribute>
+  
+    <attribute name="limit" required="false" default="All in the range">
+      <doc>Restricts output to the first n log messages.</doc>
+    </attribute>
+
+  </attributes>
+
+</msubsection>

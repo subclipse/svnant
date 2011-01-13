@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<msubsection id="checkout" title="checkout" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <p>Check out a working copy from a repository.</p>
+
+  <attributes>
+  
+    <attribute name="url" required="true">
+      <doc>url to checkout from</doc>
+    </attribute>
+    
+    <attribute name="recurse" required="false" default="true">
+      <doc>Set to "false" to operate on single directory only.</doc>
+    </attribute>
+  
+    <attribute name="destPath" required="true">
+      <doc>destination directory</doc>
+    </attribute>
+
+    <attribute name="revision" required="false" default="HEAD">
+      <doc>revision to checkout.</doc>
+      <doc>Possible values are:
+        <ul>
+          <li>a date with the format as specified in dateFormatter attribute</li>
+          <li>a revision number</li>
+          <li>HEAD, BASE, COMMITED or PREV</li>
+        </ul>
+      </doc>
+    </attribute>
+    
+  </attributes>
+
+</msubsection>

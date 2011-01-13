@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<msubsection id="createRepository" title="createRepository" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <p>Create a new, empty repository at path.</p>
+
+  <attributes>
+    
+    <attribute name="path" required="yes">
+      <doc>Path where to create the new repository</doc>
+    </attribute>
+    
+  </attributes>
+
+  <p>Example:</p>
+  <snippet type="xml">
+    &lt;createRepository path="repository"/&gt;
+  </snippet>
+
+</msubsection>
