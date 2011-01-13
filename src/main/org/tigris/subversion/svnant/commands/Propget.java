@@ -58,8 +58,6 @@ import org.tigris.subversion.svnclientadapter.ISVNProperty;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
-import org.tigris.subversion.svnant.SvnAntException;
-
 import org.apache.tools.ant.BuildException;
 
 import java.io.File;
@@ -92,7 +90,7 @@ public class Propget extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    public void execute() throws SvnAntException {
+    public void execute() {
         
         ISVNProperty svnProperty;
         try {
@@ -102,7 +100,7 @@ public class Propget extends SvnCommand {
                 svnProperty = getClient().propertyGet( url, name );
             }
         } catch( SVNClientException e ) {
-            throw new SvnAntException( "Can't get property " + name, e );
+            throw new BuildException( "Can't get property " + name, e );
         }
 
         if( property != null && svnProperty != null ) {
@@ -117,7 +115,7 @@ public class Propget extends SvnCommand {
                     os.write( svnProperty.getData() );
                 }
             } catch( IOException e ) {
-                throw new SvnAntException( "Can't write property value to file " + file.toString(), e );
+                throw new BuildException( "Can't write property value to file " + file.toString(), e );
             } finally {
                 if( os != null ) {
                     try {

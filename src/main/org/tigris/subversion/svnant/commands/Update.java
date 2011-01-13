@@ -57,8 +57,6 @@ package org.tigris.subversion.svnant.commands;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
-import org.tigris.subversion.svnant.SvnAntException;
-
 import org.apache.tools.ant.types.FileSet;
 
 import org.apache.tools.ant.BuildException;
@@ -92,13 +90,13 @@ public class Update extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    public void execute() throws SvnAntException {
+    public void execute() {
 
         if( file != null ) {
             try {
                 getClient().update( file, revision, false );
             } catch( SVNClientException e ) {
-                throw new SvnAntException( "Cannot update file " + file.getAbsolutePath(), e );
+                throw new BuildException( "Cannot update file " + file.getAbsolutePath(), e );
             }
         }
 
@@ -106,7 +104,7 @@ public class Update extends SvnCommand {
             try {
                 getClient().update( dir, revision, recurse );
             } catch( SVNClientException e ) {
-                throw new SvnAntException( "Cannot update dir " + dir.getAbsolutePath(), e );
+                throw new BuildException( "Cannot update dir " + dir.getAbsolutePath(), e );
             }
         }
 
@@ -135,9 +133,8 @@ public class Update extends SvnCommand {
      * updates a fileset (both dirs and files)
      * @param svnClient
      * @param fs
-     * @throws SvnAntException
      */
-    private void updateFileSet( FileSet fs ) throws SvnAntException {
+    private void updateFileSet( FileSet fs ) {
         DirectoryScanner ds = fs.getDirectoryScanner( getProject() );
         File baseDir = fs.getDir( getProject() ); // base dir
         String[] files = ds.getIncludedFiles();

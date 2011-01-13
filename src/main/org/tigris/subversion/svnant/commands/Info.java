@@ -60,8 +60,6 @@ import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
-import org.tigris.subversion.svnant.SvnAntException;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
@@ -131,12 +129,12 @@ public class Info extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    public void execute() throws SvnAntException {
+    public void execute() {
         Project theProject = getProject();
         try {
             this.info = acquireInfo();
             if( (this.info.getRevision() == null) || (SVNRevision.INVALID_REVISION.equals( this.info.getRevision() )) ) {
-                throw new SvnAntException( this.target + " - Not a versioned resource" );
+                throw new BuildException( this.target + " - Not a versioned resource" );
             }
             String[] propNames = (SVNNodeKind.DIR == this.info.getNodeKind() ? DIR_PROP_NAMES : FILE_PROP_NAMES);
             for( int i = 0; i < propNames.length; i++ ) {
@@ -144,8 +142,8 @@ public class Info extends SvnCommand {
                 theProject.setProperty( propPrefix + propNames[i], value );
                 info( verbose, propPrefix + propNames[i] + ": " + value );
             }
-        } catch( Exception e ) {
-            throw new SvnAntException( "Failed to set 'info' properties", e );
+        } catch( SVNClientException e ) {
+            throw new BuildException( "Failed to set 'info' properties", e );
         }
     }
 

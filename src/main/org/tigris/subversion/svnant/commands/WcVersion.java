@@ -61,8 +61,6 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 
-import org.tigris.subversion.svnant.SvnAntException;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
@@ -83,10 +81,10 @@ public class WcVersion extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    public void execute() throws SvnAntException {
+    public void execute() {
 
         if( !getPath().exists() || !getPath().isDirectory() ) {
-            throw new SvnAntException( "Path does not exist: " + getPath().getAbsolutePath() );
+            throw new BuildException( "Path does not exist: " + getPath().getAbsolutePath() );
         }
 
         WCVersionSummary wcVersionSummary;
@@ -94,7 +92,7 @@ public class WcVersion extends SvnCommand {
         try {
             wcVersionSummary = getWorkingCopySumary( getPath() );
         } catch( SVNClientException e ) {
-            throw new SvnAntException( "Can't get summary status for path " + getPath(), e );
+            throw new BuildException( "Can't get summary status for path " + getPath(), e );
         }
 
         // Save the status to ant properties.

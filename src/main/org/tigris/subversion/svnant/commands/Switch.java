@@ -58,8 +58,6 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
-import org.tigris.subversion.svnant.SvnAntException;
-
 import org.apache.tools.ant.BuildException;
 
 import java.io.File;
@@ -84,11 +82,11 @@ public class Switch extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    public void execute() throws SvnAntException {
+    public void execute() {
         try {
             getClient().switchToUrl( path, url, revision, recurse );
         } catch( SVNClientException e ) {
-            throw new SvnAntException( "Cannot switch to url : " + url.toString(), e );
+            throw new BuildException( "Cannot switch to url : " + url.toString(), e );
         }
     }
 

@@ -59,8 +59,6 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
-import org.tigris.subversion.svnant.SvnAntException;
-
 import org.apache.tools.ant.types.EnumeratedAttribute;
 
 import org.apache.tools.ant.BuildException;
@@ -118,18 +116,18 @@ public class SingleInfo extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    public void execute() throws SvnAntException {
+    public void execute() {
         Project project = getProject();
         try {
             ISVNInfo info = acquireInfo();
             if( (info.getRevision() == null) || (SVNRevision.INVALID_REVISION.equals( info.getRevision() )) ) {
-                throw new SvnAntException( target + " - Not a versioned resource" );
+                throw new BuildException( target + " - Not a versioned resource" );
             }
             String value = getValue( info, request.getValue() );
             project.setProperty( property, value );
             info( verbose, property + " : " + value );
         } catch( Exception ex ) {
-            throw new SvnAntException( "Failed to access subversion 'info' properties", ex );
+            throw new BuildException( "Failed to access subversion 'info' properties", ex );
         }
     }
 

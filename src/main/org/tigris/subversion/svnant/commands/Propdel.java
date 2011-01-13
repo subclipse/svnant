@@ -56,8 +56,6 @@ package org.tigris.subversion.svnant.commands;
 
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
-import org.tigris.subversion.svnant.SvnAntException;
-
 import org.apache.tools.ant.BuildException;
 
 import java.io.File;
@@ -78,11 +76,11 @@ public class Propdel extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    public void execute() throws SvnAntException {
+    public void execute() {
         try {
             getClient().propertyDel( path, propName, recurse );
         } catch( SVNClientException e ) {
-            throw new SvnAntException( "Can't delete property " + propName, e );
+            throw new BuildException( "Can't delete property " + propName, e );
         }
     }
 

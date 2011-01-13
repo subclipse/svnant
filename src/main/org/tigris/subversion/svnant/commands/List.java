@@ -55,11 +55,10 @@
 package org.tigris.subversion.svnant.commands;
 
 import org.tigris.subversion.svnclientadapter.ISVNDirEntry;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
-
-import org.tigris.subversion.svnant.SvnAntException;
 
 import org.apache.tools.ant.BuildException;
 
@@ -98,7 +97,7 @@ public class List extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    public void execute() throws SvnAntException {
+    public void execute() {
 
         try {
             ISVNDirEntry[] content = getClient().getList( url, revision, recurse );
@@ -137,8 +136,8 @@ public class List extends SvnCommand {
                 }
             }
             getProject().setProperty( property, value.toString() );
-        } catch( Exception e ) {
-            throw new SvnAntException( "Can't list", e );
+        } catch( SVNClientException e ) {
+            throw new BuildException( "Can't list", e );
         }
     }
 

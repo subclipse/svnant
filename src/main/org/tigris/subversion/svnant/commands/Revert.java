@@ -56,8 +56,6 @@ package org.tigris.subversion.svnant.commands;
 
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
-import org.tigris.subversion.svnant.SvnAntException;
-
 import org.apache.tools.ant.types.FileSet;
 
 import org.apache.tools.ant.BuildException;
@@ -90,7 +88,7 @@ public class Revert extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    public void execute() throws SvnAntException {
+    public void execute() {
 
         if( file != null ) {
             revertFile( file, false );
@@ -132,13 +130,12 @@ public class Revert extends SvnCommand {
        *
      * @param aFile
      * @param force
-     * @throws SvnAntException
      */
-    private void revertFile( File aFile, boolean doRecurse ) throws SvnAntException {
+    private void revertFile( File aFile, boolean doRecurse ) {
         try {
             getClient().revert( aFile, doRecurse );
         } catch( SVNClientException e ) {
-            throw new SvnAntException( "Cannot revert file or directory " + aFile.getAbsolutePath(), e );
+            throw new BuildException( "Cannot revert file or directory " + aFile.getAbsolutePath(), e );
         }
     }
 
@@ -146,9 +143,8 @@ public class Revert extends SvnCommand {
      * revert a fileset (both dirs and files)
      * @param svnClient
      * @param fs
-     * @throws SvnAntException
      */
-    private void revertFileSet( FileSet fs ) throws SvnAntException {
+    private void revertFileSet( FileSet fs ) {
         DirectoryScanner ds = fs.getDirectoryScanner( getProject() );
         File baseDir = fs.getDir( getProject() ); // base dir
         String[] files = ds.getIncludedFiles();

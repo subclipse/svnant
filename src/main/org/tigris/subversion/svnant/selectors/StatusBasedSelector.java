@@ -54,12 +54,13 @@
  */
 package org.tigris.subversion.svnant.selectors;
 
-import java.io.File;
-
-import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
+
+import org.apache.tools.ant.BuildException;
+
+import java.io.File;
 
 /**
  * This is an abstract class that implements all functionality shared
@@ -75,14 +76,13 @@ public abstract class StatusBasedSelector extends BaseSvnSelector {
     /**
      * {@inheritDoc}
      */
-    public final boolean isSelected( ISVNClientAdapter svnClient, File basedir, String filename, File file ) throws SvnAntException {
-        ISVNStatus status;
+    public final boolean isSelected( ISVNClientAdapter svnClient, File basedir, String filename, File file ) {
         try {
-            status = svnClient.getSingleStatus( file );
-        } catch( SVNClientException e ) {
-            throw new SvnAntException( "Error occurred while obtaining status of " + file.getAbsolutePath(), e );
+            ISVNStatus status = svnClient.getSingleStatus( file );
+            return isSelected( status );
+        } catch( SVNClientException ex ) {
+            throw new BuildException( ex );
         }
-        return isSelected( status );
     }
 
     /**

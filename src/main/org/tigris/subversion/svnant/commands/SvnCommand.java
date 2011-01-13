@@ -57,7 +57,6 @@ package org.tigris.subversion.svnant.commands;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
-import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnant.SvnTask;
 
 import org.apache.tools.ant.BuildException;
@@ -92,9 +91,8 @@ public abstract class SvnCommand extends ProjectComponent {
     
     /**
      * Execute the command.
-     * @throws SvnAntException in case an error was encountered during execution
      */
-    public abstract void execute() throws SvnAntException;
+    public abstract void execute();
 
     /**
      * Execute the receiver (a svn command) using the supplied clientAdapter

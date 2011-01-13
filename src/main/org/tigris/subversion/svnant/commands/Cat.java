@@ -54,10 +54,9 @@
  */
 package org.tigris.subversion.svnant.commands;
 
+import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
-
-import org.tigris.subversion.svnant.SvnAntException;
 
 import org.apache.tools.ant.BuildException;
 
@@ -85,7 +84,7 @@ public class Cat extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    public void execute() throws SvnAntException {
+    public void execute() {
 
         InputStream is = null;
         FileOutputStream os = null;
@@ -97,8 +96,10 @@ public class Cat extends SvnCommand {
             while( (read = is.read( buffer )) != -1 ) {
                 os.write( buffer, 0, read );
             }
-        } catch( Exception e ) {
-            throw new SvnAntException( "Can't get the content of the specified file", e );
+        } catch( IOException e ) {
+            throw new BuildException( "Can't get the content of the specified file", e );
+        } catch( SVNClientException e ) {
+            throw new BuildException( "Can't get the content of the specified file", e );
         } finally {
             if( os != null ) {
                 try {

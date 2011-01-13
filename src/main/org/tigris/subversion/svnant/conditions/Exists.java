@@ -60,7 +60,6 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
-import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnant.SvnFacade;
 
 import org.apache.tools.ant.Project;
@@ -91,7 +90,7 @@ public class Exists extends SvnCondition {
     /**
      * {@inheritDoc}
      */
-    public boolean internalEval() throws SvnAntException {
+    public boolean internalEval() {
         // Obtain a svnClient according to javahl and svnkit properties
         ISVNClientAdapter svnClient = SvnFacade.getClientAdapter( this );
 

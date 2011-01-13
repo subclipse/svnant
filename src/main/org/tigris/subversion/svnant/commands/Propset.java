@@ -56,8 +56,6 @@ package org.tigris.subversion.svnant.commands;
 
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
-import org.tigris.subversion.svnant.SvnAntException;
-
 import org.apache.tools.ant.BuildException;
 
 import java.io.File;
@@ -81,7 +79,7 @@ public class Propset extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    public void execute() throws SvnAntException {
+    public void execute() {
         try {
             if( propValue != null ) {
                 getClient().propertySet( path, propName, propValue, recurse );
@@ -89,9 +87,9 @@ public class Propset extends SvnCommand {
                 getClient().propertySet( path, propName, file, recurse );
             }
         } catch( SVNClientException e ) {
-            throw new SvnAntException( "Can't set property " + propName, e );
+            throw new BuildException( "Can't set property " + propName, e );
         } catch( IOException e ) {
-            throw new SvnAntException( "Can't set property " + propName, e );
+            throw new BuildException( "Can't set property " + propName, e );
         }
     }
 

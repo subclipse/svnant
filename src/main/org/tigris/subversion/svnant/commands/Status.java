@@ -58,8 +58,6 @@ import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
-import org.tigris.subversion.svnant.SvnAntException;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
@@ -84,7 +82,7 @@ public class Status extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    public void execute() throws SvnAntException {
+    public void execute() {
 
         Project aProject = getProject();
         try {
@@ -138,7 +136,7 @@ public class Status extends SvnCommand {
             }
 
         } catch( SVNClientException e ) {
-            throw new SvnAntException( "Can't get status of " + path, e );
+            throw new BuildException( "Can't get status of " + path, e );
         }
 
     }

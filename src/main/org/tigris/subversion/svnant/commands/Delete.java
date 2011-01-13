@@ -57,8 +57,6 @@ package org.tigris.subversion.svnant.commands;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
-import org.tigris.subversion.svnant.SvnAntException;
-
 import org.apache.tools.ant.types.FileSet;
 
 import org.apache.tools.ant.BuildException;
@@ -99,7 +97,7 @@ public class Delete extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    public void execute() throws SvnAntException {
+    public void execute() {
 
         if( url != null ) {
             deleteUrl( url, message );
@@ -135,13 +133,12 @@ public class Delete extends SvnCommand {
      * delete directly on repository
      * @param anUrl
      * @param aMessage
-     * @throws SvnAntException
      */
-    private void deleteUrl( SVNUrl anUrl, String aMessage ) throws SvnAntException {
+    private void deleteUrl( SVNUrl anUrl, String aMessage ) {
         try {
             getClient().remove( new SVNUrl[] { anUrl }, aMessage );
         } catch( SVNClientException e ) {
-            throw new SvnAntException( "Cannot delete url " + anUrl.toString(), e );
+            throw new BuildException( "Cannot delete url " + anUrl.toString(), e );
         }
     }
 
@@ -150,13 +147,12 @@ public class Delete extends SvnCommand {
      * When file is a directory, all subdirectories/files are deleted too
      * @param aFile
      * @param appyForce
-     * @throws SvnAntException
      */
-    private void deleteFile( File aFile, boolean appyForce ) throws SvnAntException {
+    private void deleteFile( File aFile, boolean appyForce ) {
         try {
             getClient().remove( new File[] { aFile }, appyForce );
         } catch( SVNClientException e ) {
-            throw new SvnAntException( "Cannot delete file or directory " + aFile.getAbsolutePath(), e );
+            throw new BuildException( "Cannot delete file or directory " + aFile.getAbsolutePath(), e );
         }
     }
 
@@ -164,9 +160,8 @@ public class Delete extends SvnCommand {
      * add a fileset (both dirs and files) to the repository
      * @param svnClient
      * @param fs
-     * @throws SvnAntException
      */
-    private void deleteFileSet( FileSet fs ) throws SvnAntException {
+    private void deleteFileSet( FileSet fs ) {
         DirectoryScanner ds = fs.getDirectoryScanner( getProject() );
         File baseDir = fs.getDir( getProject() ); // base dir
         String[] files = ds.getIncludedFiles();

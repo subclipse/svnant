@@ -56,8 +56,6 @@ package org.tigris.subversion.svnant.commands;
 
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
-import org.tigris.subversion.svnant.SvnAntException;
-
 import org.apache.tools.ant.BuildException;
 
 import java.io.File;
@@ -78,11 +76,11 @@ public class CreateRepository extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    public void execute() throws SvnAntException {
+    public void execute() {
         try {
             getClient().createRepository( path, repositoryType );
         } catch( SVNClientException e ) {
-            throw new SvnAntException( "Cannot create repository at " + path.getAbsolutePath(), e );
+            throw new BuildException( "Cannot create repository at " + path.getAbsolutePath(), e );
         }
     }
 

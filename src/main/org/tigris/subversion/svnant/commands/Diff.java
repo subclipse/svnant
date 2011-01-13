@@ -58,8 +58,6 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
-import org.tigris.subversion.svnant.SvnAntException;
-
 import org.apache.tools.ant.BuildException;
 
 import java.io.File;
@@ -86,7 +84,7 @@ public class Diff extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    public void execute() throws SvnAntException {
+    public void execute() {
         try {
             if( oldUrl != null ) {
                 getClient().diff( oldUrl, oldTargetRevision, newUrl, newTargetRevision, outFile, recurse );
@@ -94,7 +92,7 @@ public class Diff extends SvnCommand {
                 getClient().diff( oldPath, oldTargetRevision, newPath, newTargetRevision, outFile, recurse );
             }
         } catch( SVNClientException e ) {
-            throw new SvnAntException( "Can't get the differences", e );
+            throw new BuildException( "Can't get the differences", e );
         }
     }
 

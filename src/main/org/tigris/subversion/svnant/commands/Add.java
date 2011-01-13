@@ -58,8 +58,6 @@ import org.tigris.subversion.svnclientadapter.utils.SVNStatusUtils;
 
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
-import org.tigris.subversion.svnant.SvnAntException;
-
 import org.apache.tools.ant.types.FileSet;
 
 import org.apache.tools.ant.BuildException;
@@ -99,7 +97,7 @@ public class Add extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    public void execute() throws SvnAntException {
+    public void execute() {
 
         // deal with the single file
         if( file != null ) {
@@ -134,9 +132,8 @@ public class Add extends SvnCommand {
      * add a file to the repository
      * @param svnClient
      * @param aFile
-     * @throws SvnAntException
      */
-    private void svnAddFile( File aFile ) throws SvnAntException {
+    private void svnAddFile( File aFile ) {
         if( aFile.exists() ) {
             if( aFile.isDirectory() ) {
                 warning( "Directory " + aFile.getAbsolutePath() + " cannot be added using the file attribute.  Use dir instead." );
@@ -144,7 +141,7 @@ public class Add extends SvnCommand {
                 try {
                     getClient().addFile( aFile );
                 } catch( Exception e ) {
-                    throw new SvnAntException( "Can't add file " + aFile.getAbsolutePath() + " to repository", e );
+                    throw new BuildException( "Can't add file " + aFile.getAbsolutePath() + " to repository", e );
                 }
             }
         } else {
@@ -152,7 +149,7 @@ public class Add extends SvnCommand {
             if( !failonerror ) {
                 warning( message );
             } else {
-                throw new SvnAntException( message );
+                throw new BuildException( message );
             }
         }
     }
@@ -163,9 +160,8 @@ public class Add extends SvnCommand {
      * @param aDir
      * @param recursive
      * @param force
-     * @throws SvnAntException
      */
-    private void svnAddDir( File aDir, boolean recursive, boolean force ) throws SvnAntException {
+    private void svnAddDir( File aDir, boolean recursive, boolean force ) {
         if( aDir.exists() ) {
             if( !aDir.isDirectory() ) {
                 warning( "File " + aDir.getAbsolutePath() + " cannot be added using the dir attribute.  Use file instead." );
@@ -173,7 +169,7 @@ public class Add extends SvnCommand {
                 try {
                     getClient().addDirectory( aDir, recursive, force );
                 } catch( Exception e ) {
-                    throw new SvnAntException( "Can't add directory " + aDir.getAbsolutePath() + " to repository", e );
+                    throw new BuildException( "Can't add directory " + aDir.getAbsolutePath() + " to repository", e );
                 }
             }
         } else {
@@ -181,7 +177,7 @@ public class Add extends SvnCommand {
             if( !failonerror ) {
                 warning( message );
             } else {
-                throw new SvnAntException( message );
+                throw new BuildException( message );
             }
         }
     }
@@ -191,9 +187,8 @@ public class Add extends SvnCommand {
      * @param svnClient
      * @param aFile
      * @param baseDir
-     * @throws SvnAntException
      */
-    private void svnAddFileWithDirs( File aFile, File baseDir ) throws SvnAntException {
+    private void svnAddFileWithDirs( File aFile, File baseDir ) {
 
         Stack<File> dirs = new Stack<File>();
         File currentDir = aFile.getParentFile();
@@ -212,7 +207,7 @@ public class Add extends SvnCommand {
             }
 
         } catch( SVNClientException e ) {
-            throw new SvnAntException( "Cannot get status of file or directory", e );
+            throw new BuildException( "Cannot get status of file or directory", e );
         }
 
         // add them to the repository
@@ -221,7 +216,7 @@ public class Add extends SvnCommand {
             try {
                 getClient().addFile( currentDir );
             } catch( Exception e ) {
-                throw new SvnAntException( "Cannot add directory " + currentDir.getAbsolutePath() + " to repository", e );
+                throw new BuildException( "Cannot add directory " + currentDir.getAbsolutePath() + " to repository", e );
             }
         }
 
@@ -229,7 +224,7 @@ public class Add extends SvnCommand {
         try {
             getClient().addFile( aFile );
         } catch( Exception e ) {
-            throw new SvnAntException( "Can't add file " + aFile.getAbsolutePath() + " to repository", e );
+            throw new BuildException( "Can't add file " + aFile.getAbsolutePath() + " to repository", e );
         }
         
     }
@@ -238,9 +233,8 @@ public class Add extends SvnCommand {
      * add a fileset (both dirs and files) to the repository
      * @param svnClient
      * @param fs
-     * @throws SvnAntException
      */
-    private void svnAddFileSet( FileSet fs ) throws SvnAntException {
+    private void svnAddFileSet( FileSet fs ) {
         DirectoryScanner ds = fs.getDirectoryScanner( getProject() );
         File baseDir = fs.getDir( getProject() ); // base dir
         String[] files = ds.getIncludedFiles();

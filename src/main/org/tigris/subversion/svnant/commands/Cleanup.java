@@ -1,12 +1,10 @@
 package org.tigris.subversion.svnant.commands;
 
-import java.io.File;
-
-import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 import org.apache.tools.ant.BuildException;
 
-import org.tigris.subversion.svnclientadapter.SVNClientException;
+import java.io.File;
 
 public class Cleanup extends SvnCommand {
 
@@ -16,11 +14,11 @@ public class Cleanup extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    public void execute() throws SvnAntException {
+    public void execute() {
         try {
             getClient().cleanup( path );
         } catch( SVNClientException e ) {
-            throw new SvnAntException(e);
+            throw new BuildException(e);
         }
     }
 

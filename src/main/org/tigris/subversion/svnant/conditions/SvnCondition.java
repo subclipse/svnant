@@ -1,7 +1,6 @@
 package org.tigris.subversion.svnant.conditions;
 
 
-import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnant.SvnFacade;
 
 import org.apache.tools.ant.BuildException;
@@ -76,13 +75,9 @@ public abstract class SvnCondition extends ConditionBase implements Condition {
     /**
      * {@inheritDoc}
      */
-    public boolean eval() throws BuildException {
-        try {
-            preconditions();
-            return internalEval();
-        } catch (SvnAntException e) {
-            throw new BuildException(e.getMessage(), e);
-        }
+    public boolean eval() {
+        preconditions();
+        return internalEval();
     }
     
     /**
@@ -96,8 +91,7 @@ public abstract class SvnCondition extends ConditionBase implements Condition {
     /**
      * Method called internally by eval(). Must be implemented by all subclasses.
      * @return True if the condition is met. False, otherwsie.
-     * @throws SvnAntException exception that should be used in case of problems.
      */
-    protected abstract boolean internalEval() throws SvnAntException;
+    protected abstract boolean internalEval();
     
 }

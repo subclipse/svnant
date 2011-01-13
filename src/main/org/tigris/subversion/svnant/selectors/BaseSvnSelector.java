@@ -54,17 +54,11 @@
  */
 package org.tigris.subversion.svnant.selectors;
 
-import org.tigris.subversion.svnclientadapter.utils.StringUtils;
-
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 
-import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnant.SvnFacade;
 
 import org.apache.tools.ant.types.selectors.BaseExtendSelector;
-
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Project;
 
 import java.io.File;
 
@@ -127,20 +121,8 @@ public abstract class BaseSvnSelector extends BaseExtendSelector {
     /**
      * {@inheritDoc}
      */
-    public final boolean isSelected( File basedir_, String filename_, File file_ ) throws BuildException {
-        String[] nameSegments = StringUtils.split( getClass().getName(), "." );
-        String className = nameSegments[nameSegments.length - 1];
-        try {
-            return isSelected( SvnFacade.getClientAdapter( this ), basedir_, filename_, file_ );
-        } catch( SvnAntException ex ) {
-            if( SvnFacade.getFailonerror( this ) ) {
-                log( "selector " + className + " failed !", Project.MSG_INFO );
-                throw new BuildException( ex.getMessage(), ex.getCause() );
-            } else {
-                log( "selector " + className + " failed :" + ex.getLocalizedMessage(), Project.MSG_ERR );
-                return false;
-            }
-        }
+    public final boolean isSelected( File basedir_, String filename_, File file_ ) {
+        return isSelected( SvnFacade.getClientAdapter( this ), basedir_, filename_, file_ );
     }
 
     /**
@@ -150,9 +132,9 @@ public abstract class BaseSvnSelector extends BaseExtendSelector {
      * @param basedir_ A java.io.File object for the base directory
      * @param filename_ The name of the file to check
      * @param file_ A File object for this filename
-     * @exception SvnAntException if an error occurs
+     * 
      * @return Returns true if the file should be selected. Otherwise, false. 
      */
-    public abstract boolean isSelected( ISVNClientAdapter svnClient_, File basedir_, String filename_, File file_ ) throws SvnAntException;
+    public abstract boolean isSelected( ISVNClientAdapter svnClient_, File basedir_, String filename_, File file_ );
 
 }

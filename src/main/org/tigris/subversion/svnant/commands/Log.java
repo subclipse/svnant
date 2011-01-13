@@ -59,8 +59,6 @@ import org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
-import org.tigris.subversion.svnant.SvnAntException;
-
 import org.apache.tools.ant.BuildException;
 
 import org.w3c.dom.Document;
@@ -68,8 +66,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -120,7 +121,7 @@ public class Log extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    public void execute() throws SvnAntException {
+    public void execute() {
         ISVNLogMessage[] logMessages = null;
         try {
             if( path != null ) {
@@ -130,11 +131,11 @@ public class Log extends SvnCommand {
             }
             writeLogMessages( logMessages );
         } catch( Exception e ) {
-            throw new SvnAntException( "Can't get the log messages for the path or url", e );
+            throw new BuildException( "Can't get the log messages for the path or url", e );
         }
     }
 
-    private void writeLogMessages( ISVNLogMessage[] logMessages ) throws SvnAntException {
+    private void writeLogMessages( ISVNLogMessage[] logMessages ) {
         if( asXml ) {
             OutputStream outstream = null;
             try {
@@ -153,8 +154,14 @@ public class Log extends SvnCommand {
                 transformer.setOutputProperty( OutputKeys.INDENT, "yes" );
                 transformer.setOutputProperty( OutputKeys.ENCODING, "UTF-8" );
                 transformer.transform( new DOMSource( doc ), new StreamResult( outstream ) );
-            } catch( Exception ex ) {
-                throw new SvnAntException( "Can't get the content of the specified file", ex );
+            } catch( TransformerConfigurationException ex ) {
+                throw new BuildException( "Can't get the content of the specified file", ex );
+            } catch( ParserConfigurationException ex ) {
+                throw new BuildException( "Can't get the content of the specified file", ex );
+            } catch( TransformerException ex ) {
+                throw new BuildException( "Can't get the content of the specified file", ex );
+            } catch( IOException ex ) {
+                throw new BuildException( "Can't get the content of the specified file", ex );
             } finally {
                 try {
                     outstream.close();
@@ -169,8 +176,8 @@ public class Log extends SvnCommand {
                 for( int i = 0; i < logMessages.length; i++ ) {
                     writeLogEntryAsPlaintext( logMessages[i], writer );
                 }
-            } catch( Exception ex ) {
-                throw new SvnAntException( "Can't get the content of the specified file", ex );
+            } catch( IOException ex ) {
+                throw new BuildException( "Can't get the content of the specified file", ex );
             } finally {
                 try {
                     writer.close();

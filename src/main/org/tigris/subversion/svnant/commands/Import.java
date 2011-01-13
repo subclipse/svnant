@@ -57,8 +57,6 @@ package org.tigris.subversion.svnant.commands;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
-import org.tigris.subversion.svnant.SvnAntException;
-
 import org.apache.tools.ant.BuildException;
 
 import java.io.File;
@@ -84,11 +82,11 @@ public class Import extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    public void execute() throws SvnAntException {
+    public void execute() {
         try {
             getClient().doImport( path, url, message, recurse );
         } catch( SVNClientException e ) {
-            throw new SvnAntException( "Can't import", e );
+            throw new BuildException( "Can't import", e );
         }
     }
 

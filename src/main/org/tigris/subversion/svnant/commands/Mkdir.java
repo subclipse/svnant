@@ -57,8 +57,6 @@ package org.tigris.subversion.svnant.commands;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
-import org.tigris.subversion.svnant.SvnAntException;
-
 import org.apache.tools.ant.BuildException;
 
 import java.io.File;
@@ -83,19 +81,19 @@ public class Mkdir extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    public void execute() throws SvnAntException {
+    public void execute() {
 
         if( url != null ) {
             try {
                 getClient().mkdir( url, message );
             } catch( SVNClientException e ) {
-                throw new SvnAntException( "Can't make dir " + url, e );
+                throw new BuildException( "Can't make dir " + url, e );
             }
         } else {
             try {
                 getClient().mkdir( path );
             } catch( SVNClientException e ) {
-                throw new SvnAntException( "Can't make dir " + path, e );
+                throw new BuildException( "Can't make dir " + path, e );
             }
         }
 

@@ -57,8 +57,6 @@ package org.tigris.subversion.svnant.commands;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNDiffSummary;
 
-import org.tigris.subversion.svnant.SvnAntException;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
@@ -110,14 +108,14 @@ public class DiffSummarize extends Diff {
     /**
      * {@inheritDoc}
      */
-    public void execute() throws SvnAntException {
+    public void execute() {
         BufferedWriter out = null;
         if( logToFile ) {
             File f = getOutFile();
             try {
                 log( "output to file: " + f );
                 out = new BufferedWriter( new OutputStreamWriter( (new FileOutputStream( f )), encoding ) );
-            } catch( Exception e ) {
+            } catch( IOException e ) {
                 throw new BuildException( e );
             }
         }
@@ -148,7 +146,7 @@ public class DiffSummarize extends Diff {
                 }
             }
         } catch( SVNClientException ex ) {
-            throw new SvnAntException( ex );
+            throw new BuildException( ex );
         } catch( IOException ex ) {
             throw new BuildException( ex );
         } finally {

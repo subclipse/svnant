@@ -57,8 +57,6 @@ package org.tigris.subversion.svnant.commands;
 
 import org.tigris.subversion.svnclientadapter.SVNKeywords;
 
-import org.tigris.subversion.svnant.SvnAntException;
-
 import org.apache.tools.ant.types.FileSet;
 
 import org.apache.tools.ant.BuildException;
@@ -89,13 +87,6 @@ public abstract class Keywords extends SvnCommand {
 
     /** set keywords substitution recursively ? (only for dir attribute) */
     protected boolean         recurse  = true;
-
-    /**
-     * {@inheritDoc}
-     */
-    public void execute() throws SvnAntException {
-        // we do nothing there but this function is overloaded  
-    }
 
     /**
      * {@inheritDoc}

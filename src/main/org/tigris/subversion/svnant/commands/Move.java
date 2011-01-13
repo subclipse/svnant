@@ -58,8 +58,6 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
-import org.tigris.subversion.svnant.SvnAntException;
-
 import org.apache.tools.ant.BuildException;
 
 import java.io.File;
@@ -82,19 +80,19 @@ public class Move extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    public void execute() throws SvnAntException {
+    public void execute() {
 
         if( srcPath != null ) {
             try {
                 getClient().move( srcPath, destPath, force );
             } catch( SVNClientException e ) {
-                throw new SvnAntException( "Can't copy", e );
+                throw new BuildException( "Can't copy", e );
             }
         } else {
             try {
                 getClient().move( srcUrl, destUrl, message, SVNRevision.HEAD );
             } catch( SVNClientException e ) {
-                throw new SvnAntException( "Can't copy", e );
+                throw new BuildException( "Can't copy", e );
             }
         }
 

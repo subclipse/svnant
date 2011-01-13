@@ -54,14 +54,13 @@
  */
 package org.tigris.subversion.svnant.commands;
 
-import java.io.File;
-
-import org.tigris.subversion.svnant.SvnAntException;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
+import org.tigris.subversion.svnclientadapter.SVNRevision;
+import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 import org.apache.tools.ant.BuildException;
 
-import org.tigris.subversion.svnclientadapter.SVNRevision;
-import org.tigris.subversion.svnclientadapter.SVNUrl;
+import java.io.File;
 
 /**
  * svn Checkout. Check out a working copy from a repository 
@@ -85,11 +84,11 @@ public class Checkout extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    public void execute() throws SvnAntException {
+    public void execute() {
         try {
             getClient().checkout( url, destPath, revision, recurse );
-        } catch( Exception e ) {
-            throw new SvnAntException( "Can't checkout", e );
+        } catch( SVNClientException e ) {
+            throw new BuildException( "Can't checkout", e );
         }
     }
 

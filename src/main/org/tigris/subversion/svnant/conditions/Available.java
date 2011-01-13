@@ -61,7 +61,6 @@ import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
-import org.tigris.subversion.svnant.SvnAntException;
 import org.tigris.subversion.svnant.SvnFacade;
 
 import org.apache.tools.ant.types.EnumeratedAttribute;
@@ -97,7 +96,7 @@ public class Available extends SvnCondition {
     /**
      * {@inheritDoc}
      */
-    protected boolean internalEval() throws SvnAntException {
+    protected boolean internalEval() {
 
         ISVNClientAdapter client = SvnFacade.getClientAdapter( this );
 
@@ -113,7 +112,7 @@ public class Available extends SvnCondition {
                     SVNUrl url = new SVNUrl( target );
                     info = client.getInfo( url );
                 } catch( MalformedURLException ex ) {
-                    throw new SvnAntException( "The url '" + target + "' is not valid.", ex );
+                    throw new BuildException( "The url '" + target + "' is not valid.", ex );
                 }
             }
         } catch( SVNClientException ex ) {

@@ -58,8 +58,6 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
-import org.tigris.subversion.svnant.SvnAntException;
-
 import org.apache.tools.ant.BuildException;
 
 import java.io.File;
@@ -91,7 +89,7 @@ public class Export extends SvnCommand {
     /**
      * {@inheritDoc}
      */
-    public void execute() throws SvnAntException {
+    public void execute() {
         try {
             if( srcUrl != null ) {
                 getClient().doExport( srcUrl, destPath, revision, force );
@@ -99,7 +97,7 @@ public class Export extends SvnCommand {
                 getClient().doExport( srcPath, destPath, force );
             }
         } catch( SVNClientException e ) {
-            throw new SvnAntException( "Can't export", e );
+            throw new BuildException( "Can't export", e );
         }
     }
 

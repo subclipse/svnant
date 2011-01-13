@@ -57,10 +57,9 @@ package org.tigris.subversion.svnant.commands;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNKeywords;
 
-import org.tigris.subversion.svnant.SvnAntException;
-
 import org.apache.tools.ant.types.FileSet;
 
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 
 import java.io.File;
@@ -76,20 +75,18 @@ public class Keywordsset extends Keywords {
     /**
      * {@inheritDoc}
      */
-    public void execute() throws SvnAntException {
-        super.execute();
-
+    public void execute() {
         if( file != null ) {
             try {
                 getClient().setKeywords( file, keywords, false );
             } catch( SVNClientException e ) {
-                throw new SvnAntException( "Can't set keywords on file " + file.toString(), e );
+                throw new BuildException( "Can't set keywords on file " + file.toString(), e );
             }
         } else if( dir != null ) {
             try {
                 getClient().setKeywords( dir, keywords, recurse );
             } catch( SVNClientException e ) {
-                throw new SvnAntException( "Can't set keywords on directory " + dir.toString(), e );
+                throw new BuildException( "Can't set keywords on directory " + dir.toString(), e );
             }
         } else if( filesets.size() > 0 ) {
             // deal with filesets
@@ -104,9 +101,8 @@ public class Keywordsset extends Keywords {
      * set keywords on a fileset (both dirs and files)
      * @param svnClient
      * @param fs
-     * @throws SvnAntException
      */
-    private void keywordsSet( FileSet fs, SVNKeywords theKeywords ) throws SvnAntException {
+    private void keywordsSet( FileSet fs, SVNKeywords theKeywords ) {
         DirectoryScanner ds = fs.getDirectoryScanner( getProject() );
         File baseDir = fs.getDir( getProject() ); // base dir
         String[] files = ds.getIncludedFiles();
@@ -119,7 +115,7 @@ public class Keywordsset extends Keywords {
             try {
                 getClient().setKeywords( aFile, theKeywords, false );
             } catch( SVNClientException e ) {
-                throw new SvnAntException( "Can't set keywords on file " + aFile.toString(), e );
+                throw new BuildException( "Can't set keywords on file " + aFile.toString(), e );
             }
         }
     }
