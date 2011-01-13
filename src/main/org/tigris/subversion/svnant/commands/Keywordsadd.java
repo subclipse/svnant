@@ -82,13 +82,13 @@ public class Keywordsadd extends Keywords {
 
         if( file != null ) {
             try {
-                svnClient.addKeywords( file, keywords );
+                getClient().addKeywords( file, keywords );
             } catch( SVNClientException e ) {
                 throw new SvnAntException( "Can't add keywords on file " + file.toString(), e );
             }
         } else if( dir != null ) {
             try {
-                svnClient.addKeywords( dir, keywords );
+                getClient().addKeywords( dir, keywords );
             } catch( SVNClientException e ) {
                 throw new SvnAntException( "Can't add keywords on directory " + dir.toString(), e );
             }
@@ -114,7 +114,7 @@ public class Keywordsadd extends Keywords {
         for( int i = 0; i < files.length; i++ ) {
             File aFile = new File( baseDir, files[i] );
             try {
-                svnClient.addKeywords( aFile, theKeywords );
+                getClient().addKeywords( aFile, theKeywords );
             } catch( SVNClientException e ) {
                 throw new SvnAntException( "Can't set keywords on file " + aFile.toString(), e );
             }

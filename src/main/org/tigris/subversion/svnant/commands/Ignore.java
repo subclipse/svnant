@@ -136,7 +136,7 @@ public class Ignore extends SvnCommand {
     private void svnIgnoreFile( File aFile ) throws SvnAntException {
         if( aFile.exists() ) {
             try {
-                svnClient.addToIgnoredPatterns( aFile.getParentFile(), aFile.getName() );
+                getClient().addToIgnoredPatterns( aFile.getParentFile(), aFile.getName() );
             } catch( SVNClientException e ) {
                 throw new SvnAntException( "Can't add file " + aFile.getAbsolutePath() + "to svn:ignore", e );
             }
@@ -165,7 +165,7 @@ public class Ignore extends SvnCommand {
         if( recursive ) {
             File files[] = aDir.listFiles( new FileFilter(){
                 public boolean accept( File pathname ) {
-                    return pathname.isDirectory() && !pathname.getName().equals( svnClient.getAdminDirectoryName() );
+                    return pathname.isDirectory() && !pathname.getName().equals( getClient().getAdminDirectoryName() );
                 }
             } );
             for( int i = 0; i < files.length; i++ ) {
@@ -180,7 +180,7 @@ public class Ignore extends SvnCommand {
                 warning( "Can't add a pattern to svn:ignore for a file. It needs to be a directory" );
             } else {
                 try {
-                    svnClient.addToIgnoredPatterns( aDir, aPattern );
+                    getClient().addToIgnoredPatterns( aDir, aPattern );
                 } catch( SVNClientException e ) {
                     throw new SvnAntException( "Can't add pattern " + aPattern + " to svn:ignore for " + aDir.getAbsolutePath(), e );
                 }

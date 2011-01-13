@@ -89,9 +89,9 @@ public class Diff extends SvnCommand {
     public void execute() throws SvnAntException {
         try {
             if( oldUrl != null ) {
-                svnClient.diff( oldUrl, oldTargetRevision, newUrl, newTargetRevision, outFile, recurse );
+                getClient().diff( oldUrl, oldTargetRevision, newUrl, newTargetRevision, outFile, recurse );
             } else {
-                svnClient.diff( oldPath, oldTargetRevision, newPath, newTargetRevision, outFile, recurse );
+                getClient().diff( oldPath, oldTargetRevision, newPath, newTargetRevision, outFile, recurse );
             }
         } catch( SVNClientException e ) {
             throw new SvnAntException( "Can't get the differences", e );

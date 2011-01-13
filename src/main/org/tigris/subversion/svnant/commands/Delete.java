@@ -139,7 +139,7 @@ public class Delete extends SvnCommand {
      */
     private void deleteUrl( SVNUrl anUrl, String aMessage ) throws SvnAntException {
         try {
-            svnClient.remove( new SVNUrl[] { anUrl }, aMessage );
+            getClient().remove( new SVNUrl[] { anUrl }, aMessage );
         } catch( SVNClientException e ) {
             throw new SvnAntException( "Cannot delete url " + anUrl.toString(), e );
         }
@@ -154,7 +154,7 @@ public class Delete extends SvnCommand {
      */
     private void deleteFile( File aFile, boolean appyForce ) throws SvnAntException {
         try {
-            svnClient.remove( new File[] { aFile }, appyForce );
+            getClient().remove( new File[] { aFile }, appyForce );
         } catch( SVNClientException e ) {
             throw new SvnAntException( "Cannot delete file or directory " + aFile.getAbsolutePath(), e );
         }
@@ -186,7 +186,7 @@ public class Delete extends SvnCommand {
         // note : when we delete dirs, this also delete subdirectories and files 
         // contained in this directory        
         try {
-            svnClient.remove( filesAndDirs, force );
+            getClient().remove( filesAndDirs, force );
         } catch( SVNClientException e ) {
             error( "Cannot delete file " + file.getAbsolutePath() );
         }

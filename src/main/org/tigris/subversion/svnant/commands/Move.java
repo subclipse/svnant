@@ -86,13 +86,13 @@ public class Move extends SvnCommand {
 
         if( srcPath != null ) {
             try {
-                svnClient.move( srcPath, destPath, force );
+                getClient().move( srcPath, destPath, force );
             } catch( SVNClientException e ) {
                 throw new SvnAntException( "Can't copy", e );
             }
         } else {
             try {
-                svnClient.move( srcUrl, destUrl, message, SVNRevision.HEAD );
+                getClient().move( srcUrl, destUrl, message, SVNRevision.HEAD );
             } catch( SVNClientException e ) {
                 throw new SvnAntException( "Can't copy", e );
             }

@@ -157,7 +157,7 @@ public class Commit extends SvnCommand {
                 warning( "Directory " + aFile.getAbsolutePath() + " cannot be commited using the file attribute.  Use dir instead." );
             } else {
                 try {
-                    svnClient.commit( new File[] { aFile }, message, false );
+                    getClient().commit( new File[] { aFile }, message, false );
                 } catch( Exception e ) {
                     throw new SvnAntException( "Can't commit file " + aFile.getAbsolutePath(), e );
                 }
@@ -180,7 +180,7 @@ public class Commit extends SvnCommand {
                 warning( "File " + aDir.getAbsolutePath() + " cannot be commited using the dir attribute.  Use file instead." );
             } else {
                 try {
-                    svnClient.commit( new File[] { aDir }, message, recursive );
+                    getClient().commit( new File[] { aDir }, message, recursive );
                 } catch( Exception e ) {
                     throw new SvnAntException( "Can't commit directory " + aDir.getAbsolutePath(), e );
                 }
@@ -205,7 +205,7 @@ public class Commit extends SvnCommand {
 
         try {
             // file has not been "added", we cannot commit it
-            if( !SVNStatusUtils.isManaged( svnClient.getSingleStatus( aFile ) ) ) {
+            if( !SVNStatusUtils.isManaged( getClient().getSingleStatus( aFile ) ) ) {
                 return;
             }
         } catch( SVNClientException e1 ) {
@@ -219,11 +219,11 @@ public class Commit extends SvnCommand {
         Stack<File> dirs = new Stack<File>();
         File currentDir = aFile.getParentFile();
         try {
-            ISVNStatus status = svnClient.getSingleStatus( currentDir );
+            ISVNStatus status = getClient().getSingleStatus( currentDir );
             while( (currentDir != null) && (status.getTextStatus() == SVNStatusKind.ADDED) && (!currentDir.equals( baseDir )) ) {
                 dirs.push( currentDir );
                 currentDir = currentDir.getParentFile();
-                status = svnClient.getSingleStatus( currentDir );
+                status = getClient().getSingleStatus( currentDir );
             }
         } catch( SVNClientException e ) {
             throw new SvnAntException( "Cannot get status of directory :" + currentDir, e );
@@ -272,7 +272,7 @@ public class Commit extends SvnCommand {
 
         // finally we commit files
         try {
-            svnClient.commit( files, message, false );
+            getClient().commit( files, message, false );
         } catch( Exception e ) {
             throw new SvnAntException( "Can't commit fileset : ", e );
         }

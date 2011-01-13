@@ -54,8 +54,6 @@
  */
 package org.tigris.subversion.svnant.commands;
 
-import org.tigris.subversion.svnclientadapter.utils.StringUtils;
-
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
@@ -79,12 +77,19 @@ import java.text.SimpleDateFormat;
  */
 public abstract class SvnCommand extends ProjectComponent {
 
-    protected SvnTask           task;
-
-    protected ISVNClientAdapter svnClient;
+    private  SvnTask            task;
+    private ISVNClientAdapter   svnClient;
 
     protected abstract void validateAttributes();
 
+    protected ISVNClientAdapter getClient() {
+        return svnClient;
+    }
+    
+    public String getCommandname() {
+        return getClass().getSimpleName();
+    }
+    
     /**
      * Execute the command.
      * @throws SvnAntException in case an error was encountered during execution
@@ -98,29 +103,18 @@ public abstract class SvnCommand extends ProjectComponent {
      */
     public final void executeCommand( ISVNClientAdapter svnClientAdapter ) throws BuildException {
         this.svnClient = svnClientAdapter;
-        String[] nameSegments = StringUtils.split( getClass().getName(), "." );
-        String className = "<" + nameSegments[nameSegments.length - 1] + ">";
-
-        info( className + " started ..." );
+        info( "<%s> started ...", getCommandname() );
         try {
             validateAttributes();
             execute();
-        } catch( SvnAntException ex ) {
-            if( this.task.isFailonerror() ) {
-                info( className + " failed !" );
-                throw new BuildException( ex.getMessage(), ex.getCause() );
-            } else {
-                error( className + " failed :" + ex.getLocalizedMessage() );
-            }
-        } catch( BuildException e ) {
-            if( this.task.isFailonerror() ) {
-                info( className + " failed !" );
-                throw new BuildException( e.getMessage() );
-            } else {
-                error( className + " failed :" + e.getLocalizedMessage() );
-            }
+            info( "<%s> finished.", getCommandname() );
+        } catch( BuildException ex ) {
+            error( "<%s> failed.", getCommandname() );
+            throw ex;
+        } catch( Exception ex ) {
+            error( "<%s> failed.", getCommandname() );
+            throw new BuildException(ex);
         }
-        info( className + " finished." );
     }
 
     /**

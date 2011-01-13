@@ -83,10 +83,11 @@ public class Propset extends SvnCommand {
      */
     public void execute() throws SvnAntException {
         try {
-            if( propValue != null )
-                svnClient.propertySet( path, propName, propValue, recurse );
-            else
-                svnClient.propertySet( path, propName, file, recurse );
+            if( propValue != null ) {
+                getClient().propertySet( path, propName, propValue, recurse );
+            } else {
+                getClient().propertySet( path, propName, file, recurse );
+            }
         } catch( SVNClientException e ) {
             throw new SvnAntException( "Can't set property " + propName, e );
         } catch( IOException e ) {

@@ -144,16 +144,16 @@ public class SingleInfo extends SvnCommand {
         File asfile = new File( Project.translatePath( target ) );
         if( asfile.exists() ) {
             // Since the target exists locally, assume it's not a URL.
-            return svnClient.getInfo( asfile );
+            return getClient().getInfo( asfile );
         } else {
             try {
                 SVNUrl url = new SVNUrl( target );
-                return svnClient.getInfo( url );
+                return getClient().getInfo( url );
             } catch( MalformedURLException ex ) {
                 // Since we don't have a valid URL with which to
                 // contact the repository, assume the target is a
                 // local file, even though it doesn't exist locally.
-                return svnClient.getInfo( asfile );
+                return getClient().getInfo( asfile );
             }
         }
     }

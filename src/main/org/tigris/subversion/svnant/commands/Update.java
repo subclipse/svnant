@@ -96,7 +96,7 @@ public class Update extends SvnCommand {
 
         if( file != null ) {
             try {
-                svnClient.update( file, revision, false );
+                getClient().update( file, revision, false );
             } catch( SVNClientException e ) {
                 throw new SvnAntException( "Cannot update file " + file.getAbsolutePath(), e );
             }
@@ -104,7 +104,7 @@ public class Update extends SvnCommand {
 
         if( dir != null ) {
             try {
-                svnClient.update( dir, revision, recurse );
+                getClient().update( dir, revision, recurse );
             } catch( SVNClientException e ) {
                 throw new SvnAntException( "Cannot update dir " + dir.getAbsolutePath(), e );
             }
@@ -147,7 +147,7 @@ public class Update extends SvnCommand {
         for( int i = 0; i < dirs.length; i++ ) {
             File aDir = new File( baseDir, dirs[i] );
             try {
-                svnClient.update( aDir, revision, false );
+                getClient().update( aDir, revision, false );
             } catch( SVNClientException e ) {
                 error( "Cannot update directory " + aDir.getAbsolutePath() );
             }
@@ -157,7 +157,7 @@ public class Update extends SvnCommand {
         for( int i = 0; i < files.length; i++ ) {
             File aFile = new File( baseDir, files[i] );
             try {
-                svnClient.update( aFile, revision, false );
+                getClient().update( aFile, revision, false );
             } catch( SVNClientException e ) {
                 error( "Cannot update file " + aFile.getAbsolutePath() );
             }

@@ -653,8 +653,8 @@ public class SvnTask extends Task {
         }
 
         for( int i = 0; i < commands.size(); i++ ) {
-            SvnCommand command = commands.get( i );
-            Feedback feedback = new Feedback( command );
+            SvnCommand command  = commands.get( i );
+            Feedback   feedback = new Feedback( command );
             svnClient.addNotifyListener( feedback );
             command.executeCommand( svnClient );
             svnClient.removeNotifyListener( feedback );

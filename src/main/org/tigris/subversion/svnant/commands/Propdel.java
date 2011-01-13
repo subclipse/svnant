@@ -80,7 +80,7 @@ public class Propdel extends SvnCommand {
      */
     public void execute() throws SvnAntException {
         try {
-            svnClient.propertyDel( path, propName, recurse );
+            getClient().propertyDel( path, propName, recurse );
         } catch( SVNClientException e ) {
             throw new SvnAntException( "Can't delete property " + propName, e );
         }

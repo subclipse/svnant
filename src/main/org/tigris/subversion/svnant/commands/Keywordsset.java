@@ -81,13 +81,13 @@ public class Keywordsset extends Keywords {
 
         if( file != null ) {
             try {
-                svnClient.setKeywords( file, keywords, false );
+                getClient().setKeywords( file, keywords, false );
             } catch( SVNClientException e ) {
                 throw new SvnAntException( "Can't set keywords on file " + file.toString(), e );
             }
         } else if( dir != null ) {
             try {
-                svnClient.setKeywords( dir, keywords, recurse );
+                getClient().setKeywords( dir, keywords, recurse );
             } catch( SVNClientException e ) {
                 throw new SvnAntException( "Can't set keywords on directory " + dir.toString(), e );
             }
@@ -117,7 +117,7 @@ public class Keywordsset extends Keywords {
         for( int i = 0; i < files.length; i++ ) {
             File aFile = new File( baseDir, files[i] );
             try {
-                svnClient.setKeywords( aFile, theKeywords, false );
+                getClient().setKeywords( aFile, theKeywords, false );
             } catch( SVNClientException e ) {
                 throw new SvnAntException( "Can't set keywords on file " + aFile.toString(), e );
             }

@@ -86,7 +86,7 @@ public class Switch extends SvnCommand {
      */
     public void execute() throws SvnAntException {
         try {
-            svnClient.switchToUrl( path, url, revision, recurse );
+            getClient().switchToUrl( path, url, revision, recurse );
         } catch( SVNClientException e ) {
             throw new SvnAntException( "Cannot switch to url : " + url.toString(), e );
         }

@@ -88,7 +88,7 @@ public class Status extends SvnCommand {
 
         Project aProject = getProject();
         try {
-            ISVNStatus status = svnClient.getSingleStatus( path );
+            ISVNStatus status = getClient().getSingleStatus( path );
 
             if( textStatusProperty != null ) {
                 aProject.setProperty( textStatusProperty, status.getTextStatus().toString() );

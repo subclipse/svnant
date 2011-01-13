@@ -101,7 +101,7 @@ public class List extends SvnCommand {
     public void execute() throws SvnAntException {
 
         try {
-            ISVNDirEntry[] content = svnClient.getList( url, revision, recurse );
+            ISVNDirEntry[] content = getClient().getList( url, revision, recurse );
             int ignored = 0;
             for( int i = 0; i < content.length; i++ ) {
                 if( content[i].getNodeKind() == SVNNodeKind.DIR ) {

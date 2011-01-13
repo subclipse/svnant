@@ -97,9 +97,9 @@ public class Propget extends SvnCommand {
         ISVNProperty svnProperty;
         try {
             if( path != null ) {
-                svnProperty = svnClient.propertyGet( path, name );
+                svnProperty = getClient().propertyGet( path, name );
             } else {
-                svnProperty = svnClient.propertyGet( url, name );
+                svnProperty = getClient().propertyGet( url, name );
             }
         } catch( SVNClientException e ) {
             throw new SvnAntException( "Can't get property " + name, e );

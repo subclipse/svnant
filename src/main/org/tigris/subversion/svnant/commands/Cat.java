@@ -91,7 +91,7 @@ public class Cat extends SvnCommand {
         FileOutputStream os = null;
         try {
             os = new FileOutputStream( destFile );
-            is = svnClient.getContent( url, revision );
+            is = getClient().getContent( url, revision );
             byte[] buffer = new byte[5000];
             int read;
             while( (read = is.read( buffer )) != -1 ) {

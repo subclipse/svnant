@@ -142,13 +142,13 @@ public class WcVersion extends SvnCommand {
      * @throws SVNClientException Raised if there is a problem fetching working copy status.
      */
     private WCVersionSummary getWorkingCopySumary( File wcPathFile ) throws SVNClientException {
-        ISVNStatus rootStatus = svnClient.getSingleStatus( wcPathFile );
+        ISVNStatus rootStatus = getClient().getSingleStatus( wcPathFile );
         String[] pathSegs = rootStatus.getUrl().getPathSegments();
         StringBuffer pathBuffer = new StringBuffer();
         for( int i = 0; i < pathSegs.length; i++ ) {
             pathBuffer.append( '/' ).append( pathSegs[i] );
         }
-        ISVNStatus[] statuses = svnClient.getStatus( wcPathFile, true, true );
+        ISVNStatus[] statuses = getClient().getStatus( wcPathFile, true, true );
 
         return new WCVersionSummary( rootStatus, statuses, wcPathFile, processUnversioned );
     }

@@ -126,7 +126,7 @@ public class DiffSummarize extends Diff {
             // summarize only supported on repo, so on URLs
             logAction( true );
 
-            SVNDiffSummary[] summary = svnClient.diffSummarize( getOldUrl(), getOldTargetRevision(), getNewUrl(),
+            SVNDiffSummary[] summary = getClient().diffSummarize( getOldUrl(), getOldTargetRevision(), getNewUrl(),
                             getNewTargetRevision(), depth, ignoreAncestry );
 
             StringBuilder sb = new StringBuilder();

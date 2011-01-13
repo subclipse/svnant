@@ -91,15 +91,15 @@ public class Copy extends SvnCommand {
         try {
             if( srcPath != null ) {
                 if( destPath != null ) {
-                    svnClient.copy( srcPath, destPath );
+                    getClient().copy( srcPath, destPath );
                 } else {
-                    svnClient.copy( srcPath, destUrl, message );
+                    getClient().copy( srcPath, destUrl, message );
                 }
             } else {
                 if( destPath != null ) {
-                    svnClient.copy( srcUrl, destPath, revision );
+                    getClient().copy( srcUrl, destPath, revision );
                 } else {
-                    svnClient.copy( srcUrl, destUrl, message, revision, makeparents );
+                    getClient().copy( srcUrl, destUrl, message, revision, makeparents );
                 }
             }
         } catch( SVNClientException e ) {

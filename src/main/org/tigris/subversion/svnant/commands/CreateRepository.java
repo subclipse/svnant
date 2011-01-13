@@ -80,7 +80,7 @@ public class CreateRepository extends SvnCommand {
      */
     public void execute() throws SvnAntException {
         try {
-            svnClient.createRepository( path, repositoryType );
+            getClient().createRepository( path, repositoryType );
         } catch( SVNClientException e ) {
             throw new SvnAntException( "Cannot create repository at " + path.getAbsolutePath(), e );
         }

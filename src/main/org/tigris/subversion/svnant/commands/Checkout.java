@@ -87,7 +87,7 @@ public class Checkout extends SvnCommand {
      */
     public void execute() throws SvnAntException {
         try {
-            svnClient.checkout( url, destPath, revision, recurse );
+            getClient().checkout( url, destPath, revision, recurse );
         } catch( Exception e ) {
             throw new SvnAntException( "Can't checkout", e );
         }

@@ -124,9 +124,9 @@ public class Log extends SvnCommand {
         ISVNLogMessage[] logMessages = null;
         try {
             if( path != null ) {
-                logMessages = svnClient.getLogMessages( path, startRevision, stopRevision, stopOnCopy, verbose, limit );
+                logMessages = getClient().getLogMessages( path, startRevision, stopRevision, stopOnCopy, verbose, limit );
             } else {
-                logMessages = svnClient.getLogMessages( url, startRevision, startRevision, stopRevision, stopOnCopy, verbose, limit );
+                logMessages = getClient().getLogMessages( url, startRevision, startRevision, stopRevision, stopOnCopy, verbose, limit );
             }
             writeLogMessages( logMessages );
         } catch( Exception e ) {

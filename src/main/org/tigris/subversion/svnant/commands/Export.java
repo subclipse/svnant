@@ -94,9 +94,9 @@ public class Export extends SvnCommand {
     public void execute() throws SvnAntException {
         try {
             if( srcUrl != null ) {
-                svnClient.doExport( srcUrl, destPath, revision, force );
+                getClient().doExport( srcUrl, destPath, revision, force );
             } else {
-                svnClient.doExport( srcPath, destPath, force );
+                getClient().doExport( srcPath, destPath, force );
             }
         } catch( SVNClientException e ) {
             throw new SvnAntException( "Can't export", e );

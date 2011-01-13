@@ -136,7 +136,7 @@ public class Revert extends SvnCommand {
      */
     private void revertFile( File aFile, boolean doRecurse ) throws SvnAntException {
         try {
-            svnClient.revert( aFile, doRecurse );
+            getClient().revert( aFile, doRecurse );
         } catch( SVNClientException e ) {
             throw new SvnAntException( "Cannot revert file or directory " + aFile.getAbsolutePath(), e );
         }
@@ -167,7 +167,7 @@ public class Revert extends SvnCommand {
 
         try {
             for( int i = 0; i < filesAndDirs.length; i++ ) {
-                svnClient.revert( filesAndDirs[i], false );
+                getClient().revert( filesAndDirs[i], false );
             }
         } catch( SVNClientException e ) {
             error( "Cannot revert file " + file.getAbsolutePath() );

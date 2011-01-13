@@ -80,13 +80,13 @@ public class Keywordsremove extends Keywords {
         super.execute();
         if( file != null ) {
             try {
-                svnClient.removeKeywords( file, keywords );
+                getClient().removeKeywords( file, keywords );
             } catch( SVNClientException e ) {
                 throw new SvnAntException( "Can't remove keywords on file " + file.toString(), e );
             }
         } else if( dir != null ) {
             try {
-                svnClient.removeKeywords( dir, keywords );
+                getClient().removeKeywords( dir, keywords );
             } catch( SVNClientException e ) {
                 throw new SvnAntException( "Can't remove keywords on directory " + dir.toString(), e );
             }
@@ -112,7 +112,7 @@ public class Keywordsremove extends Keywords {
         for( int i = 0; i < files.length; i++ ) {
             File aFile = new File( baseDir, files[i] );
             try {
-                svnClient.removeKeywords( aFile, theKeywords );
+                getClient().removeKeywords( aFile, theKeywords );
             } catch( SVNClientException e ) {
                 throw new SvnAntException( "Can't set keywords on file " + aFile.toString(), e );
             }

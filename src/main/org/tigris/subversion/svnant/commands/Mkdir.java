@@ -87,13 +87,13 @@ public class Mkdir extends SvnCommand {
 
         if( url != null ) {
             try {
-                svnClient.mkdir( url, message );
+                getClient().mkdir( url, message );
             } catch( SVNClientException e ) {
                 throw new SvnAntException( "Can't make dir " + url, e );
             }
         } else {
             try {
-                svnClient.mkdir( path );
+                getClient().mkdir( path );
             } catch( SVNClientException e ) {
                 throw new SvnAntException( "Can't make dir " + path, e );
             }

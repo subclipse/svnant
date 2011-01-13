@@ -162,16 +162,16 @@ public class Info extends SvnCommand {
         File targetAsFile = new File( Project.translatePath( this.target ) );
         if( targetAsFile.exists() ) {
             // Since the target exists locally, assume it's not a URL.
-            return svnClient.getInfo( targetAsFile );
+            return getClient().getInfo( targetAsFile );
         } else {
             try {
                 SVNUrl url = new SVNUrl( this.target );
-                return svnClient.getInfo( url );
+                return getClient().getInfo( url );
             } catch( MalformedURLException ex ) {
                 // Since we don't have a valid URL with which to
                 // contact the repository, assume the target is a
                 // local file, even though it doesn't exist locally.
-                return svnClient.getInfo( targetAsFile );
+                return getClient().getInfo( targetAsFile );
             }
         }
     }

@@ -86,7 +86,7 @@ public class Import extends SvnCommand {
      */
     public void execute() throws SvnAntException {
         try {
-            svnClient.doImport( path, url, message, recurse );
+            getClient().doImport( path, url, message, recurse );
         } catch( SVNClientException e ) {
             throw new SvnAntException( "Can't import", e );
         }
