@@ -58,6 +58,8 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
+import org.tigris.subversion.svnant.SvnAntUtilities;
+
 import org.apache.tools.ant.BuildException;
 
 import java.io.File;
@@ -109,20 +111,11 @@ public class Copy extends SvnCommand {
      * {@inheritDoc}
      */
     protected void validateAttributes() {
-        if( ((srcPath == null) && (srcUrl == null)) || ((srcPath != null) && (srcUrl != null)) ) {
-            throw new BuildException( "srcPath attribute or srcUrl attribute must be set" );
-        }
-        if( ((destPath == null) && (destUrl == null)) || ((destPath != null) && (destUrl != null)) ) {
-            throw new BuildException( "destPath attribute or destUrl attribute must be set" );
-        }
-        if( (destUrl != null) && (message == null) ) {
-            throw new BuildException( "message attribute needed when destUrl is set" );
-        }
-        if( (destUrl == null) && (message != null) ) {
-            throw new BuildException( "message attribute cannot be used when destUrl is not set" );
-        }
-        if( revision == null ) {
-            throw new BuildException( "Invalid revision. Revision should be a number, a date in the format as specified in dateFormatter attribute or HEAD, BASE, COMMITED or PREV" );
+        SvnAntUtilities.attrsNotSet( "srcPath, srcUrl", true, srcPath, srcUrl );
+        SvnAntUtilities.attrsNotSet( "destPath, destUrl", true, destPath, destUrl );
+        SvnAntUtilities.attrNotNull( "revision", revision );
+        if( destUrl != null ) {
+            SvnAntUtilities.attrNotEmpty( "message", message );
         }
     }
 

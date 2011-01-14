@@ -2,6 +2,8 @@ package org.tigris.subversion.svnant.commands;
 
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
+import org.tigris.subversion.svnant.SvnAntUtilities;
+
 import org.apache.tools.ant.BuildException;
 
 import java.io.File;
@@ -34,12 +36,7 @@ public class Cleanup extends SvnCommand {
      * {@inheritDoc}
      */
     protected void validateAttributes() {
-        if( path == null ) {
-            throw new BuildException( "dir must be set" );
-        }
-        if( ! path.exists() ) {
-            throw new BuildException( "Directory doesn't exist " + path.getAbsolutePath() );
-        }
+        SvnAntUtilities.attrIsDirectory( "path", path );
     }
 
 }

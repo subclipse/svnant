@@ -56,8 +56,11 @@ package org.tigris.subversion.svnant.commands;
 
 import org.tigris.subversion.svnclientadapter.ISVNLogMessage;
 import org.tigris.subversion.svnclientadapter.ISVNLogMessageChangePath;
+import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
+
+import org.tigris.subversion.svnant.SvnAntUtilities;
 
 import org.apache.tools.ant.BuildException;
 
@@ -116,21 +119,24 @@ public class Log extends SvnCommand {
     private SVNRevision stopRevision  = new SVNRevision.Number( 1 );
 
     /** the --verbose flag */
-    private boolean     verbose       = false;
+    private boolean     changedpathes       = false;
 
     /**
      * {@inheritDoc}
      */
     public void execute() {
+        if( destFile == null ) {
+            destFile = new File( getProject().getBaseDir(), url.getLastPathSegment() );
+        }
         ISVNLogMessage[] logMessages = null;
         try {
             if( path != null ) {
-                logMessages = getClient().getLogMessages( path, startRevision, stopRevision, stopOnCopy, verbose, limit );
+                logMessages = getClient().getLogMessages( path, startRevision, stopRevision, stopOnCopy, changedpathes, limit );
             } else {
-                logMessages = getClient().getLogMessages( url, startRevision, startRevision, stopRevision, stopOnCopy, verbose, limit );
+                logMessages = getClient().getLogMessages( url, startRevision, startRevision, stopRevision, stopOnCopy, changedpathes, limit );
             }
             writeLogMessages( logMessages );
-        } catch( Exception e ) {
+        } catch( SVNClientException e ) {
             throw new BuildException( "Can't get the log messages for the path or url", e );
         }
     }
@@ -193,18 +199,9 @@ public class Log extends SvnCommand {
      * {@inheritDoc}
      */
     protected void validateAttributes() {
-        if( (url == null) && (path == null) ) {
-            throw new BuildException( "url or path attributes must be set" );
-        }
-        if( destFile == null ) {
-            destFile = new File( getProject().getBaseDir(), url.getLastPathSegment() );
-        }
-        if( startRevision == null ) {
-            throw new BuildException( "Invalid revision. Revision should be a number, a date in the format as specified in dateFormatter attribute or HEAD, BASE, COMMITED or PREV" );
-        }
-        if( stopRevision == null ) {
-            throw new BuildException( "Invalid revision. Revision should be a number, a date in the format as specified in dateFormatter attribute or HEAD, BASE, COMMITED or PREV" );
-        }
+        SvnAntUtilities.attrsNotSet( "url, path", url, path );
+        SvnAntUtilities.attrNotNull( "startRevision", startRevision );
+        SvnAntUtilities.attrNotNull( "stopRevision", stopRevision );
     }
 
     /**
@@ -266,10 +263,10 @@ public class Log extends SvnCommand {
     }
 
     /**
-     * @param verbose whether to be verbose or not
+     * @param changedpathes whether to be verbose or not
      */
-    public void setVerbose( boolean verbose ) {
-        this.verbose = verbose;
+    public void setChangedpathes( boolean changedpathes ) {
+        this.changedpathes = changedpathes;
     }
 
     private void writeLogEntryAsPlaintext( ISVNLogMessage logMessage, BufferedWriter writer ) throws IOException {
@@ -323,7 +320,7 @@ public class Log extends SvnCommand {
         //    if (.length > 1) {
         //      writer.write('s');
         //    }
-        if( verbose ) {
+        if( changedpathes ) {
             writer.write( "Changed paths:" );
             writer.newLine();
             for( ISVNLogMessageChangePath changepathlogmessage : logMessage.getChangedPaths() ) {
@@ -412,7 +409,7 @@ public class Log extends SvnCommand {
                         .getDate() ) );
         date.appendChild( dateText );
 
-        if( verbose ) {
+        if( changedpathes ) {
             Element paths = doc.createElement( "paths" );
             entry.appendChild( paths );
             for( ISVNLogMessageChangePath changedPath : logMessage.getChangedPaths() ) {

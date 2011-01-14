@@ -15,10 +15,6 @@
       could not be gathered.</doc>
     </attribute>
     
-    <attribute name="verbose" required="false" default="false">
-      <doc>Turns on verbosity for this task. Default is "false".</doc>
-    </attribute>
-    
     <attribute name="request" required="true">
       <doc>Specifies the information that has to be retrieved. Following values are supported:
       <ul>

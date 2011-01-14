@@ -56,6 +56,8 @@ package org.tigris.subversion.svnant.commands;
 
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
+import org.tigris.subversion.svnant.SvnAntUtilities;
+
 import org.apache.tools.ant.BuildException;
 
 import java.io.File;
@@ -88,9 +90,7 @@ public class CreateRepository extends SvnCommand {
      * {@inheritDoc}
      */
     protected void validateAttributes() {
-        if( path == null ) {
-            throw new BuildException( "Path attribute must be set" );
-        }
+        SvnAntUtilities.attrNotNull( "path", path );
     }
 
     /**

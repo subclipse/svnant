@@ -57,6 +57,8 @@ package org.tigris.subversion.svnant.commands;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
+import org.tigris.subversion.svnant.SvnAntUtilities;
+
 import org.apache.tools.ant.BuildException;
 
 import java.io.File;
@@ -103,14 +105,9 @@ public class Mkdir extends SvnCommand {
      * {@inheritDoc}
      */
     protected void validateAttributes() {
-        if( (url == null) && (path == null) ) {
-            throw new BuildException( "url or path attributes must be set" );
-        }
-        if( (url != null) && (path != null) ) {
-            throw new BuildException( "Either url or path attributes must be set" );
-        }
-        if( (url != null) && (message == null) ) {
-            throw new BuildException( "Message attribute must be set when url is used" );
+        SvnAntUtilities.attrsNotSet( "url, path", true, url, path );
+        if( url != null ) {
+            SvnAntUtilities.attrNotEmpty( "message", message );
         }
     }
 

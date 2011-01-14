@@ -56,6 +56,8 @@ package org.tigris.subversion.svnant.commands;
 
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
+import org.tigris.subversion.svnant.SvnAntUtilities;
+
 import org.apache.tools.ant.BuildException;
 
 import java.io.File;
@@ -97,18 +99,9 @@ public class Propset extends SvnCommand {
      * {@inheritDoc}
      */
     protected void validateAttributes() {
-        if( path == null ) {
-            throw new BuildException( "path attribute must be set" );
-        }
-        if( propName == null ) {
-            throw new BuildException( "name attribute must be set" );
-        }
-        if( (propValue == null) && (file == null) ) {
-            throw new BuildException( "value or file attribute must be set" );
-        }
-        if( (propValue != null) && (file != null) ) {
-            throw new BuildException( "file attribute must not be set when value attribute is set" );
-        }
+        SvnAntUtilities.attrNotNull( "path", path );
+        SvnAntUtilities.attrNotEmpty( "name", propName );
+        SvnAntUtilities.attrsNotSet( "value, file", true, propValue, file );
     }
 
     /**

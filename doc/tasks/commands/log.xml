@@ -33,7 +33,7 @@
       <doc>Output log as xml.</doc>
     </attribute>
     
-    <attribute name="verbose" required="false" default="false">
+    <attribute name="changedpathes" required="false" default="false">
       <doc>Include changed paths in the log.</doc>
     </attribute>
 

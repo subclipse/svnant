@@ -57,6 +57,8 @@ package org.tigris.subversion.svnant.commands;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
+import org.tigris.subversion.svnant.SvnAntUtilities;
+
 import org.apache.tools.ant.types.FileSet;
 
 import org.apache.tools.ant.BuildException;
@@ -124,8 +126,14 @@ public class Delete extends SvnCommand {
      * {@inheritDoc}
      */
     protected void validateAttributes() {
-        if( (url != null) && (message == null) ) {
-            throw new BuildException( "Message attribute must be set when using url attribute" );
+        if( url != null ) {
+            SvnAntUtilities.attrNotEmpty( "message", message );
+        }
+        if( file != null ) {
+            SvnAntUtilities.attrIsFile( "file", file );
+        }
+        if( dir != null ) {
+            SvnAntUtilities.attrIsDirectory( "dir", dir );
         }
     }
 

@@ -60,6 +60,8 @@ import org.tigris.subversion.svnclientadapter.ISVNStatus;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 
+import org.tigris.subversion.svnant.SvnAntUtilities;
+
 import org.apache.tools.ant.types.FileSet;
 
 import org.apache.tools.ant.BuildException;
@@ -122,23 +124,13 @@ public class Commit extends SvnCommand {
      * {@inheritDoc}
      */
     protected void validateAttributes() {
-
-        if( (file == null) && (dir == null) && (filesets.size() == 0) ) {
-            throw new BuildException( "file, url or fileset must be set" );
-        }
+        SvnAntUtilities.attrsNotSet( "file, dir, fileset", true, file, dir, filesets );
+        SvnAntUtilities.attrNotEmpty( "message", message );
         if( file != null ) {
-            if( (dir != null) || (filesets.size() != 0) ) {
-                throw new BuildException( "dir and fileset must not be set when file attribute is present" );
-            }
+            SvnAntUtilities.attrIsFile( "file", file );
         }
-
         if( dir != null ) {
-            if( (file != null) || (filesets.size() != 0) ) {
-                throw new BuildException( "file and fileset must not be set when dir attribute is present" );
-            }
-        }
-        if( message == null ) {
-            throw new BuildException( "Message must be set" );
+            SvnAntUtilities.attrIsDirectory( "dir", dir );
         }
     }
 
@@ -148,18 +140,10 @@ public class Commit extends SvnCommand {
      * @param aFile
      */
     private void svnCommitFile( File aFile ) {
-        if( aFile.exists() ) {
-            if( aFile.isDirectory() ) {
-                warning( "Directory " + aFile.getAbsolutePath() + " cannot be commited using the file attribute.  Use dir instead." );
-            } else {
-                try {
-                    getClient().commit( new File[] { aFile }, message, false );
-                } catch( Exception e ) {
-                    throw new BuildException( "Can't commit file " + aFile.getAbsolutePath(), e );
-                }
-            }
-        } else {
-            throw new BuildException( "Warning: Could not find file " + aFile.getAbsolutePath() + " to commit to the repository." );
+        try {
+            getClient().commit( new File[] { aFile }, message, false );
+        } catch( SVNClientException e ) {
+            throw new BuildException( "Can't commit file " + aFile.getAbsolutePath(), e );
         }
     }
 
@@ -170,18 +154,10 @@ public class Commit extends SvnCommand {
      * @param recursive
      */
     private void svnCommitDir( File aDir, boolean recursive ) {
-        if( aDir.exists() ) {
-            if( !aDir.isDirectory() ) {
-                warning( "File " + aDir.getAbsolutePath() + " cannot be commited using the dir attribute.  Use file instead." );
-            } else {
-                try {
-                    getClient().commit( new File[] { aDir }, message, recursive );
-                } catch( Exception e ) {
-                    throw new BuildException( "Can't commit directory " + aDir.getAbsolutePath(), e );
-                }
-            }
-        } else {
-            throw new BuildException( "Warning: Could not find directory " + aDir.getAbsolutePath() + " to add to the repository." );
+        try {
+            getClient().commit( new File[] { aDir }, message, recursive );
+        } catch( SVNClientException e ) {
+            throw new BuildException( "Can't commit directory " + aDir.getAbsolutePath(), e );
         }
     }
 

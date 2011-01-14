@@ -58,6 +58,8 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
+import org.tigris.subversion.svnant.SvnAntUtilities;
+
 import org.apache.tools.ant.BuildException;
 
 import java.io.File;
@@ -94,12 +96,9 @@ public class Switch extends SvnCommand {
      * {@inheritDoc}
      */
     protected void validateAttributes() {
-        if( (path == null) || (url == null) ) {
-            throw new BuildException( "path and url must be set" );
-        }
-        if( revision == null ) {
-            throw new BuildException( "Invalid revision. Revision should be a number, a date in the format as specified in dateFormatter attribute or HEAD, BASE, COMMITED or PREV" );
-        }
+        SvnAntUtilities.attrNotNull( "path", path );
+        SvnAntUtilities.attrNotNull( "url", url );
+        SvnAntUtilities.attrNotNull( "revision", revision );
     }
 
     /**

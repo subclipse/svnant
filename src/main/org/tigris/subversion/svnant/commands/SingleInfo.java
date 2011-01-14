@@ -59,6 +59,8 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
+import org.tigris.subversion.svnant.SvnAntUtilities;
+
 import org.apache.tools.ant.types.EnumeratedAttribute;
 
 import org.apache.tools.ant.BuildException;
@@ -108,10 +110,9 @@ public class SingleInfo extends SvnCommand {
         PROP_REPOURL 
     };
 
-    private String                target              = null;
-    private boolean               verbose             = false;
-    private String                property            = null;
-    private PropRequest           request             = null;
+    private String      target      = null;
+    private String      property    = null;
+    private PropRequest request     = null;
 
     /**
      * {@inheritDoc}
@@ -125,7 +126,7 @@ public class SingleInfo extends SvnCommand {
             }
             String value = getValue( info, request.getValue() );
             project.setProperty( property, value );
-            info( verbose, property + " : " + value );
+            verbose( "%s : %s", property, value );
         } catch( Exception ex ) {
             throw new BuildException( "Failed to access subversion 'info' properties", ex );
         }
@@ -212,7 +213,7 @@ public class SingleInfo extends SvnCommand {
             // ### FIXME: Implement checksum in svnClientAdapter.
             log( "    " + "Property '" + key + "' not implemented", Project.MSG_WARN );
         } else {
-            info( verbose, "    " + "Property '" + key + "' not recognized" );
+            warning( "    " + "Property '" + key + "' not recognized" );
         }
         if( value == null ) {
             value = "";
@@ -224,15 +225,9 @@ public class SingleInfo extends SvnCommand {
      * {@inheritDoc}
      */
     protected void validateAttributes() {
-        if( target == null ) {
-            throw new BuildException( "the attribute 'target' must be set." );
-        }
-        if( property == null ) {
-            throw new BuildException( "the attribute 'property' must be set." );
-        }
-        if( request == null ) {
-            throw new BuildException( "the attribute 'request' must be set." );
-        }
+        SvnAntUtilities.attrNotEmpty( "target", target );
+        SvnAntUtilities.attrNotEmpty( "property", property );
+        SvnAntUtilities.attrNotNull( "request", request );
     }
 
     /**
@@ -245,15 +240,6 @@ public class SingleInfo extends SvnCommand {
         if( (target != null) && (target.length() == 0) ) {
             target = null;
         }
-    }
-
-    /**
-     * Enables/disables the generation of verbose output.
-     * 
-     * @param enable    <code>true</code> <=> Enables verbose output.
-     */
-    public void setVerbose( boolean enable ) {
-        verbose = enable;
     }
 
     /**

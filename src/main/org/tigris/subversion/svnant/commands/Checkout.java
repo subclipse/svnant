@@ -58,6 +58,8 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
+import org.tigris.subversion.svnant.SvnAntUtilities;
+
 import org.apache.tools.ant.BuildException;
 
 import java.io.File;
@@ -85,6 +87,9 @@ public class Checkout extends SvnCommand {
      * {@inheritDoc}
      */
     public void execute() {
+        if( destPath == null ) {
+            destPath = getProject().getBaseDir();
+        }
         try {
             getClient().checkout( url, destPath, revision, recurse );
         } catch( SVNClientException e ) {
@@ -96,15 +101,11 @@ public class Checkout extends SvnCommand {
      * {@inheritDoc}
      */
     protected void validateAttributes() {
-        if( destPath == null ) {
-            destPath = getProject().getBaseDir();
+        if( destPath != null ) {
+            SvnAntUtilities.attrNotNull( "destpath", destPath );
         }
-        if( url == null ) {
-            throw new BuildException( "url must be set" );
-        }
-        if( revision == null ) {
-            throw new BuildException( "Invalid revision. Revision should be a number, a date in the format as specified in dateFormatter attribute or HEAD, BASE, COMMITED or PREV" );
-        }
+        SvnAntUtilities.attrNotNull( "url", url );
+        SvnAntUtilities.attrNotNull( "revision", revision );
     }
 
     /**

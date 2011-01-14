@@ -60,6 +60,8 @@ import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
+import org.tigris.subversion.svnant.SvnAntUtilities;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
@@ -79,9 +81,6 @@ public class Info extends SvnCommand {
      * The target to retrieve properties for.
      */
     private String                target          = null;
-
-    /** Whether or not to print the properties. */
-    private boolean               verbose         = false;
 
     /** String prepended to new property names. */
     private String                propPrefix      = "svn.info.";
@@ -140,7 +139,7 @@ public class Info extends SvnCommand {
             for( int i = 0; i < propNames.length; i++ ) {
                 String value = getValue( propNames[i] );
                 theProject.setProperty( propPrefix + propNames[i], value );
-                info( verbose, propPrefix + propNames[i] + ": " + value );
+                verbose( "%s%s: %s", propPrefix, propNames[i], value );
             }
         } catch( SVNClientException e ) {
             throw new BuildException( "Failed to set 'info' properties", e );
@@ -231,7 +230,7 @@ public class Info extends SvnCommand {
             // ### FIXME: Implement checksum in svnClientAdapter.
             log( "    " + "Property '" + propName + "' not implemented", Project.MSG_WARN );
         } else {
-            info( verbose, "    " + "Property '" + propName + "' not recognized" );
+            warning( "    Property '%s' not recognized", propName );
         }
 
         return (value == null ? "" : value.toString());
@@ -241,9 +240,7 @@ public class Info extends SvnCommand {
      * {@inheritDoc}
      */
     protected void validateAttributes() {
-        if( target == null ) {
-            throw new BuildException( "target must be set to a file or directory in your working copy, or to a URI" );
-        }
+        SvnAntUtilities.attrNotNull( "target", target );
     }
 
     /**
@@ -259,7 +256,7 @@ public class Info extends SvnCommand {
      * @param verbose
      */
     public void setVerbose( boolean verbose ) {
-        this.verbose = verbose;
+        warning( "The attribute 'verbose' is no longer supported for the command 'info' as it's generally enabled using the Ant option -v !" );
     }
 
     /**

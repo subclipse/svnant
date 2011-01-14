@@ -61,6 +61,8 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 
+import org.tigris.subversion.svnant.SvnAntUtilities;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
@@ -127,9 +129,7 @@ public class WcVersion extends SvnCommand {
      * {@inheritDoc}
      */
     protected void validateAttributes() {
-        if( path == null ) {
-            throw new BuildException( "path attribute must be set" );
-        }
+        SvnAntUtilities.attrNotNull( "path", path ); 
     }
 
     /**

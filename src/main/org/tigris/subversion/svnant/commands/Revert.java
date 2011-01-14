@@ -56,6 +56,8 @@ package org.tigris.subversion.svnant.commands;
 
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
+import org.tigris.subversion.svnant.SvnAntUtilities;
+
 import org.apache.tools.ant.types.FileSet;
 
 import org.apache.tools.ant.BuildException;
@@ -101,8 +103,7 @@ public class Revert extends SvnCommand {
         // deal with filesets
         if( filesets.size() > 0 ) {
             for( int i = 0; i < filesets.size(); i++ ) {
-                FileSet fs = filesets.elementAt( i );
-                revertFileSet( fs );
+                revertFileSet( filesets.elementAt( i ) );
             }
         }
     }
@@ -111,17 +112,12 @@ public class Revert extends SvnCommand {
      * {@inheritDoc}
      */
     protected void validateAttributes() {
+        SvnAntUtilities.attrsNotSet( "file, dir, fileset", file, dir, filesets );
         if( file != null ) {
-            if( dir != null ) {
-                throw new BuildException( "Don't use both file and dir attribute" );
-            }
-            if( filesets.size() > 0 ) {
-                throw new BuildException( "Don't use both file attribute and filesets" );
-            }
-        } else if( dir != null ) {
-            if( filesets.size() > 0 ) {
-                throw new BuildException( "Don't use both file attribute and filesets" );
-            }
+            SvnAntUtilities.attrIsFile( "file", file );
+        }
+        if( dir != null ) {
+            SvnAntUtilities.attrIsDirectory( "dir", dir );
         }
     }
 

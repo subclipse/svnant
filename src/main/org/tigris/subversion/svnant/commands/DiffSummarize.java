@@ -57,6 +57,8 @@ package org.tigris.subversion.svnant.commands;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNDiffSummary;
 
+import org.tigris.subversion.svnant.SvnAntUtilities;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
@@ -165,9 +167,7 @@ public class DiffSummarize extends Diff {
      */
     protected void validateAttributes() {
         super.validateAttributes();
-        if( encoding.trim().length() == 0 ) {
-            throw new BuildException( "the parameter 'encoding' is supposed to provide a value" );
-        }
+        SvnAntUtilities.attrNotEmpty( "encoding", encoding );
     }
 
 }

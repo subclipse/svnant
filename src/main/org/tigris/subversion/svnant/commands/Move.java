@@ -58,6 +58,8 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
+import org.tigris.subversion.svnant.SvnAntUtilities;
+
 import org.apache.tools.ant.BuildException;
 
 import java.io.File;
@@ -102,27 +104,15 @@ public class Move extends SvnCommand {
      * {@inheritDoc}
      */
     protected void validateAttributes() {
-        if( ((srcPath == null) && (srcUrl == null)) || ((srcPath != null) && (srcUrl != null)) ) {
-            throw new BuildException( "Either srcPath attribute or srcUrl attribute must be set" );
-        }
+        SvnAntUtilities.attrsNotSet( "srcPath, srcUrl", true, srcPath, srcUrl );
         if( srcPath != null ) {
-            if( destPath == null ) {
-                throw new BuildException( "destPath attribute must be set when srcPath is set" );
-            }
-            if( destUrl != null ) {
-                throw new BuildException( "destUrl attribute cannot be used when srcPath is set" );
-            }
+            SvnAntUtilities.attrNotNull( "destPath", destPath );
+            SvnAntUtilities.attrNull( "destUrl", destUrl );
         }
         if( srcUrl != null ) {
-            if( destUrl == null ) {
-                throw new BuildException( "destUrl attribute must be set when srcUrl is set" );
-            }
-            if( destPath != null ) {
-                throw new BuildException( "destPath attribute cannot be used when srcUrl is set" );
-            }
-            if( message == null ) {
-                throw new BuildException( "message attribute must be set when srcUrl is set" );
-            }
+            SvnAntUtilities.attrNotNull( "destUrl", destUrl );
+            SvnAntUtilities.attrNull( "destPath", destPath );
+            SvnAntUtilities.attrNotEmpty( "message", message );
         }
     }
 

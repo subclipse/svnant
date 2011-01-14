@@ -58,6 +58,8 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
+import org.tigris.subversion.svnant.SvnAntUtilities;
+
 import org.apache.tools.ant.BuildException;
 
 import java.io.File;
@@ -86,35 +88,27 @@ public class Cat extends SvnCommand {
      */
     public void execute() {
 
+        if( destFile == null ) {
+            destFile = new File( getProject().getBaseDir(), url.getLastPathSegment() );
+        }
         InputStream is = null;
         FileOutputStream os = null;
         try {
             os = new FileOutputStream( destFile );
             is = getClient().getContent( url, revision );
             byte[] buffer = new byte[5000];
-            int read;
-            while( (read = is.read( buffer )) != -1 ) {
+            int read = is.read( buffer );
+            while( read != -1 ) {
                 os.write( buffer, 0, read );
+                read = is.read( buffer );
             }
         } catch( IOException e ) {
             throw new BuildException( "Can't get the content of the specified file", e );
         } catch( SVNClientException e ) {
             throw new BuildException( "Can't get the content of the specified file", e );
         } finally {
-            if( os != null ) {
-                try {
-                    os.close();
-                } catch( IOException e ) {
-                    //Just ignore, it's exception during stream closing }
-                }
-            }
-            if( is != null ) {
-                try {
-                    is.close();
-                } catch( IOException e ) {
-                    //Just ignore, it's exception during stream closing }
-                }
-            }
+            SvnAntUtilities.close( os );
+            SvnAntUtilities.close( is );
         }
     }
 
@@ -122,15 +116,11 @@ public class Cat extends SvnCommand {
      * {@inheritDoc}
      */
     protected void validateAttributes() {
-        if( url == null ) {
-            throw new BuildException( "you must set url attr" );
+        SvnAntUtilities.attrNotNull( "url", url );
+        if( destFile != null ) {
+            SvnAntUtilities.attrCanWrite( "destFile", destFile );
         }
-        if( destFile == null ) {
-            destFile = new File( getProject().getBaseDir(), url.getLastPathSegment() );
-        }
-        if( revision == null ) {
-            throw new BuildException( "Invalid revision. Revision should be a number, a date in the format as specified in dateFormatter attribute or HEAD, BASE, COMMITED or PREV" );
-        }
+        SvnAntUtilities.attrNotNull( "revision", revision );
     }
 
     /**
