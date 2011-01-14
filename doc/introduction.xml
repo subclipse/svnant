@@ -89,6 +89,14 @@
   
   </msection>
   
+  <msection id="license" title="License">
+  
+    <snippet id="license" type="text">
+      <xi:include parse="text" href="../license.txt"/>
+    </snippet>
+  
+  </msection>
+  
   <msection id="changelog" title="Changelog">
   
     <snippet id="changelog" type="text">
