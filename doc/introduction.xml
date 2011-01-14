@@ -102,16 +102,37 @@
     <p>This chapter provides some known issues which might be of interest when you're experiencing
     <i>weird</i> behaviour:</p>
     
-    <ul>
-      <li><b>Mutable Ant properties</b><br/>
-      <p>Basically Ant properties aren't supposed to be changed. This means that their value
-      stays the same once they have been set. <i>svnant</i> doesn't take care of this so if
-      you're <i>reusing</i> property names you should be aware that they can be overwritten.</p>
-      <p>We won't change that behaviour since this is a historical result and modifying the
-      behaviour might cause issues on current build scripts.</p> 
-      </li>
-    </ul>
-  
+    <msubsection title="General">
+    
+      <ul>
+      
+        <li><b>Mutable Ant properties</b><br/>
+        <p>Basically Ant properties aren't supposed to be changed. This means that their value
+        stays the same once they have been set. <i>svnant</i> doesn't take care of this so if
+        you're <i>reusing</i> property names you should be aware that they can be overwritten.</p>
+        <p>We won't change that behaviour since this is a historical result and modifying the
+        behaviour might cause issues on current build scripts.</p> 
+        </li>
+        
+      </ul>
+      
+    </msubsection>
+
+    <msubsection title="JavaHL Binding">
+    
+      <ul>
+        
+        <li><code>propset</code> fails with binary code<br/>
+        <p>If you're trying to use the <code>propset</code> command with the <code>file</code>
+        attribute you might experience errors in case of binary data. This is an error within
+        the JavaHL implementation and has been filed using the following issue:</p>
+        <a href="http://subversion.tigris.org/issues/show_bug.cgi?id=3770">http://subversion.tigris.org/issues/show_bug.cgi?id=3770</a>
+        </li>
+        
+      </ul>
+    
+    </msubsection>
+    
   </msection>
 
   <msection id="authors" title="Authors">
