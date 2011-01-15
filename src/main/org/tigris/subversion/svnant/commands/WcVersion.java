@@ -137,7 +137,7 @@ public class WcVersion extends SvnCommand {
      */
     private WCVersionSummary getWorkingCopySumary( File wcPathFile ) throws SVNClientException {
         ISVNStatus rootStatus = getClient().getSingleStatus( wcPathFile );
-        if( SVNStatusKind.NONE.equals( rootStatus.getPropStatus() ) ) {
+        if( rootStatus.getUrl() == null ) {
             throw createEx( "The path '%s' is not under version control !", wcPathFile.getAbsolutePath() );
         }
         String[] pathSegs = rootStatus.getUrl().getPathSegments();
