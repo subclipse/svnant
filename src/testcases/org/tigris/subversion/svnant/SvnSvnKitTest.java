@@ -60,4 +60,12 @@ public class SvnSvnKitTest extends SvnTest {
     public void testSingleInfo() throws Exception {
         super.testSingleInfo();
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void testWcVersionUnmanaged() throws Exception {
+        super.testWcVersionUnmanaged();
+    }
+    
 }

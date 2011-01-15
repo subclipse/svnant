@@ -512,6 +512,16 @@
     </svn>
   </target>
 
+  <target name="testWcVersionUnmanaged" depends="init">
+    <copy todir="workingcopy/wcversionTest">
+      <fileset dir="model/wcversionTest"></fileset>
+    </copy>
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="Cedric Chabanois">
+      <wcversion path="workingcopy/wcversionTest"/>
+    </svn>
+    <echo>REVISIONMAX: ${revision.max}</echo>
+  </target>
+  
   <target name="testStatusUnmanaged" depends="init">
   <!-- Test to verify issue#408, where status of a file not under 
      source control generates a NPE -->

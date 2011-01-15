@@ -60,4 +60,11 @@ public class SvnCmdLineTest extends SvnTest {
         super.testSingleInfo();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public void testWcVersionUnmanaged() throws Exception {
+        super.testWcVersionUnmanaged();
+    }
+
 }

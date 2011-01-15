@@ -472,6 +472,10 @@ public abstract class SvnTest extends BuildFileTest {
         assertNull(getProject().getProperty("wc.mixed"));
     }
 
+    public void testWcVersionUnmanaged() throws Exception {
+        executeTarget("testWcVersionUnmanaged");
+    }
+    
     public void testStatusUnmanaged() throws Exception {  
     executeTarget("testStatusUnmanaged");
     
@@ -1024,7 +1028,7 @@ public abstract class SvnTest extends BuildFileTest {
     public void testCleanupAfterTests() throws Exception {
       executeTarget("clean");
     }
-
+    
     public static void main(String[] args) {
         String[] testCaseName = { SvnTest.class.getName()};
         junit.textui.TestRunner.main(testCaseName);
