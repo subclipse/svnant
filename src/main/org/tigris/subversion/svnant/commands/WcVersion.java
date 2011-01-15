@@ -85,10 +85,6 @@ public class WcVersion extends SvnCommand {
      */
     public void execute() {
 
-        if( !getPath().exists() || !getPath().isDirectory() ) {
-            throw new BuildException( "Path does not exist: " + getPath().getAbsolutePath() );
-        }
-
         WCVersionSummary wcVersionSummary;
 
         try {
@@ -129,7 +125,7 @@ public class WcVersion extends SvnCommand {
      * {@inheritDoc}
      */
     protected void validateAttributes() {
-        SvnAntUtilities.attrNotNull( "path", path ); 
+        SvnAntUtilities.attrIsDirectory( "path", path );
     }
 
     /**
@@ -141,13 +137,15 @@ public class WcVersion extends SvnCommand {
      */
     private WCVersionSummary getWorkingCopySumary( File wcPathFile ) throws SVNClientException {
         ISVNStatus rootStatus = getClient().getSingleStatus( wcPathFile );
+        if( SVNStatusKind.NONE.equals( rootStatus.getPropStatus() ) ) {
+            throw createEx( "The path '%s' is not under version control !", wcPathFile.getAbsolutePath() );
+        }
         String[] pathSegs = rootStatus.getUrl().getPathSegments();
         StringBuffer pathBuffer = new StringBuffer();
         for( int i = 0; i < pathSegs.length; i++ ) {
             pathBuffer.append( '/' ).append( pathSegs[i] );
         }
         ISVNStatus[] statuses = getClient().getStatus( wcPathFile, true, true );
-
         return new WCVersionSummary( rootStatus, statuses, wcPathFile, processUnversioned );
     }
 

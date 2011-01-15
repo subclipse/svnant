@@ -224,4 +224,16 @@ public abstract class SvnCommand extends ProjectComponent {
         }
     }
 
+    /**
+     * A simple helper used to create an exception.
+     * 
+     * @param fmt    The formatting string to be used. Neither <code>null</code> nor empty.
+     * @param args   Some arguments for the formatting string.
+     * 
+     * @return   The BuildException indicating the error.
+     */
+    protected BuildException createEx( String fmt, Object ... args ) {
+        return new BuildException( String.format( fmt, args ) );
+    }
+    
 }

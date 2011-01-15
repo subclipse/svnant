@@ -473,7 +473,7 @@ public abstract class SvnTest extends BuildFileTest {
     }
 
     public void testWcVersionUnmanaged() throws Exception {
-        executeTarget("testWcVersionUnmanaged");
+        expectBuildExceptionContaining("testWcVersionUnmanaged", "wcVersion on unversioned directory", "is not under version control !");
     }
     
     public void testStatusUnmanaged() throws Exception {  
