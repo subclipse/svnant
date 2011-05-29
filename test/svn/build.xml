@@ -1121,6 +1121,18 @@
       <info target="${basedir}/workingcopy" propPrefix="wc.info" />
     </svn>
   </target>
+  
+  <target name="testInfoCustomisedDateFormat" depends="init">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}" dateFormatter="dd-MMM-yyyy HH:mm">
+      <info target="${basedir}/workingcopy"/>
+    </svn>
+  </target>
+  
+  <!--
+  "lastRev", 
+  "lastDate", 
+  "lastTextUpdate", 
+  -->
 
   <target name="testInfoURL" depends="init">
     <copy todir="workingcopy/infoTest">

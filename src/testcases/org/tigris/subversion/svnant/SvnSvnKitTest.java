@@ -68,4 +68,11 @@ public class SvnSvnKitTest extends SvnTest {
         super.testWcVersionUnmanaged();
     }
     
+    /**
+     * {@inheritDoc}
+     */
+    public void testInfo() throws Exception {
+        super.testInfo();
+    }
+    
 }

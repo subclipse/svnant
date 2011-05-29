@@ -1,22 +1,7 @@
 package org.tigris.subversion.svnant;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import org.tigris.subversion.svnclientadapter.utils.SVNStatusUtils;
 
-import org.apache.tools.ant.BuildFileTest;
-import org.apache.tools.ant.Target;
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.UnknownElement;
 import org.tigris.subversion.svnclientadapter.ISVNAnnotations;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNDirEntry;
@@ -31,7 +16,27 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNScheduleKind;
 import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
-import org.tigris.subversion.svnclientadapter.utils.SVNStatusUtils;
+
+import org.apache.tools.ant.BuildFileTest;
+import org.apache.tools.ant.Target;
+import org.apache.tools.ant.Task;
+import org.apache.tools.ant.UnknownElement;
+
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import java.net.MalformedURLException;
+import java.text.SimpleDateFormat;
 
 import junit.framework.Assert;
 
@@ -583,6 +588,17 @@ public abstract class SvnTest extends BuildFileTest {
         for (int i = 0; i < propNames.length; i++) {
           assertPropertySet(propNames[i], true);
         }
+        
+        executeTarget("testInfoCustomisedDateFormat");
+        propNames = new String[] {
+            "svn.info.lastDate",
+        };
+        for (int i = 0; i < propNames.length; i++) {
+          assertPropertySet(propNames[i], true);
+        }
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
+        assertPropertyEquals("svn.info.lastDate", formatter.format(new Date(System.currentTimeMillis())));
+        
     }
 
     /**
