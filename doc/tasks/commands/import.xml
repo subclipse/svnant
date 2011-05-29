@@ -3,9 +3,6 @@
 
   <p>Commit an unversioned file or tree into the repository.</p>
   <p>Recursively commit a copy of <code>path</code> to <code>url</code>.</p>
-  <p>If <code>newEntry</code> is not set, copy top-level contents of <code>path</code> into 
-  <code>url</code> directly.  
-  Otherwise, create <code>newEntry</code> underneath <code>url</code> and begin copy there.</p>
 
   <attributes>
   
@@ -18,6 +15,8 @@
     </attribute>
 
     <attribute name="newEntry" required="false">
+      <doc>If set, copy top-level contents of <code>path</code> into <code>url</code> directly.  
+      Otherwise, create <code>newEntry</code> underneath <code>url</code> and begin copy there.</doc>
     </attribute>
 
     <attribute name="message" required="true">

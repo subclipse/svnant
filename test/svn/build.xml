@@ -56,6 +56,7 @@
     <property name="urlRepos" value="file:///${testReposPath}" />  
  
     <!-- we checkout it to workingcopy -->
+    <delete dir="workingcopy" includeemptydirs="true" failonerror="false"/>
     <mkdir dir="workingcopy"/>
     <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <checkout url="${urlRepos}" destPath="workingcopy" />
@@ -301,6 +302,18 @@
   <target name="testImport" depends="init">
     <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
       <import url="${urlRepos}/" path="model/importTest" message="importTest imported"/>
+    </svn>
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
+      <checkout url="${urlRepos}" revision="HEAD" destPath="workingcopy/testImport" />
+    </svn>
+  </target>
+
+  <target name="testImportNewEntry" depends="init">
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
+      <import url="${urlRepos}/" newEntry="new" path="model/importTest" message="importTest imported"/>
+    </svn>
+    <svn javahl="${javahl}" svnkit="${svnkit}" username="${username}" password="${password}">
+      <checkout url="${urlRepos}" revision="HEAD" destPath="workingcopy/testImportNewEntry" />
     </svn>
   </target>
 

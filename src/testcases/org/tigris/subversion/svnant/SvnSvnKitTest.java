@@ -75,4 +75,19 @@ public class SvnSvnKitTest extends SvnTest {
         super.testInfo();
     }
     
+    /**
+     * {@inheritDoc}
+     */
+    public void testImport() {
+        super.testImport();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void testImportNewEntry() {
+        super.testImportNewEntry();
+    }
+    
+
 }

@@ -179,8 +179,15 @@ public abstract class SvnTest extends BuildFileTest {
   
   public void testImport() {
     executeTarget("testImport");
+    assertTrue(new File(WORKINGCOPY_DIR + "/testImport/subdir/toImport2.txt").isFile());
+    assertTrue(new File(WORKINGCOPY_DIR + "/testImport/toImport.txt").isFile());
   } 
-
+  
+  public void testImportNewEntry() {
+    executeTarget("testImportNewEntry");
+    assertTrue(new File(WORKINGCOPY_DIR + "/testImportNewEntry/new/subdir/toImport2.txt").isFile());
+    assertTrue(new File(WORKINGCOPY_DIR + "/testImportNewEntry/new/toImport.txt").isFile());
+  }
   
   public void testMkdir() throws SVNClientException {
     executeTarget("testMkdir");
