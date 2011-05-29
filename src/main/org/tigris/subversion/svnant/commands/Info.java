@@ -65,6 +65,8 @@ import org.tigris.subversion.svnant.SvnAntUtilities;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
+import java.util.Date;
+
 import java.io.File;
 
 import java.net.MalformedURLException;
@@ -92,38 +94,14 @@ public class Info extends SvnCommand {
      * Available directory properties.  Assumed to be a subset of
      * {@link #FILE_PROP_NAMES}.
      */
-    private static final String[] DIR_PROP_NAMES  = { 
-        "path", 
-        "url", 
-        "repourl", 
-        "repouuid", 
-        "rev", 
-        "nodekind",
-        "schedule", 
-        "author", 
-        "lastRev", 
-        "lastDate" 
-    };
+    private static final String[] DIR_PROP_NAMES  = { "path", "url", "repourl", "repouuid", "rev", "nodekind",
+                    "schedule", "author", "lastRev", "lastDate" };
 
     //TODO check the properties, the code and the documentation
 
     /** Available file properties. */
-    private static final String[] FILE_PROP_NAMES = { 
-        "path", 
-        "name", 
-        "url", 
-        "repourl", 
-        "repouuid", 
-        "rev", 
-        "nodekind",
-        "schedule", 
-        "author", 
-        "lastRev", 
-        "lastDate", 
-        "lastTextUpdate", 
-        "lastPropUpdate", 
-        "checksum" 
-    };
+    private static final String[] FILE_PROP_NAMES = { "path", "name", "url", "repourl", "repouuid", "rev", "nodekind",
+                    "schedule", "author", "lastRev", "lastDate", "lastTextUpdate", "lastPropUpdate", "checksum" };
 
     /**
      * {@inheritDoc}
@@ -221,11 +199,20 @@ public class Info extends SvnCommand {
         } else if( FILE_PROP_NAMES[9].equals( propName ) ) {
             value = this.info.getLastChangedRevision();
         } else if( FILE_PROP_NAMES[10].equals( propName ) ) {
-            value = this.info.getLastChangedDate();
+            Date lastChangedDate = this.info.getLastChangedDate();
+            if( lastChangedDate != null ) {
+                value = getDateStringFor(lastChangedDate);
+            }
         } else if( FILE_PROP_NAMES[11].equals( propName ) ) {
-            value = this.info.getLastDateTextUpdate();
+            Date lastDateTextUpdate = this.info.getLastDateTextUpdate();
+            if( lastDateTextUpdate != null ) {
+                value = getDateStringFor(lastDateTextUpdate);
+            }
         } else if( FILE_PROP_NAMES[12].equals( propName ) ) {
-            value = this.info.getLastDatePropsUpdate();
+            Date lastDatePropsUpdate = this.info.getLastDatePropsUpdate();
+            if( lastDatePropsUpdate != null ) {
+                value = getDateStringFor(lastDatePropsUpdate);
+            }
         } else if( FILE_PROP_NAMES[13].equals( propName ) ) {
             // ### FIXME: Implement checksum in svnClientAdapter.
             log( "    " + "Property '" + propName + "' not implemented", Project.MSG_WARN );
