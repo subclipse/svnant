@@ -76,6 +76,8 @@ import java.util.TimeZone;
  */
 public class SvnFacade {
 
+    private static final String MSG_MISSING_DEPENDENCY = "Missing '%s' dependencies on the classpath !";
+
     private static final String  DEFAULT_DATEFORMATTER = "MM/dd/yyyy hh:mm a";
 
     private static final Boolean DEFAULT_SVNKIT        = Boolean.FALSE;
@@ -460,16 +462,30 @@ public class SvnFacade {
 
         ISVNClientAdapter result = null;
 
-        if( getJavahl( component ) && isJavahlAvailable() ) {
-            result = SVNClientAdapterFactory.createSVNClient( JhlClientAdapterFactory.JAVAHL_CLIENT );
-            component.log( "Using javahl", Project.MSG_VERBOSE );
-        } else if( getSvnKit( component ) && isSVNKitAvailable() ) {
-            result = SVNClientAdapterFactory.createSVNClient( SvnKitClientAdapterFactory.SVNKIT_CLIENT );
-            component.log( "Using svnkit", Project.MSG_VERBOSE );
-        } else if( isCommandLineAvailable() ) {
-            result = SVNClientAdapterFactory.createSVNClient( CmdLineClientAdapterFactory.COMMANDLINE_CLIENT );
-            component.log( "Using command line", Project.MSG_VERBOSE );
+        if( getJavahl( component ) ) {
+            if( isJavahlAvailable() ) {
+                result = SVNClientAdapterFactory.createSVNClient( JhlClientAdapterFactory.JAVAHL_CLIENT );
+                component.log( "Using javahl", Project.MSG_VERBOSE );
+            } else {
+                throw new BuildException( String.format( MSG_MISSING_DEPENDENCY, "javahl" ) );
+            }
+        } else if( getSvnKit( component ) ) {
+            if( isSVNKitAvailable() ) {
+                result = SVNClientAdapterFactory.createSVNClient( SvnKitClientAdapterFactory.SVNKIT_CLIENT );
+                component.log( "Using svnkit", Project.MSG_VERBOSE );
+            } else {
+                throw new BuildException( String.format( MSG_MISSING_DEPENDENCY, "svnkit" ) );
+            }
         } else {
+            if( isCommandLineAvailable() ) {
+                result = SVNClientAdapterFactory.createSVNClient( CmdLineClientAdapterFactory.COMMANDLINE_CLIENT );
+                component.log( "Using command line", Project.MSG_VERBOSE );
+            } else {
+                throw new BuildException( String.format( MSG_MISSING_DEPENDENCY, "commandline" ) );
+            }
+        }
+        
+        if( result == null ) {
             throw new BuildException( "Cannot find javahl, svnkit nor command line svn client" );
         }
 
