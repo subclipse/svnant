@@ -99,6 +99,8 @@ import java.util.List;
 import java.util.TimeZone;
 
 import java.io.CharArrayWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.PrintWriter;
 
 /**
@@ -113,7 +115,18 @@ public class SvnTask extends Task {
     private List<ISVNNotifyListener> notifyListeners = new ArrayList<ISVNNotifyListener>();
     private CharArrayWriter          writer          = new CharArrayWriter();
     private PrintWriter              printer         = new PrintWriter( writer );
+    private PrintWriter              logprinter      = null;
+    private File                     logfile         = null;
 
+    /**
+     * Specifies a location of the log file used to write the output to.
+     * 
+     * @param newlogfile   The location of the logfile used to write the output to.
+     */
+    public void setLogFile( File newlogfile ) {
+        logfile = newlogfile;
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -538,9 +551,9 @@ public class SvnTask extends Task {
      */
     public void verbose( String fmt, Object ... args ) {
         if( (args == null) || (args.length == 0) ) {
-            log( fmt, Project.MSG_VERBOSE );
+            write( fmt, Project.MSG_VERBOSE );
         } else {
-            log( String.format( fmt, alter( args ) ), Project.MSG_VERBOSE );
+            write( String.format( fmt, alter( args ) ), Project.MSG_VERBOSE );
         }
     }
 
@@ -552,9 +565,9 @@ public class SvnTask extends Task {
      */
     public void debug( String fmt, Object ... args ) {
         if( (args == null) || (args.length == 0) ) {
-            log( fmt, Project.MSG_DEBUG );
+            write( fmt, Project.MSG_DEBUG );
         } else {
-            log( String.format( fmt, alter( args ) ), Project.MSG_DEBUG );
+            write( String.format( fmt, alter( args ) ), Project.MSG_DEBUG );
         }
     }
     
@@ -566,9 +579,9 @@ public class SvnTask extends Task {
      */
     public void warning( String fmt, Object ... args ) {
         if( (args == null) || (args.length == 0) ) {
-            log( fmt, Project.MSG_WARN );
+            write( fmt, Project.MSG_WARN );
         } else {
-            log( String.format( fmt, alter( args ) ), Project.MSG_WARN );
+            write( String.format( fmt, alter( args ) ), Project.MSG_WARN );
         }
     }
 
@@ -581,9 +594,9 @@ public class SvnTask extends Task {
      */
     public void info( boolean verbose, String fmt, Object ... args ) {
         if( (args == null) || (args.length == 0) ) {
-            log( fmt, verbose ? Project.MSG_VERBOSE : Project.MSG_INFO );
+            write( fmt, verbose ? Project.MSG_VERBOSE : Project.MSG_INFO );
         } else {
-            log( String.format( fmt, alter( args ) ), verbose ? Project.MSG_VERBOSE : Project.MSG_INFO );
+            write( String.format( fmt, alter( args ) ), verbose ? Project.MSG_VERBOSE : Project.MSG_INFO );
         }
     }
 
@@ -595,9 +608,9 @@ public class SvnTask extends Task {
      */
     public void info( String fmt, Object ... args ) {
         if( (args == null) || (args.length == 0) ) {
-            log( fmt, Project.MSG_INFO );
+            write( fmt, Project.MSG_INFO );
         } else {
-            log( String.format( fmt, alter( args ) ), Project.MSG_INFO );
+            write( String.format( fmt, alter( args ) ), Project.MSG_INFO );
         }
     }
 
@@ -609,9 +622,23 @@ public class SvnTask extends Task {
      */
     public void error( String fmt, Object ... args ) {
         if( (args == null) || (args.length == 0) ) {
-            log( fmt, Project.MSG_ERR );
+            write( fmt, Project.MSG_ERR );
         } else {
-            log( String.format( fmt, alter( args ) ), Project.MSG_ERR );
+            write( String.format( fmt, alter( args ) ), Project.MSG_ERR );
+        }
+    }
+    
+    /**
+     * Writes a message to the log.
+     * 
+     * @param message   The message which has to be written. Neither <code>null</code> nor empty.
+     * @param level     The error level.
+     */
+    private void write( String message, int level ) {
+        if( logprinter != null ) {
+            logprinter.println( message );
+        } else {
+            log( message, level );
         }
     }
 
@@ -621,6 +648,9 @@ public class SvnTask extends Task {
     public void execute() throws BuildException {
 
         try {
+            if( logfile != null ) {
+                logprinter = new PrintWriter( new FileWriter( logfile ) );
+            }
             executeImpl();
         } catch( Exception ex ) {
 
@@ -636,7 +666,11 @@ public class SvnTask extends Task {
                 // quit normally but we're dumping the exception so the user will notice it
                 error( "the execution failed for some reason. cause: %s", ex );
             }
-
+            
+        } finally {
+            if( logprinter != null ) {
+                logprinter.close();
+            }
         }
 
     }

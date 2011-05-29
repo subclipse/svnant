@@ -44,6 +44,10 @@
         <doc>Controls whether an error stops the build or is merely reported to the screen.</doc>
       </attribute>
     
+      <attribute name="logFile" required="false">
+        <doc>Write the output of the commands into the log file instead of the console.</doc>
+      </attribute>
+      
       <attribute name="refid" required="false">
         <doc>If set the configuration for this task is taken from a <ref id="svnsetting">svnSetting</ref> object. Such a settings instance simply provides default values, so they will be overridden in case the corresponding attribute on this task has been set.</doc>
       </attribute>
