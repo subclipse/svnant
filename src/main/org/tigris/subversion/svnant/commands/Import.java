@@ -81,12 +81,23 @@ public class Import extends SvnCommand {
 
     private boolean recurse = true;
 
+    private String newentry = null;
+    
     /**
      * {@inheritDoc}
      */
     public void execute() {
         try {
-            getClient().doImport( path, url, message, recurse );
+            SVNUrl desturl = url;
+            if( newentry != null ) { 
+                try {
+                    desturl = url.appendPath( newentry );
+                    getClient().mkdir( desturl, message );
+                } catch( SVNClientException e ) {
+                    throw new BuildException( "Can't make dir " + url, e );
+                }
+            }
+            getClient().doImport( path, desturl, message, recurse );
         } catch( SVNClientException e ) {
             throw new BuildException( "Can't import", e );
         }
@@ -126,11 +137,24 @@ public class Import extends SvnCommand {
     }
 
     /**
-     * if not set, import will operate on single directory only  
-     * @param recurse
+     * if not set, import will operate on single directory only.
+     * 
+     * @param recurse   <code>true</code> <=> Import recursively.
      */
     public void setRecurse( boolean recurse ) {
         this.recurse = recurse;
+    }
+    
+    /**
+     * If set a new directory is created below the url.
+     * 
+     * @param newentry   The name of the sub directory which will receive the imported data.
+     */
+    public void setNewEntry( String newentry ) {
+        this.newentry = newentry;
+        if( (this.newentry != null) && (this.newentry.trim().length() == 0) ) {
+            this.newentry = null;
+        }
     }
 
 }
