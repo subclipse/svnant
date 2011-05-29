@@ -462,21 +462,25 @@ public class SvnFacade {
 
         ISVNClientAdapter result = null;
 
-        if( getJavahl( component ) ) {
+        boolean javahl = getJavahl( component );
+        boolean svnkit = getSvnKit( component );
+        if( javahl ) {
             if( isJavahlAvailable() ) {
                 result = SVNClientAdapterFactory.createSVNClient( JhlClientAdapterFactory.JAVAHL_CLIENT );
                 component.log( "Using javahl", Project.MSG_VERBOSE );
             } else {
                 throw new BuildException( String.format( MSG_MISSING_DEPENDENCY, "javahl" ) );
             }
-        } else if( getSvnKit( component ) ) {
+        }
+        if( svnkit && (result == null) ) {
             if( isSVNKitAvailable() ) {
                 result = SVNClientAdapterFactory.createSVNClient( SvnKitClientAdapterFactory.SVNKIT_CLIENT );
                 component.log( "Using svnkit", Project.MSG_VERBOSE );
             } else {
                 throw new BuildException( String.format( MSG_MISSING_DEPENDENCY, "svnkit" ) );
             }
-        } else {
+        }
+        if( (!javahl) && (!svnkit) ) {
             if( isCommandLineAvailable() ) {
                 result = SVNClientAdapterFactory.createSVNClient( CmdLineClientAdapterFactory.COMMANDLINE_CLIENT );
                 component.log( "Using command line", Project.MSG_VERBOSE );
