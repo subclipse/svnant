@@ -76,7 +76,7 @@ import java.text.SimpleDateFormat;
  */
 public abstract class SvnCommand extends ProjectComponent {
 
-    private  SvnTask            task;
+    private SvnTask             task;
     private ISVNClientAdapter   svnClient;
 
     protected abstract void validateAttributes();
