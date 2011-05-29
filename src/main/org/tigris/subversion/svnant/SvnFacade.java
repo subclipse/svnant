@@ -78,7 +78,7 @@ public class SvnFacade {
 
     private static final String  DEFAULT_DATEFORMATTER = "MM/dd/yyyy hh:mm a";
 
-    private static final Boolean DEFAULT_SVNKIT        = Boolean.TRUE;
+    private static final Boolean DEFAULT_SVNKIT        = Boolean.FALSE;
     private static final Boolean DEFAULT_JAVAHL        = Boolean.TRUE;
     private static final Boolean DEFAULT_FAILONERROR   = Boolean.TRUE;
 
