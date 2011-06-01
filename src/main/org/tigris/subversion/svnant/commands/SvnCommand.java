@@ -101,11 +101,11 @@ public abstract class SvnCommand extends ProjectComponent {
      */
     public final void executeCommand( ISVNClientAdapter svnClientAdapter ) throws BuildException {
         this.svnClient = svnClientAdapter;
-        info( "<%s> started ...", getCommandname() );
+        verbose( "<%s> started ...", getCommandname() );
         try {
             validateAttributes();
             execute();
-            info( "<%s> finished.", getCommandname() );
+            verbose( "<%s> finished.", getCommandname() );
         } catch( BuildException ex ) {
             error( "<%s> failed.", getCommandname() );
             throw ex;
