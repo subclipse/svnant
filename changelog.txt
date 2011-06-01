@@ -1,5 +1,6 @@
 * 1.3.1
 - Built against svnClientAdapter 0.9.100, Subversion 1.6.x, SVNKit 1.3.x
+- #828: 'wcVersion' won't incorporate 'svn:externals' anymore for the version calculation
 - #906: added 'singleinfo', 'list' commands
 - #906: added 'svnAvailable' condition
 - #619, #689: the 'log' command now provides a verbose option for the changed pathes

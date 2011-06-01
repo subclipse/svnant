@@ -243,6 +243,12 @@ public class WcVersion extends SvnCommand {
                 }
 
                 if( SVNStatusUtils.isManaged( status ) ) {
+                    
+                    if( isExternal( rootStatus, status ) ) {
+                        // don't include externals for the calculation process
+                        continue;
+                    }
+                    
                     SVNRevision.Number rev = status.getLastChangedRevision();
                     long revNum = (rev != null) ? rev.getNumber() : 0;
                     if( revNum > this.maxRevision ) {
@@ -264,6 +270,18 @@ public class WcVersion extends SvnCommand {
             if( (this.minRevision > 0) && (this.minRevision != this.maxRevision) ) {
                 this.hasMixed = true;
             }
+        }
+        
+        /**
+         * Returns <code>true</code> if a status is associated with an external resources.
+         * 
+         * @param base      The base for the version calculation. Not <code>null</code>.
+         * @param current   The current status to be used for the version calculation. Not <code>null</code>.
+         * 
+         * @return   <code>true</code> <=> The current status is an external.
+         */
+        private boolean isExternal( ISVNStatus base, ISVNStatus current ) {
+            return ! current.getUrlString().startsWith( base.getUrlString() );
         }
 
         /**
