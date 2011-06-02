@@ -89,6 +89,8 @@ import org.tigris.subversion.svnant.commands.WcVersion;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNNotifyListener;
 
+import org.tigris.subversion.svnant.types.SvnSetting;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectComponent;
@@ -96,7 +98,6 @@ import org.apache.tools.ant.Task;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TimeZone;
 
 import java.io.CharArrayWriter;
 import java.io.File;
@@ -110,7 +111,7 @@ import java.io.PrintWriter;
  *
  */
 public class SvnTask extends Task {
-
+    
     private List<SvnCommand>         commands        = new ArrayList<SvnCommand>();
     private List<ISVNNotifyListener> notifyListeners = new ArrayList<ISVNNotifyListener>();
     private CharArrayWriter          writer          = new CharArrayWriter();
@@ -135,6 +136,15 @@ public class SvnTask extends Task {
     }
 
     /**
+     * Sets the referred configuration to be used for the svn task.
+     *
+     * @param refid   The id of the configuration to be used for the svn task.
+     */
+    public void setRefid( String refid ) {
+        SvnFacade.setRefid( this, refid );
+    }
+
+    /**
      * @see SvnFacade#getJavahl(ProjectComponent)
      */
     public boolean getJavahl() {
@@ -149,69 +159,77 @@ public class SvnTask extends Task {
     }
 
     /**
-     * Sets the referred configuration to be used for the svn task.
-     *
-     * @param refid   The id of the configuration to be used for the svn task.
-     */
-    public void setRefid( String refid ) {
-        SvnFacade.setRefid( this, refid );
-    }
-
-    /**
-     * @param username the username to set
+     * @see SvnSetting#setUsername(String)
      */
     public void setUsername( String username ) {
         SvnFacade.setUsername( this, username );
     }
 
     /**
-     * @param password the password to set
+     * @see SvnSetting#setPassword(String)
      */
     public void setPassword( String password ) {
         SvnFacade.setPassword( this, password );
     }
 
     /**
-     * set javahl to false to use command line interface
-     * @param javahl
+     * @see SvnSetting#setSSLPassword(String)
+     */
+    public void setSSLPassword( String newpassword ) {
+        SvnFacade.setSSLPassword( this, newpassword );
+    }
+    
+    /**
+     * @see SvnSetting#setSSLClientCertPath(File)
+     */
+    public void setSSLClientCertPath( File newclientcertpath ) {
+        SvnFacade.setSSLClientCertPath( this, newclientcertpath );
+    }
+    
+    /**
+     * @see SvnSetting#setSSHPort(Integer)
+     */
+    public void setSSHPort( Integer newsshport ) {
+        SvnFacade.setSSHPort( this, newsshport );
+    }
+    
+    /**
+     * @see SvnSetting#setSSHPassphrase(String)
+     */
+    public void setSSHPassphrase( String newsshpassphrase ) {
+        SvnFacade.setSSHPassphrase( this, newsshpassphrase );
+    }
+    
+    /**
+     * @see SvnSetting#setSSHKeyPath(File)
+     */
+    public void setSSHKeyPath( File newsshkeypath ) {
+        SvnFacade.setSSHKeyPath( this, newsshkeypath );
+    }
+
+    /**
+     * @see SvnSetting#setJavahl(boolean)
      */
     public void setJavahl( boolean javahl ) {
         SvnFacade.setJavahl( this, javahl );
     }
 
     /**
-     * set svnkit to false to use command line interface
-     * @param svnkit
+     * @see SvnSetting#setSvnKit(boolean)
      */
     public void setSvnkit( boolean svnkit ) {
         SvnFacade.setSvnKit( this, svnkit );
     }
 
     /**
-     * @return dateFormatter used to parse/format revision dates
-     */
-    public String getDateFormatter() {
-        return SvnFacade.getDateFormatter( this );
-    }
-
-    /**
-     * set dateFormatter used to parse/format revision dates
-     * @param dateFormatter
+     * @see SvnSetting#setDateFormatter(String)
      */
     public void setDateFormatter( String dateFormatter ) {
         SvnFacade.setDateFormatter( this, dateFormatter );
     }
 
     /**
-     * @return dateTimeZone used to parse/format revision dates
-     */
-    public TimeZone getDateTimezone() {
-        return SvnFacade.getDateTimezone( this );
-    }
-
-    /**
-     * set dateTimezone used to parse/format revision dates
-     * @param dateTimezone
+     * @see SvnSetting#setDateTimezone(String)
      */
     public void setDateTimezone( String dateTimeZone ) {
         SvnFacade.setDateTimezone( this, dateTimeZone );
