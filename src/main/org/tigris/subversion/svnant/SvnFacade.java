@@ -54,18 +54,25 @@
  */
 package org.tigris.subversion.svnant;
 
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.ProjectComponent;
-import org.tigris.subversion.svnant.types.SvnSetting;
+import org.tigris.subversion.svnant.commands.SvnCommand;
+
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.ISVNPromptUserPassword;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.commandline.CmdLineClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.javahl.JhlClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.svnkit.SvnKitClientAdapterFactory;
 
+import org.tigris.subversion.svnant.types.SvnSetting;
+
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.ProjectComponent;
+
 import java.util.TimeZone;
+
+import java.io.File;
 
 /**
  * This facade provides a reusable way to configure and access subversion clients.
@@ -107,7 +114,11 @@ public class SvnFacade {
         // become invalid if the ant svn tasks are used in parallel for the same
         // project (which is unlikely to happen), so here we're providing the necessary 
         // distinction.
-        String key = KEY_FACADE + component.hashCode();
+        if( component instanceof SvnCommand ) {
+            // if a command is passed we're using the task for reference
+            component = ((SvnCommand) component).getTask();
+        }
+        String    key    = KEY_FACADE + component.hashCode();
         SvnFacade result = (SvnFacade) component.getProject().getReference( key );
         if( result == null ) {
             result = new SvnFacade();
@@ -217,26 +228,20 @@ public class SvnFacade {
     }
 
     /**
-     * Sets the username to access the repository.
-     *
-     * @param component     The ant project component used to access the facade. 
-     *                      Not <code>null</code>.
-     * @param username      The username to access the repository. If not <code>null</code> the
-     *                      value has to be not empty as well.
+     * @see SvnSetting#setUsername(String)
+     * 
+     * @param component   The ant project component used to access the facade. Not <code>null</code>.
      */
     public static final void setUsername( ProjectComponent component, String username ) {
         getSetting( component ).setUsername( username );
     }
 
     /**
-     * Returns the currently configured username.
-     *
-     * @param component     The ant project component used to access the facade. 
-     *                      Not <code>null</code>.
-     *                      
-     * @return   The currently configured username. Maybe <code>null</code>.
+     * @see SvnSetting#getUsername()
+     * 
+     * @param component   The ant project component used to access the facade. Not <code>null</code>.
      */
-    private static final String getUsername( ProjectComponent component ) {
+    public static final String getUsername( ProjectComponent component ) {
         String result = getSetting( component ).getUsername();
         if( result == null ) {
             result = getRefidSetting( component ).getUsername();
@@ -245,27 +250,20 @@ public class SvnFacade {
     }
 
     /**
-     * Sets the password to access the repository.
-     *
-     * @param component     The ant project component used to access the facade. 
-     *                      Not <code>null</code>.
-     * @param password      The password to access the repository. If not <code>null</code> the
-     *                      value has to be not empty as well. Double double quotes will be treated
-     *                      as an empty string.
+     * @see SvnSetting#setPassword(String)
+     * 
+     * @param component   The ant project component used to access the facade. Not <code>null</code>.
      */
     public static final void setPassword( ProjectComponent component, String password ) {
         getSetting( component ).setPassword( password );
     }
 
     /**
-     * Returns the currently configured password.
-     *
-     * @param component     The ant project component used to access the facade. 
-     *                      Not <code>null</code>.
-     *                      
-     * @return   The currently configured password. Maybe <code>null</code>.
+     * @see SvnSetting#getPassword()
+     * 
+     * @param component   The ant project component used to access the facade. Not <code>null</code>.
      */
-    private static final String getPassword( ProjectComponent component ) {
+    public static final String getPassword( ProjectComponent component ) {
         String result = getSetting( component ).getPassword();
         if( result == null ) {
             result = getRefidSetting( component ).getPassword();
@@ -274,24 +272,128 @@ public class SvnFacade {
     }
 
     /**
-     * Changes the formatting of dates (used to parse/format revision information). 
-     *
-     * @param component         The ant project component used to access the facade. 
-     *                          Not <code>null</code>.
-     * @param dateformatter     If <code>null</code> or empty the default format 
-     *                          {@link #DEFAULT_DATEFORMATTER} is used.
+     * @see SvnSetting#setSSLPassword(String)
+     * 
+     * @param component   The ant project component used to access the facade. Not <code>null</code>.
+     */
+    public static final void setSSLPassword( ProjectComponent component, String sslpassword ) {
+        getSetting( component ).setSSLPassword( sslpassword );
+    }
+    
+    /**
+     * @see SvnSetting#getSSLPassword()
+     * 
+     * @param component   The ant project component used to access the facade. Not <code>null</code>.
+     */
+    public static final String getSSLPassword( ProjectComponent component ) {
+        String result = getSetting( component ).getSSLPassword();
+        if( result == null ) {
+            result = getRefidSetting( component ).getSSLPassword();
+        }
+        return result;
+    }
+    
+    /**
+     * @see SvnSetting#setSSLClientCertPath(File)
+     * 
+     * @param component   The ant project component used to access the facade. Not <code>null</code>.
+     */
+    public static final void setSSLClientCertPath( ProjectComponent component, File newclientcertpath ) {
+        getSetting( component ).setSSLClientCertPath( newclientcertpath );
+    }
+    
+    /**
+     * @see SvnSetting#getSSLClientCertPath()
+     * 
+     * @param component   The ant project component used to access the facade. Not <code>null</code>.
+     */
+    public static final File getSSLClientCertPath( ProjectComponent component ) {
+        File result = getSetting( component ).getSSLClientCertPath();
+        if( result == null ) {
+            result = getRefidSetting( component ).getSSLClientCertPath();
+        }
+        return result;
+    }
+    
+    /**
+     * @see SvnSetting#setSSHPort(int)
+     * 
+     * @param component   The ant project component used to access the facade. Not <code>null</code>.
+     */
+    public static final void setSSHPort( ProjectComponent component, Integer newsshport ) {
+        getSetting( component ).setSSHPort( newsshport );
+    }
+    
+    /**
+     * @see SvnSetting#getSSHPort()
+     * 
+     * @param component   The ant project component used to access the facade. Not <code>null</code>.
+     */
+    public static final Integer getSSHPort( ProjectComponent component ) {
+        Integer result = getSetting( component ).getSSHPort();
+        if( result == null ) {
+            result = getRefidSetting( component ).getSSHPort();
+        }
+        return result;
+    }
+    
+    /**
+     * @see SvnSetting#setSSHPassphrase(String)
+     * 
+     * @param component   The ant project component used to access the facade. Not <code>null</code>.
+     */
+    public static final void setSSHPassphrase( ProjectComponent component, String newsshpassphrase ) {
+        getSetting( component ).setSSHPassphrase( newsshpassphrase );
+    }
+    
+    /**
+     * @see SvnSetting#getSSHPassphrase()
+     * 
+     * @param component   The ant project component used to access the facade. Not <code>null</code>.
+     */
+    public static final String getSSHPassphrase( ProjectComponent component ) {
+        String result = getSetting( component ).getSSHPassphrase();
+        if( result == null ) {
+            result = getRefidSetting( component ).getSSHPassphrase();
+        }
+        return result;
+    }
+    
+    /**
+     * @see SvnSetting#setSSHKeyPath(File)
+     * 
+     * @param component   The ant project component used to access the facade. Not <code>null</code>.
+     */
+    public static final void setSSHKeyPath( ProjectComponent component, File newsshkeypath ) {
+        getSetting( component ).setSSHKeyPath( newsshkeypath );
+    }
+    
+    /**
+     * @see SvnSetting#getSSHKeyPath()
+     * 
+     * @param component   The ant project component used to access the facade. Not <code>null</code>.
+     */
+    public static final File getSSHKeyPath( ProjectComponent component ) {
+        File result = getSetting( component ).getSSHKeyPath();
+        if( result == null ) {
+            result = getRefidSetting( component ).getSSHKeyPath();
+        }
+        return result;
+    }
+
+    /**
+     * @see SvnSetting#setDateFormatter(String)
+     * 
+     * @param component   The ant project component used to access the facade. Not <code>null</code>.
      */
     public static final void setDateFormatter( ProjectComponent component, String dateformatter ) {
         getSetting( component ).setDateFormatter( dateformatter );
     }
 
     /**
-     * Returns the formatting pattern to parse/format revision dates.
-     *
-     * @param component  The ant project component used to access the facade. 
-     *                   Not <code>null</code>.
-     *                          
-     * @return   The formatting pattern. Neither <code>null</code> nor empty.
+     * @see SvnSetting#getDateFormatter()
+     * 
+     * @param component   The ant project component used to access the facade. Not <code>null</code>.
      */
     public static final String getDateFormatter( ProjectComponent component ) {
         String result = getSetting( component ).getDateFormatter();
@@ -305,24 +407,18 @@ public class SvnFacade {
     }
 
     /**
-     * Changes the timezone to be used when parsing/formatting date information.
-     *
-     * @param component  The ant project component used to access the facade. 
-     *                   Not <code>null</code>.
-     * @param timezone   The timezone to be used. If <code>null</code> or empty the default
-     *                   timezone {@link #DEFAULT_TIMEZONE} is being used.
+     * @see SvnSetting#setDateTimezone(String)
+     * 
+     * @param component   The ant project component used to access the facade. Not <code>null</code>.
      */
     public static final void setDateTimezone( ProjectComponent component, String timezone ) {
         getSetting( component ).setDateTimezone( timezone );
     }
 
     /**
-     * Returns the timezone used to parse/format revision dates.
-     *
-     * @param component  The ant project component used to access the facade. 
-     *                   Not <code>null</code>.
-     *                          
-     * @return   The timezone. Maybe <code>null</code>.
+     * @see SvnSetting#getDateTimezone()
+     * 
+     * @param component   The ant project component used to access the facade. Not <code>null</code>.
      */
     public static final TimeZone getDateTimezone( ProjectComponent component ) {
         String zone = getSetting( component ).getDateTimezone();
@@ -461,13 +557,14 @@ public class SvnFacade {
     public static final ISVNClientAdapter getClientAdapter( ProjectComponent component ) throws BuildException {
 
         ISVNClientAdapter result = null;
-
+        
         boolean javahl = getJavahl( component );
         boolean svnkit = getSvnKit( component );
         if( javahl ) {
             if( isJavahlAvailable() ) {
                 result = SVNClientAdapterFactory.createSVNClient( JhlClientAdapterFactory.JAVAHL_CLIENT );
                 component.log( "Using javahl", Project.MSG_VERBOSE );
+                System.err.println( "JAVAHL: " + result );
             } else {
                 component.log( String.format( MSG_MISSING_DEPENDENCY, "javahl" ), Project.MSG_ERR );
             }
@@ -476,6 +573,7 @@ public class SvnFacade {
             if( isSVNKitAvailable() ) {
                 result = SVNClientAdapterFactory.createSVNClient( SvnKitClientAdapterFactory.SVNKIT_CLIENT );
                 component.log( "Using svnkit", Project.MSG_VERBOSE );
+                System.err.println( "SVNKIT: " + result );
             } else {
                 component.log( String.format( MSG_MISSING_DEPENDENCY, "svnkit" ), Project.MSG_ERR );
             }
@@ -484,6 +582,7 @@ public class SvnFacade {
             if( isCommandLineAvailable() ) {
                 result = SVNClientAdapterFactory.createSVNClient( CmdLineClientAdapterFactory.COMMANDLINE_CLIENT );
                 component.log( "Using command line", Project.MSG_VERBOSE );
+                System.err.println( "COMMANDLINE: " + result );
             } else {
                 component.log( String.format( MSG_MISSING_DEPENDENCY, "commandline" ), Project.MSG_ERR );
             }
@@ -493,15 +592,156 @@ public class SvnFacade {
             throw new BuildException( "Cannot find javahl, svnkit nor command line svn client" );
         }
 
-        if( getUsername( component ) != null ) {
-            result.setUsername( getUsername( component ) );
-        }
-
-        if( getPassword( component ) != null ) {
-            result.setPassword( getPassword( component ) );
-        }
+        result.addPasswordCallback( 
+          new DefaultPasswordCallback( 
+            getUsername          ( component ),
+            getPassword          ( component ),
+            getSSHKeyPath        ( component ),
+            getSSHPassphrase     ( component ),
+            getSSHPort           ( component ),
+            getSSLClientCertPath ( component ),
+            getSSLPassword       ( component )
+          ) 
+        );
 
         return result;
+        
     }
+    
+    private static class DefaultPasswordCallback implements ISVNPromptUserPassword {
+
+        private String    username;
+        private String    password;
+        private String    sshprivatekeypath;
+        private String    sshpassphrase;
+        private String    sslclientcertpath;
+        private String    sslcertpassword;
+        private Integer   sshport;
+        
+        public DefaultPasswordCallback(String newusername, String newpassword, File sshkeypath, String sshphrase, Integer sshp, File sslpath, String sslpassword) {
+            username            = newusername;
+            password            = newpassword;
+            sshprivatekeypath   = sshkeypath != null ? sshkeypath.getAbsolutePath() : null;
+            sshpassphrase       = sshphrase;
+            sshport             = sshp;
+            sslclientcertpath   = sslpath != null ? sslpath.getAbsolutePath() : null;
+            sslcertpassword     = sslpassword;
+        }
+        
+        
+        /**
+         * {@inheritDoc}
+         */
+        public boolean promptSSL( String realm, boolean maysave ) {
+            return (sslclientcertpath != null) || (sslcertpassword != null);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public String getSSLClientCertPassword() {
+            return sslclientcertpath;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public String getSSLClientCertPath() {
+            return sslcertpassword;
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public int askTrustSSLServer( String info, boolean allowpermanently ) {
+            return ISVNPromptUserPassword.AcceptTemporary;
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public String getSSHPrivateKeyPath() {
+            return sshprivatekeypath;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public String getSSHPrivateKeyPassphrase() {
+            return sshpassphrase;
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public boolean promptSSH( String realm, String username, int sshport, boolean maysave ) {
+            if( sshport > 0 ) {
+                // the port is obviously given by the url
+                this.sshport = Integer.valueOf( sshport );
+            }
+            return (sshpassphrase != null) || (sshprivatekeypath != null);
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public int getSSHPort() {
+            if( sshport == null ) {
+                return 22;
+            } else {
+                return sshport.intValue();
+            }
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public boolean userAllowedSave() {
+            return false;
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public String getUsername() {
+            return username;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public String getPassword() {
+            return password;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public String askQuestion( String realm, String question, boolean showanswer, boolean maysave ) {
+            return "";
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public boolean prompt( String realm, String username, boolean maysave ) {
+            return true;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public boolean promptUser( String realm, String username, boolean maysave ) {
+            return true;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public boolean askYesNo( String realm, String question, boolean yesisdefault ) {
+            return yesisdefault;
+        }
+        
+    } /* ENDCLASS */
 
 } /* ENDCLASS */

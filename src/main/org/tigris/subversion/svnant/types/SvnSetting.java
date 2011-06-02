@@ -58,6 +58,8 @@ import org.apache.tools.ant.types.DataType;
 
 import org.apache.tools.ant.Project;
 
+import java.io.File;
+
 /**
  * Settings to be used
  * 
@@ -65,15 +67,20 @@ import org.apache.tools.ant.Project;
  */
 public class SvnSetting extends DataType {
 
-    private Project project;
-    private Boolean javahl;
-    private Boolean svnkit;
-    private String  username;
-    private String  password;
-    private String  dateformatter;
-    private String  timezone;
-    private Boolean failonerror;
-    private String  id;
+    private Project   project;
+    private Boolean   javahl;
+    private Boolean   svnkit;
+    private String    username;
+    private String    password;
+    private String    dateformatter;
+    private String    timezone;
+    private Boolean   failonerror;
+    private String    id;
+    private String    sslpassword;
+    private File      sslclientcertpath;
+    private Integer   sshport;
+    private String    sshpassphrase;
+    private File      sshkeypath;
 
     /**
      * Initialises this instance.
@@ -81,17 +88,112 @@ public class SvnSetting extends DataType {
      * @param antproject   The Ant project this instance is related to. Not <code>null</code>.
      */
     public SvnSetting( Project antproject ) {
-        project         = antproject;
-        javahl          = null;
-        svnkit          = null;
-        username        = null;
-        password        = null;
-        dateformatter   = null;
-        timezone        = null;
-        failonerror     = null;
-        id              = null;
+        project                 = antproject;
+        javahl                  = null;
+        svnkit                  = null;
+        username                = null;
+        password                = null;
+        dateformatter           = null;
+        timezone                = null;
+        failonerror             = null;
+        id                      = null;
+        sslpassword             = null;
+        sslclientcertpath       = null;
+        sshport                 = null;
+        sshpassphrase           = null;
+        sshkeypath              = null;
     }
 
+    /**
+     * Changes the password to be used for an SSL connection.
+     * 
+     * @param newpassword   The new password to be used. Maybe <code>null</code>.
+     */
+    public void setSSLPassword( String newpassword ) {
+        sslpassword = newpassword;
+    }
+    
+    /**
+     * Returns the password to be used for an SSL connection.
+     * 
+     * @return   The password to be used for an SSL connection. Maybe <code>null</code>.
+     */
+    public String getSSLPassword() {
+        return sslpassword;
+    }
+    
+    /**
+     * Changes the path for the SSL client certificate.
+     * 
+     * @param newclientcertpath   The new path for the SSL client certificate. Maybe <code>null</code>.
+     */
+    public void setSSLClientCertPath( File newclientcertpath ) {
+        sslclientcertpath = newclientcertpath;
+    }
+    
+    /**
+     * Returns the path for the SSL client certificate.
+     * 
+     * @return   The path for the SSL client certificate. Maybe <code>null</code>.
+     */
+    public File getSSLClientCertPath() {
+        return sslclientcertpath;
+    }
+    
+    /**
+     * Changes the port used for the SSH port.
+     * 
+     * @param newsshport   The new port for the SSH port.
+     */
+    public void setSSHPort( Integer newsshport ) {
+        sshport = newsshport;
+    }
+    
+    /**
+     * Returns the path for the SSH port.
+     * 
+     * @return   The path for the SSH port.
+     */
+    public Integer getSSHPort() {
+        return sshport;
+    }
+    
+    /**
+     * Changes the passphrase for the SSH encryption.
+     * 
+     * @param newsshpassphrase   The new passphrase for the SSH encryption. Maybe <code>null</code>.
+     */
+    public void setSSHPassphrase( String newsshpassphrase ) {
+        sshpassphrase = newsshpassphrase;
+    }
+    
+    /**
+     * Returns the passphrase for the SSH encryption.
+     * 
+     * @return   The passphrase for the SSH encryption. Maybe <code>null</code>.
+     */
+    public String getSSHPassphrase() {
+        return sshpassphrase;
+    }
+    
+    /**
+     * Changes the location of the SSH key path.
+     * 
+     * @param newsshkeypath   The location of the SSH key path. Maybe <code>null</code>.
+     */
+    public void setSSHKeyPath( File newsshkeypath ) {
+        sshkeypath = newsshkeypath;
+    }
+    
+    /**
+     * Returns the location of the SSH key path.
+     * 
+     * @return   The location of the SSH key path. Maybe <code>null</code>.
+     */
+    public File getSSHKeyPath() {
+        return sshkeypath;
+    }
+    
     /**
      * Sets the id for this settings. Makes this setting accessible within the project.
      *
