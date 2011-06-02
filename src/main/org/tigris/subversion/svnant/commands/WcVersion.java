@@ -131,22 +131,17 @@ public class WcVersion extends SvnCommand {
     /**
      * Fetch the summary version information for the given working copy path.
      * @param svnClient The svn client used to fetch the status.
-     * @param wcPathFile The working copy path.
+     * @param wcpathfile The working copy path.
      * @return The <code>WCVersionSummary</code> storing version information about the working copy.
      * @throws SVNClientException Raised if there is a problem fetching working copy status.
      */
-    private WCVersionSummary getWorkingCopySumary( File wcPathFile ) throws SVNClientException {
-        ISVNStatus rootStatus = getClient().getSingleStatus( wcPathFile );
-        if( rootStatus.getUrl() == null ) {
-            throw createEx( "The path '%s' is not under version control !", wcPathFile.getAbsolutePath() );
+    private WCVersionSummary getWorkingCopySumary( File wcpathfile ) throws SVNClientException {
+        ISVNStatus rootstatus = getClient().getSingleStatus( wcpathfile );
+        if( rootstatus.getUrl() == null ) {
+            throw createEx( "The path '%s' is not under version control !", wcpathfile.getAbsolutePath() );
         }
-        String[] pathSegs = rootStatus.getUrl().getPathSegments();
-        StringBuffer pathBuffer = new StringBuffer();
-        for( int i = 0; i < pathSegs.length; i++ ) {
-            pathBuffer.append( '/' ).append( pathSegs[i] );
-        }
-        ISVNStatus[] statuses = getClient().getStatus( wcPathFile, true, true );
-        return new WCVersionSummary( rootStatus, statuses, wcPathFile, processUnversioned );
+        ISVNStatus[] statuses = getClient().getStatus( wcpathfile, true, true );
+        return new WCVersionSummary( rootstatus, statuses, wcpathfile, processUnversioned );
     }
 
     /**
