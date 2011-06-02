@@ -127,6 +127,9 @@ public abstract class SvnCommand extends ProjectComponent {
      */
     public void setTask( SvnTask task ) {
         this.task = task;
+        if( this.task.getProject() != null ) {
+            setProject( this.task.getProject() );
+        }
     }
 
     /**
