@@ -564,7 +564,6 @@ public class SvnFacade {
             if( isJavahlAvailable() ) {
                 result = SVNClientAdapterFactory.createSVNClient( JhlClientAdapterFactory.JAVAHL_CLIENT );
                 component.log( "Using javahl", Project.MSG_VERBOSE );
-                System.err.println( "JAVAHL: " + result );
             } else {
                 component.log( String.format( MSG_MISSING_DEPENDENCY, "javahl" ), Project.MSG_ERR );
             }
@@ -573,7 +572,6 @@ public class SvnFacade {
             if( isSVNKitAvailable() ) {
                 result = SVNClientAdapterFactory.createSVNClient( SvnKitClientAdapterFactory.SVNKIT_CLIENT );
                 component.log( "Using svnkit", Project.MSG_VERBOSE );
-                System.err.println( "SVNKIT: " + result );
             } else {
                 component.log( String.format( MSG_MISSING_DEPENDENCY, "svnkit" ), Project.MSG_ERR );
             }
@@ -582,7 +580,6 @@ public class SvnFacade {
             if( isCommandLineAvailable() ) {
                 result = SVNClientAdapterFactory.createSVNClient( CmdLineClientAdapterFactory.COMMANDLINE_CLIENT );
                 component.log( "Using command line", Project.MSG_VERBOSE );
-                System.err.println( "COMMANDLINE: " + result );
             } else {
                 component.log( String.format( MSG_MISSING_DEPENDENCY, "commandline" ), Project.MSG_ERR );
             }
