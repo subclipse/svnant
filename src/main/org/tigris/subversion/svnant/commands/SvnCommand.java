@@ -57,6 +57,7 @@ package org.tigris.subversion.svnant.commands;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 
+import org.tigris.subversion.svnant.SvnFacade;
 import org.tigris.subversion.svnant.SvnTask;
 
 import org.apache.tools.ant.BuildException;
@@ -157,8 +158,8 @@ public abstract class SvnCommand extends ProjectComponent {
     }
 
     private SimpleDateFormat getDateFormatter() {
-        final SimpleDateFormat formatter = new SimpleDateFormat( task.getDateFormatter() );
-        final TimeZone timezone = task.getDateTimezone();
+        SimpleDateFormat formatter = new SimpleDateFormat( SvnFacade.getDateFormatter( this ) );
+        TimeZone         timezone  = SvnFacade.getDateTimezone( this );
         if( timezone != null ) {
             formatter.setTimeZone( timezone );
         }
