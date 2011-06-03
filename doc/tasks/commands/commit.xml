@@ -27,6 +27,8 @@
   <ul>
     <li>fileset<br/>
     Filesets are used to select sets of files to commit.</li>
+    <li>dirset<br/>
+    Dirsets are used to select sets of directories to commit.</li>
   </ul>
 
 </msubsection>

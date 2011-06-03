@@ -74,7 +74,9 @@
   <p>Parameters specified as nested elements:</p>
   <ul>
     <li>fileset<br/>
-    Filesets are used to select sets of files on which to apply keywords substitution.</li>
+    Filesets are used to select the files where the keywords will be set.</li>
+    <li>dirset<br/>
+    Dirsets are used to select the directories where the keywords will be set.</li>
   </ul>
 
 </msubsection>

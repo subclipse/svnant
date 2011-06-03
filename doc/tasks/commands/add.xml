@@ -24,13 +24,14 @@
 
   </attributes>
     
-  <p>Parameters specified as nested elements:</p>
+  <p>Parameters specified as nested elements :</p>
   <ul>
     <li>fileset<br/>
     <p>Filesets are used to select sets of files to add to the repository.</p>
     <p><b>Note that directories needed to add selected files will be added to the repository 
-    even if they are not selected by the fileset.</b></p>
-    </li>
+    even if they are not selected by the fileset.</b></p></li>
+    <li>dirset<br/>
+    Dirsets are used to select sets of directories to add.</li>
   </ul>
 
 </msubsection>

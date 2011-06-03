@@ -16,7 +16,7 @@
   
     <attribute name="recurse" required="false" default="false">
       <doc>Set to "false" to operate on a single directory only (applies only if
-      <code>dir</code> has been set).</doc>
+      <code>dir</code> has been set or a <code>dirset</code> has been given).</doc>
     </attribute>
   
     <attribute name="revision" required="false" default="HEAD">
@@ -35,8 +35,9 @@
   <p>Parameters specified as nested elements :</p>
   <ul>
     <li>fileset<br/>
-    Filesets are used to select sets of files to update. 
-    </li>
+    Filesets are used to select sets of files to update.</li>
+    <li>dirset<br/>
+    Dirsets are used to select sets of directories to update.</li>
   </ul>
 
 </msubsection>

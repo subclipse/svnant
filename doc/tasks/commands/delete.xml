@@ -36,8 +36,9 @@
   <p>Parameters specified as nested elements :</p>
   <ul>
     <li>fileset<br/>
-    Filesets are used to select sets of files to delete. 
-    </li>
+    Filesets are used to select sets of files to delete.</li>
+    <li>dirset<br/>
+    Dirsets are used to select sets of directories to delete.</li>
   </ul>
 
 </msubsection>

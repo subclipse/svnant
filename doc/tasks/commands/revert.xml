@@ -15,7 +15,7 @@
     
     <attribute name="recurse" required="false" default="false">
       <doc>Set to "false" to operate on a single directory only (applies only when dir attribute 
-      is set).</doc>
+      is set or a dirset is provided).</doc>
     </attribute>
     
     <attribute name="revision" required="false" default="HEAD">
@@ -35,6 +35,8 @@
   <ul>
     <li>fileset<br/>
     Filesets are used to select sets of files to revert.</li>
+    <li>dirset<br/>
+    Dirsets are used to select sets of directories to revert.</li>
   </ul>
 
 </msubsection>
