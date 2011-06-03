@@ -576,7 +576,7 @@ public class SvnFacade {
      *          
      * @throws BuildException   Thrown in a situation where no adapter can fit the constraints.
      */
-    public static final ISVNClientAdapter getClientAdapter( ProjectComponent component ) throws BuildException {
+    public static final synchronized ISVNClientAdapter getClientAdapter( ProjectComponent component ) throws BuildException {
 
         ISVNClientAdapter result = null;
         
