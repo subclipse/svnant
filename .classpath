@@ -4,10 +4,10 @@
 	<classpathentry kind="src" path="src/testcases"/>
 	<classpathentry kind="lib" path="lib/ant.jar"/>
 	<classpathentry kind="lib" path="lib/ant-launcher.jar"/>
-	<classpathentry kind="lib" path="lib/svnclientadapter/lib/svnClientAdapter.jar"/>
-	<classpathentry kind="lib" path="lib/svnclientadapter/lib/ganymed.jar"/>
-	<classpathentry kind="lib" path="lib/svnclientadapter/lib/svnjavahl.jar"/>
-	<classpathentry kind="lib" path="lib/svnkit/svnkit.jar"/>
+	<classpathentry kind="lib" path="lib/svnjavahl.jar"/>
+	<classpathentry kind="lib" path="lib/ganymed.jar"/>
+	<classpathentry kind="lib" path="lib/svnClientAdapter.jar"/>
+	<classpathentry kind="lib" path="lib/svnkit.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="build/bin"/>

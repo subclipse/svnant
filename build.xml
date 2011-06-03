@@ -16,11 +16,7 @@
   <!-- ======================================================================================= -->
   
   <path id="project.classpath">
-    <pathelement location="${svnClientAdapter.jar}" />
-    <pathelement location="${svnjavahl.jar}" />
-    <pathelement location="${svnkit.jar}" />
-    <pathelement location="${ganymed.jar}" />
-    <pathelement location="${junit.jar}" />
+    <fileset dir="${dir.project}/lib" includes="*.jar"/>
   </path>
   
   <path id="path.xinclude">
@@ -134,7 +130,6 @@
         <pathelement location="${build.classes.dir}" />
         <path refid="project.classpath" />
       </classpath>
-      <formatter type="plain" />
       <formatter type="xml" />
       <test name="org.tigris.subversion.svnant.SvnJavaHLTest" fork="yes" />
       <test name="org.tigris.subversion.svnant.SvnSvnKitTest" fork="yes" />
@@ -148,36 +143,44 @@
   <target name="makeDistrib" depends="clean, svnant.jar, docs" description="make binary distribution">
     <mkdir dir="${build.distrib.dir}" />
     <mkdir dir="${build.distrib.dir}/lib" />
-    <copy file="readme.txt"                             todir="${build.distrib.dir}" />
-    <copy file="changelog.txt"                          todir="${build.distrib.dir}" />
-    <copy file="license.txt"                            todir="${build.distrib.dir}" />
-    <copy file="${svnClientAdapter.jar}"                todir="${build.distrib.dir}/lib" />
-    <copy file="${lib.dir}/SVNCLIENTADAPTER-LICENSE"    todir="${build.distrib.dir}/lib" />
-    <copy file="${svnjavahl.jar}"                       todir="${build.distrib.dir}/lib" />
-    <copy file="${lib.dir}/JAVAHL-LICENSE"              todir="${build.distrib.dir}/lib" />
-    <copy file="${svnkit.jar}"                          todir="${build.distrib.dir}/lib" />
-    <copy file="${lib.dir}/SVNKit-LICENSE"              todir="${build.distrib.dir}" />
-    <copy file="${ganymed.jar}"                         todir="${build.distrib.dir}/lib" />
-    <copy file="${lib.dir}/GANYMED-LICENSE"             todir="${build.distrib.dir}" />
-    <copy file="${build.lib.dir}/svnant.jar"            todir="${build.distrib.dir}/lib" />
-    <copy file="${distribfiles.dir}/build.xml"          todir="${build.distrib.dir}" />
+    <copy todir="${build.distrib.dir}">
+      <fileset dir="${dir.project}">
+        <include name="readme.txt"/>
+        <include name="changelog.txt"/>
+        <include name="license.txt"/>
+      </fileset>
+    </copy>
+    <copy todir="${build.distrib.dir}/lib">
+      <fileset dir="${dir.project}/lib/svnclientadapter/lib" includes="*-LICENSE"/>
+      <fileset dir="${dir.project}/lib/svnclientadapter/lib" includes="*.jar"/>
+      <fileset dir="${dir.project}/lib/svnkit" includes="jna*"/>
+    </copy>
+    <copy file="${dir.project}/lib/svnclientadapter/license.txt" tofile="${build.distrib.dir}/lib/SVNCLIENTADAPTER-LICENSE"/>
+    <copy file="${build.lib.dir}/svnant.jar"           todir="${build.distrib.dir}/lib" />
+    <copy file="${distribfiles.dir}/build.xml"         todir="${build.distrib.dir}"/>
+    
     <copy file="${distribfiles.dir}/build.properties"  todir="${build.distrib.dir}">
       <filterset>
         <filter token="SVNANTVERSION" value="${svnant.version}" />
       </filterset>
     </copy>
+    
     <copy file="${distribfiles.dir}/release-announcement-template.txt" todir="${build.dir}">
       <filterset>
         <filter token="SVNANTVERSION" value="${svnant.version}" />
       </filterset>
     </copy>
+    
     <condition property="revision" value="unknown" else="${env.SVN_REVISION}">
       <equals arg1="${env.SVN_REVISION}" arg2="$${env.SVN_REVISION}"/>
     </condition>
+    
     <echo file="${build.distrib.dir}/releaseinfo.txt">DEVELOPMENT RELEASE OF REVISION: ${revision}</echo>
+    
     <zip destfile="${build.dir}/svnant-${svnant.version}-${revision}.zip">
       <zipfileset dir="${build.distrib.dir}" prefix="svnant-${svnant.version}" />
     </zip>
+    
   </target>
 
   <!-- create all jar files -->
