@@ -76,6 +76,8 @@ import java.io.File;
  */
 public abstract class BaseSvnSelector extends BaseExtendSelector {
 
+    private ISVNClientAdapter clientadapter = null;
+    
     /**
      * @param username the username to set
      */
@@ -122,7 +124,10 @@ public abstract class BaseSvnSelector extends BaseExtendSelector {
      * {@inheritDoc}
      */
     public final boolean isSelected( File basedir_, String filename_, File file_ ) {
-        return isSelected( SvnFacade.getClientAdapter( this ), basedir_, filename_, file_ );
+        if( clientadapter == null ) {
+            clientadapter = SvnFacade.getClientAdapter( this );
+        }
+        return isSelected( clientadapter, basedir_, filename_, file_ );
     }
 
     /**
