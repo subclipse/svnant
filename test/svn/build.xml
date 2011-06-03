@@ -1137,12 +1137,6 @@
     </svn>
   </target>
   
-  <!--
-  "lastRev", 
-  "lastDate", 
-  "lastTextUpdate", 
-  -->
-
   <target name="testInfoURL" depends="init">
     <copy todir="workingcopy/infoTest">
       <fileset dir="model/infoTest"></fileset>
