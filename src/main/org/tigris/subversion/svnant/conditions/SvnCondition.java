@@ -6,6 +6,7 @@ import org.tigris.subversion.svnant.SvnFacade;
 import org.apache.tools.ant.types.Reference;
 
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectComponent;
 import org.apache.tools.ant.taskdefs.condition.Condition;
 import org.apache.tools.ant.taskdefs.condition.ConditionBase;
@@ -18,9 +19,12 @@ import org.apache.tools.ant.taskdefs.condition.ConditionBase;
  * of properties. See taks Condition in ANT documentation.
  * 
  * @author Jean-Pierre Fiset <a href="mailto:jp@fiset.ca">jp@fiset.ca</a>
- *
+ * @author Daniel Kasmeroglu <a href="mailto:daniel.kasmeroglu@kasisoft.net">Daniel.Kasmeroglu@kasisoft.net</a>
  */
 public abstract class SvnCondition extends ConditionBase implements Condition {
+
+    private static final String MSG_DEPRECATION = 
+        "Deprecated attribute '%s'. This attribute will disappear with SVNANT 1.3.2. Use svnSetting instead.";
 
     /**
      * @see SvnFacade#setRefid(ProjectComponent, org.apache.tools.ant.types.Reference)
@@ -33,6 +37,7 @@ public abstract class SvnCondition extends ConditionBase implements Condition {
      * @see SvnFacade#setUsername(ProjectComponent, String)
      */
     public void setUsername( String username ) {
+        warning( MSG_DEPRECATION, "username" );
         SvnFacade.setUsername( this, username );
     }
 
@@ -40,6 +45,7 @@ public abstract class SvnCondition extends ConditionBase implements Condition {
      * @see SvnFacade#setPassword(ProjectComponent, String)
      */
     public void setPassword( String password ) {
+        warning( MSG_DEPRECATION, "password" );
         SvnFacade.setPassword( this, password );
     }
 
@@ -47,6 +53,7 @@ public abstract class SvnCondition extends ConditionBase implements Condition {
      * @see SvnFacade#setJavahl(ProjectComponent, boolean)
      */
     public void setJavahl( boolean javahl ) {
+        warning( MSG_DEPRECATION, "javahl" );
         SvnFacade.setJavahl( this, javahl );
     }
 
@@ -54,6 +61,7 @@ public abstract class SvnCondition extends ConditionBase implements Condition {
      * @see SvnFacade#setSvnKit(ProjectComponent, boolean)
      */
     public void setSvnkit( boolean svnkit ) {
+        warning( MSG_DEPRECATION, "svnkit" );
         SvnFacade.setSvnKit( this, svnkit );
     }
 
@@ -78,5 +86,15 @@ public abstract class SvnCondition extends ConditionBase implements Condition {
      * @return True if the condition is met. False, otherwsie.
      */
     protected abstract boolean internalEval();
+    
+    /**
+     * Dumps some warning messages.
+     * 
+     * @param fmt    A formatting String. Not <code>null</code>.
+     * @param args   The arguments for the formatting String. Maybe <code>null</code>.
+     */
+    private void warning( String fmt, Object ... args ) {
+        getProject().log( String.format( fmt, args ), Project.MSG_WARN );
+    }
     
 }

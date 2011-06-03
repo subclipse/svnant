@@ -110,9 +110,13 @@ import java.io.PrintWriter;
  * Svn Task
  * @author Cédric Chabanois 
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
- *
+ * @author Daniel Kasmeroglu 
+ *         <a href="mailto:daniel.kasmeroglu@kasisoft.net">Daniel.Kasmeroglu@kasisoft.net</a>
  */
 public class SvnTask extends Task {
+    
+    private static final String MSG_DEPRECATION = 
+        "Deprecated attribute '%s'. This attribute will disappear with SVNANT 1.3.2. Use svnSetting instead.";
     
     private List<SvnCommand>         commands        = new ArrayList<SvnCommand>();
     private List<ISVNNotifyListener> notifyListeners = new ArrayList<ISVNNotifyListener>();
@@ -147,23 +151,10 @@ public class SvnTask extends Task {
     }
 
     /**
-     * @see SvnFacade#getJavahl(ProjectComponent)
-     */
-    public boolean getJavahl() {
-        return SvnFacade.getJavahl( this );
-    }
-
-    /**
-     * @see SvnFacade#getSvnKit(ProjectComponent)
-     */
-    public boolean getSvnKit() {
-        return SvnFacade.getSvnKit( this );
-    }
-
-    /**
      * @see SvnSetting#setUsername(String)
      */
     public void setUsername( String username ) {
+        warning( MSG_DEPRECATION, "username" );
         SvnFacade.setUsername( this, username );
     }
 
@@ -171,6 +162,7 @@ public class SvnTask extends Task {
      * @see SvnSetting#setPassword(String)
      */
     public void setPassword( String password ) {
+        warning( MSG_DEPRECATION, "password" );
         SvnFacade.setPassword( this, password );
     }
 
@@ -178,6 +170,7 @@ public class SvnTask extends Task {
      * @see SvnSetting#setJavahl(boolean)
      */
     public void setJavahl( boolean javahl ) {
+        warning( MSG_DEPRECATION, "javahl" );
         SvnFacade.setJavahl( this, javahl );
     }
 
@@ -185,6 +178,7 @@ public class SvnTask extends Task {
      * @see SvnSetting#setSvnKit(boolean)
      */
     public void setSvnkit( boolean svnkit ) {
+        warning( MSG_DEPRECATION, "svnkit" );
         SvnFacade.setSvnKit( this, svnkit );
     }
 
@@ -192,6 +186,7 @@ public class SvnTask extends Task {
      * @see SvnSetting#setDateFormatter(String)
      */
     public void setDateFormatter( String dateFormatter ) {
+        warning( MSG_DEPRECATION, "dateformatter" );
         SvnFacade.setDateFormatter( this, dateFormatter );
     }
 
@@ -199,6 +194,7 @@ public class SvnTask extends Task {
      * @see SvnSetting#setDateTimezone(String)
      */
     public void setDateTimezone( String dateTimeZone ) {
+        warning( MSG_DEPRECATION, "datetimezone" );
         SvnFacade.setDateTimezone( this, dateTimeZone );
     }
 
@@ -206,6 +202,7 @@ public class SvnTask extends Task {
      * @see SvnSetting#setFailonerror(boolean)
      */
     public void setFailonerror( boolean failonerror ) {
+        warning( MSG_DEPRECATION, "failonerror" );
         SvnFacade.setFailonerror( this, failonerror );
     }
 

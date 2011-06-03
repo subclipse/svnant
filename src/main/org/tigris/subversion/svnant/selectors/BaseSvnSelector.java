@@ -61,6 +61,7 @@ import org.tigris.subversion.svnant.SvnFacade;
 import org.apache.tools.ant.types.Reference;
 import org.apache.tools.ant.types.selectors.BaseExtendSelector;
 
+import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectComponent;
 
 import java.io.File;
@@ -79,12 +80,16 @@ import java.io.File;
  */
 public abstract class BaseSvnSelector extends BaseExtendSelector {
 
+    private static final String MSG_DEPRECATION = 
+        "Deprecated attribute '%s'. This attribute will disappear with SVNANT 1.3.2. Use svnSetting instead.";
+
     private ISVNClientAdapter clientadapter = null;
     
     /**
      * @see SvnFacade#setUsername(ProjectComponent, String)
      */
     public void setUsername( String username ) {
+        warning( MSG_DEPRECATION, "username" );
         SvnFacade.setUsername( this, username );
     }
 
@@ -92,6 +97,7 @@ public abstract class BaseSvnSelector extends BaseExtendSelector {
      * @see SvnFacade#setPassword(ProjectComponent, String)
      */
     public void setPassword( String password ) {
+        warning( MSG_DEPRECATION, "password" );
         SvnFacade.setPassword( this, password );
     }
 
@@ -106,6 +112,7 @@ public abstract class BaseSvnSelector extends BaseExtendSelector {
      * @see SvnFacade#setJavahl(org.apache.tools.ant.ProjectComponent, boolean)
      */
     public void setJavahl( boolean javahl_ ) {
+        warning( MSG_DEPRECATION, "javahl" );
         SvnFacade.setJavahl( this, javahl_ );
     }
 
@@ -113,6 +120,7 @@ public abstract class BaseSvnSelector extends BaseExtendSelector {
      * @see SvnFacade#setSvnKit(org.apache.tools.ant.ProjectComponent, boolean)
      */
     public void setSvnkit( boolean svnkit_ ) {
+        warning( MSG_DEPRECATION, "svnkit" );
         SvnFacade.setSvnKit( this, svnkit_ );
     }
 
@@ -120,6 +128,7 @@ public abstract class BaseSvnSelector extends BaseExtendSelector {
      * @see SvnFacade#setFailonerror(org.apache.tools.ant.ProjectComponent, boolean)
      */
     public void setFailonerror( boolean failonerror ) {
+        warning( MSG_DEPRECATION, "failonerror" );
         SvnFacade.setFailonerror( this, failonerror );
     }
 
@@ -144,5 +153,15 @@ public abstract class BaseSvnSelector extends BaseExtendSelector {
      * @return Returns true if the file should be selected. Otherwise, false. 
      */
     public abstract boolean isSelected( ISVNClientAdapter svnClient_, File basedir_, String filename_, File file_ );
+
+    /**
+     * Dumps some warning messages.
+     * 
+     * @param fmt    A formatting String. Not <code>null</code>.
+     * @param args   The arguments for the formatting String. Maybe <code>null</code>.
+     */
+    private void warning( String fmt, Object ... args ) {
+        getProject().log( String.format( fmt, args ), Project.MSG_WARN );
+    }
 
 }
