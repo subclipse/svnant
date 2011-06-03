@@ -558,8 +558,9 @@ public class SvnFacade {
 
         ISVNClientAdapter result = null;
         
-        boolean javahl = getJavahl( component );
-        boolean svnkit = getSvnKit( component );
+        boolean javahl      = getJavahl( component );
+        boolean svnkit      = getSvnKit( component );
+        boolean commandline = false;
         if( javahl ) {
             if( isJavahlAvailable() ) {
                 result = SVNClientAdapterFactory.createSVNClient( JhlClientAdapterFactory.JAVAHL_CLIENT );
@@ -578,7 +579,8 @@ public class SvnFacade {
         }
         if( (!javahl) && (!svnkit) ) {
             if( isCommandLineAvailable() ) {
-                result = SVNClientAdapterFactory.createSVNClient( CmdLineClientAdapterFactory.COMMANDLINE_CLIENT );
+                result      = SVNClientAdapterFactory.createSVNClient( CmdLineClientAdapterFactory.COMMANDLINE_CLIENT );
+                commandline = true;
                 component.log( "Using command line", Project.MSG_VERBOSE );
             } else {
                 component.log( String.format( MSG_MISSING_DEPENDENCY, "commandline" ), Project.MSG_ERR );
@@ -589,17 +591,29 @@ public class SvnFacade {
             throw new BuildException( "Cannot find javahl, svnkit nor command line svn client" );
         }
 
-        result.addPasswordCallback( 
-          new DefaultPasswordCallback( 
-            getUsername          ( component ),
-            getPassword          ( component ),
-            getSSHKeyPath        ( component ),
-            getSSHPassphrase     ( component ),
-            getSSHPort           ( component ),
-            getSSLClientCertPath ( component ),
-            getSSLPassword       ( component )
-          ) 
-        );
+        if( getUsername( component ) != null ) {
+            result.setUsername( getUsername( component ) );
+        }
+        if( commandline ) {
+            if( getUsername( component ) != null ) {
+                result.setUsername( getUsername( component ) );
+            }
+            if( getPassword( component ) != null ) {
+                result.setPassword( getPassword( component ) );
+            }
+        } else {
+            result.addPasswordCallback( 
+                new DefaultPasswordCallback( 
+                    getUsername          ( component ),
+                    getPassword          ( component ),
+                    getSSHKeyPath        ( component ),
+                    getSSHPassphrase     ( component ),
+                    getSSHPort           ( component ),
+                    getSSLClientCertPath ( component ),
+                    getSSLPassword       ( component )
+                ) 
+            );
+        }
 
         return result;
         
