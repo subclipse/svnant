@@ -88,6 +88,9 @@ import java.io.File;
  */
 public class SvnFileSet extends FileSet {
 
+    private static final String MSG_DEPRECATION = 
+        "Deprecated attribute '%s'. This attribute will disappear with SVNANT 1.3.2. Use svnSetting instead.";
+
     /**
      * Constructor for FileSet.
      */
@@ -115,6 +118,7 @@ public class SvnFileSet extends FileSet {
      * @see SvnFacade#setJavahl(ProjectComponent, boolean)
      */
     public void setJavahl( boolean javahl_ ) {
+        warning( MSG_DEPRECATION, "javahl" );
         SvnFacade.setJavahl( this, javahl_ );
     }
 
@@ -122,6 +126,7 @@ public class SvnFileSet extends FileSet {
      * @see SvnFacade#setSvnKit(ProjectComponent, boolean)
      */
     public void setSvnkit( boolean svnkit_ ) {
+        warning( MSG_DEPRECATION, "javahl" );
         SvnFacade.setSvnKit( this, svnkit_ );
     }
 
@@ -184,6 +189,16 @@ public class SvnFileSet extends FileSet {
             message.append( "nested " ).append( featureName_ ).append( " element." );
         }
         return new BuildException( message.toString() );
+    }
+ 
+    /**
+     * Dumps some warning messages.
+     * 
+     * @param fmt    A formatting String. Not <code>null</code>.
+     * @param args   The arguments for the formatting String. Maybe <code>null</code>.
+     */
+    private void warning( String fmt, Object ... args ) {
+        getProject().log( String.format( fmt, args ), Project.MSG_WARN );
     }
     
 }
