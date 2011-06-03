@@ -91,6 +91,8 @@ import org.tigris.subversion.svnclientadapter.ISVNNotifyListener;
 
 import org.tigris.subversion.svnant.types.SvnSetting;
 
+import org.apache.tools.ant.types.Reference;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectComponent;
@@ -140,7 +142,7 @@ public class SvnTask extends Task {
      *
      * @param refid   The id of the configuration to be used for the svn task.
      */
-    public void setRefid( String refid ) {
+    public void setRefid( Reference refid ) {
         SvnFacade.setRefid( this, refid );
     }
 

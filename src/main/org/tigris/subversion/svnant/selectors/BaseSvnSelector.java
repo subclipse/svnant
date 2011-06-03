@@ -57,7 +57,9 @@ package org.tigris.subversion.svnant.selectors;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 
 import org.tigris.subversion.svnant.SvnFacade;
+import org.tigris.subversion.svnant.types.SvnSetting;
 
+import org.apache.tools.ant.types.Reference;
 import org.apache.tools.ant.types.selectors.BaseExtendSelector;
 
 import java.io.File;
@@ -79,23 +81,65 @@ public abstract class BaseSvnSelector extends BaseExtendSelector {
     private ISVNClientAdapter clientadapter = null;
     
     /**
-     * @param username the username to set
+     * @see SvnSetting#setCertReject(Boolean)
      */
-    public void setUsername(String username) {
+    public void setCertReject( Boolean newcertreject ) {
+        SvnFacade.setCertReject( this, newcertreject );
+    }
+    
+    /**
+     * @see SvnSetting#setSSLPassword(String)
+     */
+    public void setSSLPassword( String newpassword ) {
+        SvnFacade.setSSLPassword( this, newpassword );
+    }
+    
+    /**
+     * @see SvnSetting#setSSLClientCertPath(File)
+     */
+    public void setSSLClientCertPath( File newclientcertpath ) {
+        SvnFacade.setSSLClientCertPath( this, newclientcertpath );
+    }
+    
+    /**
+     * @see SvnSetting#setSSHPort(Integer)
+     */
+    public void setSSHPort( Integer newsshport ) {
+        SvnFacade.setSSHPort( this, newsshport );
+    }
+    
+    /**
+     * @see SvnSetting#setSSHPassphrase(String)
+     */
+    public void setSSHPassphrase( String newsshpassphrase ) {
+        SvnFacade.setSSHPassphrase( this, newsshpassphrase );
+    }
+    
+    /**
+     * @see SvnSetting#setSSHKeyPath(File)
+     */
+    public void setSSHKeyPath( File newsshkeypath ) {
+        SvnFacade.setSSHKeyPath( this, newsshkeypath );
+    }
+
+    /**
+     * @see SvnFacade#setUsername(ProjectComponent, String)
+     */
+    public void setUsername( String username ) {
         SvnFacade.setUsername( this, username );
     }
 
     /**
-     * @param password the password to set
+     * @see SvnFacade#setPassword(ProjectComponent, String)
      */
-    public void setPassword(String password) {
+    public void setPassword( String password ) {
         SvnFacade.setPassword( this, password );
     }
 
     /**
-     * @see SvnFacade#setRefid(org.apache.tools.ant.ProjectComponent, String)
+     * @see SvnFacade#setRefid(org.apache.tools.ant.ProjectComponent, Reference)
      */
-    public void setRefid(String refid) {
+    public void setRefid( Reference refid ) {
         SvnFacade.setRefid( this, refid );
     }
 

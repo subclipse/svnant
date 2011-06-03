@@ -66,6 +66,8 @@ import org.tigris.subversion.svnclientadapter.svnkit.SvnKitClientAdapterFactory;
 
 import org.tigris.subversion.svnant.types.SvnSetting;
 
+import org.apache.tools.ant.types.Reference;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectComponent;
@@ -100,7 +102,7 @@ public class SvnFacade {
     private SvnSetting           setting               = new SvnSetting( null );
 
     private SvnSetting           refidsetting          = null;
-    private String               refid                 = null;
+    private Reference            refid                 = null;
 
     /**
      * Returns a facade which is associated with the supplied ant project.
@@ -141,8 +143,8 @@ public class SvnFacade {
     private static final SvnSetting getRefidSetting( ProjectComponent component ) {
         SvnFacade facade = getFacade( component );
         if( facade.refidsetting == null ) {
-            if( (facade.refid != null) && (facade.refid.length() > 0) ) {
-                Object obj = component.getProject().getReference( facade.refid );
+            if( facade.refid != null ) {
+                Object obj = facade.refid.getReferencedObject( component.getProject() );
                 if( obj == null ) {
                     throw new BuildException( "The refid attribute value '" + facade.refid + "' doesn't refer to any object." );
                 }
@@ -163,7 +165,7 @@ public class SvnFacade {
      * @param component   The ant project component used to access the facade. Not <code>null</code>.
      * @param refid       The id of the configuration which has to be used.
      */
-    public static final void setRefid( ProjectComponent component, String refid ) {
+    public static final void setRefid( ProjectComponent component, Reference refid ) {
         getFacade( component ).refid = refid;
     }
 

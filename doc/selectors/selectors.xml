@@ -38,6 +38,38 @@
         <doc>If set the configuration for this task is taken from a <ref id="svnsetting">svnSetting</ref> object. Such a settings instance simply provides default values, so they will be overridden in case the corresponding attribute on this task has been set.</doc>
       </attribute>
   
+      <attribute name="sshkeypath" required="false">
+        <doc>Specifies the location of a SSH private key.</doc>
+        <doc><b>UNTESTED FEATURE: NOT SUPPORTED BY THE COMMANDLINE CLIENT ! SUBJECT TO CHANGE !</b></doc>
+      </attribute> 
+
+      <attribute name="sshpassphrase" required="false">
+        <doc>Specifies the passphrase for the SSH private key.</doc>
+        <doc><b>UNTESTED FEATURE: NOT SUPPORTED BY THE COMMANDLINE CLIENT ! SUBJECT TO CHANGE !</b></doc>
+      </attribute> 
+
+      <attribute name="sshport" required="false" default="22">
+        <doc>The port to be used when connecting using SSH. If the connection URL contains
+        a port number this will be used instead.</doc>
+        <doc><b>UNTESTED FEATURE: NOT SUPPORTED BY THE COMMANDLINE CLIENT ! SUBJECT TO CHANGE !</b></doc>
+      </attribute> 
+ 
+      <attribute name="sslclientcertpath" required="false">
+        <doc>The path of a SSL client certificate.</doc>
+        <doc><b>UNTESTED FEATURE: NOT SUPPORTED BY THE COMMANDLINE CLIENT ! SUBJECT TO CHANGE !</b></doc>
+      </attribute> 
+
+      <attribute name="sslpassword" required="false">
+        <doc>The password for the SSL connection.</doc>
+        <doc><b>UNTESTED FEATURE: NOT SUPPORTED BY THE COMMANDLINE CLIENT ! SUBJECT TO CHANGE !</b></doc>
+      </attribute> 
+
+      <attribute name="certreject" required="false" default="false">
+        <doc>Boolean which allows to reject untrusted certificates in general. By default they are
+        accepted temporarily (we don't want to break with previous implementations).</doc>
+        <doc><b>UNTESTED FEATURE: NOT SUPPORTED BY THE COMMANDLINE CLIENT ! SUBJECT TO CHANGE !</b></doc>
+      </attribute> 
+  
     </attributes>
 
   </msection>

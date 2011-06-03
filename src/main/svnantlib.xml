@@ -32,7 +32,7 @@
     classname="org.tigris.subversion.svnant.selectors.Missing" />
   <typedef name="svnDeleted"
     classname="org.tigris.subversion.svnant.selectors.Deleted" />
-	
+  
   <!-- Conditions -->
   <typedef name="svnExists"
     classname="org.tigris.subversion.svnant.conditions.Exists" />
