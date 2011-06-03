@@ -54,193 +54,70 @@
  */
 package org.tigris.subversion.svnant.commands;
 
-import org.tigris.subversion.svnclientadapter.utils.SVNStatusUtils;
-
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
-import org.tigris.subversion.svnant.SvnAntUtilities;
-
-import org.apache.tools.ant.types.FileSet;
-
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DirectoryScanner;
-
-import java.util.Stack;
-import java.util.Vector;
 
 import java.io.File;
 
 /**
  * svn Add. Add a file, a directory or a set of files to repository
+ * 
  * @author Cédric Chabanois 
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
+ *         
+ * @author Daniel Kasmeroglu (Daniel.Kameroglu@kasisoft.net)
  *
  */
-public class Add extends SvnCommand {
-
-    /** file to add to the repository */
-    private File            file        = null;
-
-    /** filesets to add to the repository */
-    private Vector<FileSet> filesets    = new Vector<FileSet>();
-
-    /** directory to add to the repository */
-    private File            dir         = null;
-
-    /** add recursively ? (only for dir attribute) */
-    private boolean         recurse     = true;
+public class Add extends ResourceSetSvnCommand {
 
     /** check directories already under version control during add ? (only for dir attribute) */
     private boolean         force       = false;
 
-    /**
-     * {@inheritDoc}
-     */
-    public void execute() {
-
-        // deal with the single file
-        if( file != null ) {
-            svnAddFile( file );
-        }
-
-        // deal with a directory
-        if( dir != null ) {
-            svnAddDir( dir, recurse, force );
-        }
-
-        // deal with filesets
-        if( filesets.size() > 0 ) {
-            for( int i = 0; i < filesets.size(); i++ ) {
-                svnAddFileSet( filesets.elementAt( i ) );
-            }
-        }
-
+    public Add() {
+        super( true, false, null );
     }
 
     /**
      * {@inheritDoc}
      */
-    protected void validateAttributes() {
-        SvnAntUtilities.attrsNotSet( "file, dir, fileset", file, dir, filesets );
-        if( file != null ) {
-            SvnAntUtilities.attrIsFile( "file", file );
-        }
-        if( dir != null ) {
-            SvnAntUtilities.attrIsDirectory( "dir", dir );
-        }
+    protected void handleUnmanaged( File dir ) {
+        svnAddDir( dir, false, force );
+    }
+
+    protected void handleDir( File dir, boolean recurse ) {
+        svnAddDir( dir, recurse, force );
+    }
+
+    protected void handleFile( File file ) {
+        svnAddFile( file );
     }
 
     /**
      * add a file to the repository
      * @param svnClient
-     * @param aFile
+     * @param file
      */
-    private void svnAddFile( File aFile ) {
+    private void svnAddFile( File file ) {
         try {
-            getClient().addFile( aFile );
+            getClient().addFile( file );
         } catch( SVNClientException e ) {
-            throw new BuildException( "Can't add file " + aFile.getAbsolutePath() + " to repository", e );
+            throw new BuildException( "Can't add file " + file.getAbsolutePath() + " to repository", e );
         }
     }
 
     /**
      * add a directory to the repository
-     * @param svnClient
-     * @param aDir
+     * @param dir
      * @param recursive
      * @param force
      */
-    private void svnAddDir( File aDir, boolean recursive, boolean force ) {
+    private void svnAddDir( File dir, boolean recursive, boolean force ) {
         try {
-            getClient().addDirectory( aDir, recursive, force );
+            getClient().addDirectory( dir, recursive, force );
         } catch( SVNClientException e ) {
-            throw new BuildException( "Can't add directory " + aDir.getAbsolutePath() + " to repository", e );
+            throw new BuildException( "Can't add directory " + dir.getAbsolutePath() + " to repository", e );
         }
-    }
-
-    /**
-     * add the file (or directory) to the repository, including any necessary parent directories
-     * @param svnClient
-     * @param aFile
-     * @param baseDir
-     */
-    private void svnAddFileWithDirs( File aFile, File baseDir ) {
-
-        Stack<File> dirs = new Stack<File>();
-        File currentDir = aFile.getParentFile();
-
-        try {
-            // don't add the file if already added ...
-            if( SVNStatusUtils.isManaged( getClient().getSingleStatus( aFile ) ) ) {
-                return;
-            }
-
-            // determine directories to add to repository     
-            while( (currentDir != null) && (!SVNStatusUtils.isManaged( getClient().getSingleStatus( currentDir ) ))
-                            && (!currentDir.equals( baseDir )) ) {
-                dirs.push( currentDir );
-                currentDir = currentDir.getParentFile();
-            }
-
-        } catch( SVNClientException e ) {
-            throw new BuildException( "Cannot get status of file or directory", e );
-        }
-
-        // add them to the repository
-        while( dirs.size() > 0 ) {
-            currentDir = dirs.pop();
-            try {
-                getClient().addFile( currentDir );
-            } catch( SVNClientException e ) {
-                throw new BuildException( "Cannot add directory " + currentDir.getAbsolutePath() + " to repository", e );
-            }
-        }
-
-        // now add the file ...
-        try {
-            getClient().addFile( aFile );
-        } catch( SVNClientException e ) {
-            throw new BuildException( "Can't add file " + aFile.getAbsolutePath() + " to repository", e );
-        }
-        
-    }
-
-    /**
-     * add a fileset (both dirs and files) to the repository
-     * @param svnClient
-     * @param fs
-     */
-    private void svnAddFileSet( FileSet fs ) {
-        DirectoryScanner ds = fs.getDirectoryScanner( getProject() );
-        File baseDir = fs.getDir( getProject() ); // base dir
-        String[] files = ds.getIncludedFiles();
-        String[] dirs = ds.getIncludedDirectories();
-
-        // first : we add directories to the repository
-        for( int i = 0; i < dirs.length; i++ ) {
-            svnAddFileWithDirs( new File( baseDir, dirs[i] ), baseDir );
-        }
-
-        // then we add files
-        for( int i = 0; i < files.length; i++ ) {
-            svnAddFileWithDirs( new File( baseDir, files[i] ), baseDir );
-        }
-    }
-
-    /**
-     * set file to add to repository
-     * @param file
-     */
-    public void setFile( File file ) {
-        this.file = file;
-    }
-
-    /**
-     * set the directory to add to the repository
-     * @param dir
-     */
-    public void setDir( File dir ) {
-        this.dir = dir;
     }
 
     /**
@@ -248,7 +125,7 @@ public class Add extends SvnCommand {
      * @param recurse
      */
     public void setRecurse( boolean recurse ) {
-        this.recurse = recurse;
+        super.setRecurse( recurse );
     }
 
     /**
@@ -257,22 +134,6 @@ public class Add extends SvnCommand {
      */
     public void setForce( boolean force ) {
         this.force = force;
-    }
-
-    /**
-     * Adds a set of files to add
-     * @param set
-     */
-    public void addFileset( FileSet set ) {
-        filesets.addElement( set );
-    }
-
-    /**
-     * Adds a set of files to add
-     * @param set
-     */
-    public void add( FileSet set ) {
-        filesets.addElement( set );
     }
 
 }

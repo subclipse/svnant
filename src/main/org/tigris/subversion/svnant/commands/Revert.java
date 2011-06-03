@@ -56,154 +56,57 @@ package org.tigris.subversion.svnant.commands;
 
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
-import org.tigris.subversion.svnant.SvnAntUtilities;
-
-import org.apache.tools.ant.types.FileSet;
-
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DirectoryScanner;
-
-import java.util.Vector;
 
 import java.io.File;
 
 /**
  * svn Revert. Restore pristine working copy file (undo most local edits)
+ * 
  * @author Cédric Chabanois 
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  *
+ * @author Daniel Kasmeroglu (Daniel.Kasmeroglu@kasisoft.net)
  */
-public class Revert extends SvnCommand {
+public class Revert extends ResourceSetSvnCommand {
 
-    /** file to revert */
-    private File            file     = null;
-
-    /** dir to revert */
-    private File            dir      = null;
-
-    /** descend recursively */
-    private boolean         recurse  = false;
-
-    /** filesets to revert */
-    private Vector<FileSet> filesets = new Vector<FileSet>();
-
+    public Revert() {
+        super( false, true, null );
+    }
+    
     /**
      * {@inheritDoc}
      */
-    public void execute() {
-
-        if( file != null ) {
-            revertFile( file, false );
-        }
-
-        if( dir != null ) {
-            revertFile( dir, recurse );
-        }
-
-        // deal with filesets
-        if( filesets.size() > 0 ) {
-            for( int i = 0; i < filesets.size(); i++ ) {
-                revertFileSet( filesets.elementAt( i ) );
-            }
-        }
+    protected void handleDir( File dir, boolean recurse ) {
+        revert( dir, recurse );
     }
 
     /**
      * {@inheritDoc}
      */
-    protected void validateAttributes() {
-        SvnAntUtilities.attrsNotSet( "file, dir, fileset", file, dir, filesets );
-        if( file != null ) {
-            SvnAntUtilities.attrIsFile( "file", file );
-        }
-        if( dir != null ) {
-            SvnAntUtilities.attrIsDirectory( "dir", dir );
-        }
+    protected void handleFile( File file ) {
+        revert( file, false );
     }
 
     /**
-     * Revert file or directory
-       *
-     * @param aFile
-     * @param force
+     * Revers the supplied resource.
+     * 
+     * @param file      The resource which has to be reverted. Not <code>null</code>.
+     * @param recurse   <code>true</code> <=> Revert recursively.
      */
-    private void revertFile( File aFile, boolean doRecurse ) {
+    private void revert( File file, boolean recurse ) {
         try {
-            getClient().revert( aFile, doRecurse );
+            getClient().revert( file, recurse );
         } catch( SVNClientException e ) {
-            throw new BuildException( "Cannot revert file or directory " + aFile.getAbsolutePath(), e );
+            throw new BuildException( "Cannot revert file or directory " + file.getAbsolutePath(), e );
         }
     }
-
+    
     /**
-     * revert a fileset (both dirs and files)
-     * @param svnClient
-     * @param fs
-     */
-    private void revertFileSet( FileSet fs ) {
-        DirectoryScanner ds = fs.getDirectoryScanner( getProject() );
-        File baseDir = fs.getDir( getProject() ); // base dir
-        String[] files = ds.getIncludedFiles();
-        String[] dirs = ds.getIncludedDirectories();
-        File[] filesAndDirs = new File[files.length + dirs.length];
-        int j = 0;
-
-        for( int i = 0; i < dirs.length; i++ ) {
-            filesAndDirs[j] = new File( baseDir, dirs[i] );
-            j++;
-        }
-        for( int i = 0; i < files.length; i++ ) {
-            filesAndDirs[j] = new File( baseDir, files[i] );
-            j++;
-        }
-
-        try {
-            for( int i = 0; i < filesAndDirs.length; i++ ) {
-                getClient().revert( filesAndDirs[i], false );
-            }
-        } catch( SVNClientException e ) {
-            error( "Cannot revert file " + file.getAbsolutePath() );
-        }
-    }
-
-    /**
-     * set file to revert
-     * @param file
-     */
-    public void setFile( File file ) {
-        this.file = file;
-    }
-
-    /**
-     * set directory to revert
-     * @param dir
-     */
-    public void setDir( File dir ) {
-        this.dir = dir;
-    }
-
-    /**
-     * Set the recurse flag
-     * @param recurse
+     * {@inheritDoc}
      */
     public void setRecurse( boolean recurse ) {
-        this.recurse = recurse;
+        super.setRecurse( recurse );
     }
-
-    /**
-     * Adds a set of files to add
-     * @param set
-     */
-    public void addFileset( FileSet set ) {
-        filesets.addElement( set );
-    }
-
-    /**
-     * Adds a set of files to add
-     * @param set
-     */
-    public void add( FileSet set ) {
-        filesets.addElement( set );
-    }
-
+    
 }

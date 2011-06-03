@@ -57,63 +57,39 @@ package org.tigris.subversion.svnant.commands;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNKeywords;
 
-import org.apache.tools.ant.types.FileSet;
-
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DirectoryScanner;
 
 import java.io.File;
 
 /**
  * remove some keywords on given files
+ * 
  * @author Cédric Chabanois 
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  *
+ * @author Daniel Kasmeroglu (Daniel.Kasmeroglu@kasisoft.net)
  */
 public class Keywordsremove extends Keywords {
 
     /**
      * {@inheritDoc}
      */
-    public void execute() {
-        if( file != null ) {
-            try {
-                getClient().removeKeywords( file, keywords );
-            } catch( SVNClientException e ) {
-                throw new BuildException( "Can't remove keywords on file " + file.toString(), e );
-            }
-        } else if( dir != null ) {
-            try {
-                getClient().removeKeywords( dir, keywords );
-            } catch( SVNClientException e ) {
-                throw new BuildException( "Can't remove keywords on directory " + dir.toString(), e );
-            }
-        } else if( filesets.size() > 0 ) {
-            // deal with filesets
-            for( int i = 0; i < filesets.size(); i++ ) {
-                FileSet fs = filesets.elementAt( i );
-                keywordsRemove( fs, keywords );
-            }
-        }
+    protected void handleDir( File dir, boolean recurse ) {
+        keywordsRemove( dir, keywords );
     }
 
     /**
-     * add keywords on a fileset 
-     * @param svnClient
-     * @param fs
-     * @throws SvnAntException
+     * {@inheritDoc}
      */
-    private void keywordsRemove( FileSet fs, SVNKeywords theKeywords ) {
-        DirectoryScanner ds = fs.getDirectoryScanner( getProject() );
-        File baseDir = fs.getDir( getProject() ); // base dir
-        String[] files = ds.getIncludedFiles();
-        for( int i = 0; i < files.length; i++ ) {
-            File aFile = new File( baseDir, files[i] );
-            try {
-                getClient().removeKeywords( aFile, theKeywords );
-            } catch( SVNClientException e ) {
-                throw new BuildException( "Can't set keywords on file " + aFile.toString(), e );
-            }
+    protected void handleFile( File file ) {
+        keywordsRemove( file, keywords );
+    }
+
+    private void keywordsRemove( File file, SVNKeywords keywords ) {
+        try {
+            getClient().removeKeywords( file, keywords );
+        } catch( SVNClientException e ) {
+            throw new BuildException( "Can't set keywords on file " + file.toString(), e );
         }
     }
 

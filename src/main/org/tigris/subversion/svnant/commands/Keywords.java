@@ -59,46 +59,27 @@ import org.tigris.subversion.svnclientadapter.SVNKeywords;
 
 import org.tigris.subversion.svnant.SvnAntUtilities;
 
-import org.apache.tools.ant.types.FileSet;
-
-import java.util.Vector;
-
-import java.io.File;
-
 /**
  * ancestor of KeywordSet ...
  * @author Cédric Chabanois 
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  *
  */
-public abstract class Keywords extends SvnCommand {
+public abstract class Keywords extends ResourceSetSvnCommand {
 
     // the keywords available for substitution
-    protected SVNKeywords     keywords;
+    protected SVNKeywords   keywords;
 
-    /** file concerned by keywords substitution */
-    protected File            file     = null;
-
-    /** filesets concerned by keywords substitution */
-    protected Vector<FileSet> filesets = new Vector<FileSet>();
-
-    /** directory concerned by keywords substitution */
-    protected File            dir      = null;
-
-    /** set keywords substitution recursively ? (only for dir attribute) */
-    protected boolean         recurse  = true;
+    public Keywords() {
+        super( true, false, null );
+    }
 
     /**
      * {@inheritDoc}
      */
     protected void validateAttributes() {
-        SvnAntUtilities.attrsNotSet( "file, dir, fileset", true, file, dir, filesets );
-        if( file != null ) {
-            SvnAntUtilities.attrIsFile( "file", file );
-        }
-        if( dir != null ) {
-            SvnAntUtilities.attrIsDirectory( "dir", dir );
-        }
+        super.validateAttributes();
+        SvnAntUtilities.attrNotNull( "keywords", keywords );
     }
 
     public void setHeadURL( boolean b ) {
@@ -135,46 +116,6 @@ public abstract class Keywords extends SvnCommand {
 
     public void setRev( boolean b ) {
         keywords.setLastChangedRevision( b );
-    }
-
-    /**
-     * set file on which to set keywords substitution 
-     * @param file
-     */
-    public void setFile( File file ) {
-        this.file = file;
-    }
-
-    /**
-     * set directory on which to set keywords substitution 
-     * @param dir
-     */
-    public void setDir( File dir ) {
-        this.dir = dir;
-    }
-
-    /**
-     * if set, keywords substitution will be set recursively
-     * @param recurse
-     */
-    public void setRecurse( boolean recurse ) {
-        this.recurse = recurse;
-    }
-
-    /**
-     * Adds a set of files on which to apply keywords substitution
-     * @param set
-     */
-    public void addFileset( FileSet set ) {
-        filesets.addElement( set );
-    }
-
-    /**
-     * Adds a set of files on which to apply keywords substitution
-     * @param set
-     */
-    public void add( FileSet set ) {
-        filesets.addElement( set );
     }
 
     /**

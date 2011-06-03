@@ -57,10 +57,7 @@ package org.tigris.subversion.svnant.commands;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNKeywords;
 
-import org.apache.tools.ant.types.FileSet;
-
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DirectoryScanner;
 
 import java.io.File;
 
@@ -75,49 +72,30 @@ public class Keywordsset extends Keywords {
     /**
      * {@inheritDoc}
      */
-    public void execute() {
-        if( file != null ) {
-            try {
-                getClient().setKeywords( file, keywords, false );
-            } catch( SVNClientException e ) {
-                throw new BuildException( "Can't set keywords on file " + file.toString(), e );
-            }
-        } else if( dir != null ) {
-            try {
-                getClient().setKeywords( dir, keywords, recurse );
-            } catch( SVNClientException e ) {
-                throw new BuildException( "Can't set keywords on directory " + dir.toString(), e );
-            }
-        } else if( filesets.size() > 0 ) {
-            // deal with filesets
-            for( int i = 0; i < filesets.size(); i++ ) {
-                FileSet fs = filesets.elementAt( i );
-                keywordsSet( fs, keywords );
-            }
+    protected void handleDir( File dir, boolean recurse ) {
+        keywordsSet( dir, keywords, recurse );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected void handleFile( File file ) {
+        keywordsSet( file, keywords, false );
+    }
+
+    private void keywordsSet( File file, SVNKeywords keywords, boolean recurse ) {
+        try {
+            getClient().setKeywords( file, keywords, recurse );
+        } catch( SVNClientException e ) {
+            throw new BuildException( "Can't set keywords on file " + file.toString(), e );
         }
     }
 
     /**
-     * set keywords on a fileset (both dirs and files)
-     * @param svnClient
-     * @param fs
+     * {@inheritDoc}
      */
-    private void keywordsSet( FileSet fs, SVNKeywords theKeywords ) {
-        DirectoryScanner ds = fs.getDirectoryScanner( getProject() );
-        File baseDir = fs.getDir( getProject() ); // base dir
-        String[] files = ds.getIncludedFiles();
-
-        // we don't need to set keywords on directories
-        // we only set keywords on files
-
-        for( int i = 0; i < files.length; i++ ) {
-            File aFile = new File( baseDir, files[i] );
-            try {
-                getClient().setKeywords( aFile, theKeywords, false );
-            } catch( SVNClientException e ) {
-                throw new BuildException( "Can't set keywords on file " + aFile.toString(), e );
-            }
-        }
+    public void setRecurse( boolean recurse ) {
+        super.setRecurse( recurse );
     }
 
 }

@@ -59,22 +59,19 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 import org.tigris.subversion.svnant.SvnAntUtilities;
 
-import org.apache.tools.ant.types.FileSet;
-
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DirectoryScanner;
-
-import java.util.Vector;
 
 import java.io.File;
 
 /**
  * svn Delete. Remove files and directories from version control.
+ * 
  * @author Cédric Chabanois 
  *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
  *
+ * @author Daniel Kasmeroglu (Daniel.Kasmeroglu@kasisoft.net)
  */
-public class Delete extends SvnCommand {
+public class Delete extends ResourceSetSvnCommand {
 
     /** message for commit (only when target is an url) */
     private String          message  = null;
@@ -82,58 +79,45 @@ public class Delete extends SvnCommand {
     /** url of the target to delete */
     private SVNUrl          url      = null;
 
-    /** file to delete */
-    private File            file     = null;
-
-    /** dir to delete */
-    private File            dir      = null;
-
     /** delete will not remove TARGETs that are, or contain, unversioned 
      * or modified items; use the force option to override this behaviour 
      */
     private boolean         force    = false;
 
-    /** filesets to delete */
-    private Vector<FileSet> filesets = new Vector<FileSet>();
-
+    public Delete() {
+        super( true, true, null );
+    }
+    
     /**
      * {@inheritDoc}
      */
-    public void execute() {
-
-        if( url != null ) {
-            deleteUrl( url, message );
-        }
-
-        if( file != null ) {
-            deleteFile( file, force );
-        }
-
-        if( dir != null ) {
-            deleteFile( dir, force );
-        }
-
-        // deal with filesets
-        if( filesets.size() > 0 ) {
-            for( int i = 0; i < filesets.size(); i++ ) {
-                FileSet fs = filesets.elementAt( i );
-                deleteFileSet( fs );
-            }
-        }
+    protected void handleDir( File dir, boolean recurse ) {
+        deleteFile( dir, force );
     }
 
     /**
      * {@inheritDoc}
      */
+    protected void handleFile( File file ) {
+        deleteFile( file, force );
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    protected void handleBegin() {
+        if( url != null ) {
+            deleteUrl( url, message );
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
     protected void validateAttributes() {
+        super.validateAttributes();
         if( url != null ) {
             SvnAntUtilities.attrNotEmpty( "message", message );
-        }
-        if( file != null ) {
-            SvnAntUtilities.attrIsFile( "file", file );
-        }
-        if( dir != null ) {
-            SvnAntUtilities.attrIsDirectory( "dir", dir );
         }
     }
 
@@ -165,37 +149,6 @@ public class Delete extends SvnCommand {
     }
 
     /**
-     * add a fileset (both dirs and files) to the repository
-     * @param svnClient
-     * @param fs
-     */
-    private void deleteFileSet( FileSet fs ) {
-        DirectoryScanner ds = fs.getDirectoryScanner( getProject() );
-        File baseDir = fs.getDir( getProject() ); // base dir
-        String[] files = ds.getIncludedFiles();
-        String[] dirs = ds.getIncludedDirectories();
-        File[] filesAndDirs = new File[files.length + dirs.length];
-        int j = 0;
-
-        for( int i = 0; i < dirs.length; i++ ) {
-            filesAndDirs[j] = new File( baseDir, dirs[i] );
-            j++;
-        }
-        for( int i = 0; i < files.length; i++ ) {
-            filesAndDirs[j] = new File( baseDir, files[i] );
-            j++;
-        }
-
-        // note : when we delete dirs, this also delete subdirectories and files 
-        // contained in this directory        
-        try {
-            getClient().remove( filesAndDirs, force );
-        } catch( SVNClientException e ) {
-            error( "Cannot delete file " + file.getAbsolutePath() );
-        }
-    }
-
-    /**
      * set the message for the commit (only when deleting directly from repository
      * using an url)
      * @param message
@@ -213,43 +166,11 @@ public class Delete extends SvnCommand {
     }
 
     /**
-     * set file to delete
-     * @param file
-     */
-    public void setFile( File file ) {
-        this.file = file;
-    }
-
-    /**
-     * set directory to delete
-     * @param dir
-     */
-    public void setDir( File dir ) {
-        this.dir = dir;
-    }
-
-    /**
      * Set the force flag
      * @param force
      */
     public void setForce( boolean force ) {
         this.force = force;
-    }
-
-    /**
-     * Adds a set of files to add
-     * @param set
-     */
-    public void addFileset( FileSet set ) {
-        filesets.addElement( set );
-    }
-
-    /**
-     * Adds a set of files to add
-     * @param set
-     */
-    public void add( FileSet set ) {
-        filesets.addElement( set );
     }
 
 }
