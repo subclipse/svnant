@@ -105,8 +105,6 @@ public class SvnDirScanner extends DirectoryScanner {
     /** Is OpenVMS the operating system we're running on? */
     private static final boolean    ON_VMS             = Os.isFamily( "openvms" );
 
-    private ISVNClientAdapter svnClient;
-
     /**
      * Patterns which should be excluded by default.
      *
@@ -119,105 +117,96 @@ public class SvnDirScanner extends DirectoryScanner {
      * getDefaultExcludes} method instead.
      */
     protected static final String[] DEFAULTEXCLUDES    = {
-                                                       // Miscellaneous typical temporary files
-                    "**/*~", "**/#*#", "**/.#*", "**/%*%", "**/._*",
+        // Miscellaneous typical temporary files
+        "**/*~", "**/#*#", "**/.#*", "**/%*%", "**/._*",
 
-                    // CVS
-                    "**/CVS", "**/CVS/**", "**/.cvsignore",
+        // CVS
+        "**/CVS", "**/CVS/**", "**/.cvsignore",
 
-                    // SCCS
-                    "**/SCCS", "**/SCCS/**",
+        // SCCS
+        "**/SCCS", "**/SCCS/**",
 
-                    // Visual SourceSafe
-                    "**/vssver.scc",
+        // Visual SourceSafe
+        "**/vssver.scc",
 
-                    // Subversion
-                    "**/.svn", "**/.svn/**",
+        // Subversion
+        "**/.svn", "**/.svn/**",
 
-                    // Mac
-                    "**/.DS_Store"                    };
+        // Mac
+        "**/.DS_Store"
+    };
 
     /**
      * Patterns which should be excluded by default.
      *
      * @see #addDefaultExcludes()
      */
-    private static Vector           defaultExcludes    = new Vector();
+    private static final Vector<String> defaultExcludes    = new Vector<String>();
+    
+    /** Helper. */
+    private static final FileUtils      fileUtils          = FileUtils.newFileUtils();
+
     static {
         resetDefaultExcludes();
     }
 
+    private ISVNClientAdapter           svnClient;
+    
+    /** temporary table to speed up the various scanning methods below  */
+    private Map<File,ISVNStatus[]>      fileListMap = new HashMap<File,ISVNStatus[]>();
+
     /** The base directory to be scanned. */
-    protected File                  basedir;
+    private File                        basedir;
 
     /** The patterns for the files to be included. */
-    protected String[]              includes;
+    private String[]                    includes;
 
     /** The patterns for the files to be excluded. */
-    protected String[]              excludes;
+    private String[]                    excludes;
 
     /** Selectors that will filter which files are in our candidate list. */
-    protected FileSelector[]        selectors          = null;
+    private FileSelector[]              selectors          = null;
 
-    /** The files which matched at least one include and no excludes
-     *  and were selected.
-     */
-    protected Vector                filesIncluded;
+    /** The files which matched at least one include and no excludes and were selected. */
+    private Vector<String>              filesIncluded;
 
     /** The files which did not match any includes or selectors. */
-    protected Vector                filesNotIncluded;
+    private Vector<String>              filesNotIncluded;
 
-    /**
-     * The files which matched at least one include and at least
-     * one exclude.
-     */
-    protected Vector                filesExcluded;
+    /** The files which matched at least one include and at least one exclude. */
+    private Vector<String>              filesExcluded;
 
-    /** The directories which matched at least one include and no excludes
-     *  and were selected.
-     */
-    protected Vector                dirsIncluded;
+    /** The directories which matched at least one include and no excludes and were selected. */
+    private Vector<String>              dirsIncluded;
 
     /** The directories which were found and did not match any includes. */
-    protected Vector                dirsNotIncluded;
+    private Vector<String>              dirsNotIncluded;
 
-    /**
-     * The directories which matched at least one include and at least one
-     * exclude.
-     */
-    protected Vector                dirsExcluded;
+    /** The directories which matched at least one include and at least one exclude. */
+    private Vector<String>              dirsExcluded;
 
     /** The files which matched at least one include and no excludes and
      *  which a selector discarded.
      */
-    protected Vector                filesDeselected;
+    private Vector<String>              filesDeselected;
 
-    /** The directories which matched at least one include and no excludes
-     *  but which a selector discarded.
-     */
-    protected Vector                dirsDeselected;
+    /** The directories which matched at least one include and no excludes but which a selector discarded. */
+    private Vector<String>              dirsDeselected;
 
     /** Whether or not our results were built by a slow scan. */
-    protected boolean               haveSlowResults    = false;
+    private boolean                     haveSlowResults    = false;
 
-    /**
-     * Whether or not the file system should be treated as a case sensitive
-     * one.
-     */
-    protected boolean               isCaseSensitive    = true;
+    /** Whether or not the file system should be treated as a case sensitive one.*/
+    private boolean                     isCaseSensitive    = true;
 
-    /**
-     * Whether or not symbolic links should be followed.
-     *
-     * @since Ant 1.5
-     */
-    private boolean                 followSymlinks     = true;
-
-    /** Helper. */
-    private static final FileUtils  fileUtils          = FileUtils.newFileUtils();
+    /** Whether or not symbolic links should be followed. */
+    private boolean                     followSymlinks     = true;
 
     /** Whether or not everything tested so far has been included. */
-    protected boolean               everythingIncluded = true;
+    private boolean                     everythingIncluded = true;
+
+    /** List of all scanned directories. */
+    private Set<String>                 scannedDirs = new HashSet<String>();
 
     /**
      * Sole constructor.
@@ -235,7 +224,7 @@ public class SvnDirScanner extends DirectoryScanner {
      * @since Ant 1.6
      */
     private ISVNStatus[] list( File file ) {
-        ISVNStatus[] files = (ISVNStatus[]) fileListMap.get( file );
+        ISVNStatus[] files = fileListMap.get( file );
         if( files == null ) {
             // Obtain the entries from the client adapter
             try {
@@ -393,7 +382,7 @@ public class SvnDirScanner extends DirectoryScanner {
      * @since Ant 1.6
      */
     public static String[] getDefaultExcludes() {
-        return (String[]) defaultExcludes.toArray( new String[defaultExcludes.size()] );
+        return defaultExcludes.toArray( new String[defaultExcludes.size()] );
     }
 
     /**
@@ -436,8 +425,7 @@ public class SvnDirScanner extends DirectoryScanner {
      * @since Ant 1.6
      */
     public static void resetDefaultExcludes() {
-        defaultExcludes = new Vector();
-
+        defaultExcludes.clear();
         for( int i = 0; i < DEFAULTEXCLUDES.length; i++ ) {
             defaultExcludes.add( DEFAULTEXCLUDES[i] );
         }
@@ -624,14 +612,14 @@ public class SvnDirScanner extends DirectoryScanner {
             excludes = new String[0];
         }
 
-        filesIncluded = new Vector();
-        filesNotIncluded = new Vector();
-        filesExcluded = new Vector();
-        filesDeselected = new Vector();
-        dirsIncluded = new Vector();
-        dirsNotIncluded = new Vector();
-        dirsExcluded = new Vector();
-        dirsDeselected = new Vector();
+        filesIncluded       = new Vector<String>();
+        filesNotIncluded    = new Vector<String>();
+        filesExcluded       = new Vector<String>();
+        filesDeselected     = new Vector<String>();
+        dirsIncluded        = new Vector<String>();
+        dirsNotIncluded     = new Vector<String>();
+        dirsExcluded        = new Vector<String>();
+        dirsDeselected      = new Vector<String>();
 
         if( isIncluded( "" ) ) {
             if( !isExcluded( "" ) ) {
@@ -656,7 +644,7 @@ public class SvnDirScanner extends DirectoryScanner {
      * @since ant1.6
      */
     private void checkIncludePatterns() {
-        Hashtable newroots = new Hashtable();
+        Hashtable<String,String> newroots = new Hashtable<String,String>();
         // put in the newroots vector the include patterns without
         // wildcard tokens
         for( int icounter = 0; icounter < includes.length; icounter++ ) {
@@ -670,7 +658,7 @@ public class SvnDirScanner extends DirectoryScanner {
         } else {
             // only scan directories that can include matched files or
             // directories
-            Enumeration enum2 = newroots.keys();
+            Enumeration<String> enum2 = newroots.keys();
 
             File canonBase = null;
             try {
@@ -680,8 +668,8 @@ public class SvnDirScanner extends DirectoryScanner {
             }
 
             while( enum2.hasMoreElements() ) {
-                String currentelement = (String) enum2.nextElement();
-                String originalpattern = (String) newroots.get( currentelement );
+                String currentelement = enum2.nextElement();
+                String originalpattern = newroots.get( currentelement );
                 File myfile = new File( basedir, currentelement );
 
                 if( myfile.exists() ) {
@@ -1162,13 +1150,6 @@ public class SvnDirScanner extends DirectoryScanner {
     }
 
     /**
-     * temporary table to speed up the various scanning methods below
-     *
-     * @since Ant 1.6
-     */
-    private Map fileListMap = new HashMap();
-
-    /**
      * From <code>base</code> traverse the filesystem in a case
      * insensitive manner in order to find a file that matches the
      * given name.
@@ -1179,6 +1160,7 @@ public class SvnDirScanner extends DirectoryScanner {
      *
      * @since Ant 1.6
      */
+    @SuppressWarnings("unchecked")
     private File findFileCaseInsensitive( File base, String path ) {
         File f = findFileCaseInsensitive( base, SelectorUtils.tokenizePath( path ) );
         return f == null ? new File( base, path ) : f;
@@ -1193,8 +1175,8 @@ public class SvnDirScanner extends DirectoryScanner {
      *
      * @since Ant 1.6
      */
-    private File findFileCaseInsensitive( File base, Vector pathElements ) {
-        if( pathElements.size() == 0 ) {
+    private File findFileCaseInsensitive( File base, Vector<String> pathElements ) {
+        if( pathElements.isEmpty() ) {
             return base;
         } else {
             if( !base.isDirectory() ) {
@@ -1204,7 +1186,7 @@ public class SvnDirScanner extends DirectoryScanner {
             if( files == null ) {
                 throw new BuildException( "IO error scanning directory " + base.getAbsolutePath() );
             }
-            String current = (String) pathElements.remove( 0 );
+            String current = pathElements.remove( 0 );
             for( int i = 0; i < files.length; i++ ) {
                 String name = files[i].getFile().getName();
                 if( name.equals( current ) ) {
@@ -1229,6 +1211,7 @@ public class SvnDirScanner extends DirectoryScanner {
      *
      * @since Ant 1.6
      */
+    @SuppressWarnings("unchecked")
     private File findFile( File base, String path ) {
         return findFile( base, SelectorUtils.tokenizePath( path ) );
     }
@@ -1241,8 +1224,8 @@ public class SvnDirScanner extends DirectoryScanner {
      *
      * @since Ant 1.6
      */
-    private File findFile( File base, Vector pathElements ) {
-        if( pathElements.size() == 0 ) {
+    private File findFile( File base, Vector<String> pathElements ) {
+        if( pathElements.isEmpty() ) {
             return base;
         } else {
             if( !base.isDirectory() ) {
@@ -1252,7 +1235,7 @@ public class SvnDirScanner extends DirectoryScanner {
             if( files == null ) {
                 throw new BuildException( "IO error scanning directory " + base.getAbsolutePath() );
             }
-            String current = (String) pathElements.remove( 0 );
+            String current = pathElements.remove( 0 );
             for( int i = 0; i < files.length; i++ ) {
                 String name = files[i].getFile().getName();
                 if( name.equals( current ) ) {
@@ -1268,6 +1251,7 @@ public class SvnDirScanner extends DirectoryScanner {
      * basedir?
      * @since Ant 1.6
      */
+    @SuppressWarnings("unchecked")
     private boolean isSymlink( File base, String path ) {
         return isSymlink( base, SelectorUtils.tokenizePath( path ) );
     }
@@ -1277,9 +1261,9 @@ public class SvnDirScanner extends DirectoryScanner {
      * basedir?
      * @since Ant 1.6
      */
-    private boolean isSymlink( File base, Vector pathElements ) {
+    private boolean isSymlink( File base, Vector<String> pathElements ) {
         if( pathElements.size() > 0 ) {
-            String current = (String) pathElements.remove( 0 );
+            String current = pathElements.remove( 0 );
             try {
                 if( fileUtils.isSymbolicLink( base, current ) ) {
                     return true;
@@ -1295,13 +1279,6 @@ public class SvnDirScanner extends DirectoryScanner {
         }
         return false;
     }
-
-    /**
-     * List of all scanned directories.
-     *
-     * @since Ant 1.6
-     */
-    private Set scannedDirs = new HashSet();
 
     /**
      * Has the directory with the given path relative to the base
