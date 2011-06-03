@@ -74,4 +74,11 @@ public class SvnJavaHLTest extends SvnTest {
         super.testWcVersionUnmanaged();
     }
     
+    /**
+     * {@inheritDoc}
+     */
+    public void testKeywords() throws Exception {
+        super.testKeywords();
+    }
+    
 }

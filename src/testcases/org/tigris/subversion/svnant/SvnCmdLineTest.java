@@ -67,4 +67,15 @@ public class SvnCmdLineTest extends SvnTest {
         super.testWcVersionUnmanaged();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public void testAnnotate() throws Exception {
+        super.testAnnotate();
+    }
+    
+    public void testKeywords() throws Exception {
+        super.testKeywords();
+    }
+    
 }

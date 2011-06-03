@@ -241,7 +241,7 @@ public abstract class SvnTest extends BuildFileTest {
         assertTrue(patchFile.length() > 0);
     }
     
-    public void testKeywords() throws FileNotFoundException, IOException {
+    public void testKeywords() throws Exception {
         executeTarget("testKeywords");
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(WORKINGCOPY_DIR+"/keywordsTest/file.txt"))); 
         assertEquals("$LastChangedRevision: 1 $",reader.readLine());
