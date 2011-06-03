@@ -175,48 +175,6 @@ public class SvnTask extends Task {
     }
 
     /**
-     * @see SvnSetting#setCertReject(Boolean)
-     */
-    public void setCertReject( Boolean newcertreject ) {
-        SvnFacade.setCertReject( this, newcertreject );
-    }
-    
-    /**
-     * @see SvnSetting#setSSLPassword(String)
-     */
-    public void setSSLPassword( String newpassword ) {
-        SvnFacade.setSSLPassword( this, newpassword );
-    }
-    
-    /**
-     * @see SvnSetting#setSSLClientCertPath(File)
-     */
-    public void setSSLClientCertPath( File newclientcertpath ) {
-        SvnFacade.setSSLClientCertPath( this, newclientcertpath );
-    }
-    
-    /**
-     * @see SvnSetting#setSSHPort(Integer)
-     */
-    public void setSSHPort( Integer newsshport ) {
-        SvnFacade.setSSHPort( this, newsshport );
-    }
-    
-    /**
-     * @see SvnSetting#setSSHPassphrase(String)
-     */
-    public void setSSHPassphrase( String newsshpassphrase ) {
-        SvnFacade.setSSHPassphrase( this, newsshpassphrase );
-    }
-    
-    /**
-     * @see SvnSetting#setSSHKeyPath(File)
-     */
-    public void setSSHKeyPath( File newsshkeypath ) {
-        SvnFacade.setSSHKeyPath( this, newsshkeypath );
-    }
-
-    /**
      * @see SvnSetting#setJavahl(boolean)
      */
     public void setJavahl( boolean javahl ) {
