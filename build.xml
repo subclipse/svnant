@@ -33,7 +33,8 @@
   <!-- cleans everything                                                                       -->
   <!-- ======================================================================================= -->
   <target name="clean">
-    <delete dir="${build.dir}" />
+    <delete dir="${build.dir}" failonerror="false" includeemptydirs="true"/>
+    <mkdir dir="${build.dir}"/>
   </target>
 
   <!-- ======================================================================================= -->

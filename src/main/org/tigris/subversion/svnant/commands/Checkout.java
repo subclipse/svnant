@@ -54,11 +54,15 @@
  */
 package org.tigris.subversion.svnant.commands;
 
+import org.tigris.subversion.svnclientadapter.utils.Depth;
+
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 import org.tigris.subversion.svnant.SvnAntUtilities;
+
+import org.apache.tools.ant.types.EnumeratedAttribute;
 
 import org.apache.tools.ant.BuildException;
 
@@ -71,17 +75,25 @@ import java.io.File;
  */
 public class Checkout extends SvnCommand {
 
+    private static final String MSG_USAGE_CONFLICT = "The option 'recurse' cannot be used together with 'depth' ! Ignoring 'recurse' !";
+
     /** url to checkout from */
-    private SVNUrl      url      = null;
+    private SVNUrl          url      = null;
 
     /** checkout recursively ? */
-    private boolean     recurse  = true;
+    private Boolean         recurse  = null;
 
     /** destinaty directory. */
-    private File        destPath = null;
+    private File            destPath = null;
 
     /** revision to checkout */
-    private SVNRevision revision = SVNRevision.HEAD;
+    private SVNRevision     revision = SVNRevision.HEAD;
+    
+    private boolean         force = false;
+    
+    private boolean         ignoreexternals = false;
+    
+    private CheckoutDepth   depth = null;
 
     /**
      * {@inheritDoc}
@@ -91,7 +103,12 @@ public class Checkout extends SvnCommand {
             destPath = getProject().getBaseDir();
         }
         try {
-            getClient().checkout( url, destPath, revision, recurse );
+            if( depth != null ) {
+                getClient().checkout( url, destPath, revision, depth.getIntValue(), ignoreexternals, force );
+            } else {
+                getClient().checkout( url, destPath, revision, recurse == null ? true : recurse.booleanValue() );
+            }
+            
         } catch( SVNClientException e ) {
             throw new BuildException( "Can't checkout", e );
         }
@@ -106,6 +123,9 @@ public class Checkout extends SvnCommand {
         }
         SvnAntUtilities.attrNotNull( "url", url );
         SvnAntUtilities.attrNotNull( "revision", revision );
+        if( (depth != null) && (recurse != null) ) {
+            warning( MSG_USAGE_CONFLICT );
+        }
     }
 
     /**
@@ -113,9 +133,36 @@ public class Checkout extends SvnCommand {
      * @param recurse whether you want it to checkout files recursively.
      */
     public void setRecurse( boolean recurse ) {
-        this.recurse = recurse;
+        this.recurse = Boolean.valueOf( recurse );
+    }
+    
+    /**
+     * Enforces the execution of the commands.
+     * 
+     * @param force   <code>true</code> <=> Enforces the execution of the commands.
+     */
+    public void setForce( boolean force ) {
+        this.force = force;
+    }
+    
+    /**
+     * Allows to disable the checkout of externals.
+     * 
+     * @param ignoreexternals   <code>true</code> <=> Disable the checkout of externals.
+     */
+    public void setIgnoreExternals( boolean ignoreexternals ) {
+        this.ignoreexternals = ignoreexternals;
     }
 
+    /**
+     * Changes the depth to be used while checking out.
+     * 
+     * @param depth   One of the following values: <code>empty, files, immediates, infinity</code>.
+     */
+    public void setDepth( CheckoutDepth depth ) {
+        this.depth = depth;
+    }
+    
     /**
      * Sets the URL; required.
      * @param url The url to set
@@ -139,6 +186,32 @@ public class Checkout extends SvnCommand {
      */
     public void setRevision( String revision ) {
         this.revision = getRevisionFrom( revision );
+    }
+
+    /**
+     * EnumeratedAttribute covering the depth for the checkout.
+     */
+    public static class CheckoutDepth extends EnumeratedAttribute {
+
+        private static final String[] VALUES = { "empty", "files", "immediates", "infinity" };
+        private static final int[] IVALUES = { Depth.empty, Depth.files, Depth.immediates, Depth.infinity };
+
+        /** 
+         * {@inheritDoc} 
+         */
+        public String[] getValues() {
+            return VALUES;
+        }
+        
+        public int getIntValue() {
+            for( int i = 0; i < VALUES.length; i++ ) {
+                if( VALUES[i].equalsIgnoreCase( getValue() ) ) {
+                    return IVALUES[i];
+                }
+            }
+            throw new BuildException( "Unsupported 'depth' value: '" + getValue() + "'");
+        }
+
     }
 
 }
