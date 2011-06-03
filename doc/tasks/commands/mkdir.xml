@@ -24,6 +24,10 @@
       <doc>commit message</doc>
     </attribute>
   
+    <attribute name="makeParents" required="false" default="false">
+      <doc>Create parents first.</doc>
+    </attribute>
+  
   </attributes>
 
 </msubsection>

@@ -61,7 +61,10 @@ import org.tigris.subversion.svnant.SvnAntUtilities;
 
 import org.apache.tools.ant.BuildException;
 
+import java.util.Stack;
+
 import java.io.File;
+import java.io.IOException;
 
 /**
  * @author cedric
@@ -80,6 +83,8 @@ public class Mkdir extends SvnCommand {
     /** message (when url is used) */
     private String message = null;
 
+    private boolean makeparents = false;
+
     /**
      * {@inheritDoc}
      */
@@ -87,12 +92,30 @@ public class Mkdir extends SvnCommand {
 
         if( url != null ) {
             try {
-                getClient().mkdir( url, message );
+                getClient().mkdir( url, makeparents, message );
             } catch( SVNClientException e ) {
                 throw new BuildException( "Can't make dir " + url, e );
             }
         } else {
             try {
+                if( makeparents ) {
+                    try {
+                        path = path.getCanonicalFile();
+                    } catch( IOException ex ) {
+                        throw new BuildException( "Cannot determine canonical path of " + path, ex);
+                    }
+                    // as we're working on the working copy we need to make sure
+                    // that parental directories will be created and added, too
+                    Stack<File> parents = new Stack<File>();
+                    while( ! path.isDirectory() ) {
+                        parents.push( path );
+                        path = path.getParentFile();
+                    }
+                    while( ! parents.isEmpty() ) {
+                        getClient().mkdir( parents.pop() );
+                    }
+                } else {
+                }
                 getClient().mkdir( path );
             } catch( SVNClientException e ) {
                 throw new BuildException( "Can't make dir " + path, e );
@@ -134,5 +157,16 @@ public class Mkdir extends SvnCommand {
     public void setMessage( String message ) {
         this.message = message;
     }
+    
+    /**
+     * Forces the creation of the parents first if a copy has to be done from a <code>srcUrl</code>
+     * to a <code>destUrl</code>.
+     * 
+     * @param newmakeparents   <code>true</code> <=> Create parents first.
+     */
+    public void setMakeParents( boolean newmakeparents ) {
+        this.makeparents  = newmakeparents;
+    }
+    
 
 }
