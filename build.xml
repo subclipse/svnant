@@ -16,7 +16,7 @@
   <!-- ======================================================================================= -->
   
   <path id="project.classpath">
-    <fileset dir="${dir.project}/lib" includes="*.jar"/>
+    <fileset dir="${dir.project}/lib" includes="*.jar" excludes="ant*.jar"/>
   </path>
   
   <path id="path.xinclude">
@@ -151,11 +151,9 @@
       </fileset>
     </copy>
     <copy todir="${build.distrib.dir}/lib">
-      <fileset dir="${dir.project}/lib/svnclientadapter/lib" includes="*-LICENSE"/>
-      <fileset dir="${dir.project}/lib/svnclientadapter/lib" includes="*.jar"/>
-      <fileset dir="${dir.project}/lib/svnkit" includes="jna*"/>
+      <fileset dir="${dir.project}/lib" includes="*-LICENSE"/>
+      <fileset dir="${dir.project}/lib" includes="*.jar" excludes="ant*.jar junit.jar"/>
     </copy>
-    <copy file="${dir.project}/lib/svnclientadapter/license.txt" tofile="${build.distrib.dir}/lib/SVNCLIENTADAPTER-LICENSE"/>
     <copy file="${build.lib.dir}/svnant.jar"           todir="${build.distrib.dir}/lib" />
     <copy file="${distribfiles.dir}/build.xml"         todir="${build.distrib.dir}"/>
     
