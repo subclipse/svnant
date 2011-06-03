@@ -382,6 +382,28 @@ public class SvnFacade {
     }
 
     /**
+     * @see SvnSetting#setCertReject(Boolean)
+     * 
+     * @param component   The ant project component used to access the facade. Not <code>null</code>.
+     */
+    public static final void setCertReject( ProjectComponent component, Boolean newcertreject ) {
+        getSetting( component ).setCertReject( newcertreject );
+    }
+    
+    /**
+     * @see SvnSetting#getCertReject()
+     *  
+     * @param component   The ant project component used to access the facade. Not <code>null</code>.
+     */
+    public static final Boolean getCertReject( ProjectComponent component ) {
+        Boolean result = getSetting( component ).getCertReject();
+        if( result == null ) {
+            result = getRefidSetting( component ).getCertReject();
+        }
+        return result;
+    }
+
+    /**
      * @see SvnSetting#setDateFormatter(String)
      * 
      * @param component   The ant project component used to access the facade. Not <code>null</code>.
@@ -595,9 +617,6 @@ public class SvnFacade {
             result.setUsername( getUsername( component ) );
         }
         if( commandline ) {
-            if( getUsername( component ) != null ) {
-                result.setUsername( getUsername( component ) );
-            }
             if( getPassword( component ) != null ) {
                 result.setPassword( getPassword( component ) );
             }
@@ -610,7 +629,8 @@ public class SvnFacade {
                     getSSHPassphrase     ( component ),
                     getSSHPort           ( component ),
                     getSSLClientCertPath ( component ),
-                    getSSLPassword       ( component )
+                    getSSLPassword       ( component ),
+                    getCertReject        ( component )
                 ) 
             );
         }
@@ -628,8 +648,18 @@ public class SvnFacade {
         private String    sslclientcertpath;
         private String    sslcertpassword;
         private Integer   sshport;
+        private Boolean   reject;
         
-        public DefaultPasswordCallback(String newusername, String newpassword, File sshkeypath, String sshphrase, Integer sshp, File sslpath, String sslpassword) {
+        public DefaultPasswordCallback(
+            String    newusername, 
+            String    newpassword, 
+            File      sshkeypath, 
+            String    sshphrase, 
+            Integer   sshp, 
+            File      sslpath, 
+            String    sslpassword,
+            Boolean   certreject
+        ) {
             username            = newusername;
             password            = newpassword;
             sshprivatekeypath   = sshkeypath != null ? sshkeypath.getAbsolutePath() : null;
@@ -637,6 +667,7 @@ public class SvnFacade {
             sshport             = sshp;
             sslclientcertpath   = sslpath != null ? sslpath.getAbsolutePath() : null;
             sslcertpassword     = sslpassword;
+            reject              = certreject;
         }
         
         
@@ -665,7 +696,11 @@ public class SvnFacade {
          * {@inheritDoc}
          */
         public int askTrustSSLServer( String info, boolean allowpermanently ) {
-            return ISVNPromptUserPassword.AcceptTemporary;
+            if( Boolean.TRUE.equals( reject ) ) {
+                return ISVNPromptUserPassword.Reject;
+            } else {
+                return ISVNPromptUserPassword.AcceptTemporary;
+            }
         }
         
         /**

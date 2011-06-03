@@ -81,7 +81,8 @@ public class SvnSetting extends DataType {
     private Integer   sshport;
     private String    sshpassphrase;
     private File      sshkeypath;
-
+    private Boolean   reject;
+    
     /**
      * Initialises this instance.
      * 
@@ -102,8 +103,27 @@ public class SvnSetting extends DataType {
         sshport                 = null;
         sshpassphrase           = null;
         sshkeypath              = null;
+        reject                  = null;
     }
 
+    /**
+     * Changes the handling of suspicious certificates.
+     * 
+     * @param newcertreject   <code>true</code> <=> Reject suspicious certificates.
+     */
+    public void setCertReject( Boolean newcertreject ) {
+        reject = newcertreject;
+    }
+    
+    /**
+     * Returns <code>true</code> if suspicious certificates shall be rejected.
+     * 
+     * @return   <code>true</code> <=> Suspicious certificates shall be rejected.
+     */
+    public Boolean getCertReject() {
+        return reject;
+    }
+    
     /**
      * Changes the password to be used for an SSL connection.
      * 

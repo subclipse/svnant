@@ -173,6 +173,13 @@ public class SvnTask extends Task {
     }
 
     /**
+     * @see SvnSetting#setCertReject(Boolean)
+     */
+    public void setCertReject( Boolean newcertreject ) {
+        SvnFacade.setCertReject( this, newcertreject );
+    }
+    
+    /**
      * @see SvnSetting#setSSLPassword(String)
      */
     public void setSSLPassword( String newpassword ) {
@@ -236,14 +243,7 @@ public class SvnTask extends Task {
     }
 
     /**
-     * @return the failonerror
-     */
-    public boolean isFailonerror() {
-        return SvnFacade.getFailonerror( this );
-    }
-
-    /**
-     * @param failonerror the failonerror to set
+     * @see SvnSetting#setFailonerror(boolean)
      */
     public void setFailonerror( boolean failonerror ) {
         SvnFacade.setFailonerror( this, failonerror );
@@ -672,7 +672,7 @@ public class SvnTask extends Task {
             executeImpl();
         } catch( Exception ex ) {
 
-            if( isFailonerror() ) {
+            if( SvnFacade.getFailonerror( this ) ) {
 
                 if( ex instanceof BuildException ) {
                     throw (BuildException) ex;
