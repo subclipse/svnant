@@ -287,7 +287,7 @@ public class ResourceSetSvnCommand extends SvnCommand {
             if( file.isDirectory() ) {
                 // this directory is included as part of the fileset, so recursion
                 // is disabled here
-                handleDir( dir, false );
+                handleDir( file, false );
             }
         }
         
