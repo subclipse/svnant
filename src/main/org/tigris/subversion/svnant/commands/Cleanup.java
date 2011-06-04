@@ -58,14 +58,19 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 import org.tigris.subversion.svnant.SvnAntUtilities;
 
-import org.apache.tools.ant.BuildException;
-
 import java.io.File;
 
+/**
+ * svn cleanup
+ * 
+ * @author Cédric Chabanois (cchabanois@ifrance.com)
+ * @author Daniel Kasmeroglu (Daniel.Kasmeroglu@kasisoft.net)
+ */
 public class Cleanup extends SvnCommand {
 
-    /** directory to cleanup */
-    private File    path        = null;
+    private static final String MSG_FAILED_TO_CLEANUP = "Failed to cleanup";
+    
+    private File    path = null;
 
     /**
      * {@inheritDoc}
@@ -73,8 +78,8 @@ public class Cleanup extends SvnCommand {
     public void execute() {
         try {
             getClient().cleanup( path );
-        } catch( SVNClientException e ) {
-            throw new BuildException(e);
+        } catch( SVNClientException ex ) {
+            throw ex( ex, MSG_FAILED_TO_CLEANUP );
         }
     }
 

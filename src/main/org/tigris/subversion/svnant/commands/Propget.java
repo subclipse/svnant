@@ -60,19 +60,20 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 import org.tigris.subversion.svnant.SvnAntUtilities;
 
-import org.apache.tools.ant.BuildException;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
  * svn propget. Get a property
- * @author Cédric Chabanois 
- *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
- *
+ * 
+ * @author Cédric Chabanois (cchabanois@ifrance.com)
  */
 public class Propget extends SvnCommand {
+
+    private static final String MSG_CANT_WRITE_PROPERTY = "Can't write property value to file %s";
+
+    private static final String MSG_CANT_GET_PROPERTY = "Can't get property %s";
 
     // path of the resource from which we want to get the property
     private File   path;
@@ -101,8 +102,8 @@ public class Propget extends SvnCommand {
             } else {
                 svnProperty = getClient().propertyGet( url, name );
             }
-        } catch( SVNClientException e ) {
-            throw new BuildException( "Can't get property " + name, e );
+        } catch( SVNClientException ex ) {
+            throw ex( ex, MSG_CANT_GET_PROPERTY, name );
         }
 
         if( property != null && svnProperty != null ) {
@@ -116,16 +117,10 @@ public class Propget extends SvnCommand {
                 if( svnProperty != null ) {
                     os.write( svnProperty.getData() );
                 }
-            } catch( IOException e ) {
-                throw new BuildException( "Can't write property value to file " + file.toString(), e );
+            } catch( IOException ex ) {
+                throw ex( ex, MSG_CANT_WRITE_PROPERTY, file.toString() );
             } finally {
-                if( os != null ) {
-                    try {
-                        os.close();
-                    } catch( IOException e ) {
-                        //An exception during close. Just ignore.
-                    }
-                }
+                SvnAntUtilities.close( os );
             }
         }
     }

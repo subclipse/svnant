@@ -59,20 +59,22 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 import org.tigris.subversion.svnant.SvnAntUtilities;
 
-import org.apache.tools.ant.BuildException;
-
 import java.util.Stack;
 
 import java.io.File;
 import java.io.IOException;
 
 /**
- * @author cedric
- *
- * Creates a directory directly in a repository or creates a
- * directory on disk and schedules it for addition 
+ * Creates a directory directly in a repository or creates a directory on disk and schedules it 
+ * for addition
+ *  
+ * @author Cédric Chabanois (cchabanois@ifrance.com)
  */
 public class Mkdir extends SvnCommand {
+
+    private static final String MSG_CANONICAL           = "Cannot determine canonical path of %s";
+
+    private static final String MSG_CANT_MAKE_DIRECTORY = "Can't make dir %s";
 
     /** the url of dir to create */
     private SVNUrl url     = null;
@@ -93,8 +95,8 @@ public class Mkdir extends SvnCommand {
         if( url != null ) {
             try {
                 getClient().mkdir( url, makeparents, message );
-            } catch( SVNClientException e ) {
-                throw new BuildException( "Can't make dir " + url, e );
+            } catch( SVNClientException ex ) {
+                throw ex( ex, MSG_CANT_MAKE_DIRECTORY, url );
             }
         } else {
             try {
@@ -102,7 +104,7 @@ public class Mkdir extends SvnCommand {
                     try {
                         path = path.getCanonicalFile();
                     } catch( IOException ex ) {
-                        throw new BuildException( "Cannot determine canonical path of " + path, ex);
+                        throw ex( ex, MSG_CANONICAL, path);
                     }
                     // as we're working on the working copy we need to make sure
                     // that parental directories will be created and added, too
@@ -117,8 +119,8 @@ public class Mkdir extends SvnCommand {
                 } else {
                 }
                 getClient().mkdir( path );
-            } catch( SVNClientException e ) {
-                throw new BuildException( "Can't make dir " + path, e );
+            } catch( SVNClientException ex ) {
+                throw ex( ex, MSG_CANT_MAKE_DIRECTORY, path );
             }
         }
 

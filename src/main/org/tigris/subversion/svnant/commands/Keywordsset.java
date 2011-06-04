@@ -57,17 +57,17 @@ package org.tigris.subversion.svnant.commands;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNKeywords;
 
-import org.apache.tools.ant.BuildException;
-
 import java.io.File;
 
 /**
  * set keywords substitution list
- * @author Cédric Chabanois 
- *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
- *
+ * 
+ * @author Cédric Chabanois (cchabanois@ifrance.com)
+ * @author Daniel Kasmeroglu (Daniel.Kasmeroglu@kasisoft.net)
  */
 public class Keywordsset extends Keywords {
+
+    private static final String MSG_CANT_SET_KEYWORDS = "Can't set keywords on file %s";
 
     /**
      * {@inheritDoc}
@@ -83,11 +83,17 @@ public class Keywordsset extends Keywords {
         keywordsSet( file, keywords, false );
     }
 
+    /**
+     * Sets the keywords to the supplied resource.
+     * 
+     * @param file       The resource where the keywords shall be set. Not <code>null</code>.
+     * @param keywords   The keywords that have to be set. Not <code>null</code>.
+     */
     private void keywordsSet( File file, SVNKeywords keywords, boolean recurse ) {
         try {
             getClient().setKeywords( file, keywords, recurse );
-        } catch( SVNClientException e ) {
-            throw new BuildException( "Can't set keywords on file " + file.toString(), e );
+        } catch( SVNClientException ex ) {
+            throw ex( ex, MSG_CANT_SET_KEYWORDS, file.toString() );
         }
     }
 

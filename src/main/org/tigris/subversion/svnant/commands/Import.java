@@ -59,8 +59,6 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 import org.tigris.subversion.svnant.SvnAntUtilities;
 
-import org.apache.tools.ant.BuildException;
-
 import java.io.File;
 
 /**
@@ -70,18 +68,20 @@ import java.io.File;
  */
 public class Import extends SvnCommand {
 
-    /** the url */
-    private SVNUrl  url     = null;
+    private static final String MSG_CANT_IMPORT = "Can't import";
+
+    private static final String MSG_CANT_MAKE_DIR = "Can't make dir %s";
+
+    private SVNUrl  url         = null;
 
     /** the path to import */
-    private File    path    = null;
+    private File    path        = null;
 
-    /** message */
-    private String  message = null;
+    private String  message     = null;
 
-    private boolean recurse = true;
+    private boolean recurse     = true;
 
-    private String newentry = null;
+    private String  newentry    = null;
     
     /**
      * {@inheritDoc}
@@ -93,13 +93,13 @@ public class Import extends SvnCommand {
                 try {
                     desturl = url.appendPath( newentry );
                     getClient().mkdir( desturl, message );
-                } catch( SVNClientException e ) {
-                    throw new BuildException( "Can't make dir " + url, e );
+                } catch( SVNClientException ex ) {
+                    throw ex( ex, MSG_CANT_MAKE_DIR, url );
                 }
             }
             getClient().doImport( path, desturl, message, recurse );
-        } catch( SVNClientException e ) {
-            throw new BuildException( "Can't import", e );
+        } catch( SVNClientException ex ) {
+            throw ex( ex, MSG_CANT_IMPORT );
         }
     }
 

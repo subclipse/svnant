@@ -59,21 +59,20 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 import org.tigris.subversion.svnant.SvnAntUtilities;
 
-import org.apache.tools.ant.BuildException;
-
 import java.io.File;
 
 /**
  * svn Delete. Remove files and directories from version control.
  * 
- * @author Cédric Chabanois 
- *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
- *
+ * @author Cédric Chabanois (cchabanois@ifrance.com)
  * @author Daniel Kasmeroglu (Daniel.Kasmeroglu@kasisoft.net)
  */
 public class Delete extends ResourceSetSvnCommand {
 
-    /** message for commit (only when target is an url) */
+    private static final String MSG_CANNOT_DELETE = "Cannot delete file or directory '%s' !";
+
+    private static final String MSG_CANNOT_DELETE_URL = "Cannot delete url '%s'";
+
     private String          message  = null;
 
     /** url of the target to delete */
@@ -124,34 +123,34 @@ public class Delete extends ResourceSetSvnCommand {
 
     /**
      * delete directly on repository
-     * @param anUrl
-     * @param aMessage
+     * @param url
+     * @param message
      */
-    private void deleteUrl( SVNUrl anUrl, String aMessage ) {
+    private void deleteUrl( SVNUrl url, String message ) {
         try {
-            getClient().remove( new SVNUrl[] { anUrl }, aMessage );
-        } catch( SVNClientException e ) {
-            throw new BuildException( "Cannot delete url " + anUrl.toString(), e );
+            getClient().remove( new SVNUrl[] { url }, message );
+        } catch( SVNClientException ex ) {
+            throw ex( ex, MSG_CANNOT_DELETE_URL, url.toString() );
         }
     }
 
     /**
      * Delete file or directory
      * When file is a directory, all subdirectories/files are deleted too
-     * @param aFile
-     * @param appyForce
+     * @param file
+     * @param force
      */
-    private void deleteFile( File aFile, boolean appyForce ) {
+    private void deleteFile( File file, boolean force ) {
         try {
-            getClient().remove( new File[] { aFile }, appyForce );
-        } catch( SVNClientException e ) {
-            throw new BuildException( "Cannot delete file or directory " + aFile.getAbsolutePath(), e );
+            getClient().remove( new File[] { file }, force );
+        } catch( SVNClientException ex ) {
+            throw ex( ex, MSG_CANNOT_DELETE, file.getAbsolutePath() );
         }
     }
 
     /**
-     * set the message for the commit (only when deleting directly from repository
-     * using an url)
+     * set the message for the commit (only when deleting directly from repository using an url)
+     * 
      * @param message
      */
     public void setMessage( String message ) {

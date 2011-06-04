@@ -65,7 +65,6 @@ import org.tigris.subversion.svnant.SvnAntUtilities;
 import org.apache.tools.ant.types.DirSet;
 import org.apache.tools.ant.types.FileSet;
 
-import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 
 import java.util.ArrayList;
@@ -82,6 +81,7 @@ import java.io.File;
  */
 public class ResourceSetSvnCommand extends SvnCommand {
 
+    private static final String MSG_FAILED_TO_CALCULATE_UNMANAGED = "Failed to calculate unmanaged entries.";
     private File            dir;
     private File            file;
     private boolean         recurse;
@@ -238,7 +238,7 @@ public class ResourceSetSvnCommand extends SvnCommand {
             }
             
         } catch( SVNClientException ex ) {
-            throw new BuildException( "Failed to calculate unmanaged entries.", ex );
+            throw ex( ex, MSG_FAILED_TO_CALCULATE_UNMANAGED );
         }
         
     }

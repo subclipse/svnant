@@ -64,29 +64,28 @@ import org.tigris.subversion.svnant.SvnAntUtilities;
 
 import org.apache.tools.ant.types.EnumeratedAttribute;
 
-import org.apache.tools.ant.BuildException;
-
 import java.io.File;
 
 /**
  * svn Checkout. Check out a working copy from a repository 
- * @author Cédric Chabanois 
- *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
+ * 
+ * @author Cédric Chabanois (cchabanois@ifrance.com)
+ * @author Daniel Kasmeroglu (Daniel.Kasmeroglu@kasisoft.net)
  */
 public class Checkout extends SvnCommand {
 
-    private static final String MSG_USAGE_CONFLICT = "The option 'recurse' cannot be used together with 'depth' ! Ignoring 'recurse' !";
+    private static final String MSG_CHECKOUT_FAILED = 
+        "Can't checkout";
 
-    /** url to checkout from */
+    private static final String MSG_USAGE_CONFLICT = 
+        "The option 'recurse' cannot be used together with 'depth' ! Ignoring 'recurse' !";
+
     private SVNUrl          url      = null;
 
-    /** checkout recursively ? */
     private Boolean         recurse  = null;
 
-    /** destinaty directory. */
     private File            destPath = null;
 
-    /** revision to checkout */
     private SVNRevision     revision = SVNRevision.HEAD;
     
     private boolean         force = false;
@@ -109,8 +108,8 @@ public class Checkout extends SvnCommand {
                 getClient().checkout( url, destPath, revision, recurse == null ? true : recurse.booleanValue() );
             }
             
-        } catch( SVNClientException e ) {
-            throw new BuildException( "Can't checkout", e );
+        } catch( SVNClientException ex ) {
+            throw ex( ex, MSG_CHECKOUT_FAILED );
         }
     }
 
@@ -193,8 +192,15 @@ public class Checkout extends SvnCommand {
      */
     public static class CheckoutDepth extends EnumeratedAttribute {
 
-        private static final String[] VALUES = { "empty", "files", "immediates", "infinity" };
-        private static final int[] IVALUES = { Depth.empty, Depth.files, Depth.immediates, Depth.infinity };
+        private static final String MSG_UNSUPPORTED_DEPTH_VALUE = "Unsupported 'depth' value: '%s'";
+
+        private static final String[] VALUES = { 
+            "empty", "files", "immediates", "infinity" 
+        };
+        
+        private static final int[]    IVALUES = { 
+            Depth.empty, Depth.files, Depth.immediates, Depth.infinity 
+        };
 
         /** 
          * {@inheritDoc} 
@@ -209,7 +215,7 @@ public class Checkout extends SvnCommand {
                     return IVALUES[i];
                 }
             }
-            throw new BuildException( "Unsupported 'depth' value: '" + getValue() + "'");
+            throw ex( MSG_UNSUPPORTED_DEPTH_VALUE, getValue() );
         }
 
     }

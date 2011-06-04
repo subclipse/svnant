@@ -60,18 +60,17 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 import org.tigris.subversion.svnant.SvnAntUtilities;
 
-import org.apache.tools.ant.BuildException;
-
 import java.io.File;
 
 /**
  * svn Copy. Duplicate something in working copy or repos, remembering history.
- * @author Cédric Chabanois 
- *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
- *
+ * 
+ * @author Cédric Chabanois (cchabanois@ifrance.com)
+ * @author Daniel Kasmeroglu (Daniel.Kasmeroglu@kasisoft.net)
  */
 public class Copy extends SvnCommand {
 
+    private static final String MSG_CANT_COPY = "Can't copy";
     private File        srcPath     = null;
     private File        destPath    = null;
     private SVNUrl      srcUrl      = null;
@@ -102,8 +101,8 @@ public class Copy extends SvnCommand {
                     getClient().copy( srcUrl, destUrl, message, revision, makeparents );
                 }
             }
-        } catch( SVNClientException e ) {
-            throw new BuildException( "Can't copy", e );
+        } catch( SVNClientException ex ) {
+            throw ex( ex, MSG_CANT_COPY );
         }
     }
 
@@ -152,8 +151,8 @@ public class Copy extends SvnCommand {
     }
 
     /**
-     * set the message for the commit (only when copying directly to repository
-     * using an url)
+     * set the message for the commit (only when copying directly to repository using an url)
+     * 
      * @param message
      */
     public void setMessage( String message ) {

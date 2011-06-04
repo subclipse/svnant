@@ -60,9 +60,7 @@ import org.tigris.subversion.svnclientadapter.SVNNodeKind;
 import java.io.File;
 
 /**
- * @author Cédric Chabanois 
- *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
- *
+ * @author Cédric Chabanois (cchabanois@ifrance.com)
  */
 public class Feedback implements ISVNNotifyListener {
 

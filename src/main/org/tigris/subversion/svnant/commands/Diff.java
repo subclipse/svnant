@@ -58,20 +58,20 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNRevision;
 import org.tigris.subversion.svnclientadapter.SVNUrl;
 
-import org.apache.tools.ant.BuildException;
-
 import java.io.File;
 
 /**
  * svn Diff.   
  * display the differences between two paths. (Unified format)
  * 
- * @author Cédric Chabanois 
- *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
- *
+ * @author Cédric Chabanois (cchabanois@ifrance.com)
  */
 public class Diff extends SvnCommand {
 
+    private static final String MSG_CANT_GET_DIFFERENCES    = "Can't get the differences";
+    
+    private static final String MSG_INVALID_PATH_URL_MIXUP  = "paths cannot be with urls when diffing";
+    
     private SVNUrl      oldUrl            = null;
     private SVNUrl      newUrl            = null;
     private File        oldPath           = null;
@@ -91,8 +91,8 @@ public class Diff extends SvnCommand {
             } else {
                 getClient().diff( oldPath, oldTargetRevision, newPath, newTargetRevision, outFile, recurse );
             }
-        } catch( SVNClientException e ) {
-            throw new BuildException( "Can't get the differences", e );
+        } catch( SVNClientException ex ) {
+            throw ex( ex, MSG_CANT_GET_DIFFERENCES );
         }
     }
 
@@ -102,11 +102,11 @@ public class Diff extends SvnCommand {
     protected void validateAttributes() {
         if( oldUrl != null ) {
             if( (oldPath != null) || (newPath != null) ) {
-                throw new BuildException( "paths cannot be with urls when diffing" );
+                throw ex( MSG_INVALID_PATH_URL_MIXUP );
             }
         } else {
             if( (oldUrl != null) || (newUrl != null) ) {
-                throw new BuildException( "paths cannot be with urls when diffing" );
+                throw ex( MSG_INVALID_PATH_URL_MIXUP );
             }
         }
     }

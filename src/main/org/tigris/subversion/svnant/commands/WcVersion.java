@@ -63,7 +63,6 @@ import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 
 import org.tigris.subversion.svnant.SvnAntUtilities;
 
-import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
 import java.io.File;
@@ -71,11 +70,13 @@ import java.io.File;
 /**
  * Fetches a summary of working copy status, similar to svn's svnversion utility.
  * 
- * @author Matt Doran
- *          <a href="mailto:matt.doran@papercut.biz">matt.doran@papercut.biz</a> 
+ * @author Matt Doran (matt.doran@papercut.biz)
  */
 public class WcVersion extends SvnCommand {
 
+    private static final String MSG_CANT_GET_SUMMARY    = "Can't get summary status for path %s";
+    private static final String MSG_UNMANAGED_PATH      = "The path '%s' is not under version control !";
+    
     private File    path;
     private String  prefix;
     private boolean processUnversioned = false;
@@ -89,8 +90,8 @@ public class WcVersion extends SvnCommand {
 
         try {
             wcVersionSummary = getWorkingCopySumary( getPath() );
-        } catch( SVNClientException e ) {
-            throw new BuildException( "Can't get summary status for path " + getPath(), e );
+        } catch( SVNClientException ex ) {
+            throw ex( ex, MSG_CANT_GET_SUMMARY, getPath() );
         }
 
         // Save the status to ant properties.
@@ -138,7 +139,7 @@ public class WcVersion extends SvnCommand {
     private WCVersionSummary getWorkingCopySumary( File wcpathfile ) throws SVNClientException {
         ISVNStatus rootstatus = getClient().getSingleStatus( wcpathfile );
         if( rootstatus.getUrl() == null ) {
-            throw createEx( "The path '%s' is not under version control !", wcpathfile.getAbsolutePath() );
+            throw ex( MSG_UNMANAGED_PATH, wcpathfile.getAbsolutePath() );
         }
         ISVNStatus[] statuses = getClient().getStatus( wcpathfile, true, true );
         return new WCVersionSummary( rootstatus, statuses, wcpathfile, processUnversioned );

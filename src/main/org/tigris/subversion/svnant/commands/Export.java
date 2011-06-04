@@ -60,19 +60,19 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 import org.tigris.subversion.svnant.SvnAntUtilities;
 
-import org.apache.tools.ant.BuildException;
-
 import java.io.File;
 
 /**
  * svn Export.   
- * Exports a clean directory tree from the repository or
- * Exports a clean directory tree from the working copy 
- * @author Cédric Chabanois 
- *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
- *
+ * 
+ * Exports a clean directory tree from the repository or exports a clean directory tree from the 
+ * working copy
+ *  
+ * @author Cédric Chabanois (cchabanois@ifrance.com)
  */
 public class Export extends SvnCommand {
+
+    private static final String MSG_CANT_EXPORT = "Can't export";
 
     private boolean     force    = false;
 
@@ -98,8 +98,8 @@ public class Export extends SvnCommand {
             } else {
                 getClient().doExport( srcPath, destPath, force );
             }
-        } catch( SVNClientException e ) {
-            throw new BuildException( "Can't export", e );
+        } catch( SVNClientException ex ) {
+            throw ex( ex, MSG_CANT_EXPORT );
         }
     }
 

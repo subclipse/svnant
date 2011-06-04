@@ -60,7 +60,6 @@ import org.tigris.subversion.svnclientadapter.SVNDiffSummary;
 import org.tigris.subversion.svnant.SvnAntUtilities;
 
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Project;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -117,8 +116,8 @@ public class DiffSummarize extends Diff {
             try {
                 log( "output to file: " + f );
                 out = new BufferedWriter( new OutputStreamWriter( (new FileOutputStream( f )), encoding ) );
-            } catch( IOException e ) {
-                throw new BuildException( e );
+            } catch( IOException ex ) {
+                throw ex( ex, ex.getMessage() );
             }
         }
         try {
@@ -134,7 +133,7 @@ public class DiffSummarize extends Diff {
                 sb.setLength( 0 );
                 char first = Character.toUpperCase( s.getDiffKind().toString().charAt( 0 ) );
                 if( (first != 'A') && (first != 'M') && (first != 'D') ) {
-                    log( String.format( "the diff kind '%s' is currently not known", Character.valueOf( first ) ), Project.MSG_WARN );
+                    warning( "the diff kind '%s' is currently not known", Character.valueOf( first ) );
                 }
                 sb.append( s.propsChanged() ? "M" : " " );
                 // log(String.format("%s %s %s\n", status, propSt, s.getPath()));
@@ -152,13 +151,7 @@ public class DiffSummarize extends Diff {
         } catch( IOException ex ) {
             throw new BuildException( ex );
         } finally {
-            if( out != null ) {
-                try {
-                    out.close();
-                } catch( IOException ex ) {
-                    throw new BuildException( ex );
-                }
-            }
+            SvnAntUtilities.close( out );
         }
     }
 

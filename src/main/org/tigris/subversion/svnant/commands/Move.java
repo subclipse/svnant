@@ -60,18 +60,17 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 import org.tigris.subversion.svnant.SvnAntUtilities;
 
-import org.apache.tools.ant.BuildException;
-
 import java.io.File;
 
 /**
  * svn Move. Moves or renames a file
- * @author Cédric Chabanois 
- *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
- *
+ * 
+ * @author Cédric Chabanois (cchabanois@ifrance.com)
  */
 public class Move extends SvnCommand {
 
+    private static final String MSG_CANT_COPY = "Can't copy";
+    
     private File    srcPath  = null;
     private File    destPath = null;
     private SVNUrl  srcUrl   = null;
@@ -87,14 +86,14 @@ public class Move extends SvnCommand {
         if( srcPath != null ) {
             try {
                 getClient().move( srcPath, destPath, force );
-            } catch( SVNClientException e ) {
-                throw new BuildException( "Can't copy", e );
+            } catch( SVNClientException ex ) {
+                throw ex( ex, MSG_CANT_COPY );
             }
         } else {
             try {
                 getClient().move( srcUrl, destUrl, message, SVNRevision.HEAD );
-            } catch( SVNClientException e ) {
-                throw new BuildException( "Can't copy", e );
+            } catch( SVNClientException ex ) {
+                throw ex( ex, MSG_CANT_COPY );
             }
         }
 

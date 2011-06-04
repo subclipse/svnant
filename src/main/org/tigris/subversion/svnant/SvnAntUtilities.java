@@ -58,10 +58,9 @@ import org.apache.tools.ant.BuildException;
 
 import java.util.Collection;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 /**
  * DBC variety used for Ant. The difference is the fact that a BuildException is produced instead of an 
@@ -76,22 +75,17 @@ public class SvnAntUtilities {
   private SvnAntUtilities() {
   }
   
-  public static final void close( InputStream stream ) {
-      if( stream != null ) {
+  /**
+   * Shuts down the supplied Closeable if it's available.
+   * 
+   * @param closeable   The instance which might be closed. Maybe <code>null</code>.
+   */
+  public static final void close( Closeable closeable ) {
+      if( closeable != null ) {
           try {
-              stream.close();
+              closeable.close();
           } catch( IOException ex ) {
-              
-          }
-      }
-  }
-
-  public static final void close( OutputStream stream ) {
-      if( stream != null ) {
-          try {
-              stream.close();
-          } catch( IOException ex ) {
-              
+              // we don't mind
           }
       }
   }

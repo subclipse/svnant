@@ -62,8 +62,6 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 import org.tigris.subversion.svnant.SvnAntUtilities;
 
-import org.apache.tools.ant.BuildException;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
@@ -90,17 +88,20 @@ import java.text.SimpleDateFormat;
 
 /**
  * svn log. 
+ * 
  * @author Martin Letenay
  */
 public class Log extends SvnCommand {
 
+    private static final String MSG_FAILED_TO_LOAD = "Can't get the content of the specified file";
+
+    private static final String MSG_CANT_GET_LOG_MESSAGES = "Can't get the log messages for the path or url";
+
     /** destination file. */
     private File        destFile      = null;
 
-    /** url */
     private SVNUrl      url           = null;
 
-    /** the path */
     private File        path          = null;
 
     /** the stop-on-copy flag */
@@ -136,8 +137,8 @@ public class Log extends SvnCommand {
                 logMessages = getClient().getLogMessages( url, startRevision, startRevision, stopRevision, stopOnCopy, changedpathes, limit );
             }
             writeLogMessages( logMessages );
-        } catch( SVNClientException e ) {
-            throw new BuildException( "Can't get the log messages for the path or url", e );
+        } catch( SVNClientException ex ) {
+            throw ex( ex, MSG_CANT_GET_LOG_MESSAGES );
         }
     }
 
@@ -161,19 +162,15 @@ public class Log extends SvnCommand {
                 transformer.setOutputProperty( OutputKeys.ENCODING, "UTF-8" );
                 transformer.transform( new DOMSource( doc ), new StreamResult( outstream ) );
             } catch( TransformerConfigurationException ex ) {
-                throw new BuildException( "Can't get the content of the specified file", ex );
+                throw ex( ex, MSG_FAILED_TO_LOAD );
             } catch( ParserConfigurationException ex ) {
-                throw new BuildException( "Can't get the content of the specified file", ex );
+                throw ex( ex, MSG_FAILED_TO_LOAD );
             } catch( TransformerException ex ) {
-                throw new BuildException( "Can't get the content of the specified file", ex );
+                throw ex( ex, MSG_FAILED_TO_LOAD );
             } catch( IOException ex ) {
-                throw new BuildException( "Can't get the content of the specified file", ex );
+                throw ex( ex, MSG_FAILED_TO_LOAD );
             } finally {
-                try {
-                    outstream.close();
-                } catch( IOException ex ) {
-                    // Just ignore, it's exception during stream closing }
-                }
+                SvnAntUtilities.close( outstream );
             }
         } else {
             BufferedWriter writer = null;
@@ -183,13 +180,9 @@ public class Log extends SvnCommand {
                     writeLogEntryAsPlaintext( logMessages[i], writer );
                 }
             } catch( IOException ex ) {
-                throw new BuildException( "Can't get the content of the specified file", ex );
+                throw ex( ex, MSG_FAILED_TO_LOAD );
             } finally {
-                try {
-                    writer.close();
-                } catch( IOException ex ) {
-                    // Just ignore, it's exception during stream closing }
-                }
+                SvnAntUtilities.close( writer );
             }
         }
 

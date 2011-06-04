@@ -59,20 +59,17 @@ import org.tigris.subversion.svnclientadapter.SVNRevision;
 
 import org.tigris.subversion.svnant.SvnAntUtilities;
 
-import org.apache.tools.ant.BuildException;
-
 import java.io.File;
 
 /**
  * svn Update. Bring changes from the repository into the working copy.
  * 
- * @author Cédric Chabanois 
- *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
- *         
+ * @author Cédric Chabanois (cchabanois@ifrance.com)
  * @author Daniel Kasmeroglu (Daniel.Kasmeroglu@kasisoft.net)
  */
 public class Update extends ResourceSetSvnCommand {
 
+    private static final String MSG_CANNOT_UPDATE = "Cannot update file or dir %s";
     private SVNRevision   revision = SVNRevision.HEAD;
 
     public Update() {
@@ -103,8 +100,8 @@ public class Update extends ResourceSetSvnCommand {
     private void update( File file, SVNRevision revision, boolean recurse ) {
         try {
             getClient().update( file, revision, recurse );
-        } catch( SVNClientException e ) {
-            throw new BuildException( "Cannot update file or dir " + file.getAbsolutePath(), e );
+        } catch( SVNClientException ex ) {
+            throw ex( ex, MSG_CANNOT_UPDATE, file.getAbsolutePath() );
         }
     }
     

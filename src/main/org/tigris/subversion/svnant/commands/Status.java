@@ -60,7 +60,6 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 import org.tigris.subversion.svnant.SvnAntUtilities;
 
-import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
 import java.util.Date;
@@ -72,6 +71,7 @@ import java.io.File;
  */
 public class Status extends SvnCommand {
 
+    private static final String MSG_CANT_GET_STATUS = "Can't get status of %s";
     private File   path                        = null;
     private String textStatusProperty          = null;
     private String propStatusProperty          = null;
@@ -137,8 +137,8 @@ public class Status extends SvnCommand {
                 aProject.setProperty( urlProperty, (statusUrl != null) ? statusUrl.toString() : "" );
             }
 
-        } catch( SVNClientException e ) {
-            throw new BuildException( "Can't get status of " + path, e );
+        } catch( SVNClientException ex ) {
+            throw ex( ex, MSG_CANT_GET_STATUS, path );
         }
 
     }

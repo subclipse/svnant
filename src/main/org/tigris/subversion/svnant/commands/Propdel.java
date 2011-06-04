@@ -58,18 +58,17 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 import org.tigris.subversion.svnant.SvnAntUtilities;
 
-import org.apache.tools.ant.BuildException;
-
 import java.io.File;
 
 /**
  * svn propdel. Delete a property
- * @author Cédric Chabanois 
- *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
- *
+ * 
+ * @author Cédric Chabanois (cchabanois@ifrance.com)
  */
 public class Propdel extends SvnCommand {
 
+    private static final String MSG_CANT_DELETE_PROPERTY = "Can't delete property %s";
+    
     /** the path of the file or dir on which to delete the property */
     private File    path     = null;
     private String  propName = null;
@@ -81,8 +80,8 @@ public class Propdel extends SvnCommand {
     public void execute() {
         try {
             getClient().propertyDel( path, propName, recurse );
-        } catch( SVNClientException e ) {
-            throw new BuildException( "Can't delete property " + propName, e );
+        } catch( SVNClientException ex ) {
+            throw ex( ex, MSG_CANT_DELETE_PROPERTY, propName );
         }
     }
 

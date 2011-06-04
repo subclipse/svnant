@@ -57,17 +57,17 @@ package org.tigris.subversion.svnant.commands;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNKeywords;
 
-import org.apache.tools.ant.BuildException;
-
 import java.io.File;
 
 /**
  * add keywords on files
- * @author Cédric Chabanois 
- *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
- *
+ * 
+ * @author Cédric Chabanois (cchabanois@ifrance.com)
+ * @author Daniel Kasmeroglu (Daniel.Kasmeroglu@kasisoft.net)
  */
 public class Keywordsadd extends Keywords {
+
+    private static final String MSG_CANT_ADD_KEYWORDS = "Can't add keywords on file %s";
 
     /**
      * {@inheritDoc}
@@ -83,11 +83,17 @@ public class Keywordsadd extends Keywords {
         keywordsAdd( file, keywords );
     }
 
+    /**
+     * Adds the keywords to the supplied resource.
+     * 
+     * @param file       The resource where to add the keywords. Not <code>null</code>.
+     * @param keywords   The keywords that have to be added. Not <code>null</code>.
+     */
     private void keywordsAdd( File file, SVNKeywords keywords ) {
         try {
             getClient().addKeywords( file, keywords );
-        } catch( SVNClientException e ) {
-            throw new BuildException( "Can't set keywords on file " + file.toString(), e );
+        } catch( SVNClientException ex ) {
+            throw ex( ex, MSG_CANT_ADD_KEYWORDS, file.toString());
         }
     }
     

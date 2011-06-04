@@ -58,18 +58,19 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 import org.tigris.subversion.svnant.SvnAntUtilities;
 
-import org.apache.tools.ant.BuildException;
-
 import java.io.File;
 import java.io.FileFilter;
 
 /**
  * Ignore. put patterns to svn:ignore property
- * @author Cédric Chabanois 
- *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
- *
+ * 
+ * @author Cédric Chabanois (cchabanois@ifrance.com)
  */
 public class Ignore extends SvnCommand implements FileFilter {
+
+    private static final String MSG_CANT_ADD_FILE       = "Can't add file %s to svn:ignore";
+
+    private static final String MSG_CANT_ADD_PATTERN    = "Can't add pattern %s to svn:ignore for %s";
 
     /** file to ignore */
     private File    file        = null;
@@ -123,8 +124,8 @@ public class Ignore extends SvnCommand implements FileFilter {
     private void svnIgnoreFile( File aFile ) {
         try {
             getClient().addToIgnoredPatterns( aFile.getParentFile(), aFile.getName() );
-        } catch( SVNClientException e ) {
-            throw new BuildException( "Can't add file " + aFile.getAbsolutePath() + "to svn:ignore", e );
+        } catch( SVNClientException ex ) {
+            throw ex( ex, MSG_CANT_ADD_FILE, aFile.getAbsolutePath() );
         }
     }
 
@@ -153,11 +154,11 @@ public class Ignore extends SvnCommand implements FileFilter {
         return pathname.isDirectory() && !pathname.getName().equals( getClient().getAdminDirectoryName() );
     }
     
-    private void svnIgnorePattern( File aDir ) {
+    private void svnIgnorePattern( File dir ) {
         try {
-            getClient().addToIgnoredPatterns( aDir, pattern );
-        } catch( SVNClientException e ) {
-            throw new BuildException( "Can't add pattern " + pattern + " to svn:ignore for " + aDir.getAbsolutePath(), e );
+            getClient().addToIgnoredPatterns( dir, pattern );
+        } catch( SVNClientException ex ) {
+            throw ex( ex, MSG_CANT_ADD_PATTERN, pattern, dir.getAbsolutePath() );
         }
     }
 

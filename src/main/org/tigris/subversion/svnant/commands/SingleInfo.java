@@ -63,7 +63,6 @@ import org.tigris.subversion.svnant.SvnAntUtilities;
 
 import org.apache.tools.ant.types.EnumeratedAttribute;
 
-import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
 import java.io.File;
@@ -74,10 +73,15 @@ import java.net.MalformedURLException;
  * Similar command to <code>info</info> with the difference that this one selectively
  * fetches an information.
  * 
- * @author Daniel Kasmeroglu <a href="mailto:daniel.kasmeroglu@kasisoft.net">daniel.kasmeroglu@kasisoft.net</a>.
+ * @author Daniel Kasmeroglu (daniel.kasmeroglu@kasisoft.net)
  */
 public class SingleInfo extends SvnCommand {
 
+    private static final String MSG_FAILED_TO_ACCESS_PROPERTIES = "Failed to access subversion 'info' properties";
+    private static final String MSG_PROPERTY_NOT_IMPLEMENTED    = "Property '%s' not implemented";
+    private static final String MSG_PROPERTY_NOT_RECOGNIZED     = "Property '%s' not recognized";
+    private static final String MSG_UNVERSIONED_RESOURCE        = "%s - Not a versioned resource";
+    
     private static final String   PROP_PATH           = "path";
     private static final String   PROP_URL            = "url";
     private static final String   PROP_REPOURL        = "repourl";
@@ -122,13 +126,13 @@ public class SingleInfo extends SvnCommand {
         try {
             ISVNInfo info = acquireInfo();
             if( (info.getRevision() == null) || (SVNRevision.INVALID_REVISION.equals( info.getRevision() )) ) {
-                throw new BuildException( target + " - Not a versioned resource" );
+                throw ex( MSG_UNVERSIONED_RESOURCE, target );
             }
             String value = getValue( info, request.getValue() );
             project.setProperty( property, value );
             verbose( "%s : %s", property, value );
         } catch( Exception ex ) {
-            throw new BuildException( "Failed to access subversion 'info' properties", ex );
+            throw ex( ex, MSG_FAILED_TO_ACCESS_PROPERTIES );
         }
     }
 
@@ -211,9 +215,9 @@ public class SingleInfo extends SvnCommand {
             value = info.getLastDatePropsUpdate();
         } else if( PROP_CHECKSUM.equals( key ) ) {
             // ### FIXME: Implement checksum in svnClientAdapter.
-            log( "    " + "Property '" + key + "' not implemented", Project.MSG_WARN );
+            warning( "    " + MSG_PROPERTY_NOT_IMPLEMENTED, key );
         } else {
-            warning( "    " + "Property '" + key + "' not recognized" );
+            warning( "    " + MSG_PROPERTY_NOT_RECOGNIZED, key );
         }
         if( value == null ) {
             value = "";

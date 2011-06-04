@@ -61,9 +61,9 @@ import org.tigris.subversion.svnant.SvnAntUtilities;
 
 /**
  * ancestor of KeywordSet ...
- * @author Cédric Chabanois 
- *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
- *
+ * 
+ * @author Cédric Chabanois (cchabanois@ifrance.com)
+ * @author Daniel Kasmeroglu (Daniel.Kasmeroglu@kasisoft.net)
  */
 public abstract class Keywords extends ResourceSetSvnCommand {
 

@@ -58,19 +58,18 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 import org.tigris.subversion.svnant.SvnAntUtilities;
 
-import org.apache.tools.ant.BuildException;
-
 import java.io.File;
 import java.io.IOException;
 
 /**
  * svn propset. Set a property
- * @author Cédric Chabanois 
- *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
- *
+ * 
+ * @author Cédric Chabanois  (cchabanois@ifrance.com)
  */
 public class Propset extends SvnCommand {
 
+    private static final String MSG_CANT_SET_PROPERTY = "Can't set property %s";
+    
     /** the path of the file or dir on which to set the property */
     private File    path      = null;
     private File    file;
@@ -88,10 +87,10 @@ public class Propset extends SvnCommand {
             } else {
                 getClient().propertySet( path, propName, file, recurse );
             }
-        } catch( SVNClientException e ) {
-            throw new BuildException( "Can't set property " + propName, e );
-        } catch( IOException e ) {
-            throw new BuildException( "Can't set property " + propName, e );
+        } catch( SVNClientException ex ) {
+            throw ex( ex, MSG_CANT_SET_PROPERTY, propName );
+        } catch( IOException ex ) {
+            throw ex( ex, MSG_CANT_SET_PROPERTY, propName );
         }
     }
 

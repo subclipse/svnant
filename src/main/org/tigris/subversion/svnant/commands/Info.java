@@ -62,7 +62,6 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 import org.tigris.subversion.svnant.SvnAntUtilities;
 
-import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
 import java.util.Date;
@@ -73,15 +72,20 @@ import java.net.MalformedURLException;
 
 /**
  * svn info
- * @author Jeremy Whitlock
- * <a href="mailto:jwhitlock@collab.net">jwhitlock@collab.net</a>
+ * 
+ * @author Jeremy Whitlock (jwhitlock@collab.net)
  * @author Daniel Rall
  */
 public class Info extends SvnCommand {
 
-    /**
-     * The target to retrieve properties for.
-     */
+    private static final String MSG_FAILED_TO_SET_INFO_PROPS = "Failed to set 'info' properties";
+    
+    private static final String MSG_UNSUPPORTED_OPTION = 
+        "The attribute 'verbose' is no longer supported for the command 'info' as it's " +
+        "generally enabled using the Ant option -v !";
+
+
+    /** The target to retrieve properties for. */
     private String                target          = null;
 
     /** String prepended to new property names. */
@@ -94,33 +98,57 @@ public class Info extends SvnCommand {
      * Available directory properties.  Assumed to be a subset of
      * {@link #FILE_PROP_NAMES}.
      */
-    private static final String[] DIR_PROP_NAMES  = { "path", "url", "repourl", "repouuid", "rev", "nodekind",
-                    "schedule", "author", "lastRev", "lastDate" };
+    private static final String[] DIR_PROP_NAMES  = { 
+        "path", 
+        "url", 
+        "repourl", 
+        "repouuid", 
+        "rev", 
+        "nodekind",
+        "schedule", 
+        "author", 
+        "lastRev", 
+        "lastDate" 
+    };
 
     //TODO check the properties, the code and the documentation
 
     /** Available file properties. */
-    private static final String[] FILE_PROP_NAMES = { "path", "name", "url", "repourl", "repouuid", "rev", "nodekind",
-                    "schedule", "author", "lastRev", "lastDate", "lastTextUpdate", "lastPropUpdate", "checksum" };
+    private static final String[] FILE_PROP_NAMES = { 
+        "path", 
+        "name", 
+        "url", 
+        "repourl", 
+        "repouuid", 
+        "rev", 
+        "nodekind",
+        "schedule", 
+        "author", 
+        "lastRev", 
+        "lastDate", 
+        "lastTextUpdate", 
+        "lastPropUpdate", 
+        "checksum" 
+    };
 
     /**
      * {@inheritDoc}
      */
     public void execute() {
-        Project theProject = getProject();
+        Project project = getProject();
         try {
             this.info = acquireInfo();
             if( (this.info.getRevision() == null) || (SVNRevision.INVALID_REVISION.equals( this.info.getRevision() )) ) {
-                throw new BuildException( this.target + " - Not a versioned resource" );
+                throw ex( "%s - Not a versioned resource", this.target );
             }
             String[] propNames = (SVNNodeKind.DIR == this.info.getNodeKind() ? DIR_PROP_NAMES : FILE_PROP_NAMES);
             for( int i = 0; i < propNames.length; i++ ) {
                 String value = getValue( propNames[i] );
-                theProject.setProperty( propPrefix + propNames[i], value );
+                project.setProperty( propPrefix + propNames[i], value );
                 verbose( "%s%s: %s", propPrefix, propNames[i], value );
             }
-        } catch( SVNClientException e ) {
-            throw new BuildException( "Failed to set 'info' properties", e );
+        } catch( SVNClientException ex ) {
+            throw ex( ex, MSG_FAILED_TO_SET_INFO_PROPS );
         }
     }
 
@@ -215,12 +243,12 @@ public class Info extends SvnCommand {
             }
         } else if( FILE_PROP_NAMES[13].equals( propName ) ) {
             // ### FIXME: Implement checksum in svnClientAdapter.
-            log( "    " + "Property '" + propName + "' not implemented", Project.MSG_WARN );
+            warning( "    " + "Property '%s' not implemented", propName);
         } else {
             warning( "    Property '%s' not recognized", propName );
         }
 
-        return (value == null ? "" : value.toString());
+        return value == null ? "" : value.toString();
     }
 
     /**
@@ -243,7 +271,7 @@ public class Info extends SvnCommand {
      * @param verbose
      */
     public void setVerbose( boolean verbose ) {
-        warning( "The attribute 'verbose' is no longer supported for the command 'info' as it's generally enabled using the Ant option -v !" );
+        warning( MSG_UNSUPPORTED_OPTION );
     }
 
     /**

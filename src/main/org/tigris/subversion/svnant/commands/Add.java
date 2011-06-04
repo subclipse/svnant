@@ -56,23 +56,21 @@ package org.tigris.subversion.svnant.commands;
 
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
-import org.apache.tools.ant.BuildException;
-
 import java.io.File;
 
 /**
  * svn Add. Add a file, a directory or a set of files to repository
  * 
- * @author Cédric Chabanois 
- *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
- *         
+ * @author Cédric Chabanois (cchabanois@ifrance.com)
  * @author Daniel Kasmeroglu (Daniel.Kameroglu@kasisoft.net)
- *
  */
 public class Add extends ResourceSetSvnCommand {
 
+    private static final String MSG_CANT_ADD_DIRECTORY  = "Can't add directory '%s' to repository";
+    private static final String MSG_CANT_ADD_FILE       = "Can't add file '%s' to repository";
+    
     /** check directories already under version control during add ? (only for dir attribute) */
-    private boolean         force       = false;
+    private boolean   force = false;
 
     public Add() {
         super( true, false, null );
@@ -85,55 +83,62 @@ public class Add extends ResourceSetSvnCommand {
         svnAddDir( dir, false, force );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected void handleDir( File dir, boolean recurse ) {
         svnAddDir( dir, recurse, force );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected void handleFile( File file ) {
         svnAddFile( file );
     }
 
     /**
-     * add a file to the repository
-     * @param svnClient
-     * @param file
+     * Add a file to the repository.
+     * 
+     * @param file   The file which has to be added. Not <code>null</code>.
      */
     private void svnAddFile( File file ) {
         try {
             getClient().addFile( file );
-        } catch( SVNClientException e ) {
-            throw new BuildException( "Can't add file " + file.getAbsolutePath() + " to repository", e );
+        } catch( SVNClientException ex ) {
+            throw ex( ex, MSG_CANT_ADD_FILE, file );
         }
     }
 
     /**
-     * add a directory to the repository
-     * @param dir
-     * @param recursive
-     * @param force
+     * Add a directory to the repository.
+     * 
+     * @param dir         The directory which has to be added. Not <code>null</code>.
+     * @param recursive   <code>true</code> <=> Add it recursively.
+     * @param force       <code>true</code> <=> Force it to be added.
      */
     private void svnAddDir( File dir, boolean recursive, boolean force ) {
         try {
             getClient().addDirectory( dir, recursive, force );
-        } catch( SVNClientException e ) {
-            throw new BuildException( "Can't add directory " + dir.getAbsolutePath() + " to repository", e );
+        } catch( SVNClientException ex ) {
+            throw ex( ex, MSG_CANT_ADD_DIRECTORY, dir );
         }
     }
 
     /**
-     * if set, directory will be added recursively (see setDir)
-     * @param recurse
-     */
-    public void setRecurse( boolean recurse ) {
-        super.setRecurse( recurse );
-    }
-
-    /**
-     * if set, directory will be checked for new content even if already managed by subversion (see setDir)
-     * @param force
+     * If set, directory will be checked for new content even if already managed by subversion.
+     * 
+     * @param force   <code>true</code> <=> Directory will be checked for new content even if already managed by subversion.
      */
     public void setForce( boolean force ) {
         this.force = force;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setRecurse( boolean recurse ) {
+        super.setRecurse( recurse );
     }
 
 }

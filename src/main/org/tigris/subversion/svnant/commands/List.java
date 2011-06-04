@@ -62,23 +62,19 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 import org.tigris.subversion.svnant.SvnAntUtilities;
 
-import org.apache.tools.ant.BuildException;
-
 /**
  * svn list. List resources from a repository.
  * 
- * @author Daniel Kasmeroglu
- *         <a href="mailto:daniel.kasmeroglu@qvitech.com">daniel.kasmeroglu@qvitech.com</a>
+ * @author Daniel Kasmeroglu (Daniel.Kasmeroglu@kasisoft.net)
  */
 public class List extends SvnCommand {
 
-    /** url to fetch the list from */
+    private static final String MSG_CANT_LIST = "Can't list";
+
     private SVNUrl      url       = null;
 
-    /** list recursively (complete tree) ? */
     private boolean     recurse   = false;
 
-    /** revision to list */
     private SVNRevision revision  = SVNRevision.HEAD;
 
     /** list only the names (not the complete url) ? */
@@ -138,8 +134,8 @@ public class List extends SvnCommand {
                 }
             }
             getProject().setProperty( property, value.toString() );
-        } catch( SVNClientException e ) {
-            throw new BuildException( "Can't list", e );
+        } catch( SVNClientException ex ) {
+            throw ex( ex, MSG_CANT_LIST );
         }
     }
 
@@ -155,6 +151,7 @@ public class List extends SvnCommand {
 
     /**
      * Enables/disables the listing of file entries.
+     * 
      * @param enable   <code>true</code> <=> List only file resources.
      */
     public void setListFiles( boolean enable ) {
@@ -163,6 +160,7 @@ public class List extends SvnCommand {
 
     /**
      * Enables/disables the listing of directory entries.
+     * 
      * @param enable   <code>true</code> <=> List only directory resources.
      */
     public void setListDirs( boolean enable ) {

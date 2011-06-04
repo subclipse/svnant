@@ -58,21 +58,19 @@ import org.tigris.subversion.svnclientadapter.SVNClientException;
 
 import org.tigris.subversion.svnant.SvnAntUtilities;
 
-import org.apache.tools.ant.BuildException;
-
 import java.io.File;
 
 /**
  * Create a new, empty repository at path.
  * 
- * @author Cédric Chabanois (cchabanois at no-log.org)
+ * @author Cédric Chabanois (cchabanois@ifrance.com)
  */
 public class CreateRepository extends SvnCommand {
 
-    /** path of the repository to create */
+    private static final String MSG_CANNOT_CREATE_REPOSITORY = "Cannot create repository at '%s'";
+
     private File   path           = null;
 
-    /** the type of the repository to create */
     private String repositoryType = null;
 
     /**
@@ -81,8 +79,8 @@ public class CreateRepository extends SvnCommand {
     public void execute() {
         try {
             getClient().createRepository( path, repositoryType );
-        } catch( SVNClientException e ) {
-            throw new BuildException( "Cannot create repository at " + path.getAbsolutePath(), e );
+        } catch( SVNClientException ex ) {
+            throw ex( ex, MSG_CANNOT_CREATE_REPOSITORY, path.getAbsolutePath() );
         }
     }
 

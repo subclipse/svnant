@@ -60,8 +60,6 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 import org.tigris.subversion.svnant.SvnAntUtilities;
 
-import org.apache.tools.ant.BuildException;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -69,18 +67,17 @@ import java.io.InputStream;
 
 /**
  * svn Cat. 
- * @author Cédric Chabanois 
- *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
+ * 
+ * @author Cédric Chabanois (cchabanois@ifrance.com)
  */
 public class Cat extends SvnCommand {
 
-    /** url */
+    private static final String MSG_CANT_GET_CONTENT = "Can't get the content of %s";
+
     private SVNUrl      url      = null;
 
-    /** destination file. */
     private File        destFile = null;
 
-    /** revision */
     private SVNRevision revision = SVNRevision.HEAD;
 
     /**
@@ -91,21 +88,21 @@ public class Cat extends SvnCommand {
         if( destFile == null ) {
             destFile = new File( getProject().getBaseDir(), url.getLastPathSegment() );
         }
-        InputStream is = null;
+        InputStream      is = null;
         FileOutputStream os = null;
         try {
-            os = new FileOutputStream( destFile );
-            is = getClient().getContent( url, revision );
+            os            = new FileOutputStream( destFile );
+            is            = getClient().getContent( url, revision );
             byte[] buffer = new byte[5000];
-            int read = is.read( buffer );
+            int    read   = is.read( buffer );
             while( read != -1 ) {
                 os.write( buffer, 0, read );
                 read = is.read( buffer );
             }
-        } catch( IOException e ) {
-            throw new BuildException( "Can't get the content of the specified file", e );
-        } catch( SVNClientException e ) {
-            throw new BuildException( "Can't get the content of the specified file", e );
+        } catch( IOException ex ) {
+            throw ex( ex, MSG_CANT_GET_CONTENT, url );
+        } catch( SVNClientException ex ) {
+            throw ex( ex, MSG_CANT_GET_CONTENT, url );
         } finally {
             SvnAntUtilities.close( os );
             SvnAntUtilities.close( is );

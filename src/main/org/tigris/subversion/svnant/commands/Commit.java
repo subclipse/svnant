@@ -59,22 +59,21 @@ import org.tigris.subversion.svnclientadapter.SVNStatusKind;
 
 import org.tigris.subversion.svnant.SvnAntUtilities;
 
-import org.apache.tools.ant.BuildException;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import java.io.File;
 
 /**
- * svn Add. Add a file, a directory or a set of files to repository
- * @author Cédric Chabanois 
- *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
- *
+ * svn commit. Commit a file, a directory or a set of files to repository
+ * 
+ * @author Cédric Chabanois (cchabanois@ifrance.com)
+ * @author Daniel Kasmeroglu (Daniel.Kasmeroglu@kasisoft.net)
  */
 public class Commit extends ResourceSetSvnCommand {
 
-    /** message for commit */
+    private static final String MSG_CANT_COMMIT_RESOURCES = "Can't commit resources !";
+
     private String          message;
 
     private List<File>      recursivecommit;
@@ -87,16 +86,24 @@ public class Commit extends ResourceSetSvnCommand {
         message             = null;
     }
     
-
+    /**
+     * {@inheritDoc}
+     */
     protected void handleBegin() {
         recursivecommit.clear();
         nonrecursivecommit.clear();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected void handleUnmanaged( File dir ) {
         nonrecursivecommit.add( dir );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected void handleDir( File dir, boolean recurse ) {
         if( recurse ) {
             recursivecommit.add( dir );
@@ -105,22 +112,34 @@ public class Commit extends ResourceSetSvnCommand {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected void handleFile( File file ) {
         nonrecursivecommit.add( file );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected void handleEnd() {
-        
-        try {
-            getClient().commit( nonrecursivecommit.toArray( new File[ nonrecursivecommit.size() ] ), message, false );
-        } catch( SVNClientException e ) {
-            throw new BuildException( "Can't commit resources : ", e );
+
+        if( ! nonrecursivecommit.isEmpty() ) {
+            try {
+                File[] files = nonrecursivecommit.toArray( new File[ nonrecursivecommit.size() ] );
+                getClient().commit( files, message, false );
+            } catch( SVNClientException ex ) {
+                throw ex( ex, MSG_CANT_COMMIT_RESOURCES );
+            }
         }
 
-        try {
-            getClient().commit( recursivecommit.toArray( new File[ recursivecommit.size() ] ), message, true );
-        } catch( SVNClientException e ) {
-            throw new BuildException( "Can't commit resources : ", e );
+        if( ! recursivecommit.isEmpty() ) {
+            try {
+                File[] files = recursivecommit.toArray( new File[ recursivecommit.size() ] );
+                getClient().commit( files, message, true );
+            } catch( SVNClientException ex ) {
+                throw ex( ex, MSG_CANT_COMMIT_RESOURCES );
+            }
         }
 
     }

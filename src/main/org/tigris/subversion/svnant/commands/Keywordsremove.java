@@ -57,19 +57,17 @@ package org.tigris.subversion.svnant.commands;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNKeywords;
 
-import org.apache.tools.ant.BuildException;
-
 import java.io.File;
 
 /**
  * remove some keywords on given files
  * 
- * @author Cédric Chabanois 
- *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
- *
+ * @author Cédric Chabanois (cchabanois@ifrance.com)
  * @author Daniel Kasmeroglu (Daniel.Kasmeroglu@kasisoft.net)
  */
 public class Keywordsremove extends Keywords {
+
+    private static final String MSG_CANT_REMOVE_KEYWORDS = "Can't remove keywords from file %s";
 
     /**
      * {@inheritDoc}
@@ -85,11 +83,17 @@ public class Keywordsremove extends Keywords {
         keywordsRemove( file, keywords );
     }
 
+    /**
+     * Removes the keywords from the supplied resource.
+     * 
+     * @param file       The resource from which to the keywords shall be removed. Not <code>null</code>.
+     * @param keywords   The keywords that have to be removed. Not <code>null</code>.
+     */
     private void keywordsRemove( File file, SVNKeywords keywords ) {
         try {
             getClient().removeKeywords( file, keywords );
-        } catch( SVNClientException e ) {
-            throw new BuildException( "Can't set keywords on file " + file.toString(), e );
+        } catch( SVNClientException ex ) {
+            throw ex( ex, MSG_CANT_REMOVE_KEYWORDS, file.toString() );
         }
     }
 

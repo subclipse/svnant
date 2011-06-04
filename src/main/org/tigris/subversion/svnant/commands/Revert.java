@@ -56,19 +56,17 @@ package org.tigris.subversion.svnant.commands;
 
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 
-import org.apache.tools.ant.BuildException;
-
 import java.io.File;
 
 /**
  * svn Revert. Restore pristine working copy file (undo most local edits)
  * 
- * @author Cédric Chabanois 
- *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
- *
+ * @author Cédric Chabanois (cchabanois@ifrance.com)
  * @author Daniel Kasmeroglu (Daniel.Kasmeroglu@kasisoft.net)
  */
 public class Revert extends ResourceSetSvnCommand {
+
+    private static final String MSG_CANNOT_REVERT = "Cannot revert file or directory %s";
 
     public Revert() {
         super( false, true, null );
@@ -97,8 +95,8 @@ public class Revert extends ResourceSetSvnCommand {
     private void revert( File file, boolean recurse ) {
         try {
             getClient().revert( file, recurse );
-        } catch( SVNClientException e ) {
-            throw new BuildException( "Cannot revert file or directory " + file.getAbsolutePath(), e );
+        } catch( SVNClientException ex ) {
+            throw ex( ex, MSG_CANNOT_REVERT, file.getAbsolutePath() );
         }
     }
     

@@ -60,8 +60,6 @@ import org.tigris.subversion.svnclientadapter.SVNUrl;
 
 import org.tigris.subversion.svnant.SvnAntUtilities;
 
-import org.apache.tools.ant.BuildException;
-
 import java.io.File;
 
 /**
@@ -70,12 +68,12 @@ import java.io.File;
  * This behaviour is similar to 'svn update', and is the way to
  * move a working copy to a branch or tag within the same repository.
  *
- * @author Cédric Chabanois
- *         <a href="mailto:cchabanois@ifrance.com">cchabanois@ifrance.com</a>
- *
+ * @author Cédric Chabanois (cchabanois@ifrance.com)
  */
 public class Switch extends SvnCommand {
 
+    private static final String MSG_CANNOT_SWITCH = "Cannot switch to url : %s";
+    
     private File        path     = null;
     private SVNUrl      url;
     private SVNRevision revision = SVNRevision.HEAD;
@@ -87,8 +85,8 @@ public class Switch extends SvnCommand {
     public void execute() {
         try {
             getClient().switchToUrl( path, url, revision, recurse );
-        } catch( SVNClientException e ) {
-            throw new BuildException( "Cannot switch to url : " + url.toString(), e );
+        } catch( SVNClientException ex ) {
+            throw ex( ex, MSG_CANNOT_SWITCH, url.toString() );
         }
     }
 
