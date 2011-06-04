@@ -59,12 +59,19 @@ public abstract class SvnTest extends BuildFileTest {
   protected static final String WORKINGCOPY2_DIR = "test/svn/workingcopy2";
   protected static final String TEST_DIR = "test/svn/test";
 
+  
+  private boolean firstcall;
+  
     public SvnTest(String name) {
         super(name);
+        firstcall = true;
     }
     
-    public void setUp() {
-        configureProject("test/svn/build.xml");
+    public synchronized void setUp() {
+        if( firstcall ) {
+            configureProject("test/svn/build.xml");
+            firstcall = false;
+        }
     }
 
   public void tearDown()

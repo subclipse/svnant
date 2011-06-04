@@ -283,13 +283,18 @@ public abstract class BuildFileTest extends TestCase {
      *
      * @param  filename name of project file to run
      */    
-    protected void configureProject(String filename) throws BuildException { 
-        logBuffer = new StringBuffer();
-        fullLogBuffer = new StringBuffer();
-        project = new Project();
-        project.init();
+    protected void configureProject(String filename) throws BuildException {
+        if( project == null ) {
+            logBuffer = new StringBuffer();
+            fullLogBuffer = new StringBuffer();
+            project = new Project();
+            project.init();
+            project.addBuildListener(new AntTestListener());
+        } else {
+            logBuffer.setLength(0);
+            fullLogBuffer.setLength(0);
+        }
         project.setUserProperty( "ant.file" , new File(filename).getAbsolutePath() );
-        project.addBuildListener(new AntTestListener());
         ProjectHelper.getProjectHelper().parse(project, new File(filename));
     }
     
