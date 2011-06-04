@@ -89,5 +89,12 @@ public class SvnSvnKitTest extends SvnTest {
         super.testImportNewEntry();
     }
     
+    /**
+     * {@inheritDoc}
+     */
+    public void testAddSvnFileSet() throws Exception {
+        super.testAddSvnFileSet();
+    }
+    
 
 }

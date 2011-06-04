@@ -376,6 +376,15 @@ public class ResourceSetSvnCommand extends SvnCommand {
     }
 
     /**
+     * Adds a FileSet in general to this command.
+     * 
+     * @param set   The FileSet (svnFileSet) which will be added. Not <code>null</code>.
+     */
+    public void add( FileSet set ) {
+        filesets.add( set );
+    }
+    
+    /**
      * Adds a set of directories to the list.
      * 
      * @param set   A set of directories that have to be added. Not <code>null</code>.

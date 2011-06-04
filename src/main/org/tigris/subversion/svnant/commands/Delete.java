@@ -115,8 +115,9 @@ public class Delete extends ResourceSetSvnCommand {
      * {@inheritDoc}
      */
     protected void validateAttributes() {
-        super.validateAttributes();
-        if( url != null ) {
+        if( url == null ) {
+            super.validateAttributes();
+        } else {
             SvnAntUtilities.attrNotEmpty( "message", message );
         }
     }
