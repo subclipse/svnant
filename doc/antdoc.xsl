@@ -154,7 +154,7 @@
   <xsl:template match="nestedelement">
     <tr>
       <td class="firstcol"><xsl:value-of select="@name"/></td>
-      <td><xsl:apply-templates select="doc"/></td>
+      <td><p><xsl:apply-templates select="doc"/></p></td>
     </tr>
   </xsl:template>
   
@@ -174,7 +174,7 @@
   <xsl:template match="attribute">
     <tr>
       <td class="firstcol"><xsl:value-of select="@name"/></td>
-      <td><xsl:apply-templates select="doc"/>
+      <td><p><xsl:apply-templates select="doc"/></p>
       <xsl:if test="string-length(@default) &gt; 0">
         <br/>
         Default: <xsl:value-of select="@default"/> 
@@ -195,7 +195,7 @@
     <xsl:for-each select="attribute">
       <tr>
         <td class="firstcol"><xsl:value-of select="@name"/></td>
-        <td><xsl:apply-templates select="doc"/>
+        <td><p><xsl:apply-templates select="doc"/></p>
         <xsl:if test="string-length(@default) &gt; 0">
           <br/>
           Default: <xsl:value-of select="@default"/> 

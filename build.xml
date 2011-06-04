@@ -84,7 +84,7 @@
     <tempfile property="file.temporary" deleteonexit="true"/>
     
     <xinclude in="${src.doc.dir}/tasks/svntask.xml" out="${file.temporary}"/>
-    <xslt in="${file.temporary}" out="${build.distrib.dir}/doc/svn.html" style="${src.doc.dir}/antdoc.xsl"/>
+    <xslt in="${file.temporary}" out="${build.distrib.dir}/doc/svntask.html" style="${src.doc.dir}/antdoc.xsl"/>
     
     <xinclude in="${src.doc.dir}/conditions/conditions.xml" out="${file.temporary}"/>
     <xslt in="${file.temporary}" out="${build.distrib.dir}/doc/conditions.html" style="${src.doc.dir}/antdoc.xsl"/>
