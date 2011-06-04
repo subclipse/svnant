@@ -73,7 +73,7 @@ public class Add extends ResourceSetSvnCommand {
     private boolean   force = false;
 
     public Add() {
-        super( true, false, null );
+        super( true, false, true, null );
     }
 
     /**

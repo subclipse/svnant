@@ -80,7 +80,7 @@ public class Commit extends ResourceSetSvnCommand {
     private List<File>      nonrecursivecommit;
     
     public Commit() {
-        super( true, true, SVNStatusKind.ADDED );
+        super( true, true, true, SVNStatusKind.ADDED );
         recursivecommit     = new ArrayList<File>();
         nonrecursivecommit  = new ArrayList<File>();
         message             = null;

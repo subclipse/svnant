@@ -69,7 +69,7 @@ public class Revert extends ResourceSetSvnCommand {
     private static final String MSG_CANNOT_REVERT = "Cannot revert file or directory %s";
 
     public Revert() {
-        super( false, true, null );
+        super( false, true );
     }
     
     /**

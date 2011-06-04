@@ -71,7 +71,7 @@ public abstract class Keywords extends ResourceSetSvnCommand {
     protected SVNKeywords   keywords;
 
     public Keywords() {
-        super( true, false, null );
+        super( true, false );
     }
 
     /**

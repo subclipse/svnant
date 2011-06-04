@@ -73,7 +73,7 @@ public class Update extends ResourceSetSvnCommand {
     private SVNRevision   revision = SVNRevision.HEAD;
 
     public Update() {
-        super( true, true, null );
+        super( true, true );
     }
     
     /**

@@ -89,21 +89,35 @@ public class ResourceSetSvnCommand extends SvnCommand {
     private List<FileSet>   filesets;
     private List<DirSet>    dirsets;
     private SVNStatusKind   unmanageddirs;
- 
+    private boolean         scanunmanaged;
+
     /**
      * Initialises this base command with the supplied defaults.
      * 
      * @param defrecurse   <code>true</code> <=> The default value for the recurse flag.
      * @param filedirs     <code>true</code> <=> Include directories implied by FileSet.
-     * @param unmanaged    Specifies the way unmanaged resources will be handled. If <code>null</code>
-     *                     a directory is considered to be unmanaged when it's not part of the
-     *                     repository. If not <code>null</code> a resource is considered unmanaged
-     *                     when it's part of the repository and has the supplied status. 
      */
-    ResourceSetSvnCommand( boolean defrecurse, boolean filedirs, SVNStatusKind unmanaged ) {
+    ResourceSetSvnCommand( boolean defrecurse, boolean filedirs ) {
+        this( defrecurse, filedirs, false, null );
+    }
+    
+    /**
+     * Initialises this base command with the supplied defaults.
+     * 
+     * @param defrecurse   <code>true</code> <=> The default value for the recurse flag.
+     * @param filedirs     <code>true</code> <=> Include directories implied by FileSet.
+     * @param scan         <code>true</code> <=> Scan unmanaged resources.
+     * @param unmanaged    Specifies the way unmanaged resources will be handled. If 
+     *                     <code>null</code> a directory is considered to be unmanaged when it's 
+     *                     not part of the repository. If not <code>null</code> a resource is 
+     *                     considered unmanaged when it's part of the repository and has the 
+     *                     supplied status. 
+     */
+    ResourceSetSvnCommand( boolean defrecurse, boolean filedirs, boolean scan, SVNStatusKind unmanaged ) {
         recurse         = defrecurse;
         incfiledirs     = filedirs;
         unmanageddirs   = unmanaged;
+        scanunmanaged   = scan;
         dir             = null;
         file            = null;
         filesets        = new ArrayList<FileSet>();
@@ -206,6 +220,11 @@ public class ResourceSetSvnCommand extends SvnCommand {
      *                     shall not be considered an unmanaged version.
      */
     private void collectUnmanaged( List<File> receiver, File basedir, File dir, boolean skipfirst ) {
+        if( ! scanunmanaged ) {
+            // if unwanted by the concrete implementation we don't collect unmmanaged entries
+            // which is a speed improvement due to the reduction of svn client actions
+            return;
+        }
         try {
             // iterate through the parental hierarchy until we find a managed source or the base dir
             Stack<File> parents = new Stack<File>();

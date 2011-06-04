@@ -84,7 +84,7 @@ public class Delete extends ResourceSetSvnCommand {
     private boolean         force    = false;
 
     public Delete() {
-        super( true, true, null );
+        super( true, true );
     }
     
     /**
