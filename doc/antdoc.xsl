@@ -28,28 +28,27 @@
         /* ]]> */
       </style>
       <style type="text/css">
-        table {
+        table.svnant {
           border: 1pt solid gray;
           border-collapse: collapse;
-          width: 70%;
+          width: 90%;
         }
-        tr, td {
+        table.svnant tr, table.svnant tr td {
           border: 1pt solid gray;
         }
-        tr:hover {
+        table.svnant tr:hover {
           background-color: rgb(93%,93%,93%);
         }
-        td {
+        table.svnant tr td {
           padding: 2pt;
         }
-        tr {
+        table.svnant tr {
           width: 100%;
         }
         h1 {
           font-size: 200%; text-transform: lowercase; letter-spacing: 3px;
           margin-bottom: 1em; 
           padding: 0.66em 0 0.33em 1em;
-          /* background: rgb(85%,85%,70%); */
         }
         h2 {
           background: rgb(85%,85%,70%);
@@ -79,8 +78,8 @@
           max-width: 15em;
         }
         .lastcol {
-          width: 6em;
-          max-width: 6em;
+          width: 10em;
+          max-width: 10em;
         }
         p.remark {
           margin-left: 2em;
@@ -97,15 +96,48 @@
         }
         table.attributes {
           margin-bottom: 2em;
-        } 
+          border: 1pt solid gray;
+          border-collapse: collapse;
+          width: 90%;
+        }
+        table.attributes tr, table.attributes tr td {
+          border: 1pt solid gray;
+        }
+        table.nestedelements {
+          margin-bottom: 2em;
+          border: 1pt solid gray;
+          border-collapse: collapse;
+          width: 90%;
+        }
+        table.nestedelements tr, table.nestedelements tr td {
+          border: 1pt solid gray;
+        }
         table.nestedelements tr td.firstcol {
           text-style: bold;
           width: 10em;
+          border: 1pt solid gray;
+          border-collapse: collapse;
         }
         tr.invisiblerow {
           border: 0pt solid black;
           padding-top: 3pt;
           padding-bottom: 3pt;
+        }
+        #horizontalmenu {
+          width: 100%;
+          background: rgb(85%,85%,70%);
+          padding: 0.66em 0 0.33em 1em;
+        }
+        #horizontalmenu li {
+          display: inline;
+          padding: 0px 10px; 
+
+        }
+        #horizontalmenu a {
+          color: rgb(55%,55%,40%);
+          text-transform: uppercase; 
+          font-weight: bold;
+          padding: 2px 8px 5px; 
         }
       </style> 
     </head>
@@ -119,9 +151,16 @@
     <xsl:variable name="title"><xsl:value-of select="@title"/></xsl:variable>
     <html>
       <xsl:call-template name="head">
-        <xsl:with-param name="title" select="$title"/>
+        <xsl:with-param name="title" select="@title"/>
       </xsl:call-template>
       <body lang="en-US" dir="ltr">
+        <ul id="horizontalmenu">
+          <li><a href="introduction.html">Introduction</a></li>
+          <li><a href="svntask.html">Tasks</a></li>
+          <li><a href="types.html">Types</a></li>
+          <li><a href="selectors.html">Selectors</a></li>
+          <li><a href="conditions.html">Conditions</a></li>
+        </ul>
         <xsl:if test="@header = 'true'">
           <h1>&lt;<xsl:value-of select="@name"/>&gt;</h1>
         </xsl:if>
@@ -230,7 +269,7 @@
   <xsl:template match="ul"><ul><xsl:call-template name="doc"/></ul></xsl:template>
   <xsl:template match="ol"><ol><xsl:call-template name="doc"/></ol></xsl:template>
   <xsl:template match="li"><li><xsl:call-template name="doc"/></li></xsl:template>
-  <xsl:template match="table"><table><xsl:call-template name="doc"/></table></xsl:template>
+  <xsl:template match="table"><table class="svnant"><xsl:call-template name="doc"/></table></xsl:template>
   <xsl:template match="tr"><tr><xsl:call-template name="doc"/></tr></xsl:template>
   <xsl:template match="td"><td><xsl:call-template name="doc"/></td></xsl:template>
   <xsl:template match="code"><code><xsl:call-template name="doc"/></code></xsl:template>
@@ -253,7 +292,7 @@
   <xsl:template name="generate_index_subsection">
     <xsl:if test="@indexing = 'true'">
       <xsl:if test="count(msubsection[@id != '']) &gt; 0">
-        <table>
+        <table class="svnant">
           <xsl:for-each select="msubsection[@id != '']">
             <xsl:if test="position() mod 5 = 1">
               <tr>

@@ -7,7 +7,7 @@
     
   </msection>
     
-  <msection id="svntype" title="Support svn types" indexing="true">
+  <msection id="svntype" title="Supported svn types" indexing="true">
 
     <xi:include href="svnfileset.xml"/>
     <xi:include href="svnsetting.xml"/>

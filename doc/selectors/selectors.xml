@@ -15,27 +15,27 @@
     <attributes>
   
       <attribute name="username" required="false">
-        <doc>username that will be used for all nested svn commands.</doc>
+        <doc>username that will be used for all nested svn commands.<br/></doc>
         <doc><b>Deprecated. This attribute won't work with SVNANT 1.3.2+ . Use refid for svnSetting instead.</b></doc>
       </attribute>
     
       <attribute name="password" required="false">
-        <doc>password that will be used for all nested svn commands.</doc>
+        <doc>password that will be used for all nested svn commands.<br/></doc>
         <doc><b>Deprecated. This attribute won't work with SVNANT 1.3.2+ . Use refid for svnSetting instead.</b></doc>
       </attribute>
   
       <attribute name="javahl" required="false" default="true">
-        <doc>Set to "false" to use command line client interface instead of JNI JavaHL binding.</doc>
+        <doc>Set to "false" to use command line client interface instead of JNI JavaHL binding.<br/></doc>
         <doc><b>Deprecated. This attribute won't work with SVNANT 1.3.2+ . Use refid for svnSetting instead.</b></doc>
       </attribute>
   
       <attribute name="svnkit" required="false" default="false">
-        <doc>Set to "false" to use command line client interface instead of SVNKit binding.</doc>
+        <doc>Set to "false" to use command line client interface instead of SVNKit binding.<br/></doc>
         <doc><b>Deprecated. This attribute won't work with SVNANT 1.3.2+ . Use refid for svnSetting instead.</b></doc>
       </attribute>
   
       <attribute name="failonerror" required="false" default="true">
-        <doc>Controls whether an error stops the build or is merely reported to the screen.</doc>
+        <doc>Controls whether an error stops the build or is merely reported to the screen.<br/></doc>
         <doc><b>Deprecated. This attribute won't work with SVNANT 1.3.2+ . Use refid for svnSetting instead.</b></doc>
       </attribute>
       

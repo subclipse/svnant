@@ -97,7 +97,9 @@
       
     <xinclude in="${src.doc.dir}/introduction.xml" out="${file.temporary}"/>
     <xslt in="${file.temporary}" out="${build.distrib.dir}/doc/introduction.html" style="${src.doc.dir}/antdoc.xsl"/>
-      
+    
+    <copy file="${build.distrib.dir}/doc/introduction.html" tofile="${build.distrib.dir}/doc/svn.html"/>
+    
     <copy todir="${build.distrib.dir}/doc" overwrite="true">
       <fileset dir="${src.doc.dir}" includes="*.html"/>
     </copy>

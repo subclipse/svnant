@@ -8,7 +8,7 @@
     <grouped>
     
       <attribute name="recurse" required="false" default="true">
-        <doc>Set to "false" to operate on single directory only.</doc>
+        <doc>Set to "false" to operate on single directory only.<br/></doc>
         <doc><b>Don't use this in combination with 'depth' !</b></doc>
       </attribute>
 
@@ -19,7 +19,7 @@
           <li>files : Just checkout toplevel files.</li>
           <li>immediates : Checkout toplevel files and directories (unpopulated).</li>
           <li>infinity : Checkout everything.</li>
-        </ul>
+        </ul><br/>
         </doc>
         <doc><b>Don't use this in combination with 'recurse' !</b></doc>
       </attribute>
@@ -27,12 +27,12 @@
     </grouped>
   
     <attribute name="ignoreexternals" required="false" default="false">
-      <doc>If set to <code>true</code> svn externals will be skipped.</doc>
+      <doc>If set to <code>true</code> svn externals will be skipped.<br/></doc>
       <doc><b>Only in combination with 'depth' !</b></doc>
     </attribute>
 
     <attribute name="force" required="false" default="false">
-      <doc>Enforces the execution of the checkout commands.</doc>
+      <doc>Enforces the execution of the checkout commands.<br/></doc>
       <doc><b>Only in combination with 'depth' !</b></doc>
     </attribute>
 
