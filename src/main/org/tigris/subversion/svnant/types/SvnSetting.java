@@ -54,6 +54,9 @@
  */
 package org.tigris.subversion.svnant.types;
 
+import org.tigris.subversion.svnant.ConflictResolution;
+import org.tigris.subversion.svnant.SvnAntUtilities;
+
 import org.apache.tools.ant.types.DataType;
 
 import org.apache.tools.ant.Project;
@@ -67,22 +70,23 @@ import java.io.File;
  */
 public class SvnSetting extends DataType {
 
-    private Project   project;
-    private Boolean   javahl;
-    private Boolean   svnkit;
-    private String    username;
-    private String    password;
-    private String    dateformatter;
-    private String    timezone;
-    private Boolean   failonerror;
-    private String    id;
-    private String    sslpassword;
-    private File      sslclientcertpath;
-    private Integer   sshport;
-    private String    sshpassphrase;
-    private File      sshkeypath;
-    private Boolean   reject;
-    private File      configdir;
+    private Project              project;
+    private Boolean              javahl;
+    private Boolean              svnkit;
+    private String               username;
+    private String               password;
+    private String               dateformatter;
+    private String               timezone;
+    private Boolean              failonerror;
+    private String               id;
+    private String               sslpassword;
+    private File                 sslclientcertpath;
+    private Integer              sshport;
+    private String               sshpassphrase;
+    private File                 sshkeypath;
+    private Boolean              reject;
+    private File                 configdir;
+    private ConflictResolution   conflictresolution;
     
     /**
      * Initialises this instance.
@@ -106,6 +110,29 @@ public class SvnSetting extends DataType {
         sshkeypath              = null;
         reject                  = null;
         configdir               = null;
+        conflictresolution      = null;
+    }
+    
+    /**
+     * Changes the value for the conflict resolution handling.
+     * 
+     * @param resolution   The new value for the conflict resolution handling.
+     */
+    public void setConflictResolution( String resolution ) {
+        try {
+            conflictresolution = ConflictResolution.valueOf( resolution );
+        } catch( IllegalArgumentException ex ) {
+            SvnAntUtilities.attrInvalidValue( "conflictResolution", ConflictResolution.values(), resolution );
+        }
+    }
+    
+    /**
+     * Returns the value used to specify the handling of conflict resolutions.
+     * 
+     * @return   The value used to specify the handling of conflict resolutions. Maybe <code>null</code>.
+     */
+    public ConflictResolution getConflictResolution() {
+        return conflictresolution;
     }
     
     /**

@@ -5,6 +5,22 @@
 
   <attributes>
   
+    <attribute name="conflictResolution" required="false">
+      <doc>This attribute allows to specify the handling of potential conflicts:</doc>
+      <doc>Possible values are:
+      <ul>
+        <li>Postpone        : Don't do anything about the conflict.</li>
+        <li>Base            : Use the base version.</li>
+        <li>TheirsFull      : Take the current repository content.</li>
+        <li>TheirsConflict  : Accept all solved conflicts within the repository.</li>
+        <li>MineFull        : Take the whole working copy content.</li>
+        <li>MineConflict    : Use the conflict solutions from the working copy.</li>
+        <li>Merged          : Tage the merged result.</li>
+      </ul>
+      </doc>
+      <doc><b>UNTESTED FEATURE: NOT SUPPORTED BY THE COMMANDLINE CLIENT ! SUBJECT TO CHANGE !</b></doc>
+    </attribute>
+  
     <attribute name="configDirectory" required="false">
       <doc>Specifies the location of a configuration directory which is used for subversion. Please 
       note that it's support depends on the concrete client implementation. Thus it's possible to

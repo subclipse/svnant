@@ -57,9 +57,12 @@ package org.tigris.subversion.svnant;
 import org.tigris.subversion.svnant.commands.SvnCommand;
 
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
+import org.tigris.subversion.svnclientadapter.ISVNConflictResolver;
 import org.tigris.subversion.svnclientadapter.ISVNPromptUserPassword;
 import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
+import org.tigris.subversion.svnclientadapter.SVNConflictDescriptor;
+import org.tigris.subversion.svnclientadapter.SVNConflictResult;
 import org.tigris.subversion.svnclientadapter.commandline.CmdLineClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.javahl.JhlClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.svnkit.SvnKitClientAdapterFactory;
@@ -169,6 +172,21 @@ public class SvnFacade {
         getFacade( component ).refid = refid;
     }
 
+    /**
+     * Returns the <code>ConflictResolution</code> specification used to handle conflicts.
+     * 
+     * @param component   The ant project component used to access the facade. Not <code>null</code>.
+     * 
+     * @return   The <code>ConflictResolution</code> specification used to handle conflicts.
+     */
+    public static final ConflictResolution getConflictResolution( ProjectComponent component ) {
+        ConflictResolution result = getSetting( component ).getConflictResolution();
+        if( result == null ) {
+            result = getRefidSetting( component ).getConflictResolution();
+        }
+        return result;
+    }
+    
     /**
      * Enables/disables the use of the command line client interface.
      *
@@ -633,6 +651,10 @@ public class SvnFacade {
                 throw new BuildException( "Failed to change the configuration directory to '" + configdir.getAbsolutePath() + "' !", ex );
             }
         }
+        ConflictResolution conflictresolution = getConflictResolution( component );
+        if( conflictresolution != null ) {
+            result.addConflictResolutionCallback( new DefaultConflictResolver( conflictresolution ) );
+        }
         if( getUsername( component ) != null ) {
             result.setUsername( getUsername( component ) );
         }
@@ -658,6 +680,23 @@ public class SvnFacade {
         return result;
         
     }
+    
+    private static class DefaultConflictResolver implements ISVNConflictResolver {
+
+        private ConflictResolution   choice;
+        
+        public DefaultConflictResolver( ConflictResolution resolve ) {
+            choice = resolve;
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public SVNConflictResult resolve( SVNConflictDescriptor descriptor ) throws SVNClientException {
+            return choice.resolve( descriptor );
+        }
+        
+    } /* ENDCLASS */
     
     private static class DefaultPasswordCallback implements ISVNPromptUserPassword {
 
