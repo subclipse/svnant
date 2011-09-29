@@ -382,6 +382,17 @@ public class SvnFacade {
         }
         return result;
     }
+    
+    /**
+     * @see SvnSetting#getConfigDirectory()
+     */
+    public static final File getConfigDirectory( ProjectComponent component ) {
+        File result = getSetting( component ).getConfigDirectory();
+        if( result == null ) {
+            result = getRefidSetting( component ).getConfigDirectory();
+        }
+        return result;
+    }
 
     /**
      * @see SvnSetting#setCertReject(Boolean)
@@ -614,7 +625,14 @@ public class SvnFacade {
         if( result == null ) {
             throw new BuildException( "Cannot find javahl, svnkit nor command line svn client" );
         }
-
+        File configdir = getConfigDirectory( component );
+        if( configdir != null ) {
+            try {
+                result.setConfigDirectory( configdir );
+            } catch( SVNClientException ex ) {
+                throw new BuildException( "Failed to change the configuration directory to '" + configdir.getAbsolutePath() + "' !", ex );
+            }
+        }
         if( getUsername( component ) != null ) {
             result.setUsername( getUsername( component ) );
         }

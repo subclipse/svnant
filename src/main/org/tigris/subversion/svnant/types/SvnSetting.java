@@ -82,6 +82,7 @@ public class SvnSetting extends DataType {
     private String    sshpassphrase;
     private File      sshkeypath;
     private Boolean   reject;
+    private File      configdir;
     
     /**
      * Initialises this instance.
@@ -104,6 +105,25 @@ public class SvnSetting extends DataType {
         sshpassphrase           = null;
         sshkeypath              = null;
         reject                  = null;
+        configdir               = null;
+    }
+    
+    /**
+     * Changes the location of the config directory.
+     * 
+     * @param config   The new location of the configuration directory.
+     */
+    public void setConfigDirectory( File config ) {
+        configdir = config;
+    }
+    
+    /**
+     * Returns the location of the configuration directory.
+     * 
+     * @return   The location of the current configuration directory. Maybe <code>null</code>.
+     */
+    public File getConfigDirectory() {
+        return configdir;
     }
 
     /**

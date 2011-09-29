@@ -5,12 +5,18 @@
 
   <attributes>
   
+    <attribute name="configDirectory" required="false">
+      <doc>Specifies the location of a configuration directory which is used for subversion. Please 
+      note that it's support depends on the concrete client implementation. Thus it's possible to
+      fail (you would get a <b>BuildException</b> in that case).</doc>
+    </attribute>
+  
     <attribute name="dateFormatter" required="false" default="MM/DD/YYYY HH:MM AM_PM">
-      <doc>formatter definition used to format/parse dates (e.g. when revision is specified as date).</doc>
+      <doc>Formatter definition used to format/parse dates (e.g. when revision is specified as date).</doc>
     </attribute>
   
     <attribute name="dateTimeZone" required="false" default="local">
-      <doc>time zone used to format/parse dates (e.g. when revision is specified as date).</doc>
+      <doc>Time zone used to format/parse dates (e.g. when revision is specified as date).</doc>
     </attribute>
   
     <attribute name="id" required="true">
