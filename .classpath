@@ -2,12 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="src/main"/>
 	<classpathentry kind="src" path="src/testcases"/>
-	<classpathentry kind="lib" path="lib/ant.jar"/>
-	<classpathentry kind="lib" path="lib/ant-launcher.jar"/>
-	<classpathentry kind="lib" path="lib/svnjavahl.jar"/>
-	<classpathentry kind="lib" path="lib/ganymed.jar"/>
-	<classpathentry kind="lib" path="lib/svnClientAdapter.jar"/>
-	<classpathentry kind="lib" path="lib/svnkit.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ant"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/svnclientadapter"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/svnkit"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
