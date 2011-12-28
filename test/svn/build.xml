@@ -20,7 +20,7 @@
   </path>  
   
   <!-- Define svnant tasks and types. -->
-  <typedef resource="svnantlib.xml" classpathref="project.classpath"/>
+  <typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="project.classpath"/>
 
   <svnSetting client="${svn.client}" id="defaultsettings"       username="${username}" password="${password}"/>
   <svnSetting client="${svn.client}" id="no-credentials"/>

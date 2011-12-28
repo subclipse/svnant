@@ -58,7 +58,7 @@
       includeantruntime="true"
       classpathref="project.classpath" 
     />
-    <copy file="${src.main.dir}/svnantlib.xml" todir="${build.classes.dir}/org/tigris/subversion/svnant" />
+    <copy file="${src.main.dir}/org/tigris/subversion/svnant/svnantlib.xml" todir="${build.classes.dir}/org/tigris/subversion/svnant" />
   </target>
 
   <!-- ======================================================================================= -->
@@ -154,7 +154,6 @@
     <mkdir dir="${build.distrib.dir}/lib" />
     <copy todir="${build.distrib.dir}">
       <fileset dir="${dir.svnant}">
-        <include name="readme.txt"/>
         <include name="changelog.txt"/>
         <include name="license.txt"/>
       </fileset>
