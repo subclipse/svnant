@@ -80,24 +80,33 @@ public enum SvnClientType {
     
     private Class<? extends SVNClientAdapterFactory>   factoryclass;
     private String                                     clientname;
+    private Boolean                                    available;
     
     SvnClientType( Class<? extends SVNClientAdapterFactory> clazz, String client ) {
         factoryclass    = clazz;
         clientname      = client;
+        available       = null;
     }
     
     public ISVNClientAdapter createClient() throws BuildException {
-        checkAvailability();
-        ISVNClientAdapter result = null;
-        try {
-            result = SVNClientAdapterFactory.createSVNClient( clientname );
-        } catch( Exception ex ) {
-            throw new BuildException( ex );
+        if( available == null ) {
+            checkAvailability();
         }
-        return result;
+        if( available.booleanValue() ) {
+            ISVNClientAdapter result = null;
+            try {
+                result = SVNClientAdapterFactory.createSVNClient( clientname );
+            } catch( Exception ex ) {
+                throw new BuildException( ex );
+            }
+            return result;
+        } else {
+            throw new BuildException( String.format( "The svn client '%s' is not available !", this ) );
+        }
     }
     
     private void checkAvailability() throws BuildException {
+        available             = Boolean.FALSE;
         String msgunavailable = String.format( "The svn client '%s' is not available !", this );
         try {
             invoke( getMethod( factoryclass, "setup" ) );
@@ -106,6 +115,7 @@ public enum SvnClientType {
             if( ! Boolean.TRUE.equals( availablity ) ) {
                 throw new BuildException( msgunavailable );
             }
+            available = Boolean.TRUE;
         } catch( BuildException ex ) {
             throw ex;
         } catch( RuntimeException ex ) {

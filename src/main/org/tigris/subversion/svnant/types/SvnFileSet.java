@@ -118,8 +118,8 @@ public class SvnFileSet extends FileSet {
     /**
      * {@inheritDoc}
      */
-    public void setRefid( Reference r ) throws BuildException {
-        throw (BuildException) notSupported( "refid", true ).fillInStackTrace();
+    public void setRefid( Reference refid ) throws BuildException {
+        SvnFacade.setRefid( this, refid );
     }
 
     /**

@@ -5,8 +5,9 @@ import org.junit.Test;
 
 public class SvnSvnKitTest extends SvnTest {
 
-    public SvnSvnKitTest( String name ) {
+    public SvnSvnKitTest() {
         super( SvnClientType.svnkit );
+        
     }
 
     /**

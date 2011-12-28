@@ -276,7 +276,7 @@ public abstract class BuildFileTest {
      *
      * @param  filename name of project file to run
      */    
-    protected void configureProject(String filename) throws BuildException {
+    protected void configureProject(String filename, String ... props) throws BuildException {
         if( project == null ) {
             logBuffer = new StringBuffer();
             fullLogBuffer = new StringBuffer();
@@ -288,6 +288,13 @@ public abstract class BuildFileTest {
             fullLogBuffer.setLength(0);
         }
         project.setUserProperty( "ant.file" , new File(filename).getAbsolutePath() );
+        if( props != null ) {
+            for( int i = 0; i < props.length; i += 2 ) {
+                String key = props[ i + 0 ];
+                String val = props[ i + 1 ];
+                project.setUserProperty( key, val );
+            }
+        }
         ProjectHelper.getProjectHelper().parse(project, new File(filename));
     }
     
