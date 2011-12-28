@@ -72,8 +72,7 @@ public abstract class SvnTest extends BuildFileTest {
     @Before
     public synchronized void setUp() {
         if( firstcall ) {
-            configureProject( "test/svn/build.xml" );
-            project.setProperty( "svn.client", clienttype.name() );
+            configureProject( "test/svn/build.xml", "svn.client", clienttype.name() );
             svnClient = clienttype.createClient();
             firstcall = false;
         }
