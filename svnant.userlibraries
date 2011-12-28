@@ -8,22 +8,12 @@
         <archive path="/svnant/lib/junit/junit.jar"/>
     </library>
     <library name="svnclientadapter" systemlibrary="false">
-        <archive javadoc="jar:platform:/resource/svnant/lib/svnclientadapter/javadoc.zip!/" path="/svnant/lib/svnclientadapter/lib/svnClientAdapter.jar"/>
+        <archive javadoc="jar:platform:/resource/svnant/lib/svnclientadapter/javadoc.zip!/" path="/svnant/lib/svnclientadapter/lib/svnClientAdapter.jar" source="/svnClientAdapter/src"/>
         <archive path="/svnant/lib/svnclientadapter/lib/svnjavahl.jar"/>
     </library>
     <library name="svnkit" systemlibrary="false">
-        <archive path="/svnant/lib/svnkit/lib/antlr-runtime.jar"/>
-        <archive path="/svnant/lib/svnkit/lib/commons-codec.jar"/>
-        <archive path="/svnant/lib/svnkit/lib/commons-logging.jar"/>
-        <archive path="/svnant/lib/svnkit/lib/httpclient.jar"/>
-        <archive path="/svnant/lib/svnkit/lib/httpcore.jar"/>
-        <archive path="/svnant/lib/svnkit/lib/jna.jar"/>
-        <archive path="/svnant/lib/svnkit/lib/sequence-library.jar"/>
-        <archive path="/svnant/lib/svnkit/lib/sqljet.jar"/>
-        <archive path="/svnant/lib/svnkit/src/svnkit-sources.jar"/>
-        <archive path="/svnant/lib/svnkit/src/svnkit-cli-sources.jar"/>
-        <archive path="/svnant/lib/svnkit/src/svnkit-javahl16-sources.jar"/>
-        <archive path="/svnant/lib/svnkit/lib/trilead-ssh2.jar"/>
+        <archive path="/svnant/lib/svnkit/ganymed.jar"/>
+        <archive path="/svnant/lib/svnkit/svnkit.jar"/>
     </library>
     <library name="xincluder" systemlibrary="false">
         <archive path="/svnant/lib/xincluder/xincluder.jar" source="/svnant/lib/xincluder/src.zip"/>

@@ -1,0 +1,21 @@
+IDE
+===
+
+* Eclipse 3.5+
+
+
+Classpath
+=========
+
+* Preferences -> Java -> Build Path -> User Libraries
+* Press 'Import' and browse to the provided 'svnant.userlibraries'
+ 
+Testing
+=======
+
+Tests should run out of the box. In order to get JavaHL running you must create a file 
+'svnant-${user.name}.properties' on the top level. Add the following property with the location
+of the DLLs/SOs located on your developer machine:
+
+   lib.jni.dir=Q:/workspaces/svnant/javahl
+
