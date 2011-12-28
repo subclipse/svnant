@@ -22,6 +22,8 @@ import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.UnknownElement;
 
+import org.junit.Assert;
+
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -37,8 +39,6 @@ import java.io.InputStreamReader;
 
 import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
-
-import junit.framework.Assert;
 
 /**
  * Set the property <code>javahl</code> and/or <code>svnkit</code> to
@@ -276,6 +276,7 @@ public abstract class SvnTest extends BuildFileTest {
         reader.close();
     }
 
+    @SuppressWarnings("unchecked")
     public void testListener() throws Exception {
         final Set<File> addSet = new HashSet<File>();
         final Set<File> commitSet = new HashSet<File>();
