@@ -54,17 +54,19 @@
 
 package org.apache.tools.ant;
 
+import org.junit.Assert;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.StringReader;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
 
-import junit.framework.TestCase;
+import java.net.URL;
 
 /**
  * A BuildFileTest is a TestCase which executes targets from an Ant buildfile 
@@ -76,7 +78,7 @@ import junit.framework.TestCase;
  * @author Nico Seessle <nico@seessle.de>
  * @author Conor MacNeill
  */
-public abstract class BuildFileTest extends TestCase { 
+public abstract class BuildFileTest { 
     
     protected Project project;
     
@@ -85,15 +87,6 @@ public abstract class BuildFileTest extends TestCase {
     private StringBuffer outBuffer;
     private StringBuffer errBuffer;
     private BuildException buildException;
-    
-    /**
-     *  Constructor for the BuildFileTest object
-     *
-     *@param  name string to pass up to TestCase constructor
-     */    
-    public BuildFileTest(String name) {
-        super(name);
-    }
     
     /**
      *  run a target, expect for any build exception 
@@ -112,7 +105,7 @@ public abstract class BuildFileTest extends TestCase {
     protected void expectLog(String target, String log) { 
         executeTarget(target);
         String realLog = getLog();
-        assertEquals(log, realLog);
+        Assert.assertEquals(log, realLog);
     }
 
     /**
@@ -122,7 +115,7 @@ public abstract class BuildFileTest extends TestCase {
     protected void expectLogContaining(String target, String log) { 
         executeTarget(target);
         String realLog = getLog();
-        assertTrue("expecting log to contain \""+log+"\" log was \""
+        Assert.assertTrue("expecting log to contain \""+log+"\" log was \""
                    + realLog + "\"", 
                    realLog.indexOf(log) >= 0);
     }
@@ -200,7 +193,7 @@ public abstract class BuildFileTest extends TestCase {
     protected void expectDebuglog(String target, String log) { 
         executeTarget(target);
         String realLog = getFullLog();
-        assertEquals(log, realLog);
+        Assert.assertEquals(log, realLog);
     }
 
     /**
@@ -224,7 +217,7 @@ public abstract class BuildFileTest extends TestCase {
     protected void expectOutput(String target, String output) { 
         executeTarget(target);
         String realOutput = getOutput();
-        assertEquals(output, realOutput);
+        Assert.assertEquals(output, realOutput);
     }
 
     /**
@@ -238,9 +231,9 @@ public abstract class BuildFileTest extends TestCase {
     protected void expectOutputAndError(String target, String output, String error) { 
         executeTarget(target);
         String realOutput = getOutput();
-        assertEquals(output, realOutput);
+        Assert.assertEquals(output, realOutput);
         String realError = getError();
-        assertEquals(error, realError);
+        Assert.assertEquals(error, realError);
     }
 
     protected String getOutput() {
@@ -361,13 +354,13 @@ public abstract class BuildFileTest extends TestCase {
         } catch (org.apache.tools.ant.BuildException ex) {
             buildException = ex;
             if ((null != msg) && (!ex.getMessage().equals(msg))) {
-                fail("Should throw BuildException because '" + cause
+                Assert.fail("Should throw BuildException because '" + cause
                         + "' with message '" + msg
                         + "' (actual message '" + ex.getMessage() + "' instead)");
             }
             return;
         }
-        fail("Should throw BuildException because: " + cause);
+        Assert.fail("Should throw BuildException because: " + cause);
     }
     
     /**
@@ -385,11 +378,11 @@ public abstract class BuildFileTest extends TestCase {
         } catch (org.apache.tools.ant.BuildException ex) {
             buildException = ex;
             if ((null != contains) && (ex.getMessage().indexOf(contains) == -1)) {
-                fail("Should throw BuildException because '" + cause + "' with message containing '" + contains + "' (actual message '" + ex.getMessage() + "' instead)");
+                Assert.fail("Should throw BuildException because '" + cause + "' with message containing '" + contains + "' (actual message '" + ex.getMessage() + "' instead)");
             }
             return;
         }
-        fail("Should throw BuildException because: " + cause);
+        Assert.fail("Should throw BuildException because: " + cause);
     }
     
 
@@ -413,7 +406,7 @@ public abstract class BuildFileTest extends TestCase {
      */
     protected void assertPropertyEquals(String property, String value) {
         String result = project.getProperty(property);
-        assertEquals("property " + property,value,result);
+        Assert.assertEquals("property " + property,value,result);
     }
 
     /**
@@ -462,7 +455,7 @@ public abstract class BuildFileTest extends TestCase {
      */
     protected URL getResource(String resource){
         URL url = getClass().getResource(resource);
-        assertNotNull("Could not find resource :" + resource, url);
+        Assert.assertNotNull("Could not find resource :" + resource, url);
         return url;
     }
 

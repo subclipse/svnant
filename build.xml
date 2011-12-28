@@ -1,6 +1,6 @@
 <project name="svnant" default="all" basedir=".">
 
-  <dirname file="${ant.file.svnant}" property="dir.project"/>
+  <dirname file="${ant.file.svnant}" property="dir.svnant"/>
   
   <!-- prefer the settings from the user if there are some. -->
   <property file="svnant-${user.name}.properties"/>
@@ -16,11 +16,17 @@
   <!-- ======================================================================================= -->
   
   <path id="project.classpath">
-    <fileset dir="${dir.project}/lib" includes="*.jar" excludes="ant*.jar"/>
+    <fileset dir="${dir.svnant}/lib/junit"            includes="**/*.jar"/>
+    <fileset dir="${dir.svnant}/lib/svnclientadapter" includes="**/*.jar"/>
+    <fileset dir="${dir.svnant}/lib/svnkit">
+      <include name="**/*.jar"/>
+      <exclude name="**/svnkit-cli.jar"/>
+      <exclude name="**/svnkit-javahl16.jar"/>
+    </fileset>
   </path>
   
   <path id="path.xinclude">
-    <fileset dir="${dir.project}/lib/xincluder" includes="**/*.jar"/>
+    <fileset dir="${dir.svnant}/lib/xincluder" includes="**/*.jar"/>
   </path>
 
   <!-- ======================================================================================= -->
@@ -147,15 +153,15 @@
     <mkdir dir="${build.distrib.dir}" />
     <mkdir dir="${build.distrib.dir}/lib" />
     <copy todir="${build.distrib.dir}">
-      <fileset dir="${dir.project}">
+      <fileset dir="${dir.svnant}">
         <include name="readme.txt"/>
         <include name="changelog.txt"/>
         <include name="license.txt"/>
       </fileset>
     </copy>
     <copy todir="${build.distrib.dir}/lib">
-      <fileset dir="${dir.project}/lib" includes="*-LICENSE"/>
-      <fileset dir="${dir.project}/lib" includes="*.jar" excludes="ant*.jar junit.jar"/>
+      <fileset dir="${dir.svnant}/lib" includes="*-LICENSE"/>
+      <fileset dir="${dir.svnant}/lib" includes="*.jar" excludes="ant*.jar junit.jar"/>
     </copy>
     <copy file="${build.lib.dir}/svnant.jar"           todir="${build.distrib.dir}/lib" />
     <copy file="${distribfiles.dir}/build.xml"         todir="${build.distrib.dir}"/>

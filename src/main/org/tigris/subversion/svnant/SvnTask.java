@@ -89,8 +89,6 @@ import org.tigris.subversion.svnant.commands.WcVersion;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNNotifyListener;
 
-import org.tigris.subversion.svnant.types.SvnSetting;
-
 import org.apache.tools.ant.types.Reference;
 
 import org.apache.tools.ant.BuildException;
@@ -114,9 +112,6 @@ import java.io.PrintWriter;
  *         <a href="mailto:daniel.kasmeroglu@kasisoft.net">Daniel.Kasmeroglu@kasisoft.net</a>
  */
 public class SvnTask extends Task {
-    
-    private static final String MSG_DEPRECATION = 
-        "Deprecated attribute '%s'. This attribute will disappear with SVNANT 1.3.2. Use svnSetting instead.";
     
     private List<SvnCommand>         commands        = new ArrayList<SvnCommand>();
     private List<ISVNNotifyListener> notifyListeners = new ArrayList<ISVNNotifyListener>();
@@ -148,62 +143,6 @@ public class SvnTask extends Task {
      */
     public void setRefid( Reference refid ) {
         SvnFacade.setRefid( this, refid );
-    }
-
-    /**
-     * @see SvnSetting#setUsername(String)
-     */
-    public void setUsername( String username ) {
-        warning( MSG_DEPRECATION, "username" );
-        SvnFacade.setUsername( this, username );
-    }
-
-    /**
-     * @see SvnSetting#setPassword(String)
-     */
-    public void setPassword( String password ) {
-        warning( MSG_DEPRECATION, "password" );
-        SvnFacade.setPassword( this, password );
-    }
-
-    /**
-     * @see SvnSetting#setJavahl(boolean)
-     */
-    public void setJavahl( boolean javahl ) {
-        warning( MSG_DEPRECATION, "javahl" );
-        SvnFacade.setJavahl( this, javahl );
-    }
-
-    /**
-     * @see SvnSetting#setSvnKit(boolean)
-     */
-    public void setSvnkit( boolean svnkit ) {
-        warning( MSG_DEPRECATION, "svnkit" );
-        SvnFacade.setSvnKit( this, svnkit );
-    }
-
-    /**
-     * @see SvnSetting#setDateFormatter(String)
-     */
-    public void setDateFormatter( String dateFormatter ) {
-        warning( MSG_DEPRECATION, "dateformatter" );
-        SvnFacade.setDateFormatter( this, dateFormatter );
-    }
-
-    /**
-     * @see SvnSetting#setDateTimezone(String)
-     */
-    public void setDateTimezone( String dateTimeZone ) {
-        warning( MSG_DEPRECATION, "datetimezone" );
-        SvnFacade.setDateTimezone( this, dateTimeZone );
-    }
-
-    /**
-     * @see SvnSetting#setFailonerror(boolean)
-     */
-    public void setFailonerror( boolean failonerror ) {
-        warning( MSG_DEPRECATION, "failonerror" );
-        SvnFacade.setFailonerror( this, failonerror );
     }
 
     /**

@@ -5,6 +5,9 @@ package org.tigris.subversion.svnant;
 
 import org.apache.tools.ant.BuildFileTest;
 
+import org.junit.After;
+import org.junit.Before;
+
 /**
  * to run this test, you should use keychain (or ssh-agent) otherwise the password will be asked many times 
  * 
@@ -14,21 +17,18 @@ import org.apache.tools.ant.BuildFileTest;
  */
 public class SvnSshTest extends BuildFileTest {
 
-	public SvnSshTest(String name) {
-		super(name);
-	}
+    @Before
+    public void setUp() {
+        configureProject( "test/svnssh/build.xml" );
+    }
 
-	public void setUp() {
-		configureProject("test/svnssh/build.xml");
-	}
+    @After
+    public void tearDown() {
+        System.out.print( getLog() );
+    }
 
-	public void tearDown()
-	{
-		System.out.print(getLog());
-	}
-
-	public void testSvnservePasswdSucceed() throws Exception {
-		executeTarget("testPasswdSucceed");
-	}
+    public void testSvnservePasswdSucceed() throws Exception {
+        executeTarget( "testPasswdSucceed" );
+    }
 
 }

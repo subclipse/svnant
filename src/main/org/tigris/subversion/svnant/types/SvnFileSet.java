@@ -62,7 +62,6 @@ import org.apache.tools.ant.types.Reference;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.ProjectComponent;
 
 import java.io.File;
 
@@ -87,48 +86,6 @@ import java.io.File;
  * @author Jean-Pierre Fiset <a href="mailto:jp@fiset.ca">jp@fiset.ca</a>
  */
 public class SvnFileSet extends FileSet {
-
-    private static final String MSG_DEPRECATION = 
-        "Deprecated attribute '%s'. This attribute will disappear with SVNANT 1.3.2. Use svnSetting instead.";
-
-    /**
-     * Constructor for FileSet.
-     */
-    public SvnFileSet() {
-        super();
-    }
-
-    /**
-     * Constructor for FileSet, with FileSet to shallowly clone.
-     * @param fileset the fileset to clone
-     */
-    protected SvnFileSet( SvnFileSet fileset_ ) {
-        SvnFacade.setJavahl( this, SvnFacade.getJavahl( fileset_ ) );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public synchronized Object clone() {
-        SvnFileSet fs = (SvnFileSet) super.clone();
-        return fs;
-    }
-
-    /**
-     * @see SvnFacade#setJavahl(ProjectComponent, boolean)
-     */
-    public void setJavahl( boolean javahl_ ) {
-        warning( MSG_DEPRECATION, "javahl" );
-        SvnFacade.setJavahl( this, javahl_ );
-    }
-
-    /**
-     * @see SvnFacade#setSvnKit(ProjectComponent, boolean)
-     */
-    public void setSvnkit( boolean svnkit_ ) {
-        warning( MSG_DEPRECATION, "javahl" );
-        SvnFacade.setSvnKit( this, svnkit_ );
-    }
 
     /**
      * Returns the directory scanner needed to access the files to process.
@@ -189,16 +146,6 @@ public class SvnFileSet extends FileSet {
             message.append( "nested " ).append( featureName_ ).append( " element." );
         }
         return new BuildException( message.toString() );
-    }
- 
-    /**
-     * Dumps some warning messages.
-     * 
-     * @param fmt    A formatting String. Not <code>null</code>.
-     * @param args   The arguments for the formatting String. Maybe <code>null</code>.
-     */
-    private void warning( String fmt, Object ... args ) {
-        getProject().log( String.format( fmt, args ), Project.MSG_WARN );
     }
     
 }

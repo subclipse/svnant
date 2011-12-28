@@ -59,20 +59,15 @@ import org.tigris.subversion.svnant.commands.SvnCommand;
 import org.tigris.subversion.svnclientadapter.ISVNClientAdapter;
 import org.tigris.subversion.svnclientadapter.ISVNConflictResolver;
 import org.tigris.subversion.svnclientadapter.ISVNPromptUserPassword;
-import org.tigris.subversion.svnclientadapter.SVNClientAdapterFactory;
 import org.tigris.subversion.svnclientadapter.SVNClientException;
 import org.tigris.subversion.svnclientadapter.SVNConflictDescriptor;
 import org.tigris.subversion.svnclientadapter.SVNConflictResult;
-import org.tigris.subversion.svnclientadapter.commandline.CmdLineClientAdapterFactory;
-import org.tigris.subversion.svnclientadapter.javahl.JhlClientAdapterFactory;
-import org.tigris.subversion.svnclientadapter.svnkit.SvnKitClientAdapterFactory;
 
 import org.tigris.subversion.svnant.types.SvnSetting;
 
 import org.apache.tools.ant.types.Reference;
 
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectComponent;
 
 import java.util.TimeZone;
@@ -88,22 +83,13 @@ import java.io.File;
  */
 public class SvnFacade {
 
-    private static final String MSG_MISSING_DEPENDENCY = "Missing '%s' dependencies on the classpath !";
-
     private static final String  DEFAULT_DATEFORMATTER = "MM/dd/yyyy hh:mm a";
 
-    private static final Boolean DEFAULT_SVNKIT        = Boolean.FALSE;
-    private static final Boolean DEFAULT_JAVAHL        = Boolean.TRUE;
     private static final Boolean DEFAULT_FAILONERROR   = Boolean.TRUE;
 
     private static final String  KEY_FACADE            = "org.tigris.subversion.svnant.SvnFacade";
 
-    private static Boolean       javahlAvailable       = null;
-    private static Boolean       svnKitAvailable       = null;
-    private static Boolean       commandLineAvailable  = null;
-
     private SvnSetting           setting               = new SvnSetting( null );
-
     private SvnSetting           refidsetting          = null;
     private Reference            refid                 = null;
 
@@ -179,7 +165,7 @@ public class SvnFacade {
      * 
      * @return   The <code>ConflictResolution</code> specification used to handle conflicts.
      */
-    public static final ConflictResolution getConflictResolution( ProjectComponent component ) {
+    private static final ConflictResolution getConflictResolution( ProjectComponent component ) {
         ConflictResolution result = getSetting( component ).getConflictResolution();
         if( result == null ) {
             result = getRefidSetting( component ).getConflictResolution();
@@ -187,73 +173,8 @@ public class SvnFacade {
         return result;
     }
     
-    /**
-     * Enables/disables the use of the command line client interface.
-     *
-     * @param component     The ant project component used to access the facade. 
-     *                      Not <code>null</code>.
-     * @param enable        <code>true</code> <=> Enables the command line client interface.
-     */
-    public static final void setJavahl( ProjectComponent component, boolean enable ) {
-        getSetting( component ).setJavahl( enable );
-    }
-
-    /**
-     * Returns <code>true</code> if the java jni javahl client has to be used.
-     *
-     * @param component  The ant project component used to access the facade. 
-     *                          Not <code>null</code>.
-     *                          
-     * @return   <code>true</code> <=> The java jni javahl client has to be used.
-     */
-    public static final boolean getJavahl( ProjectComponent component ) {
-        Boolean result = getSetting( component ).getJavahl();
-        if( result == null ) {
-            result = getRefidSetting( component ).getJavahl();
-        }
-        if( result == null ) {
-            result = DEFAULT_JAVAHL;
-        }
-        return result.booleanValue();
-    }
-
-    /**
-     * Enables/disables the use of the svnkit client interface.
-     *
-     * @param component     The ant project component used to access the facade. 
-     *                      Not <code>null</code>.
-     * @param enable        <code>true</code> <=> Enables the svnkit client interface.
-     */
-    public static final void setSvnKit( ProjectComponent component, boolean enable ) {
-        getSetting( component ).setSvnKit( enable );
-    }
-
-    /**
-     * Returns <code>true</code> if the java svnkit client has to be used.
-     *
-     * @param component  The ant project component used to access the facade. 
-     *                   Not <code>null</code>.
-     *                          
-     * @return   <code>true</code> <=> The java jsvnkit client has to be used.
-     */
-    public static final boolean getSvnKit( ProjectComponent component ) {
-        Boolean result = getSetting( component ).getSvnKit();
-        if( result == null ) {
-            result = getRefidSetting( component ).getSvnKit();
-        }
-        if( result == null ) {
-            result = DEFAULT_SVNKIT;
-        }
-        return result.booleanValue();
-    }
-
-    /**
-     * @see SvnSetting#setUsername(String)
-     * 
-     * @param component   The ant project component used to access the facade. Not <code>null</code>.
-     */
-    public static final void setUsername( ProjectComponent component, String username ) {
-        getSetting( component ).setUsername( username );
+    private static final SvnClientType getClientType( ProjectComponent component ) {
+        return getRefidSetting( component ).getClient();
     }
 
     /**
@@ -261,7 +182,7 @@ public class SvnFacade {
      * 
      * @param component   The ant project component used to access the facade. Not <code>null</code>.
      */
-    public static final String getUsername( ProjectComponent component ) {
+    private static final String getUsername( ProjectComponent component ) {
         String result = getSetting( component ).getUsername();
         if( result == null ) {
             result = getRefidSetting( component ).getUsername();
@@ -270,20 +191,11 @@ public class SvnFacade {
     }
 
     /**
-     * @see SvnSetting#setPassword(String)
-     * 
-     * @param component   The ant project component used to access the facade. Not <code>null</code>.
-     */
-    public static final void setPassword( ProjectComponent component, String password ) {
-        getSetting( component ).setPassword( password );
-    }
-
-    /**
      * @see SvnSetting#getPassword()
      * 
      * @param component   The ant project component used to access the facade. Not <code>null</code>.
      */
-    public static final String getPassword( ProjectComponent component ) {
+    private static final String getPassword( ProjectComponent component ) {
         String result = getSetting( component ).getPassword();
         if( result == null ) {
             result = getRefidSetting( component ).getPassword();
@@ -292,20 +204,11 @@ public class SvnFacade {
     }
 
     /**
-     * @see SvnSetting#setSSLPassword(String)
-     * 
-     * @param component   The ant project component used to access the facade. Not <code>null</code>.
-     */
-    public static final void setSSLPassword( ProjectComponent component, String sslpassword ) {
-        getSetting( component ).setSSLPassword( sslpassword );
-    }
-    
-    /**
      * @see SvnSetting#getSSLPassword()
      * 
      * @param component   The ant project component used to access the facade. Not <code>null</code>.
      */
-    public static final String getSSLPassword( ProjectComponent component ) {
+    private static final String getSSLPassword( ProjectComponent component ) {
         String result = getSetting( component ).getSSLPassword();
         if( result == null ) {
             result = getRefidSetting( component ).getSSLPassword();
@@ -314,20 +217,11 @@ public class SvnFacade {
     }
     
     /**
-     * @see SvnSetting#setSSLClientCertPath(File)
-     * 
-     * @param component   The ant project component used to access the facade. Not <code>null</code>.
-     */
-    public static final void setSSLClientCertPath( ProjectComponent component, File newclientcertpath ) {
-        getSetting( component ).setSSLClientCertPath( newclientcertpath );
-    }
-    
-    /**
      * @see SvnSetting#getSSLClientCertPath()
      * 
      * @param component   The ant project component used to access the facade. Not <code>null</code>.
      */
-    public static final File getSSLClientCertPath( ProjectComponent component ) {
+    private static final File getSSLClientCertPath( ProjectComponent component ) {
         File result = getSetting( component ).getSSLClientCertPath();
         if( result == null ) {
             result = getRefidSetting( component ).getSSLClientCertPath();
@@ -336,20 +230,11 @@ public class SvnFacade {
     }
     
     /**
-     * @see SvnSetting#setSSHPort(int)
-     * 
-     * @param component   The ant project component used to access the facade. Not <code>null</code>.
-     */
-    public static final void setSSHPort( ProjectComponent component, Integer newsshport ) {
-        getSetting( component ).setSSHPort( newsshport );
-    }
-    
-    /**
      * @see SvnSetting#getSSHPort()
      * 
      * @param component   The ant project component used to access the facade. Not <code>null</code>.
      */
-    public static final Integer getSSHPort( ProjectComponent component ) {
+    private static final Integer getSSHPort( ProjectComponent component ) {
         Integer result = getSetting( component ).getSSHPort();
         if( result == null ) {
             result = getRefidSetting( component ).getSSHPort();
@@ -358,20 +243,11 @@ public class SvnFacade {
     }
     
     /**
-     * @see SvnSetting#setSSHPassphrase(String)
-     * 
-     * @param component   The ant project component used to access the facade. Not <code>null</code>.
-     */
-    public static final void setSSHPassphrase( ProjectComponent component, String newsshpassphrase ) {
-        getSetting( component ).setSSHPassphrase( newsshpassphrase );
-    }
-    
-    /**
      * @see SvnSetting#getSSHPassphrase()
      * 
      * @param component   The ant project component used to access the facade. Not <code>null</code>.
      */
-    public static final String getSSHPassphrase( ProjectComponent component ) {
+    private static final String getSSHPassphrase( ProjectComponent component ) {
         String result = getSetting( component ).getSSHPassphrase();
         if( result == null ) {
             result = getRefidSetting( component ).getSSHPassphrase();
@@ -380,20 +256,11 @@ public class SvnFacade {
     }
     
     /**
-     * @see SvnSetting#setSSHKeyPath(File)
-     * 
-     * @param component   The ant project component used to access the facade. Not <code>null</code>.
-     */
-    public static final void setSSHKeyPath( ProjectComponent component, File newsshkeypath ) {
-        getSetting( component ).setSSHKeyPath( newsshkeypath );
-    }
-    
-    /**
      * @see SvnSetting#getSSHKeyPath()
      * 
      * @param component   The ant project component used to access the facade. Not <code>null</code>.
      */
-    public static final File getSSHKeyPath( ProjectComponent component ) {
+    private static final File getSSHKeyPath( ProjectComponent component ) {
         File result = getSetting( component ).getSSHKeyPath();
         if( result == null ) {
             result = getRefidSetting( component ).getSSHKeyPath();
@@ -404,7 +271,7 @@ public class SvnFacade {
     /**
      * @see SvnSetting#getConfigDirectory()
      */
-    public static final File getConfigDirectory( ProjectComponent component ) {
+    private static final File getConfigDirectory( ProjectComponent component ) {
         File result = getSetting( component ).getConfigDirectory();
         if( result == null ) {
             result = getRefidSetting( component ).getConfigDirectory();
@@ -413,34 +280,16 @@ public class SvnFacade {
     }
 
     /**
-     * @see SvnSetting#setCertReject(Boolean)
-     * 
-     * @param component   The ant project component used to access the facade. Not <code>null</code>.
-     */
-    public static final void setCertReject( ProjectComponent component, Boolean newcertreject ) {
-        getSetting( component ).setCertReject( newcertreject );
-    }
-    
-    /**
      * @see SvnSetting#getCertReject()
      *  
      * @param component   The ant project component used to access the facade. Not <code>null</code>.
      */
-    public static final Boolean getCertReject( ProjectComponent component ) {
+    private static final Boolean getCertReject( ProjectComponent component ) {
         Boolean result = getSetting( component ).getCertReject();
         if( result == null ) {
             result = getRefidSetting( component ).getCertReject();
         }
         return result;
-    }
-
-    /**
-     * @see SvnSetting#setDateFormatter(String)
-     * 
-     * @param component   The ant project component used to access the facade. Not <code>null</code>.
-     */
-    public static final void setDateFormatter( ProjectComponent component, String dateformatter ) {
-        getSetting( component ).setDateFormatter( dateformatter );
     }
 
     /**
@@ -460,15 +309,6 @@ public class SvnFacade {
     }
 
     /**
-     * @see SvnSetting#setDateTimezone(String)
-     * 
-     * @param component   The ant project component used to access the facade. Not <code>null</code>.
-     */
-    public static final void setDateTimezone( ProjectComponent component, String timezone ) {
-        getSetting( component ).setDateTimezone( timezone );
-    }
-
-    /**
      * @see SvnSetting#getDateTimezone()
      * 
      * @param component   The ant project component used to access the facade. Not <code>null</code>.
@@ -483,17 +323,6 @@ public class SvnFacade {
         } else {
             return TimeZone.getTimeZone( zone );
         }
-    }
-
-    /**
-     * Enables/disables the controlflow interruption in case of an error.
-     *
-     * @param component     The ant project component used to access the facade. 
-     *                      Not <code>null</code>.
-     * @param enable        <code>true</code> <=> Cause a failure in case of an error. 
-     */
-    public static final void setFailonerror( ProjectComponent component, boolean enable ) {
-        getSetting( component ).setFailonerror( enable );
     }
 
     /**
@@ -516,85 +345,6 @@ public class SvnFacade {
     }
 
     /**
-     * Check if javahl is available.
-     * 
-     * @return  <code>true</code> <=> Javahl is available.
-     */
-    private static final boolean isJavahlAvailable() {
-        if( javahlAvailable == null ) {
-
-            javahlAvailable = Boolean.FALSE;
-
-            try {
-                JhlClientAdapterFactory.setup();
-            } catch( SVNClientException ex ) {
-                // if an exception is thrown, javahl is not available or 
-                // already registered ...
-            }
-            try {
-                if( SVNClientAdapterFactory.isSVNClientAvailable( JhlClientAdapterFactory.JAVAHL_CLIENT ) ) {
-                    javahlAvailable = Boolean.TRUE;
-                }
-            } catch( Exception ex ) {
-                // If anything goes wrong it's not available. 
-            }
-        }
-        return javahlAvailable.booleanValue();
-    }
-
-    /**
-     * Check if svnkit is available.
-     * 
-     * @return  <code>true</code> <=> Svnkit is available.
-     */
-    private static final boolean isSVNKitAvailable() {
-        if( svnKitAvailable == null ) {
-
-            svnKitAvailable = Boolean.FALSE;
-
-            try {
-                SvnKitClientAdapterFactory.setup();
-            } catch( SVNClientException ex ) {
-                // if an exception is thrown, SVNKit is not available or 
-                // already registered ...
-            }
-            try {
-                if( SVNClientAdapterFactory.isSVNClientAvailable( SvnKitClientAdapterFactory.SVNKIT_CLIENT ) ) {
-                    svnKitAvailable = Boolean.TRUE;
-                }
-            } catch( Exception ex ) {
-                // If anything goes wrong it's not available. 
-            }
-        }
-        return svnKitAvailable.booleanValue();
-    }
-
-    /**
-     * Check if command line client is available.
-     * 
-     * @return  <code>true</code> <=> Command line client is available.
-     */
-    private static final boolean isCommandLineAvailable() {
-        if( commandLineAvailable == null ) {
-            commandLineAvailable = Boolean.FALSE;
-            try {
-                CmdLineClientAdapterFactory.setup();
-            } catch( SVNClientException ex ) {
-                // if an exception is thrown, command line interface is not available or
-                // already registered ...                
-            }
-            try {
-                if( SVNClientAdapterFactory.isSVNClientAvailable( CmdLineClientAdapterFactory.COMMANDLINE_CLIENT ) ) {
-                    commandLineAvailable = Boolean.TRUE;
-                }
-            } catch( Exception ex ) {
-                // If anything goes wrong it's not available. 
-            }
-        }
-        return commandLineAvailable.booleanValue();
-    }
-
-    /**
      * This method returns a SVN client adapter, based on the property set to the svn task. 
      * More specifically, the 'javahl' and 'svnkit' flags are verified, as well as the
      * availability of JAVAHL ad SVNKit adapters, to decide what flavour to use.
@@ -608,41 +358,8 @@ public class SvnFacade {
      * @throws BuildException   Thrown in a situation where no adapter can fit the constraints.
      */
     public static final synchronized ISVNClientAdapter getClientAdapter( ProjectComponent component ) throws BuildException {
-
-        ISVNClientAdapter result = null;
-        
-        boolean javahl      = getJavahl( component );
-        boolean svnkit      = getSvnKit( component );
-        boolean commandline = false;
-        if( javahl ) {
-            if( isJavahlAvailable() ) {
-                result = SVNClientAdapterFactory.createSVNClient( JhlClientAdapterFactory.JAVAHL_CLIENT );
-                component.log( "Using javahl", Project.MSG_VERBOSE );
-            } else {
-                component.log( String.format( MSG_MISSING_DEPENDENCY, "javahl" ), Project.MSG_ERR );
-            }
-        }
-        if( svnkit && (result == null) ) {
-            if( isSVNKitAvailable() ) {
-                result = SVNClientAdapterFactory.createSVNClient( SvnKitClientAdapterFactory.SVNKIT_CLIENT );
-                component.log( "Using svnkit", Project.MSG_VERBOSE );
-            } else {
-                component.log( String.format( MSG_MISSING_DEPENDENCY, "svnkit" ), Project.MSG_ERR );
-            }
-        }
-        if( (!javahl) && (!svnkit) ) {
-            if( isCommandLineAvailable() ) {
-                result      = SVNClientAdapterFactory.createSVNClient( CmdLineClientAdapterFactory.COMMANDLINE_CLIENT );
-                commandline = true;
-                component.log( "Using command line", Project.MSG_VERBOSE );
-            } else {
-                component.log( String.format( MSG_MISSING_DEPENDENCY, "commandline" ), Project.MSG_ERR );
-            }
-        }
-        
-        if( result == null ) {
-            throw new BuildException( "Cannot find javahl, svnkit nor command line svn client" );
-        }
+        SvnClientType     clienttype = getClientType( component );
+        ISVNClientAdapter result     = clienttype.createClient();
         File configdir = getConfigDirectory( component );
         if( configdir != null ) {
             try {
@@ -658,7 +375,7 @@ public class SvnFacade {
         if( getUsername( component ) != null ) {
             result.setUsername( getUsername( component ) );
         }
-        if( commandline ) {
+        if( clienttype == SvnClientType.cli ) {
             if( getPassword( component ) != null ) {
                 result.setPassword( getPassword( component ) );
             }
@@ -676,7 +393,6 @@ public class SvnFacade {
                 ) 
             );
         }
-
         return result;
         
     }

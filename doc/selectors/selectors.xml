@@ -14,31 +14,6 @@
       
     <attributes>
   
-      <attribute name="username" required="false">
-        <doc>username that will be used for all nested svn commands.<br/></doc>
-        <doc><b>Deprecated. This attribute won't work with SVNANT 1.3.2+ . Use refid for svnSetting instead.</b></doc>
-      </attribute>
-    
-      <attribute name="password" required="false">
-        <doc>password that will be used for all nested svn commands.<br/></doc>
-        <doc><b>Deprecated. This attribute won't work with SVNANT 1.3.2+ . Use refid for svnSetting instead.</b></doc>
-      </attribute>
-  
-      <attribute name="javahl" required="false" default="true">
-        <doc>Set to "false" to use command line client interface instead of JNI JavaHL binding.<br/></doc>
-        <doc><b>Deprecated. This attribute won't work with SVNANT 1.3.2+ . Use refid for svnSetting instead.</b></doc>
-      </attribute>
-  
-      <attribute name="svnkit" required="false" default="false">
-        <doc>Set to "false" to use command line client interface instead of SVNKit binding.<br/></doc>
-        <doc><b>Deprecated. This attribute won't work with SVNANT 1.3.2+ . Use refid for svnSetting instead.</b></doc>
-      </attribute>
-  
-      <attribute name="failonerror" required="false" default="true">
-        <doc>Controls whether an error stops the build or is merely reported to the screen.<br/></doc>
-        <doc><b>Deprecated. This attribute won't work with SVNANT 1.3.2+ . Use refid for svnSetting instead.</b></doc>
-      </attribute>
-      
       <attribute name="refid" required="false">
         <doc>If set the configuration for this task is taken from a <ref id="svnsetting">svnSetting</ref> object. Such a settings instance simply provides default values, so they will be overridden in case the corresponding attribute on this task has been set.</doc>
       </attribute>

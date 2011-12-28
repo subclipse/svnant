@@ -56,6 +56,7 @@ package org.tigris.subversion.svnant.types;
 
 import org.tigris.subversion.svnant.ConflictResolution;
 import org.tigris.subversion.svnant.SvnAntUtilities;
+import org.tigris.subversion.svnant.SvnClientType;
 
 import org.apache.tools.ant.types.DataType;
 
@@ -71,8 +72,6 @@ import java.io.File;
 public class SvnSetting extends DataType {
 
     private Project              project;
-    private Boolean              javahl;
-    private Boolean              svnkit;
     private String               username;
     private String               password;
     private String               dateformatter;
@@ -87,6 +86,7 @@ public class SvnSetting extends DataType {
     private Boolean              reject;
     private File                 configdir;
     private ConflictResolution   conflictresolution;
+    private SvnClientType        client;
     
     /**
      * Initialises this instance.
@@ -95,8 +95,6 @@ public class SvnSetting extends DataType {
      */
     public SvnSetting( Project antproject ) {
         project                 = antproject;
-        javahl                  = null;
-        svnkit                  = null;
         username                = null;
         password                = null;
         dateformatter           = null;
@@ -111,6 +109,29 @@ public class SvnSetting extends DataType {
         reject                  = null;
         configdir               = null;
         conflictresolution      = null;
+        client                  = SvnClientType.svnkit;
+    }
+    
+    /**
+     * Changes the value for the underlying client type.
+     *
+     * @param clienttype   The new value for the client type type.
+     */
+    public void setClient( String clienttype ) {
+        try {
+            client = SvnClientType.valueOf( clienttype );
+        } catch( IllegalArgumentException ex ) {
+            SvnAntUtilities.attrInvalidValue( "client", SvnClientType.values(), clienttype );
+        }
+    }
+    
+    /**
+     * Returns the value for the client type.
+     * 
+     * @return   The value for the client type. Not <code>null</code>.
+     */
+    public SvnClientType getClient() {
+        return client;
     }
     
     /**
@@ -269,44 +290,6 @@ public class SvnSetting extends DataType {
     public void setId( String newid ) {
         id = newid;
         project.addReference( id, this );
-    }
-
-    /**
-     * Enables/disables the use of the command line client interface.
-     *
-     * @param enable   <code>true</code> <=> Enables the command line client interface.
-     */
-    public void setJavahl( boolean enable ) {
-        javahl = enable ? Boolean.TRUE : Boolean.FALSE;
-    }
-
-    /**
-     * Returns <code>true</code> if the java jni javahl client has to be used.
-     *
-     * @return   <code>true</code> <=> The java jni javahl client has to be used.
-     *           Maybe <code>null</code>.
-     */
-    public Boolean getJavahl() {
-        return javahl;
-    }
-
-    /**
-     * Enables/disables the use of the svnkit client interface.
-     *
-     * @param enable   <code>true</code> <=> Enables the svnkit client interface.
-     */
-    public void setSvnKit( boolean enable ) {
-        svnkit = enable ? Boolean.TRUE : Boolean.FALSE;
-    }
-
-    /**
-     * Returns <code>true</code> if the java svnkit client has to be used.
-     *
-     * @return   <code>true</code> <=> The java jsvnkit client has to be used.
-     *           Maybe <code>null</code>.
-     */
-    public Boolean getSvnKit() {
-        return svnkit;
     }
 
     /**

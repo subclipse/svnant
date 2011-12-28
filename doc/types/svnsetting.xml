@@ -47,12 +47,14 @@
       <doc>password that will be used for all nested svn commands.</doc>
     </attribute>
 
-    <attribute name="javahl" required="false" default="true">
-      <doc>Set to "false" to use command line client interface instead of JNI JavaHL binding.</doc>
-    </attribute>
-
-    <attribute name="svnkit" required="false" default="false">
-      <doc>Set to "false" to use command line client interface instead of SVNKit binding.</doc>
+    <attribute name="client" required="false" default="svnkit">
+      <doc>Specifies the client that is supposed to be used to access the svn repository:
+      <ul>
+        <li>svnkit : Makes use of the pure java client <a href="http://svnkit.com">SvnKit</a>.</li>
+        <li>javahl : Uses the Java native binding for subversion (requires the DLL to be on the path).</li>
+        <li>cli : Uses the svn executables which must be available through the path.</li>
+      </ul>
+      </doc>
     </attribute>
 
     <attribute name="failonerror" required="false" default="true">
