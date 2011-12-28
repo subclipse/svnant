@@ -21,7 +21,7 @@
       </attribute>
       
       <attribute name="refid" required="false">
-        <doc>If set the configuration for this task is taken from a <ref id="svnsetting">svnSetting</ref> object. Such a settings instance simply provides default values, so they will be overridden in case the corresponding attribute on this task has been set.</doc>
+        <doc>If set the configuration for this task is taken from a <a href="types.html#svnsetting">svnSetting</a> object. Such a settings instance simply provides default values, so they will be overridden in case the corresponding attribute on this task has been set.</doc>
       </attribute>
 
     </attributes>

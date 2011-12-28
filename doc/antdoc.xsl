@@ -349,7 +349,6 @@
     </p>
   </xsl:template>
 
-
   <xsl:template name="generate_anchor">
     <xsl:if test="string-length(@id) &gt; 0">
       <a style="visibility: hidden;"><xsl:attribute name="name"><xsl:value-of select="@id"/></xsl:attribute></a>
