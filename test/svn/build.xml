@@ -1,81 +1,36 @@
 <?xml version="1.0"?>
 <project name="svn-test" basedir="." default="all">
   
-  <!--  all properties are in build.properties 
-  --> 
+  <dirname file="${ant.file.svn-test}"    property="dir.svn-test"/>
+  <dirname file="${dir.svn-test}"         property="dir.test"/>
+  <dirname file="${dir.test}"             property="dir.svnant"/>
+  
+  <!--  all properties are in build.properties --> 
   
   <property file="build.properties" /> 
 
-  <svnSetting 
-    id="defaultsettings"
-    client="${svn.client}"
-    username="${username}"
-    password="${password}"
-  />
-
-  <svnSetting 
-    id="no-credentials"
-    client="${svn.client}"
-  />
-
-  <svnSetting 
-    id="nopassword"
-    client="${svn.client}"
-    username="${username}"
-  />
-
-  <svnSetting 
-    id="formatteddate"
-    client="${svn.client}"
-    username="${username}"
-    password="${password}"
-    dateFormatter="yyyy/MM/dd HH:mm"
-  />
-  
-  <svnSetting
-    id="formatteddate-german"
-    client="${svn.client}"
-    username="${username}"
-    password="${password}"
-    dateFormatter="dd-MMM-yyyy HH:mm"
-  />
-
-  <svnSetting 
-    id="nopassword-cedric"
-    client="${svn.client}"
-    username="Cedric Chabanois"
-  />
-
-  <svnSetting 
-    id="nopassword-user1"
-    client="${svn.client}"
-    username="user1"
-  />
-
-  <svnSetting 
-    id="nopassword-user2"
-    client="${svn.client}"
-    username="user2"
-  />
-
-  <svnSetting 
-    id="nopassword-empty"
-    client="${svn.client}"
-    username=""
-  />
-
   <path id="project.classpath">
-    <pathelement location="${svnant.jar}" />
-    <pathelement location="${svnClientAdapter.jar}"/>
-    <pathelement location="${svnjavahl.jar}"/>
-    <pathelement location="${javasvn.jar}"/>
-    <pathelement location="${ganymed.jar}"/>
+    <fileset dir="${dir.svnant}/lib/svnclientadapter" includes="**/*.jar"/>
+    <fileset dir="${dir.svnant}/lib/svnkit">
+      <include name="**/*.jar"/>
+      <exclude name="**/svnkit-cli.jar"/>
+      <exclude name="**/svnkit-javahl16.jar"/>
+    </fileset>
+    <pathelement path="${dir.svnant}/bin"/>
   </path>  
   
   <!-- Define svnant tasks and types. -->
-  <typedef resource="org/tigris/subversion/svnant/svnantlib.xml"
-           classpathref="project.classpath"/>
+  <typedef resource="svnantlib.xml" classpathref="project.classpath"/>
 
+  <svnSetting client="${svn.client}" id="defaultsettings"       username="${username}" password="${password}"/>
+  <svnSetting client="${svn.client}" id="no-credentials"/>
+  <svnSetting client="${svn.client}" id="nopassword"            username="${username}"/>
+  <svnSetting client="${svn.client}" id="formatteddate"         username="${username}" password="${password}" dateFormatter="yyyy/MM/dd HH:mm"/>
+  <svnSetting client="${svn.client}" id="formatteddate-german"  username="${username}" password="${password}" dateFormatter="dd-MMM-yyyy HH:mm"/>
+  <svnSetting client="${svn.client}" id="nopassword-cedric"     username="Cedric Chabanois"/>
+  <svnSetting client="${svn.client}" id="nopassword-user1"      username="user1" />
+  <svnSetting client="${svn.client}" id="nopassword-user2"      username="user2"/>
+  <svnSetting client="${svn.client}" id="nopassword-empty"      username=""/>
 
   <target name="clean">
     <delete dir="workingcopy"/>
@@ -86,8 +41,6 @@
     <delete dir="test"/>
   </target>
 
-
- 
   <!-- create the test repository -->
   <target name="createTestRepository">
     <echo>creating repository (you need svnadmin in your path if using command line interface) ...</echo>
@@ -264,7 +217,6 @@
     <svn refid="defaultsettings">
       <add dir="workingcopy/checkoutTest"/>
       <commit dir="workingcopy/checkoutTest" message="checkoutTest directory added to repository"/>
-      
       <checkout url="${urlRepos}" revision="HEAD" destPath="coHEAD" />
       <checkout url="${urlRepos}" revision="0" destPath="co0" />
     </svn>
