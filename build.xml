@@ -17,8 +17,7 @@
   
   <path id="project.classpath">
     <fileset dir="${dir.svnant}/lib/junit"            includes="**/*.jar"/>
-    <fileset dir="${dir.svnant}/lib/svnclientadapter" includes="**/*.jar"/>
-    <fileset dir="${dir.svnant}/lib/svnkit">
+    <fileset dir="${dir.svnant}/lib/svnclientadapter">
       <include name="**/*.jar"/>
       <exclude name="**/svnkit-cli.jar"/>
       <exclude name="**/svnkit-javahl16.jar"/>
@@ -54,6 +53,7 @@
       destdir="${build.classes.dir}"
       debug="${debug}" 
       target="${targetJvm}"
+      source="${targetJvm}"
       includes="**"
       includeantruntime="true"
       classpathref="project.classpath" 
@@ -121,6 +121,7 @@
       debug="${debug}" 
       includes="**" 
       target="${targetJvm}"
+      source="${targetJvm}"
       includeantruntime="true"
       encoding="${encoding}"
       classpathref="project.classpath">

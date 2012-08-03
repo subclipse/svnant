@@ -10,15 +10,16 @@
   <property file="build.properties" /> 
 
   <path id="project.classpath">
-    <fileset dir="${dir.svnant}/lib/svnclientadapter" includes="**/*.jar"/>
-    <fileset dir="${dir.svnant}/lib/svnkit">
+    <fileset dir="${dir.svnant}/lib/svnclientadapter">
       <include name="**/*.jar"/>
       <exclude name="**/svnkit-cli.jar"/>
       <exclude name="**/svnkit-javahl16.jar"/>
+      
     </fileset>
     <pathelement path="${dir.svnant}/bin"/>
+    <pathelement path="${dir.svnant}/src/main"/>
   </path>  
-  
+ 
   <!-- Define svnant tasks and types. -->
   <typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="project.classpath"/>
 
