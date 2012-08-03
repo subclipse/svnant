@@ -96,18 +96,6 @@ public class SvnAntUtilities {
    * 
    * @param params      A list of parameters that do represent the supplied objects. 
    *                    Neither <code>null</code> nor empty.
-   * @param objects     The objects that needs to be tested.
-   */
-  public static final void attrsNotSet( String params, Object ... objects ) {
-      attrsNotSet( params, false, objects );
-  }
-  
-  /**
-   * Causes a BuildException if all supplied objects are <code>null</code> or all collections
-   * are empty.
-   * 
-   * @param params      A list of parameters that do represent the supplied objects. 
-   *                    Neither <code>null</code> nor empty.
    * @param exclusive   <code>true</code> <=> Only one value is allowed to be set.
    * @param objects     The objects that needs to be tested.
    */

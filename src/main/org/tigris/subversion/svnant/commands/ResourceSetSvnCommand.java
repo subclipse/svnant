@@ -266,7 +266,7 @@ public class ResourceSetSvnCommand extends SvnCommand {
      * {@inheritDoc}
      */
     protected void validateAttributes() {
-        SvnAntUtilities.attrsNotSet( "file, dir, fileset, dirset", file, dir, filesets, dirsets );
+        SvnAntUtilities.attrsNotSet( "file, dir, fileset, dirset", false, file, dir, filesets, dirsets );
         if( file != null ) {
             SvnAntUtilities.attrIsFile( "file", file );
         }

@@ -192,7 +192,7 @@ public class Log extends SvnCommand {
      * {@inheritDoc}
      */
     protected void validateAttributes() {
-        SvnAntUtilities.attrsNotSet( "url, path", url, path );
+        SvnAntUtilities.attrsNotSet( "url, path", false, url, path );
         SvnAntUtilities.attrNotNull( "startRevision", startRevision );
         SvnAntUtilities.attrNotNull( "stopRevision", stopRevision );
     }
