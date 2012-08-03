@@ -160,8 +160,10 @@
       </fileset>
     </copy>
     <copy todir="${build.distrib.dir}/lib">
-      <fileset dir="${dir.svnant}/lib" includes="*-LICENSE"/>
-      <fileset dir="${dir.svnant}/lib" includes="*.jar" excludes="ant*.jar junit.jar"/>
+      <fileset dir="${dir.svnant}/lib/svnclientadapter/lib">
+        <include name="*.jar"/>
+        <include name="LICENSE-*"/>
+      </fileset>
     </copy>
     <copy file="${build.lib.dir}/svnant.jar"           todir="${build.distrib.dir}/lib" />
     <copy file="${distribfiles.dir}/build.xml"         todir="${build.distrib.dir}"/>
