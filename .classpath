@@ -4,7 +4,6 @@
 	<classpathentry kind="src" path="src/testcases"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ant"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/svnclientadapter"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/svnkit"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
