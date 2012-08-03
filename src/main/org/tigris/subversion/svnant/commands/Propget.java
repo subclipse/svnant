@@ -67,7 +67,7 @@ import java.io.IOException;
 /**
  * svn propget. Get a property
  * 
- * @author Cédric Chabanois (cchabanois@ifrance.com)
+ * @author CÃ©dric Chabanois (cchabanois@ifrance.com)
  */
 public class Propget extends SvnCommand {
 
@@ -131,7 +131,7 @@ public class Propget extends SvnCommand {
     protected void validateAttributes() {
         SvnAntUtilities.attrsNotSet( "path, url", true, path, url );
         SvnAntUtilities.attrNotEmpty( "name", name );
-        SvnAntUtilities.attrsNotSet( "property, file", property, file );
+        SvnAntUtilities.attrsNotSet( "property, file", false, property, file );
     }
 
     /**
