@@ -86,8 +86,10 @@ public abstract class SvnTest extends BuildFileTest {
     @Test
     public void testCheckout() throws Exception {
         executeTarget( "testCheckout" );
-        Assert.assertEquals( 1, svnClient.getSingleStatus( new File( "test/svn/coHEAD/checkoutTest/readme.txt" ) )
-                        .getLastChangedRevision().getNumber() );
+        ISVNStatus status = svnClient.getSingleStatus( new File( "test/svn/coHEAD/checkoutTest/readme.txt" ) );
+        Assert.assertNotNull( status );
+        Assert.assertNotNull( status.getLastChangedRevision() );
+        Assert.assertEquals( 1, status.getLastChangedRevision().getNumber() );
     }
 
     @Test
